@@ -1,0 +1,54 @@
+//==================== Copyright © 2014, Holodeck Project =====================
+//
+// Purpose: Holodeck SDK definition file (.fgd) 
+//
+//=============================================================================
+
+//-------------------------------------------------------------------------
+//-------------------------------------------------------------------------
+@BaseClass base(Targetname, EnableDisable) = GesturePanel
+[
+]
+
+//-------------------------------------------------------------------------
+//-------------------------------------------------------------------------
+@SolidClass base(GesturePanel) = holo_circle_panel : "A volume in which circle gestures are detected."
+[
+	// Attributes.
+	angles(angle) : "Circle Direction" : "0 0 0" : "The direction of the circle gesture required to trigger this panel."
+	useTime(float) : "Use Time" : "3.0" : "The length of time the user must make the circle gesture to trigger this panel."
+	
+	// Inputs.
+	input SetUseTime(float) : "Updates the use time attribute."
+	
+	// Outputs.
+	output OnFullyActivated(void) : "Fired when the the use time has been fully incremented."
+	output OnFullyDeactivated(void) : "Fired when the the use time has been fully decremented."
+]
+
+//-------------------------------------------------------------------------
+//-------------------------------------------------------------------------
+@SolidClass base(GesturePanel) = holo_swipe_panel : "A volume in which swipe gestures are detected."
+[
+	// Attributes.
+	angles(angle) : "Swipe Direction" : "0 0 0" : "The direction of the swipe gesture required to trigger this panel."
+	minSpeed(float) : "Use Time (mm/s)" : "3.0" : "The required speed of the swipe to activate trigger this panel."
+	
+	// Inputs.
+	input SetMinSpeed(float) : "Updates the minimum speed attribute."
+	
+	// Outputs.
+	output OnSwipePositive(void) : "Fired when the swipe matches the required direction."
+	output OnSwipeNegative(void) : "Fired when the swipe is opposite to the required direction."
+]
+
+//-------------------------------------------------------------------------
+//-------------------------------------------------------------------------
+@SolidClass base(GesturePanel) = holo_button_panel : "A volume in which swipe gestures are detected."
+[
+	// Attributes.
+	angles(angle) : "Press Direction" : "0 0 0" : "The direction of the press gesture required to trigger this panel."
+	
+	// Outputs.
+	output OnPress(void) : "Fired when the button has a press gesture in required direction."
+]
