@@ -55,6 +55,7 @@ $Configuration
 		$PreprocessorDefinitions		"$BASE;GAME_DLL;VECTOR;VERSION_SAFE_STEAM_API_INTERFACES;PROTECTED_THINGS_ENABLE;sprintf=use_Q_snprintf_instead_of_sprintf;strncpy=use_Q_strncpy_instead;_snprintf=use_Q_snprintf_instead"
 		$PreprocessorDefinitions		"$BASE;SWDS" [$POSIX]
 		$PreprocessorDefinitions		"$BASE;fopen=dont_use_fopen" [$WINDOWS||$X360]
+		$PreprocessorDefinitions		"$BASE;HOLODECK" [$HOLODECK]
 		$Create/UsePrecompiledHeader	"Use Precompiled Header (/Yu)"
 		$Create/UsePCHThroughFile		"cbase.h"
 	}
@@ -68,6 +69,17 @@ $Configuration
 
 $Project
 {
+	$Folder "Holodeck" [$HOLODECK]
+	{
+		$File	"holodeck\holo_button_panel.cpp"
+		$File	"holodeck\holo_circle_panel.cpp"
+		$File	"holodeck\holo_swipe_panel.cpp"
+		$File	"holodeck\base_holo_panel.cpp"
+		$File	"holodeck\base_holo_panel.h"
+		$File	"holodeck\holo_hand.cpp"
+		$File	"holodeck\holo_hand.h"
+	}
+	
 	$Folder "Replay"
 	{
 		$File	"gamedll_replay.cpp"

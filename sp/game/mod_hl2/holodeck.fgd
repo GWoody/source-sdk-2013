@@ -15,7 +15,7 @@
 @SolidClass base(GesturePanel) = holo_circle_panel : "A volume in which circle gestures are detected."
 [
 	// Attributes.
-	angles(angle) : "Circle Direction" : "0 0 0" : "The direction of the circle gesture required to trigger this panel."
+	normal(angle) : "Circle Normal" : "0 0 0" : "The normal of the circle gesture required to trigger this panel."
 	useTime(float) : "Use Time" : "3.0" : "The length of time the user must make the circle gesture to trigger this panel."
 	
 	// Inputs.
@@ -31,7 +31,7 @@
 @SolidClass base(GesturePanel) = holo_swipe_panel : "A volume in which swipe gestures are detected."
 [
 	// Attributes.
-	angles(angle) : "Swipe Direction" : "0 0 0" : "The direction of the swipe gesture required to trigger this panel."
+	swipeDirection(angle) : "Swipe Direction" : "0 0 0" : "The direction of the swipe gesture required to trigger this panel."
 	minSpeed(float) : "Use Time (mm/s)" : "3.0" : "The required speed of the swipe to activate trigger this panel."
 	
 	// Inputs.
@@ -47,8 +47,22 @@
 @SolidClass base(GesturePanel) = holo_button_panel : "A volume in which swipe gestures are detected."
 [
 	// Attributes.
-	angles(angle) : "Press Direction" : "0 0 0" : "The direction of the press gesture required to trigger this panel."
+	pressDirection(angle) : "Press Direction" : "0 0 0" : "The direction of the press gesture required to trigger this panel."
+	pressSound(sound) : "Sound Name" : "" : "Name of the GameSound entry for the sound to play. Also supports direct .wav filenames."
+	lockedSound(sound) : "Locked Sound Name" : "" : "Name of the GameSound entry for the sound to play (when locked). Also supports direct .wav filenames."
+	volume(float) : "Sound Volume [0.0, 1.0]" : "1.0" : "Volume of the sound that is played when the button is pressed."
+	
+	// Flags.
+	spawnflags(flags) =
+	[
+		2048: "Starts locked" : 0
+	]
+	
+	// Inputs.
+	input Lock(void) : "Lock the button, preventing it from functioning."
+	input Unlock(void) : "Unlock the button, allowing it to function."
 	
 	// Outputs.
 	output OnPress(void) : "Fired when the button has a press gesture in required direction."
+	output OnPressLocked(void) : "Fired when the button has a press gesture in required direction, but the button panel has been locked."
 ]

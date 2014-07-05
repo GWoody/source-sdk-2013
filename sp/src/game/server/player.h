@@ -249,6 +249,14 @@ public:
 	CBasePlayer();
 	~CBasePlayer();
 
+#ifdef HOLODECK
+private:
+	EHANDLE					m_hHandEntity;				// The hand entity which is used to interact with the environment.
+
+public:
+	CBaseEntity *			GetHandEntity() const		{ return m_hHandEntity.IsValid() ? m_hHandEntity.Get() : NULL; }
+#endif
+
 	// IPlayerInfo passthrough (because we can't do multiple inheritance)
 	IPlayerInfo *GetPlayerInfo() { return &m_PlayerInfo; }
 	IBotController *GetBotController() { return &m_PlayerInfo; }

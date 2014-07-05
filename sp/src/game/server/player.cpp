@@ -5038,6 +5038,12 @@ void CBasePlayer::Spawn( void )
 	UpdateLastKnownArea();
 
 	m_weaponFiredTimer.Invalidate();
+
+#ifdef HOLODECK
+	CBaseEntity *pHand = CreateEntityByName( "holo_hand" );
+	Assert( pHand );
+	m_hHandEntity.Set( pHand );
+#endif
 }
 
 void CBasePlayer::Activate( void )
