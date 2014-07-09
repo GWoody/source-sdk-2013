@@ -128,14 +128,14 @@ void CHoloButtonPanel::Touch( CBaseEntity *pOther )
 	//
 	// All conditions are satisfied. Trigger the map event.
 	//
-	COutputEvent event = _locked ? _onPressLocked : _onPress;
-	event.FireOutput( pPlayer, this );
+	COutputEvent *event = _locked ? &_onPressLocked : &_onPress;
+	event->FireOutput( pPlayer, this );
 
 	//
 	// Play the press sound.
 	//
-	string_t &sound = _locked ? _lockedSound : _pressSound;
-	const char *pszSound = sound.ToCStr();
+	string_t *sound = _locked ? &_lockedSound : &_pressSound;
+	const char *pszSound = sound->ToCStr();
 	if( pszSound )
 	{
 		UTIL_EmitAmbientSound( entindex( ), GetAbsOrigin(), pszSound, _volume, SNDLVL_NORM, SND_NOFLAGS, PITCH_NORM );

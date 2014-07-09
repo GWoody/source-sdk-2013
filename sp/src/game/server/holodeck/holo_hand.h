@@ -37,6 +37,8 @@ public:
 	};
 
 public:
+	DECLARE_CLASS( CHoloHand, CBaseEntity );
+
 	const SFinger &	GetFinger( EFinger finger );
 
 private:

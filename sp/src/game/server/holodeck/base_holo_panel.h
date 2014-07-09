@@ -17,6 +17,8 @@
 class CBaseHoloPanel : public CTriggerMultiple
 {
 public:
+	DECLARE_CLASS( CBaseHoloPanel, CTriggerMultiple );
+
 	// CBaseEntity overrides.
 	virtual void	Spawn();
 
