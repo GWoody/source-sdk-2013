@@ -1671,6 +1671,9 @@ void CInput::Init_All (void)
 		
 	// Initialize third person camera controls.
 	Init_Camera();
+
+	//extern void Leap_Create();
+	//Leap_Create();
 }
 
 /*
@@ -1688,6 +1691,9 @@ void CInput::Shutdown_All(void)
 
 	delete[] m_pVerifiedCommands;
 	m_pVerifiedCommands = NULL;
+
+	//extern void Leap_Destroy();
+	//Leap_Destroy();
 }
 
 void CInput::LevelInit( void )
