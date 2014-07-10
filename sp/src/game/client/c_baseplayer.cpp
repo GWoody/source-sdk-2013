@@ -57,6 +57,10 @@
 // NVNT haptics system interface
 #include "haptics/ihaptics.h"
 
+#ifdef HOLODECK
+#include "holodeck/in_leap.h"
+#endif
+
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
@@ -2125,6 +2129,30 @@ void C_BasePlayer::Simulate()
 	{
 		ResetLatched();
 	}
+
+#ifdef HOLODECK
+	// Pass all Leap frame data to the server.
+	SFrameQueue &queue = SFrameQueue::get();
+	SLeapFrame frame = queue.peek();
+
+	// Alright, at first this seems counter intuitive.
+	// "Why are you ignoring the Leap frames collected during THIS Source frame update?" you may ask.
+	// 
+	// Since `gpGlobals->curtime` is only updated at the beginning of every Source Engine frame,
+	// it becomes possible for the queue to never become empty (since the Leap thread will always send
+	// frame data of value `gpGlobals->curtime`.
+	while( frame.getGametime() != gpGlobals->curtime )
+	{
+		queue.popOffQueue();
+
+		while( !frame.isEmpty() )
+		{
+			engine->ServerCmd( frame.pop( ).c_str(), true );
+		}
+
+		frame = queue.peek();
+	}
+#endif
 }
 
 //-----------------------------------------------------------------------------

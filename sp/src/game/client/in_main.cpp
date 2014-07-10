@@ -33,6 +33,10 @@
 #include "client_virtualreality.h"
 #include "sourcevr/isourcevirtualreality.h"
 
+#ifdef HOLODECK
+#include "holodeck/in_leap.h"
+#endif
+
 // NVNT Include
 #include "haptics/haptic_utils.h"
 #include <vgui/ISurface.h>
@@ -1282,6 +1286,10 @@ void CInput::CreateMove ( int sequence_number, float input_sample_frametime, boo
 
 	pVerified->m_cmd = *cmd;
 	pVerified->m_crc = cmd->GetChecksum();
+
+#ifdef HOLODECK
+	CLeapMotion::get().setEngineTime( gpGlobals->curtime );
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -1672,8 +1680,10 @@ void CInput::Init_All (void)
 	// Initialize third person camera controls.
 	Init_Camera();
 
-	//extern void Leap_Create();
-	//Leap_Create();
+#ifdef HOLODECK
+	SFrameQueue::create();
+	CLeapMotion::create();
+#endif
 }
 
 /*
@@ -1692,8 +1702,10 @@ void CInput::Shutdown_All(void)
 	delete[] m_pVerifiedCommands;
 	m_pVerifiedCommands = NULL;
 
-	//extern void Leap_Destroy();
-	//Leap_Destroy();
+#ifdef HOLODECK
+	CLeapMotion::destroy();
+	SFrameQueue::destroy();
+#endif
 }
 
 void CInput::LevelInit( void )

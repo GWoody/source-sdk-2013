@@ -14,6 +14,44 @@ static const int VERSION = 1;
 
 //----------------------------------------------------------------------------
 //----------------------------------------------------------------------------
+SLeapFrame::SLeapFrame( float time )
+{
+	gametime = time;
+}
+
+//----------------------------------------------------------------------------
+//----------------------------------------------------------------------------
+bool SLeapFrame::isEmpty()
+{
+	return data.empty();
+}
+
+//----------------------------------------------------------------------------
+//----------------------------------------------------------------------------
+void SLeapFrame::push( const std::string &str )
+{
+	data.push( str );
+}
+
+//----------------------------------------------------------------------------
+//----------------------------------------------------------------------------
+std::string SLeapFrame::pop()
+{
+	std::string str = "";
+
+	if( !data.empty() )
+	{
+		str = data.front();
+		data.pop();
+	}
+
+	return str;
+}
+
+//----------------------------------------------------------------------------
+//----------------------------------------------------------------------------
+
+SFrameQueue *SFrameQueue::_instance;
 
 /*
 ==============================================================================
@@ -23,12 +61,13 @@ Contains the code necessary to push a string onto an STL defined queue.
 */
 
 
-void SFrameQueue::pushOnToQueue( std::string s )
+void SFrameQueue::pushOnToQueue( const SLeapFrame &frame )
 {
 	_mutex.Lock();
-	_frameQueue.push(s);
+		_frameQueue.push( frame );
 	_mutex.Unlock();
 }
+
 //----------------------------------------------------------------------------
 //----------------------------------------------------------------------------
 
@@ -39,16 +78,45 @@ Contains the code necessary to pop off a string in a STL defined queue.
 ==============================================================================
 */
 
-std::string SFrameQueue::popOffQueue()
+SLeapFrame SFrameQueue::popOffQueue()
 {
-	std::string topFrame = " ";
+	SLeapFrame frame( 0.0f );
+
 	_mutex.Lock();
-	topFrame = _frameQueue.front();
-	_frameQueue.pop();
+		if( !_frameQueue.empty() )
+		{
+			frame = _frameQueue.front();
+			_frameQueue.pop();
+		}
 	_mutex.Unlock();
 
-	return topFrame;
+	return frame;
 }
+
+//----------------------------------------------------------------------------
+//----------------------------------------------------------------------------
+
+/*
+==============================================================================
+[peek]
+Provides a preview of the top frame in the queue.
+==============================================================================
+*/
+
+ SLeapFrame SFrameQueue::peek()
+{
+	SLeapFrame frame( 0.0f );
+
+	_mutex.Lock();
+		if( !_frameQueue.empty() )
+		{
+			frame = _frameQueue.front();
+		}
+	_mutex.Unlock();
+
+	return frame;
+}
+
 //----------------------------------------------------------------------------
 //----------------------------------------------------------------------------
 
@@ -72,17 +140,7 @@ bool SFrameQueue::isEmpty()
 //----------------------------------------------------------------------------
 //----------------------------------------------------------------------------
 
-CLeapMotion *gpLeapMotion = NULL;
-
-void Leap_Create()
-{
-	gpLeapMotion = new CLeapMotion;
-}
-
-void Leap_Destroy()
-{
-	delete gpLeapMotion;
-}
+CLeapMotion *CLeapMotion::_instance;
 
 /*
 ==============================================================================
@@ -111,6 +169,26 @@ CLeapMotion::~CLeapMotion()
 {
 	_controller.removeListener( *_pListener );
 	delete _pListener;
+}
+
+//----------------------------------------------------------------------------
+//----------------------------------------------------------------------------
+void CLeapMotion::setEngineTime( float curtime )
+{
+	_timerMutex.Lock();
+		_engineTime = curtime;
+	_timerMutex.Unlock();
+}
+
+//----------------------------------------------------------------------------
+//----------------------------------------------------------------------------
+float CLeapMotion::getEngineTime()
+{
+	_timerMutex.Lock();
+		float curtime = _engineTime;
+	_timerMutex.Unlock();
+
+	return curtime;
 }
 
 //----------------------------------------------------------------------------
@@ -235,85 +313,6 @@ std::string CLeapMotionListener::HandToString( const Leap::Hand &hand )
 	return sHand;
 }
 
-
-//----------------------------------------------------------------------------
-//----------------------------------------------------------------------------
-
-/*
-==============================================================================
-[LeapVectorToString]
-Contains the code necessary to convert a Leap Motion defined vector into a protocol ready format.
-==============================================================================
-*/
-std::string CLeapMotionListener::LeapVectorToString(Leap::Vector &vector)
-{
-	std::stringstream ss;
-
-	ss << "vector " << vector.x << " " << vector.y << " " << vector.z << " " << "\n";
-
-	std::string sVector = ss.str();
-
-	return sVector;
-
-}
-
-
-//----------------------------------------------------------------------------
-//----------------------------------------------------------------------------
-
-/*
-==============================================================================
-[HeaderToString]
-Contains the code necessary to convert a gesture into a protocol ready format.
-==============================================================================
-*/
-std::string CLeapMotionListener::HeaderToString( const Leap::Frame & frame, CLeapMotion::typeTag_e enumeration )
-{
-	std::stringstream ss;
-
-	uint32 tag = 0;
-
-	switch (enumeration)
-	{
-	case CLeapMotion::L_VECTOR:
-		tag = 0;
-		break;
-	case CLeapMotion::L_HAND:
-		tag = 1;
-		break;
-	case CLeapMotion::L_FINGER:
-		tag = 2;
-		break;
-	case CLeapMotion::L_CIRCLE:
-		tag = 3;
-		break;
-	case CLeapMotion::L_SWIPE:
-		tag = 4;
-		break;
-	case CLeapMotion::L_KTAP:
-		tag = 5;
-		break;
-	case CLeapMotion::L_STAP:
-		tag = 6;
-		break;
-	case CLeapMotion::L_BALL:
-		tag = 7;
-		break;
-	default:
-		tag = 99;
-		Warning("error\n");
-		break;
-	}
-
-	ss << "header " << tag << " " << frame.id() << " " << VERSION << "\n";
-
-	std::string sHeader = ss.str();
-
-	return sHeader;
-}
-
-
-
 //----------------------------------------------------------------------------
 //----------------------------------------------------------------------------
 
@@ -420,37 +419,40 @@ the proper utility functions. It is called repeatedly on each new Frame.
 
 void CLeapMotionListener::onFrame( const Leap::Controller &controller )
 {
-
 	const Leap::Frame &frame = controller.frame();
 	const Leap::GestureList &gestures = frame.gestures();
 	const Leap::GestureList::const_iterator &end = gestures.end();
 	const Leap::HandList &hands = frame.hands();
 
+	float engineTime = CLeapMotion::get().getEngineTime();
+	SLeapFrame strFrame( engineTime );
+
 	for (Leap::GestureList::const_iterator it = gestures.begin(); it != end; it++)
 	{
 		const Leap::Gesture &gesture = *it;
+		std::string data;
 		if ( gesture.type() == Leap::Gesture::TYPE_CIRCLE )
 		{
 			Leap::CircleGesture circle = Leap::CircleGesture( gesture );
-			std::string data = CircleGestureToString( circle );
-
+			data = CircleGestureToString( circle );
 		}
-		if ( gesture.type() == Leap::Gesture::TYPE_SWIPE )
+		else if ( gesture.type() == Leap::Gesture::TYPE_SWIPE )
 		{
 			Leap::SwipeGesture swipe = Leap::SwipeGesture( gesture );
-			std::string data = SwipeGestureToString( swipe );
+			data = SwipeGestureToString( swipe );
 		}
-		if ( gesture.type() == Leap::Gesture::TYPE_KEY_TAP )
+		else if ( gesture.type() == Leap::Gesture::TYPE_KEY_TAP )
 		{
 			Leap::KeyTapGesture keyTap = Leap::KeyTapGesture( gesture );
-			std::string data = KeyTapGestureToString( keyTap );
+			data = KeyTapGestureToString( keyTap );
 		}
-		if (gesture.type() == Leap::Gesture::TYPE_SCREEN_TAP )
+		else if (gesture.type() == Leap::Gesture::TYPE_SCREEN_TAP )
 		{
 			Leap::ScreenTapGesture screenTap = Leap::ScreenTapGesture( gesture );
-			std::string data = ScreenTapGestureToString( screenTap );
+			data = ScreenTapGestureToString( screenTap );
 		}
 
+		strFrame.push( data );
 	}
 
 	if (!hands.isEmpty())
@@ -459,21 +461,16 @@ void CLeapMotionListener::onFrame( const Leap::Controller &controller )
 		{
 			const Leap::Hand &hand = *it;
 			std::string data = HandToString( hand );
+			strFrame.push( data );
 
 			if (hand.grabStrength() > 0.5)
 			{
-				std::string data = BallGestureToString(hand);
+				data = BallGestureToString(hand);
+				strFrame.push( data );
 			}
-
 		}
 	}
 
-	Leap::Vector newVector = Leap::Vector( 0.5, 200.3, 67 );
-	std::string sVector = LeapVectorToString( newVector );
-
-	CLeapMotion::typeTag_e test = CLeapMotion::L_SWIPE;
-
-	std::string dummyHeader = HeaderToString(frame, test);
+	// Add the constructed frame to the queue.
+	SFrameQueue::get().pushOnToQueue( strFrame );
 }
-
-
