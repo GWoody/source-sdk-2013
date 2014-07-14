@@ -1,3 +1,12 @@
+/*
+==============================================================================
+
+	in_leap.h
+	Defines the Frame Queue and Leap Interface. 
+
+==============================================================================
+*/
+
 #ifndef __IN_LEAP_H__
 #define __IN_LEAP_H__
 
@@ -10,22 +19,25 @@
 
 #include "holodeck/holo_shared.h"
 
+// Pre definition.
+class CLeapMotionListener;
+
 //----------------------------------------------------------------------------
 // This is thread safe.
 //----------------------------------------------------------------------------
-class SFrameQueue
+struct SFrameQueue
 {
-	public:
-		void							pushOnToQueue( const holo::SFrame &frame );
-		holo::SFrame					popOffQueue();
-		holo::SFrame 					peek();
-		bool							isEmpty();
+public:
+	void			pushOnToQueue( const holo::SFrame &frame );
+	holo::SFrame	popOffQueue();
+	holo::SFrame 	peek();
+	bool			isEmpty();
 
-		void							markLast()	{ _frameQueue.back().Mark(); }
+	void			markLast()	{ _frameQueue.back().Mark(); }
 
-	private:
-		std::queue<holo::SFrame>		_frameQueue;
-		CThreadMutex					_mutex;
+private:
+	std::queue<holo::SFrame>	_frameQueue;
+	CThreadMutex	_mutex;
 };
 
 
@@ -33,39 +45,43 @@ class SFrameQueue
 //----------------------------------------------------------------------------
 class CLeapMotion
 {
-	public:
-		// Singleton methods.
-		static CLeapMotion &			get()		{ return *_instance; }
-		static void						create()	{ _instance = new CLeapMotion; }
-		static void						destroy()	{ delete _instance; }
+public:
+	// Singleton methods.
+	static CLeapMotion &	get()		{ return *_instance; }
+	static void		create()			{ _instance = new CLeapMotion; }
+	static void		destroy()			{ delete _instance; }
 
-		// Accessors.
-		SFrameQueue &					getQueue()	{ return *_queue; }
+	// Accessors.
+	SFrameQueue &	getQueue()			{ return *_queue; }
 
-	private:
-		CLeapMotion();
-		~CLeapMotion();
+	void			CreateMove( CUserCmd *cmd );
 
-		Leap::Controller				_controller;
-		class CLeapMotionListener *		_pListener;
-		SFrameQueue *					_queue;
+private:
+	// Frame processing.
+	holo::SFrame	BuildFinalFrame();
 
-		static CLeapMotion *			_instance;
+					CLeapMotion();
+					~CLeapMotion();
+
+	Leap::Controller	_controller;
+	CLeapMotionListener *	_pListener;
+	SFrameQueue *	_queue;
+
+	static CLeapMotion *	_instance;
 };
 
 //----------------------------------------------------------------------------
 //----------------------------------------------------------------------------
-
 class CLeapMotionListener : public Leap::Listener
 {
-	public:
-		CLeapMotionListener( CLeapMotion* pLeap );
+public:
+					CLeapMotionListener( CLeapMotion *pLeap );
 
-		virtual void					onConnect( const Leap::Controller & controller );
-		virtual void					onFrame( const Leap::Controller &controller );
+	virtual void	onConnect( const Leap::Controller &controller );
+	virtual void	onFrame( const Leap::Controller &controller );
 
-	private:
-		CLeapMotion *					_pLeap;
+private:
+	CLeapMotion *	_pLeap;
 };
 
 

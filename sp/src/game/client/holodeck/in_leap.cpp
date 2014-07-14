@@ -97,6 +97,55 @@ CLeapMotion::~CLeapMotion()
 
 //----------------------------------------------------------------------------
 //----------------------------------------------------------------------------
+void CLeapMotion::CreateMove( CUserCmd *cmd )
+{
+	cmd->holo_frame = BuildFinalFrame();
+}
+
+//----------------------------------------------------------------------------
+//----------------------------------------------------------------------------
+SFrame CLeapMotion::BuildFinalFrame()
+{
+	SFrame finalFrame;
+
+	if( !_queue->isEmpty() )
+	{
+		// Mark the position of the (current) last frame.
+		_queue->markLast();
+
+		holo::SFrame curframe;
+
+		do
+		{
+			curframe = _queue->popOffQueue();
+
+			if( curframe.IsGestureActive( EGesture::GESTURE_CIRCLE ) )
+			{
+				finalFrame._circle = curframe._circle;
+				finalFrame.SetGestureActive( EGesture::GESTURE_CIRCLE );
+			}
+			if( curframe.IsGestureActive( EGesture::GESTURE_SWIPE ) )
+			{
+				finalFrame._swipe = curframe._swipe;
+				finalFrame.SetGestureActive( EGesture::GESTURE_SWIPE );
+			}
+			if( curframe.IsGestureActive( EGesture::GESTURE_TAP ) )
+			{
+				finalFrame._tap = curframe._tap;
+				finalFrame.SetGestureActive( EGesture::GESTURE_TAP );
+			}
+
+			finalFrame._ball = curframe._ball;
+			finalFrame._hand = curframe._hand;
+
+		} while( !curframe.IsMarked() );
+	}
+
+	return finalFrame;
+}
+
+//----------------------------------------------------------------------------
+//----------------------------------------------------------------------------
 CLeapMotionListener::CLeapMotionListener(CLeapMotion *pLeap)
 {
 

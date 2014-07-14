@@ -16,6 +16,9 @@
 #include "imovehelper.h"
 #include "checksum_crc.h"
 
+#ifdef HOLODECK
+#include "holodeck/holo_shared.h"
+#endif
 
 class bf_read;
 class bf_write;
@@ -163,6 +166,9 @@ public:
 	CUtlVector< CEntityGroundContact > entitygroundcontact;
 #endif
 
+#ifdef HOLODECK
+	holo::SFrame holo_frame;
+#endif
 };
 
 void ReadUsercmd( bf_read *buf, CUserCmd *move, CUserCmd *from );

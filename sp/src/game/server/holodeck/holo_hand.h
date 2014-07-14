@@ -27,7 +27,7 @@ public:
 	void			ProcessClientString( const CCommand &args );
 
 	// Accessors.
-	const holo::SFinger &	GetFinger( holo::EFinger finger ) const;
+	const holo::SFinger &	GetFinger( holo::EFinger::type finger ) const;
 	const holo::SHand &	GetHand() const;
 
 private:
@@ -39,7 +39,7 @@ private:
 	void			ProcessScrenTapGestureString( const CCommand &args );
 	void			ProcessBallGestureString( const CCommand &args );
 
-	holo::SFinger	_fingers[holo::FINGER_COUNT];
+	holo::SFinger	_fingers[holo::EFinger::FINGER_COUNT];
 	holo::SHand		_hand;
 	int				_activeGestures;
 

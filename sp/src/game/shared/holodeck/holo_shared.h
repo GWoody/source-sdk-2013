@@ -23,25 +23,35 @@ namespace holo
 //=============================================================================
 // Constants.
 //=============================================================================
-	enum EFinger
+	namespace EFinger
 	{
-		FINGER_THUMB,
-		FINGER_POINTER,
-		FINGER_MIDDLE,
-		FINGER_USELESS,
-		FINGER_PINKY,
+		enum type
+		{
+			FINGER_THUMB,
+			FINGER_POINTER,
+			FINGER_MIDDLE,
+			FINGER_RING,
+			FINGER_PINKY,
 
-		FINGER_COUNT
-	};
+			FINGER_COUNT
+		};
 
-	enum EGesture
+		const char *ToString( type finger );
+	}
+
+	namespace EGesture
 	{
-		GESTURE_CIRCLE,
-		GESTURE_SWIPE,
-		GESTURE_TAP,
+		enum type
+		{
+			GESTURE_CIRCLE,
+			GESTURE_SWIPE,
+			GESTURE_TAP,
 
-		GESTURE_COUNT
-	};
+			GESTURE_COUNT
+		};
+
+		const char *ToString( type gesture );
+	}
 
 	enum EGlobals
 	{
@@ -86,7 +96,7 @@ namespace holo
 		Vector		palmPosition;
 		Vector		palmVelocity;
 		Vector		palmNormal;
-		SFinger		fingers[FINGER_COUNT];
+		SFinger		fingers[EFinger::FINGER_COUNT];
 	};
 
 	std::istream &operator>>( std::istream &ss, SHand &h );
@@ -181,7 +191,9 @@ namespace holo
 
 		void			Mark()				{ _marked = true; }
 		bool			IsMarked()			{ return _marked; }
-		bool			IsGestureActive( EGesture gesture )	{ return ( _gestureBits & gesture ) != 0; }
+
+		bool			IsGestureActive( EGesture::type gesture )	{ return ( _gestureBits & gesture ) != 0; }
+		void			SetGestureActive( EGesture::type gesture )	{ _gestureBits |= ( 1 << gesture ); }
 
 		// Frame data.
 		SHand			_hand;
@@ -204,7 +216,7 @@ namespace holo
 #ifdef CLIENT_DLL
 	Vector			LeapToHoloCoordinates( const Leap::Vector &v );
 
-	EFinger			LeapToHoloFingerCode( const Leap::Finger::Type &finger );
+	EFinger::type	LeapToHoloFingerCode( const Leap::Finger::Type &finger );
 #endif
 	
 }

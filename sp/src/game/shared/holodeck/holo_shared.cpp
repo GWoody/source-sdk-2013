@@ -33,6 +33,62 @@ static inline ostream &operator<<( ostream &ss, const Vector &v )
 	return ss;
 }
 
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+const char *EFinger::ToString( EFinger::type finger )
+{
+	switch( finger )
+	{
+		case FINGER_THUMB:
+			return "FINGER_THUMB";
+
+		case FINGER_POINTER:
+			return "FINGER_POINTER";
+
+		case FINGER_MIDDLE:
+			return "FINGER_MIDDLE";
+
+		case FINGER_RING:
+			return "FINGER_RING";
+
+		case FINGER_PINKY:
+			return "FINGER_PINKY";
+
+		case FINGER_COUNT:
+			return "FINGER_COUNT";
+
+		default:
+			break;
+	}
+
+	return "FINGER_INVALID";
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+const char *EGesture::ToString( EGesture::type gesture )
+{
+	switch( gesture )
+	{
+		case GESTURE_CIRCLE:
+			return "GESTURE_CIRCLE";
+
+		case GESTURE_SWIPE:
+			return "GESTURE_SWIPE";
+
+		case GESTURE_TAP:
+			return "GESTURE_TAP";
+
+		case GESTURE_COUNT:
+			return "GESTURE_COUNT";
+
+		default:
+			break;
+	}
+
+	return "GESTURE_INVALID";
+}
+
 #ifdef CLIENT_DLL
 
 //----------------------------------------------------------------------------
@@ -58,31 +114,31 @@ Vector holo::LeapToHoloCoordinates( const Leap::Vector &v )
 	return ov;
 }
 
-EFinger	holo::LeapToHoloFingerCode( const Leap::Finger::Type &finger )
+EFinger::type holo::LeapToHoloFingerCode( const Leap::Finger::Type &finger )
 {
 	switch( finger )
 	{
 		case Leap::Finger::TYPE_THUMB:
-			return FINGER_THUMB;
+			return EFinger::FINGER_THUMB;
 
 		case Leap::Finger::TYPE_INDEX:
-			return FINGER_POINTER;
+			return EFinger::FINGER_POINTER;
 
 		case Leap::Finger::TYPE_MIDDLE:
-			return FINGER_MIDDLE;
+			return EFinger::FINGER_MIDDLE;
 
 		case Leap::Finger::TYPE_RING:
-			return FINGER_USELESS;
+			return EFinger::FINGER_RING;
 
 		case Leap::Finger::TYPE_PINKY:
-			return FINGER_PINKY;
+			return EFinger::FINGER_PINKY;
 
 		default:
 			break;
 	}
 
 	Assert( 0 );
-	return FINGER_COUNT;
+	return EFinger::FINGER_COUNT;
 }
 
 #endif
@@ -148,7 +204,7 @@ void SHand::FromLeap( const Leap::Hand &h )
 	const Leap::FingerList &fingerlist = h.fingers();
 	for each( const Leap::Finger &f in fingerlist )
 	{
-		EFinger idx = LeapToHoloFingerCode( f.type() );
+		EFinger::type idx = LeapToHoloFingerCode( f.type() );
 		fingers[idx].FromLeap( f );
 	}
 
@@ -165,7 +221,7 @@ istream &holo::operator>>( istream &ss, SHand &h )
 {
 	ss >> h.id >> h.confidence >> h.palmPosition >> h.palmVelocity >> h.palmNormal;
 
-	for( int i = 0; i < FINGER_COUNT; i++ )
+	for( int i = 0; i < EFinger::FINGER_COUNT; i++ )
 	{
 		ss >> h.fingers[i];
 	}
@@ -177,7 +233,7 @@ ostream &holo::operator<<( ostream &ss, const SHand &h )
 {
 	ss << " " << h.id << " " << h.confidence << " " << h.palmPosition << " " << h.palmVelocity << " " << h.palmNormal;
 
-	for( int i = 0; i < FINGER_COUNT; i++ )
+	for( int i = 0; i < EFinger::FINGER_COUNT; i++ )
 	{
 		ss << h.fingers[i];
 	}
@@ -385,24 +441,24 @@ void SFrame::FromLeap( const Leap::Frame &f )
 		if ( gesture.type() == Leap::Gesture::TYPE_CIRCLE )
 		{
 			_circle = SCircleGesture( gesture );
-			_gestureBits |= GESTURE_CIRCLE;
+			SetGestureActive( EGesture::GESTURE_CIRCLE );
 		}
 		else if ( gesture.type() == Leap::Gesture::TYPE_SWIPE )
 		{
 			_swipe = SSwipeGesture( gesture );
-			_gestureBits |= GESTURE_SWIPE;
+			SetGestureActive( EGesture::GESTURE_SWIPE );
 		}
 		else if ( gesture.type() == Leap::Gesture::TYPE_KEY_TAP )
 		{
 			Leap::KeyTapGesture tap( gesture );
 			_tap = STapGesture( tap );
-			_gestureBits |= GESTURE_TAP;
+			SetGestureActive( EGesture::GESTURE_TAP );
 		}
 		else if (gesture.type() == Leap::Gesture::TYPE_SCREEN_TAP )
 		{
 			Leap::ScreenTapGesture tap( gesture );
 			_tap = STapGesture( tap );
-			_gestureBits |= GESTURE_TAP;
+			SetGestureActive( EGesture::GESTURE_TAP );
 		}
 	}
 

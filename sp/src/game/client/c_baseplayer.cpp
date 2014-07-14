@@ -57,10 +57,6 @@
 // NVNT haptics system interface
 #include "haptics/ihaptics.h"
 
-#ifdef HOLODECK
-#include "holodeck/in_leap.h"
-#endif
-
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
@@ -2129,29 +2125,6 @@ void C_BasePlayer::Simulate()
 	{
 		ResetLatched();
 	}
-
-#ifdef HOLODECK
-	// Pass all Leap frame data to the server.
-	SFrameQueue &queue = CLeapMotion::get().getQueue();
-	if( !queue.isEmpty() )
-	{
-		// Mark the position of the (current) last frame.
-		queue.markLast();
-
-		holo::SFrame frame;
-
-		do
-		{
-			frame = queue.popOffQueue();
-
-			std::ostringstream ss;
-			ss << frame;
-			std::string str = ss.str();
-
-			engine->ServerCmd( str.c_str(), true );
-		} while( !frame.IsMarked() );
-	}
-#endif
 }
 
 //-----------------------------------------------------------------------------
