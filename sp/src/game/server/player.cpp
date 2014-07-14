@@ -70,6 +70,10 @@
 #include "vote_controller.h"
 #include "ai_speech.h"
 
+#ifdef HOLODECK
+#include "holodeck/holo_hand.h"
+#endif
+
 #if defined USES_ECON_ITEMS
 #include "econ_wearable.h"
 #endif
@@ -5042,6 +5046,7 @@ void CBasePlayer::Spawn( void )
 #ifdef HOLODECK
 	CBaseEntity *pHand = CreateEntityByName( "holo_hand" );
 	Assert( pHand );
+	pHand->SetOwnerEntity( this );
 	m_hHandEntity.Set( pHand );
 #endif
 }
@@ -6550,6 +6555,22 @@ bool CBasePlayer::ClientCommand( const CCommand &args )
 		}
 		return true;
 	}
+#ifdef HOLODECK
+	// TODO: make this pretty.
+	else if( stricmp( cmd, "hand" ) || 
+		stricmp( cmd, "circlegesture" ) || 
+		stricmp( cmd, "swipegesture" ) || 
+		stricmp( cmd, "keytapgesture" ) || 
+		stricmp( cmd, "screentapgesture" ) || 
+		stricmp( cmd, "ballgesture" ) )
+	{
+		CHoloHand *pHand = dynamic_cast<CHoloHand *>( m_hHandEntity.Get() );
+		Assert( pHand );
+
+		pHand->ProcessClientString( args );
+		return true;
+	}
+#endif
 
 	return false;
 }

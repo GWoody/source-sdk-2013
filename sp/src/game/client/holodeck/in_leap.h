@@ -14,12 +14,9 @@
 // THIS IS NOT THREAD SAFE!!!
 struct SLeapFrame
 {
-	SLeapFrame( float time = 0.0f );
-
-	bool			isValid()			{ return gametime != 0.0f; }
-
-	// Source Engine stuff.
-	float			getGametime() const	{ return gametime; }
+					SLeapFrame()		{ marked = false; }
+	void			mark()				{ marked = true; }
+	bool			isMarked()			{ return marked; }
 
 	// Frame data.
 	bool			isEmpty();
@@ -27,7 +24,7 @@ struct SLeapFrame
 	std::string		pop();
 
 private:
-	float			gametime;			// Value of `gpGlobals->curtime` when the frame was received from the Leap.
+	bool			marked;
 	std::queue<std::string>	data;		// Hand, finger and gesture data for this frame.
 };
 
@@ -46,6 +43,8 @@ class SFrameQueue
 		SLeapFrame						popOffQueue();
 		SLeapFrame 						peek();
 		bool							isEmpty();
+
+		void							markLast()	{ _frameQueue.back().mark(); }
 
 	private:
 		std::queue<SLeapFrame>			_frameQueue;
@@ -69,15 +68,9 @@ class CLeapMotion
 		static void						create()	{ _instance = new CLeapMotion; }
 		static void						destroy()	{ delete _instance; }
 
-		void							setEngineTime( float curtime );
-		float							getEngineTime();
-
 	private:
 		Leap::Controller				_controller;
 		class CLeapMotionListener *		_pListener;
-
-		CThreadMutex					_timerMutex;
-		float							_engineTime;
 
 		static CLeapMotion *			_instance;
 };

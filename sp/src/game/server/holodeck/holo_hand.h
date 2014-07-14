@@ -1,7 +1,7 @@
 /*
 ===============================================================================
 
-	holo_hand.cpp
+	holo_hand.h
 		Implements the hand entity.
 		The hand entity mirrors the client side Leap Motion hand state.
 		It is used to test holodeck triggers.
@@ -13,36 +13,37 @@
 #define __HOLO_HAND_H__
 
 #include "baseentity.h"
+#include "holodeck/holo_shared.h"
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 class CHoloHand : public CBaseEntity
 {
-	// Data types.
-public:
-	enum EFinger
-	{
-		FINGER_THUMB,
-		FINGER_POINTER,
-		FINGER_MIDDLE,
-		FINGER_USELESS,
-		FINGER_PINKY,
-
-		FINGER_COUNT
-	};
-
-	struct SFinger
-	{
-		Vector direction;
-	};
-
 public:
 	DECLARE_CLASS( CHoloHand, CBaseEntity );
+					CHoloHand();
 
-	const SFinger &	GetFinger( EFinger finger );
+	// Client state updates.
+	void			ProcessClientString( const CCommand &args );
+
+	// Accessors.
+	const holo::SFinger &	GetFinger( holo::EFinger finger ) const;
+	const holo::SHand &	GetHand() const;
 
 private:
-	SFinger			_fingers[FINGER_COUNT];
+	// Client state updates.
+	void			ProcessHandString( const CCommand &args );
+	void			ProcessCircleGestureString( const CCommand &args );
+	void			ProcessSwipeGestureString( const CCommand &args );
+	void			ProcessKeyTapGestureString( const CCommand &args );
+	void			ProcessScrenTapGestureString( const CCommand &args );
+	void			ProcessBallGestureString( const CCommand &args );
+
+	holo::SFinger	_fingers[holo::FINGER_COUNT];
+	holo::SHand		_hand;
+	int				_activeGestures;
+
+	EHANDLE			_palmSprite;
 };
 
 #endif // __HOLO_HAND_H__

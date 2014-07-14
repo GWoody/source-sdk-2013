@@ -1286,10 +1286,6 @@ void CInput::CreateMove ( int sequence_number, float input_sample_frametime, boo
 
 	pVerified->m_cmd = *cmd;
 	pVerified->m_crc = cmd->GetChecksum();
-
-#ifdef HOLODECK
-	CLeapMotion::get().setEngineTime( gpGlobals->curtime );
-#endif
 }
 
 //-----------------------------------------------------------------------------

@@ -9,14 +9,36 @@
 
 #include "cbase.h"
 #include "in_leap.h"
+#include "holodeck/holo_shared.h"
 
 static const int VERSION = 1;
 
+//#define OUTPUT_DEBUG_STRINGS
+
 //----------------------------------------------------------------------------
+// Contains the code necessary to convert a Leap Motion Vector into Valve Vector.
 //----------------------------------------------------------------------------
-SLeapFrame::SLeapFrame( float time )
+std::string ToSourceCoordinates(const Leap::Vector &v)
 {
-	gametime = time;
+	std::ostringstream ss;
+	Vector ov;
+
+	// Source uses	{ forward, left, up }.
+	// Leap uses	{ left, up, forward }.
+	ov.x = v.z;
+	ov.y = v.x;
+	ov.z = v.y;
+
+	// Leap uses millimeters, Source uses inches.
+
+	// The player is 72 units tall (which is estimated to be 5ft 10in -> 1.778m).
+	// This gives us a Source unit to millimeters factor of:
+	const float scaleFactor = 72.0f / 0.001778f;	// units / millimeter.
+
+	ov *= scaleFactor;
+
+	ss << ov.x << " " << ov.y << " " << ov.z;
+	return ss.str();
 }
 
 //----------------------------------------------------------------------------
@@ -80,7 +102,7 @@ Contains the code necessary to pop off a string in a STL defined queue.
 
 SLeapFrame SFrameQueue::popOffQueue()
 {
-	SLeapFrame frame( 0.0f );
+	SLeapFrame frame;
 
 	_mutex.Lock();
 		if( !_frameQueue.empty() )
@@ -105,7 +127,7 @@ Provides a preview of the top frame in the queue.
 
  SLeapFrame SFrameQueue::peek()
 {
-	SLeapFrame frame( 0.0f );
+	SLeapFrame frame;
 
 	_mutex.Lock();
 		if( !_frameQueue.empty() )
@@ -129,12 +151,7 @@ Contains the code to check whether the queue is empty.
 
 bool SFrameQueue::isEmpty()
 {
-	if (!_frameQueue.empty())
-	{
-		return true;
-	}
-	else
-		return false;
+	return _frameQueue.empty();
 }
 
 //----------------------------------------------------------------------------
@@ -173,26 +190,6 @@ CLeapMotion::~CLeapMotion()
 
 //----------------------------------------------------------------------------
 //----------------------------------------------------------------------------
-void CLeapMotion::setEngineTime( float curtime )
-{
-	_timerMutex.Lock();
-		_engineTime = curtime;
-	_timerMutex.Unlock();
-}
-
-//----------------------------------------------------------------------------
-//----------------------------------------------------------------------------
-float CLeapMotion::getEngineTime()
-{
-	_timerMutex.Lock();
-		float curtime = _engineTime;
-	_timerMutex.Unlock();
-
-	return curtime;
-}
-
-//----------------------------------------------------------------------------
-//----------------------------------------------------------------------------
 
 CLeapMotionListener::CLeapMotionListener(CLeapMotion *pLeap)
 {
@@ -215,6 +212,8 @@ void CLeapMotionListener::onConnect( const Leap::Controller &controller )
 	controller.enableGesture( Leap::Gesture::TYPE_KEY_TAP );
 	controller.enableGesture( Leap::Gesture::TYPE_SCREEN_TAP );
 	controller.enableGesture( Leap::Gesture::TYPE_SWIPE );
+
+	Warning( "Leap Motion connected!\n" );
 }
 
 //----------------------------------------------------------------------------
@@ -233,9 +232,18 @@ std::string CLeapMotionListener::CircleGestureToString( const Leap::CircleGestur
 
 	Leap::HandList handsForGesture = circleGesture.hands();
 
-	ss << "circlegesture " << handsForGesture[0].id() << " " << circleGesture.pointable() << " " << circleGesture.center() << " " << circleGesture.normal() << " " << circleGesture.radius() << " " << circleGesture.state() << "\n";
+	ss	<< "circlegesture " 
+		<< handsForGesture[0].id() << " " 
+		<< circleGesture.pointable().id() << " " 
+		<< ToSourceCoordinates( circleGesture.center() ) << " " 
+		<< ToSourceCoordinates( circleGesture.normal() ) << " " 
+		<< circleGesture.radius() << "\n";
 
 	std::string sCircleGesture = ss.str();
+
+#ifdef OUTPUT_DEBUG_STRINGS
+	Msg( "CircleGestureToString: %s\n", sCircleGesture.c_str() );
+#endif
 
 	return sCircleGesture;
 }
@@ -255,12 +263,20 @@ std::string CLeapMotionListener::SwipeGestureToString( const Leap::SwipeGesture 
 
 	Leap::HandList handsForGesture = swipeGesture.hands();
 
-	ss << "swipegesture " << swipeGesture.direction() << " " << swipeGesture.position() << " " << handsForGesture[0].id() << " " << swipeGesture.speed() << " " <<  swipeGesture.startPosition() << "\n";
+	ss << "swipegesture " 
+		<< ToSourceCoordinates( swipeGesture.direction() ) << " " 
+		<< ToSourceCoordinates( swipeGesture.position() ) << " " 
+		<< handsForGesture[0].id() << " " 
+		<< swipeGesture.speed() << " " 
+		<< ToSourceCoordinates( swipeGesture.startPosition() ) << "\n";
 
 	std::string sSwipeGesture = ss.str();
 
-	return sSwipeGesture;
+#ifdef OUTPUT_DEBUG_STRINGS
+	Msg( "SwipeGestureToString: %s\n", sSwipeGesture.c_str() );
+#endif
 
+	return sSwipeGesture;
 }
 
 //----------------------------------------------------------------------------
@@ -276,7 +292,12 @@ std::string CLeapMotionListener::FingerToString( const Leap::Finger &finger)
 {
 	std::stringstream ss;
 
-	ss << "finger " << finger.direction() << " " << finger.tipPosition() << " " << finger.tipVelocity() << " " << finger.width() << " " << finger.length() << "\n";
+	ss << finger.id() << " " 
+		<< ToSourceCoordinates( finger.direction() ) << " " 
+		<< ToSourceCoordinates( finger.tipPosition() ) << " " 
+		<< ToSourceCoordinates( finger.tipVelocity() ) << " " 
+		<< finger.width() << " " 
+		<< finger.length() << "\n";
 
 	std::string sFinger = ss.str();
 
@@ -295,10 +316,9 @@ Contains the code necessary to convert a Leap Motion hand into a protocol ready 
 */
 std::string CLeapMotionListener::HandToString( const Leap::Hand &hand )
 {
-
 	std::stringstream ss;
 
-	ss << "hand " << hand.confidence() << " ";
+	ss << "hand " << hand.fingers().count() << " ";
 
 	for each (Leap::Finger hFinger in hand.fingers())
 	{
@@ -306,9 +326,17 @@ std::string CLeapMotionListener::HandToString( const Leap::Hand &hand )
 		ss << finger << " ";
 	}
 
-	ss << hand.palmPosition() << " " << hand.palmVelocity() << " " << hand.palmNormal() << "\n";
+	ss << hand.id() << " " 
+		<< hand.confidence() << " " 
+		<< ToSourceCoordinates( hand.palmPosition() ) << " " 
+		<< ToSourceCoordinates( hand.palmVelocity() ) << " " 
+		<< ToSourceCoordinates( hand.palmNormal() ) << "\n";
 
 	std::string sHand = ss.str();
+
+#ifdef OUTPUT_DEBUG_STRINGS
+	Msg( "HandToString: %s\n", sHand.c_str() );
+#endif
 
 	return sHand;
 }
@@ -325,17 +353,23 @@ Contains the code to convert a Leap Motion KeyTap Gesture into a protocol ready 
 
 std::string	CLeapMotionListener::KeyTapGestureToString( const Leap::KeyTapGesture &keyTapGesture)
 {
-
 	std::stringstream ss;
 
 	Leap::HandList handsForGesture = keyTapGesture.hands();
 
-	ss << "keytapgesture " << keyTapGesture.direction() << " " << keyTapGesture.position() << " " << handsForGesture[0].id() << " " << keyTapGesture.pointable() << "\n";
+	ss << "keytapgesture " 
+		<< ToSourceCoordinates( keyTapGesture.direction() ) << " " 
+		<< ToSourceCoordinates( keyTapGesture.position() ) << " " 
+		<< handsForGesture[0].id() << " " 
+		<< keyTapGesture.pointable().id() << "\n";
 
 	std::string sKeyTapGestureToString = ss.str();
 
-	return sKeyTapGestureToString;
+#ifdef OUTPUT_DEBUG_STRINGS
+	Msg( "KeyTapGestureToString: %s\n", sKeyTapGestureToString.c_str() );
+#endif
 
+	return sKeyTapGestureToString;
 }
 
 
@@ -351,17 +385,23 @@ Contains the code to convert a Leap Motion ScreenTap Gesture into a protocol rea
 */
 std::string CLeapMotionListener::ScreenTapGestureToString( const Leap::ScreenTapGesture &ScreenTapGesture )
 {
-
 	std::stringstream ss;
 
 	Leap::HandList handsForGesture = ScreenTapGesture.hands();
 
-	ss << "screentapgesture " << ScreenTapGesture.direction() << " " << ScreenTapGesture.position() << " " << handsForGesture[0].id() << " " << ScreenTapGesture.pointable() << "\n";
+	ss << "screentapgesture " 
+		<< ToSourceCoordinates( ScreenTapGesture.direction() ) << " " 
+		<< ToSourceCoordinates( ScreenTapGesture.position() ) << " " 
+		<< handsForGesture[0].id() << " " 
+		<< ScreenTapGesture.pointable().id() << "\n";
 
 	std::string sKeyTapGestureToString = ss.str();
 
-	return sKeyTapGestureToString;
+#ifdef OUTPUT_DEBUG_STRINGS
+	Msg( "ScreenTapGestureToString: %s\n", sKeyTapGestureToString.c_str() );
+#endif
 
+	return sKeyTapGestureToString;
 }
 
 //----------------------------------------------------------------------------
@@ -379,31 +419,19 @@ std::string	CLeapMotionListener::BallGestureToString( const Leap::Hand &hand )
 {
 	std::stringstream ss;
 
-	ss << "ballgesture " << hand.id() << " " << hand.sphereCenter() << " " << hand.sphereRadius() << " " << hand.palmPosition() << "\n";
+	ss << "ballgesture " 
+		<< hand.id() << " " 
+		<< ToSourceCoordinates( hand.sphereCenter() ) << " " 
+		<< hand.sphereRadius() << " " 
+		<< ToSourceCoordinates( hand.palmPosition() ) << "\n";
 
 	std::string sBallGesture = ss.str();
 
+#ifdef OUTPUT_DEBUG_STRINGS
+	Msg( "BallGestureToString: %s\n", sBallGesture.c_str() );
+#endif
+
 	return sBallGesture;
-
-}
-
-
-//----------------------------------------------------------------------------
-//----------------------------------------------------------------------------
-
-/*
-==============================================================================
-====
-[ToSourceVector]
-Contains the code necessary to convert a Leap Motion Vector into Valve Vector.
-
-====
-==============================================================================
-*/
-
-Vector ToSourceVector(const Leap::Vector &v)
-{
-	return Vector(v.x, v.y, v.z);
 }
 
 //----------------------------------------------------------------------------
@@ -424,8 +452,7 @@ void CLeapMotionListener::onFrame( const Leap::Controller &controller )
 	const Leap::GestureList::const_iterator &end = gestures.end();
 	const Leap::HandList &hands = frame.hands();
 
-	float engineTime = CLeapMotion::get().getEngineTime();
-	SLeapFrame strFrame( engineTime );
+	SLeapFrame strFrame;
 
 	for (Leap::GestureList::const_iterator it = gestures.begin(); it != end; it++)
 	{

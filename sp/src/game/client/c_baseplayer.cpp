@@ -2133,24 +2133,21 @@ void C_BasePlayer::Simulate()
 #ifdef HOLODECK
 	// Pass all Leap frame data to the server.
 	SFrameQueue &queue = SFrameQueue::get();
-	SLeapFrame frame = queue.peek();
-
-	// Alright, at first this seems counter intuitive.
-	// "Why are you ignoring the Leap frames collected during THIS Source frame update?" you may ask.
-	// 
-	// Since `gpGlobals->curtime` is only updated at the beginning of every Source Engine frame,
-	// it becomes possible for the queue to never become empty (since the Leap thread will always send
-	// frame data of value `gpGlobals->curtime`.
-	while( frame.getGametime() != gpGlobals->curtime )
+	if( !queue.isEmpty() )
 	{
-		queue.popOffQueue();
+		// Mark the position of the (current) last frame.
+		queue.markLast();
 
-		while( !frame.isEmpty() )
+		SLeapFrame frame;
+
+		do
 		{
-			engine->ServerCmd( frame.pop( ).c_str(), true );
-		}
-
-		frame = queue.peek();
+			frame = queue.popOffQueue();
+			while( !frame.isEmpty() )
+			{
+				engine->ServerCmd( frame.pop().c_str(), true );
+			}
+		} while( !frame.isMarked() );
 	}
 #endif
 }

@@ -11,6 +11,8 @@
 #include "base_holo_panel.h"
 #include "holo_hand.h"
 
+using namespace holo;
+
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 class CHoloButtonPanel : public CBaseHoloPanel
@@ -102,7 +104,7 @@ bool CHoloButtonPanel::PassesTriggerFilters( CBaseEntity *pOther )
 	CHoloHand *pHand = (CHoloHand *)pOther;
 
 	// Ensure the finger is facing the correct direction.
-	const CHoloHand::SFinger &pointer = pHand->GetFinger( CHoloHand::FINGER_POINTER );
+	const SFinger &pointer = pHand->GetFinger( holo::FINGER_POINTER );
 	const Vector normalizedFinger = pointer.direction.Normalized();
 
 	if( _direction.Dot( normalizedFinger ) > 0.75 )
