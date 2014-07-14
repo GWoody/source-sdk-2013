@@ -2132,22 +2132,24 @@ void C_BasePlayer::Simulate()
 
 #ifdef HOLODECK
 	// Pass all Leap frame data to the server.
-	SFrameQueue &queue = SFrameQueue::get();
+	SFrameQueue &queue = CLeapMotion::get().getQueue();
 	if( !queue.isEmpty() )
 	{
 		// Mark the position of the (current) last frame.
 		queue.markLast();
 
-		SLeapFrame frame;
+		holo::SFrame frame;
 
 		do
 		{
 			frame = queue.popOffQueue();
-			while( !frame.isEmpty() )
-			{
-				engine->ServerCmd( frame.pop().c_str(), true );
-			}
-		} while( !frame.isMarked() );
+
+			std::ostringstream ss;
+			ss << frame;
+			std::string str = ss.str();
+
+			engine->ServerCmd( str.c_str(), true );
+		} while( !frame.IsMarked() );
 	}
 #endif
 }

@@ -1677,7 +1677,6 @@ void CInput::Init_All (void)
 	Init_Camera();
 
 #ifdef HOLODECK
-	SFrameQueue::create();
 	CLeapMotion::create();
 #endif
 }
@@ -1700,7 +1699,6 @@ void CInput::Shutdown_All(void)
 
 #ifdef HOLODECK
 	CLeapMotion::destroy();
-	SFrameQueue::destroy();
 #endif
 }
 

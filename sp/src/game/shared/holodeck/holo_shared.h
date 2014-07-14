@@ -38,9 +38,7 @@ namespace holo
 	{
 		GESTURE_CIRCLE,
 		GESTURE_SWIPE,
-		GESTURE_KEY_TAP,
-		GESTURE_SCREEN_TAP,
-		GESTURE_BALL,
+		GESTURE_TAP,
 
 		GESTURE_COUNT
 	};
@@ -71,6 +69,7 @@ namespace holo
 	};
 
 	std::istream &operator>>( std::istream &ss, SFinger &f );
+	std::ostream &operator<<( std::ostream &ss, const SFinger &f );
 
 	//-------------------------------------------------------------------------
 	//-------------------------------------------------------------------------
@@ -91,6 +90,7 @@ namespace holo
 	};
 
 	std::istream &operator>>( std::istream &ss, SHand &h );
+	std::ostream &operator<<( std::ostream &ss, const SHand &h );
 
 	//-------------------------------------------------------------------------
 	//-------------------------------------------------------------------------
@@ -108,6 +108,7 @@ namespace holo
 	};
 
 	std::istream &operator>>( std::istream &ss, SCircleGesture &c );
+	std::ostream &operator<<( std::ostream &ss, const SCircleGesture &c );
 
 	//-------------------------------------------------------------------------
 	//-------------------------------------------------------------------------
@@ -125,6 +126,7 @@ namespace holo
 	};
 
 	std::istream &operator>>( std::istream &ss, SSwipeGesture &s );
+	std::ostream &operator<<( std::ostream &ss, const SSwipeGesture &s );
 
 	//-------------------------------------------------------------------------
 	//-------------------------------------------------------------------------
@@ -143,6 +145,7 @@ namespace holo
 	};
 
 	std::istream &operator>>( std::istream &ss, STapGesture &t );
+	std::ostream &operator<<( std::ostream &ss, const STapGesture &t );
 
 	//-------------------------------------------------------------------------
 	//-------------------------------------------------------------------------
@@ -155,11 +158,45 @@ namespace holo
 #endif
 
 		int			handId;
-		float		radius;
+		float		radius, grabStrength;
 		Vector		center;
 	};
 
 	std::istream &operator>>( std::istream &ss, SBallGesture &b );
+	std::ostream &operator<<( std::ostream &ss, const SBallGesture &b );
+
+	//-------------------------------------------------------------------------
+	//-------------------------------------------------------------------------
+	// THIS IS NOT THREAD SAFE!!!
+	struct SFrame
+	{
+		friend std::istream &operator>>( std::istream &ss, SFrame &f );
+		friend std::ostream &operator<<( std::ostream &ss, const SFrame &f );
+
+						SFrame();
+#ifdef CLIENT_DLL
+						SFrame( const Leap::Frame &f );
+		void			FromLeap( const Leap::Frame &f );
+#endif
+
+		void			Mark()				{ _marked = true; }
+		bool			IsMarked()			{ return _marked; }
+		bool			IsGestureActive( EGesture gesture )	{ return ( _gestureBits & gesture ) != 0; }
+
+		// Frame data.
+		SHand			_hand;
+		SBallGesture	_ball;
+		SCircleGesture	_circle;
+		SSwipeGesture	_swipe;
+		STapGesture		_tap;
+
+	private:
+		int				_gestureBits;
+		bool			_marked;
+	};
+
+	std::istream &operator>>( std::istream &ss, SFrame &f );
+	std::ostream &operator<<( std::ostream &ss, const SFrame &f );
 
 //=============================================================================
 // Code

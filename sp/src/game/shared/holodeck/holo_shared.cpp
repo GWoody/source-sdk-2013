@@ -22,6 +22,17 @@ static inline istream &operator>>( istream &ss, Vector &v )
 	return ss;
 }
 
+//-----------------------------------------------------------------------------
+// Writes a Source vector to a stream.
+//-----------------------------------------------------------------------------
+static inline ostream &operator<<( ostream &ss, const Vector &v )
+{
+	ss << v.x << " "
+		<< v.y << " "
+		<< v.z;
+	return ss;
+}
+
 #ifdef CLIENT_DLL
 
 //----------------------------------------------------------------------------
@@ -109,6 +120,12 @@ istream &holo::operator>>( istream &ss, SFinger &f )
 	return ss;
 }
 
+ostream &holo::operator<<( ostream &ss, const SFinger &f )
+{
+	ss << " " << f.id << " " << f.direction << " " << f.tipPosition << " " << f.tipVelocity << " " << f.width << " " << f.length;
+	return ss;
+}
+
 //=============================================================================
 // SHand implementation.
 //=============================================================================
@@ -147,6 +164,24 @@ void SHand::FromLeap( const Leap::Hand &h )
 istream &holo::operator>>( istream &ss, SHand &h )
 {
 	ss >> h.id >> h.confidence >> h.palmPosition >> h.palmVelocity >> h.palmNormal;
+
+	for( int i = 0; i < FINGER_COUNT; i++ )
+	{
+		ss >> h.fingers[i];
+	}
+
+	return ss;
+}
+
+ostream &holo::operator<<( ostream &ss, const SHand &h )
+{
+	ss << " " << h.id << " " << h.confidence << " " << h.palmPosition << " " << h.palmVelocity << " " << h.palmNormal;
+
+	for( int i = 0; i < FINGER_COUNT; i++ )
+	{
+		ss << h.fingers[i];
+	}
+
 	return ss;
 }
 
@@ -184,6 +219,12 @@ istream &holo::operator>>( istream &ss, SCircleGesture &c )
 	return ss;
 }
 
+ostream &holo::operator<<( ostream &ss, const SCircleGesture &c )
+{
+	ss << c.handId << " " << c.fingerId << " " << c.center << " " << c.normal << " " << c.radius;
+	return ss;
+}
+
 //=============================================================================
 // SSwipeGesture implementation.
 //=============================================================================
@@ -215,6 +256,12 @@ void SSwipeGesture::FromLeap( const Leap::SwipeGesture &s )
 istream &holo::operator>>( istream &ss, SSwipeGesture &s )
 {
 	ss >> s.handId >> s.speed >> s.direction >> s.startPosition >> s.curPosition;
+	return ss;
+}
+
+ostream &holo::operator<<( ostream &ss, const SSwipeGesture &s )
+{
+	ss << s.handId << " " << s.speed << " " << s.direction << " " << s.startPosition << " " << s.curPosition;
 	return ss;
 }
 
@@ -265,13 +312,19 @@ istream &holo::operator>>( istream &ss, STapGesture &t )
 	return ss;
 }
 
+ostream &holo::operator<<( ostream &ss, const STapGesture &t )
+{
+	ss << t.handId << " " << t.fingerId << " " << t.direction << " " << t.position;
+	return ss;
+}
+
 //=============================================================================
 // SBallGesture implementation.
 //=============================================================================
 SBallGesture::SBallGesture()
 {
 	handId = INVALID_INDEX;
-	radius = 0.0f;
+	radius = grabStrength = 0.0f;
 	center = vec3_origin;
 }
 
@@ -285,12 +338,100 @@ void SBallGesture::FromLeap( const Leap::Hand &h )
 {
 	handId = h.id();
 	radius = h.sphereRadius();
+	grabStrength = h.grabStrength();
 	center = LeapToHoloCoordinates( h.sphereCenter() );
 }
 #endif
 
 istream &holo::operator>>( istream &ss, SBallGesture &b )
 {
-	ss >> b.handId >> b.radius >> b.center;
+	ss >> b.handId >> b.radius >> b.grabStrength >> b.center;
+	return ss;
+}
+
+ostream &holo::operator<<( ostream &ss, const SBallGesture &b )
+{
+	ss << b.handId << " " << b.radius << " " << b.grabStrength << " " << b.center;
+	return ss;
+}
+
+//=============================================================================
+// SFrame implementation.
+//=============================================================================
+SFrame::SFrame()
+{
+	_gestureBits = 0;
+	_marked = false;
+}
+
+#ifdef CLIENT_DLL
+SFrame::SFrame( const Leap::Frame &f )
+{
+	FromLeap( f );
+}
+
+void SFrame::FromLeap( const Leap::Frame &f )
+{
+	const Leap::GestureList &gestures = f.gestures();
+	const Leap::GestureList::const_iterator &end = gestures.end();
+	const Leap::HandList &hands = f.hands();
+
+	_gestureBits = 0;
+
+	for (Leap::GestureList::const_iterator it = gestures.begin(); it != end; it++)
+	{
+		const Leap::Gesture &gesture = *it;
+		string data;
+		if ( gesture.type() == Leap::Gesture::TYPE_CIRCLE )
+		{
+			_circle = SCircleGesture( gesture );
+			_gestureBits |= GESTURE_CIRCLE;
+		}
+		else if ( gesture.type() == Leap::Gesture::TYPE_SWIPE )
+		{
+			_swipe = SSwipeGesture( gesture );
+			_gestureBits |= GESTURE_SWIPE;
+		}
+		else if ( gesture.type() == Leap::Gesture::TYPE_KEY_TAP )
+		{
+			Leap::KeyTapGesture tap( gesture );
+			_tap = STapGesture( tap );
+			_gestureBits |= GESTURE_TAP;
+		}
+		else if (gesture.type() == Leap::Gesture::TYPE_SCREEN_TAP )
+		{
+			Leap::ScreenTapGesture tap( gesture );
+			_tap = STapGesture( tap );
+			_gestureBits |= GESTURE_TAP;
+		}
+	}
+
+	if (!hands.isEmpty())
+	{
+		// Holodeck only needs to support a single hand for now.
+#if 0
+		for ( Leap::HandList::const_iterator it = hands.begin(); it != hands.end(); it++ )
+		{
+			const Leap::Hand &hand = *it;
+#else
+		{
+			const Leap::Hand &hand = hands[0];
+#endif
+			_hand = SHand( hand );
+			_ball = SBallGesture( hand );
+		}
+	}
+}
+#endif
+
+istream &holo::operator>>( istream &ss, SFrame &f )
+{
+	ss >> f._hand >> f._gestureBits >> f._ball >> f._circle >> f._swipe >> f._tap;
+	return ss;
+}
+
+ostream &holo::operator<<( ostream &ss, const SFrame &f )
+{
+	ss << " " << f._hand << " " << f._gestureBits << " " << f._ball << " " << f._circle << " " << f._swipe << " " << f._tap;
 	return ss;
 }
