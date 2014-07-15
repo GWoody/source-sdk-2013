@@ -22,6 +22,12 @@ CLeapMotion *CLeapMotion::_instance;
 void SFrameQueue::pushOnToQueue( const SFrame &frame )
 {
 	_mutex.Lock();
+		// Disregard frames older than 1 second (Leap Motion samples at 60 frames per second).
+		if( _frameQueue.size() >= 60 )
+		{
+			_frameQueue.pop();
+		}
+
 		_frameQueue.push( frame );
 	_mutex.Unlock();
 }
@@ -140,6 +146,8 @@ SFrame CLeapMotion::BuildFinalFrame()
 
 		} while( !curframe.IsMarked() );
 	}
+
+	//Warning( "%f %f %f\n", finalFrame._hand.palmPosition.x, finalFrame._hand.palmPosition.y, finalFrame._hand.palmPosition.z );
 
 	return finalFrame;
 }

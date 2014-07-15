@@ -24,7 +24,7 @@ void CBaseHoloPanel::Spawn()
 //-----------------------------------------------------------------------------
 bool CBaseHoloPanel::PassesTriggerFilters( CBaseEntity *pOther )
 {
-	if( m_bDisabled || !pOther )
+	if( !pOther )
 	{
 		return false;
 	}

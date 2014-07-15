@@ -23,6 +23,11 @@ public:
 	DECLARE_CLASS( CHoloHand, CBaseEntity );
 					CHoloHand();
 
+	// CBaseEntity overrides.
+	virtual void	Spawn();
+	virtual void	Precache();
+	virtual	bool	CreateVPhysics();
+
 	// Accessors.
 	const holo::SFinger &	GetFinger( holo::EFinger finger ) const;
 	const holo::SHand &	GetHand() const;
@@ -30,12 +35,16 @@ public:
 	// Frame processing.
 	void			ProcessFrame( const holo::SFrame &frame );
 
-private:
-	holo::SFinger	_fingers[holo::EFinger::FINGER_COUNT];
-	holo::SHand		_hand;
-	int				_activeGestures;
+	void			DebugStartTouch();
+	void			DebugEndTouch();
 
-	EHANDLE			_palmSprite;
+private:
+	void			RenderDebugHand();
+
+	bool			IsValidFrame( const holo::SFrame &frame );
+
+	holo::SFrame	_curFrame;
+	int				_activeGestures;
 };
 
 #endif // __HOLO_HAND_H__

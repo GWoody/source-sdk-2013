@@ -28,6 +28,7 @@ public:
 
 	// CBaseEntity overrides.
 	virtual void	Spawn();
+	virtual void	Precache();
 
 	// CBaseHoloPanel overrides.
 	virtual bool	PassesTriggerFilters( CBaseEntity *pOther );
@@ -93,6 +94,21 @@ void CHoloButtonPanel::Spawn()
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
+void CHoloButtonPanel::Precache()
+{
+	if( _pressSound != NULL_STRING )
+	{
+		PrecacheScriptSound( STRING(_pressSound) );
+	}
+
+	if( _lockedSound != NULL_STRING )
+	{
+		PrecacheScriptSound( STRING(_lockedSound) );
+	}
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 bool CHoloButtonPanel::PassesTriggerFilters( CBaseEntity *pOther )
 {
 	// Ensure we're dealing with the hand entity.
@@ -120,7 +136,7 @@ bool CHoloButtonPanel::PassesTriggerFilters( CBaseEntity *pOther )
 //-----------------------------------------------------------------------------
 void CHoloButtonPanel::Touch( CBaseEntity *pOther )
 {
-	if( !PassesTriggerFilters( pOther ) )
+	if( m_bDisabled || !PassesTriggerFilters( pOther ) )
 	{
 		return;
 	}
@@ -143,6 +159,9 @@ void CHoloButtonPanel::Touch( CBaseEntity *pOther )
 		UTIL_EmitAmbientSound( entindex( ), GetAbsOrigin(), pszSound, _volume, SNDLVL_NORM, SND_NOFLAGS, PITCH_NORM );
 	}
 
+	CHoloHand *pHand = (CHoloHand *)pOther;
+	pHand->DebugStartTouch();
+
 	//
 	// We can't fire the button again until the hand has left the trigger.
 	//
@@ -158,6 +177,9 @@ void CHoloButtonPanel::EndTouch( CBaseEntity *pOther )
 	{
 		return;
 	}
+
+	CHoloHand *pHand = (CHoloHand *)pOther;
+	pHand->DebugEndTouch();
 
 	m_bDisabled = false;
 }

@@ -3442,6 +3442,7 @@ void CBasePlayer::ProcessUsercmds( CUserCmd *cmds, int numcmds, int totalcmds,
 		}
 
 #ifdef HOLODECK
+		// Take the newest version of all frame attributes.
 		const holo::SFrame &curframe = pCmd->holo_frame;
 		if( curframe.IsGestureActive( holo::EGesture::GESTURE_CIRCLE ) )
 		{
@@ -5077,6 +5078,7 @@ void CBasePlayer::Spawn( void )
 #ifdef HOLODECK
 	CBaseEntity *pHand = CreateEntityByName( "holo_hand" );
 	Assert( pHand );
+	pHand->Spawn();
 	pHand->SetOwnerEntity( this );
 	m_hHandEntity.Set( pHand );
 #endif
