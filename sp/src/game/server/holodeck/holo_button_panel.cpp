@@ -104,7 +104,7 @@ bool CHoloButtonPanel::PassesTriggerFilters( CBaseEntity *pOther )
 	CHoloHand *pHand = (CHoloHand *)pOther;
 
 	// Ensure the finger is facing the correct direction.
-	const SFinger &pointer = pHand->GetFinger( EFinger::FINGER_POINTER );
+	const SFinger &pointer = pHand->GetFinger( NFinger::FINGER_POINTER );
 	const Vector normalizedFinger = pointer.direction.Normalized();
 
 	if( _direction.Dot( normalizedFinger ) > 0.75 )

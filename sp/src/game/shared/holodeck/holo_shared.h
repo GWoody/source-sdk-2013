@@ -23,7 +23,7 @@ namespace holo
 //=============================================================================
 // Constants.
 //=============================================================================
-	namespace EFinger
+	namespace NFinger
 	{
 		enum type
 		{
@@ -38,8 +38,9 @@ namespace holo
 
 		const char *ToString( type finger );
 	}
+	typedef NFinger::type EFinger;
 
-	namespace EGesture
+	namespace NGesture
 	{
 		enum type
 		{
@@ -52,6 +53,7 @@ namespace holo
 
 		const char *ToString( type gesture );
 	}
+	typedef NGesture::type EGesture;
 
 	enum EGlobals
 	{
@@ -192,8 +194,8 @@ namespace holo
 		void			Mark()				{ _marked = true; }
 		bool			IsMarked()			{ return _marked; }
 
-		bool			IsGestureActive( EGesture::type gesture )	{ return ( _gestureBits & gesture ) != 0; }
-		void			SetGestureActive( EGesture::type gesture )	{ _gestureBits |= ( 1 << gesture ); }
+		bool			IsGestureActive( EGesture gesture )		{ return ( _gestureBits & gesture ) != 0; }
+		void			SetGestureActive( EGesture gesture )	{ _gestureBits |= ( 1 << gesture ); }
 
 		// Frame data.
 		SHand			_hand;
@@ -216,7 +218,7 @@ namespace holo
 #ifdef CLIENT_DLL
 	Vector			LeapToHoloCoordinates( const Leap::Vector &v );
 
-	EFinger::type	LeapToHoloFingerCode( const Leap::Finger::Type &finger );
+	EFinger			LeapToHoloFingerCode( const Leap::Finger::Type &finger );
 #endif
 	
 }

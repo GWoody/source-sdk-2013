@@ -66,9 +66,9 @@ void CHoloHand::ProcessClientString( const CCommand &args )
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-const SFinger &CHoloHand::GetFinger( EFinger::type finger ) const
+const SFinger &CHoloHand::GetFinger( EFinger finger ) const
 {
-	Assert( finger >= 0 && finger < EFinger::FINGER_COUNT );
+	Assert( finger >= 0 && finger < NFinger::FINGER_COUNT );
 	return _fingers[finger];
 }
 

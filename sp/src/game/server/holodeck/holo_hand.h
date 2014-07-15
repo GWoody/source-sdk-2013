@@ -27,7 +27,7 @@ public:
 	void			ProcessClientString( const CCommand &args );
 
 	// Accessors.
-	const holo::SFinger &	GetFinger( holo::EFinger::type finger ) const;
+	const holo::SFinger &	GetFinger( holo::EFinger finger ) const;
 	const holo::SHand &	GetHand() const;
 
 private:

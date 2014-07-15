@@ -35,7 +35,7 @@ static inline ostream &operator<<( ostream &ss, const Vector &v )
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-const char *EFinger::ToString( EFinger::type finger )
+const char *NFinger::ToString( EFinger finger )
 {
 	switch( finger )
 	{
@@ -66,7 +66,7 @@ const char *EFinger::ToString( EFinger::type finger )
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-const char *EGesture::ToString( EGesture::type gesture )
+const char *NGesture::ToString( EGesture gesture )
 {
 	switch( gesture )
 	{
@@ -114,7 +114,7 @@ Vector holo::LeapToHoloCoordinates( const Leap::Vector &v )
 	return ov;
 }
 
-EFinger::type holo::LeapToHoloFingerCode( const Leap::Finger::Type &finger )
+EFinger holo::LeapToHoloFingerCode( const Leap::Finger::Type &finger )
 {
 	switch( finger )
 	{
@@ -204,7 +204,7 @@ void SHand::FromLeap( const Leap::Hand &h )
 	const Leap::FingerList &fingerlist = h.fingers();
 	for each( const Leap::Finger &f in fingerlist )
 	{
-		EFinger::type idx = LeapToHoloFingerCode( f.type() );
+		EFinger idx = LeapToHoloFingerCode( f.type() );
 		fingers[idx].FromLeap( f );
 	}
 
