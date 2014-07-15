@@ -3426,6 +3426,10 @@ void CBasePlayer::ProcessUsercmds( CUserCmd *cmds, int numcmds, int totalcmds,
 	CCommandContext *ctx = AllocCommandContext();
 	Assert( ctx );
 
+#ifdef HOLODECK
+	holo::SFrame finalHoloFrame;
+#endif
+
 	int i;
 	for ( i = totalcmds - 1; i >= 0; i-- )
 	{
@@ -3437,12 +3441,39 @@ void CBasePlayer::ProcessUsercmds( CUserCmd *cmds, int numcmds, int totalcmds,
 			pCmd->MakeInert();
 		}
 
+#ifdef HOLODECK
+		const holo::SFrame &curframe = pCmd->holo_frame;
+		if( curframe.IsGestureActive( holo::EGesture::GESTURE_CIRCLE ) )
+		{
+			finalHoloFrame._circle = curframe._circle;
+			finalHoloFrame.SetGestureActive( holo::EGesture::GESTURE_CIRCLE );
+		}
+		if( curframe.IsGestureActive( holo::EGesture::GESTURE_SWIPE ) )
+		{
+			finalHoloFrame._swipe = curframe._swipe;
+			finalHoloFrame.SetGestureActive( holo::EGesture::GESTURE_SWIPE );
+		}
+		if( curframe.IsGestureActive( holo::EGesture::GESTURE_TAP ) )
+		{
+			finalHoloFrame._tap = curframe._tap;
+			finalHoloFrame.SetGestureActive( holo::EGesture::GESTURE_TAP );
+		}
+
+		finalHoloFrame._ball = curframe._ball;
+		finalHoloFrame._hand = curframe._hand;
+#endif
+
 		ctx->cmds.AddToTail( *pCmd );
 	}
 	ctx->numcmds			= numcmds;
 	ctx->totalcmds			= totalcmds,
 	ctx->dropped_packets	= dropped_packets;
 	ctx->paused				= paused;
+
+#ifdef HOLODECK
+	CHoloHand *pHand = (CHoloHand *)m_hHandEntity.Get();
+	pHand->ProcessFrame( finalHoloFrame );
+#endif
 		
 	// If the server is paused, zero out motion,buttons,view changes
 	if ( ctx->paused )
@@ -6555,22 +6586,6 @@ bool CBasePlayer::ClientCommand( const CCommand &args )
 		}
 		return true;
 	}
-#ifdef HOLODECK
-	// TODO: make this pretty.
-	else if( stricmp( cmd, "hand" ) || 
-		stricmp( cmd, "circlegesture" ) || 
-		stricmp( cmd, "swipegesture" ) || 
-		stricmp( cmd, "keytapgesture" ) || 
-		stricmp( cmd, "screentapgesture" ) || 
-		stricmp( cmd, "ballgesture" ) )
-	{
-		CHoloHand *pHand = dynamic_cast<CHoloHand *>( m_hHandEntity.Get() );
-		Assert( pHand );
-
-		pHand->ProcessClientString( args );
-		return true;
-	}
-#endif
 
 	return false;
 }

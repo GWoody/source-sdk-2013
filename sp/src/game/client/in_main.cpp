@@ -1284,6 +1284,10 @@ void CInput::CreateMove ( int sequence_number, float input_sample_frametime, boo
 	m_EntityGroundContact.RemoveAll();
 #endif
 
+#ifdef HOLODECK
+	CLeapMotion::get().CreateMove( cmd );
+#endif
+
 	pVerified->m_cmd = *cmd;
 	pVerified->m_crc = cmd->GetChecksum();
 }

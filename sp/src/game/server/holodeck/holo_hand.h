@@ -23,22 +23,14 @@ public:
 	DECLARE_CLASS( CHoloHand, CBaseEntity );
 					CHoloHand();
 
-	// Client state updates.
-	void			ProcessClientString( const CCommand &args );
-
 	// Accessors.
 	const holo::SFinger &	GetFinger( holo::EFinger finger ) const;
 	const holo::SHand &	GetHand() const;
 
-private:
-	// Client state updates.
-	void			ProcessHandString( const CCommand &args );
-	void			ProcessCircleGestureString( const CCommand &args );
-	void			ProcessSwipeGestureString( const CCommand &args );
-	void			ProcessKeyTapGestureString( const CCommand &args );
-	void			ProcessScrenTapGestureString( const CCommand &args );
-	void			ProcessBallGestureString( const CCommand &args );
+	// Frame processing.
+	void			ProcessFrame( const holo::SFrame &frame );
 
+private:
 	holo::SFinger	_fingers[holo::EFinger::FINGER_COUNT];
 	holo::SHand		_hand;
 	int				_activeGestures;

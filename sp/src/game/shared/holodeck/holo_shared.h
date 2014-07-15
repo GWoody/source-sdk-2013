@@ -194,8 +194,8 @@ namespace holo
 		void			Mark()				{ _marked = true; }
 		bool			IsMarked()			{ return _marked; }
 
-		bool			IsGestureActive( EGesture gesture )		{ return ( _gestureBits & gesture ) != 0; }
-		void			SetGestureActive( EGesture gesture )	{ _gestureBits |= ( 1 << gesture ); }
+		bool			IsGestureActive( EGesture gesture ) const	{ return ( _gestureBits & gesture ) != 0; }
+		void			SetGestureActive( EGesture gesture )		{ _gestureBits |= ( 1 << gesture ); }
 
 		// Frame data.
 		SHand			_hand;
