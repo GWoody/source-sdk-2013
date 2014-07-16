@@ -145,7 +145,9 @@ bool CHoloButtonPanel::PassesTriggerFilters( CBaseEntity *pOther )
 //-----------------------------------------------------------------------------
 void CHoloButtonPanel::Touch( CBaseEntity *pOther )
 {
-	if( m_bDisabled || !PassesTriggerFilters( pOther ) )
+	// We use the base `PassesTriggerFilters` because we don't care if a hand leaving
+	// this trigger volume is facing the correct direction.
+	if( m_bDisabled || !BaseClass::PassesTriggerFilters( pOther ) )
 	{
 		return;
 	}
