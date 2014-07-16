@@ -98,24 +98,24 @@ Vector holo::LeapToHoloCoordinates( const Leap::Vector &v )
 {
 	Vector ov;
 
+	// Set the origin of the Leap space to be 20cm above, and 30cm behind the device.
+	Leap::Vector translated = v + Leap::Vector( 0, -200, -300 );
+
 	// Source uses	{ forward, left, up }.
 	// Leap uses	{ left, up, forward }.
-	ov.x = -v.z;
-	ov.y = v.x;
-	ov.z = v.y;
+	ov.x = -translated.z;
+	ov.y = -translated.x;
+	ov.z = translated.y;
 
 	// Leap uses millimeters, Source uses inches.
 
 	// The player is 72 units tall, which is estimated to be [5ft 10in]\[1.778m].
 	// This gives us a millimeters to Source unit factor of:
-	float scaleFactor = 1778.0f / 72.0f;	// millimeter / unit
-
-	// Not sure, this just looks good.
-	scaleFactor /= 100.0f;
+	float scaleFactor = 1.778f / 72.0f;	// millimeter / unit
 
 	ov.x *= scaleFactor;
 	ov.y *= scaleFactor;
-	ov.z *= ( scaleFactor / 2.5f );
+	ov.z *= scaleFactor;
 	return ov;
 }
 

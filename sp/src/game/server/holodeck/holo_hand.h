@@ -41,7 +41,13 @@ public:
 private:
 	void			RenderDebugHand();
 
+	// Frame processing.
 	bool			IsValidFrame( const holo::SFrame &frame );
+	void			ApplyVectorOffsets( holo::SFrame &frame );
+	void			ApplyVectorRotations( holo::SFrame &frame );
+
+	Vector			GetOriginOffset() const;
+	Vector			GetBoundingBox() const;
 
 	holo::SFrame	_curFrame;
 	int				_activeGestures;
