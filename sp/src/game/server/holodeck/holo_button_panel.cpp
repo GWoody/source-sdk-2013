@@ -39,7 +39,7 @@ public:
 
 private:
 	// Hammer attributes.
-	Vector			_direction;				// Direction of the Leap Motion press gesture required to activate this entity.
+	QAngle			_activationAngle;		// Direction of the Leap Motion press gesture required to activate this entity.
 	string_t		_pressSound;			// Name of the sound to play when the button is pressed.
 	string_t		_lockedSound;			// Name of the sound to play when the button is pressed (when locked).
 	float			_volume;				// Volume modifier of the sound to play when the button is pressed.
@@ -54,6 +54,7 @@ private:
 
 	// Save state.
 	bool			_locked;
+	Vector			_activationDirection;
 };
 
 LINK_ENTITY_TO_CLASS( holo_button_panel, CHoloButtonPanel );
@@ -68,7 +69,7 @@ BEGIN_DATADESC( CHoloButtonPanel )
 	// Attributes.
 	DEFINE_KEYFIELD( _pressSound, FIELD_SOUNDNAME, "pressSound" ),
 	DEFINE_KEYFIELD( _lockedSound, FIELD_SOUNDNAME, "lockedSound" ),
-	DEFINE_KEYFIELD( _direction, FIELD_VECTOR, "pressDirection" ),
+	DEFINE_KEYFIELD( _activationAngle, FIELD_VECTOR, "pressDirection" ),
 	DEFINE_KEYFIELD( _volume, FIELD_FLOAT, "volume" ),
 
 	// Inputs.
@@ -89,7 +90,9 @@ void CHoloButtonPanel::Spawn()
 	_locked = HasSpawnFlags( SF_BUTTON_LOCKED );
 	_volume = clamp( _volume, 0.0f, 1.0f );
 
-	_direction.NormalizeInPlace();
+	// Convert the activation angle into a direction vector.
+	AngleVectors( _activationAngle, &_activationDirection );
+	_activationDirection.NormalizeInPlace();
 }
 
 //-----------------------------------------------------------------------------
@@ -121,15 +124,21 @@ bool CHoloButtonPanel::PassesTriggerFilters( CBaseEntity *pOther )
 
 	// Ensure the finger is facing the correct direction.
 	const SFinger &pointer = pHand->GetFinger( NFinger::FINGER_POINTER );
-	const Vector normalizedFinger = pointer.direction.Normalized();
+	const SHand &hand = pHand->GetHand();
+	const Vector normalizedFinger = ( pointer.tipPosition - hand.palmPosition ).Normalized();
 
-	if( _direction.Dot( normalizedFinger ) > 0.75 )
+	float dot = _activationDirection.Dot( normalizedFinger );
+	float mag = _activationDirection.Length() * normalizedFinger.Length();
+	float angleBetween = acos( dot / mag );
+	angleBetween = RAD2DEG( angleBetween );
+
+	if( angleBetween < 33.0f )
 	{
-		// The finger and button angles can differ by 22.5 degrees and still be accepted.
+		// The finger and button angles can differ by up to 33 degrees and still be accepted.
 		return true;
 	}
 
-	return true;
+	return false;
 }
 
 //-----------------------------------------------------------------------------

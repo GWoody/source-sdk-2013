@@ -98,25 +98,28 @@ Vector holo::LeapToHoloCoordinates( const Leap::Vector &v )
 {
 	Vector ov;
 
-	// Set the origin of the Leap space to be 20cm above, and 30cm behind the device.
-	Leap::Vector translated = v + Leap::Vector( 0, -200, -300 );
+	// Set the origin of the Leap space to be 20cm above, and 50cm behind the device.
+	Leap::Vector translated = v + Leap::Vector( 0, -200, -500 );
 
 	// Source uses	{ forward, left, up }.
-	// Leap uses	{ left, up, forward }.
+	// Leap uses	{ right, up, back }.
 	ov.x = -translated.z;
 	ov.y = -translated.x;
 	ov.z = translated.y;
 
-	// Leap uses millimeters, Source uses inches.
-
-	// The player is 72 units tall, which is estimated to be [5ft 10in]\[1.778m].
-	// This gives us a millimeters to Source unit factor of:
-	float scaleFactor = 1.778f / 72.0f;	// millimeter / unit
-
-	ov.x *= scaleFactor;
-	ov.y *= scaleFactor;
-	ov.z *= scaleFactor;
+	ov.x = LeapToHoloDistance( ov.x );
+	ov.y = LeapToHoloDistance( ov.y );
+	ov.z = LeapToHoloDistance( ov.z );
 	return ov;
+}
+
+float holo::LeapToHoloDistance( float distance )
+{
+	// Leap uses millimeters, Source uses inches.
+	// The player is 72 units tall, which is estimated to be [5ft 10in]\[1.778m].
+	// This gives us a meters to Source unit factor of:
+	static const float scaleFactor = 1.778f / 72.0f;	// meters / unit
+	return distance * scaleFactor;
 }
 
 EFinger holo::LeapToHoloFingerCode( const Leap::Finger::Type &finger )
@@ -268,7 +271,7 @@ void SCircleGesture::FromLeap( const Leap::CircleGesture &c )
 
 	handId = hands[0].id();
 	fingerId = c.pointable().id();
-	radius = c.radius();
+	radius = LeapToHoloDistance( c.radius() );
 	center = LeapToHoloCoordinates( c.center() );
 	normal = LeapToHoloCoordinates( c.normal() );
 }
@@ -398,7 +401,7 @@ SBallGesture::SBallGesture( const Leap::Hand &h )
 void SBallGesture::FromLeap( const Leap::Hand &h )
 {
 	handId = h.id();
-	radius = h.sphereRadius();
+	radius = LeapToHoloDistance( h.sphereRadius() );
 	grabStrength = h.grabStrength();
 	center = LeapToHoloCoordinates( h.sphereCenter() );
 }
@@ -481,6 +484,55 @@ void SFrame::FromLeap( const Leap::Frame &f )
 			_hand = SHand( hand );
 			_ball = SBallGesture( hand );
 		}
+	}
+}
+#endif
+
+#ifdef GAME_DLL
+// Translates the frame data to be positioned relative to the given entity.
+void SFrame::ToEntitySpace( CBaseCombatCharacter *entity, const Vector &delta )
+{
+	ApplyRotation( entity );
+
+	Vector offset = entity->GetAbsOrigin() + delta;
+	ApplyTranslation( offset );
+}
+
+void SFrame::ApplyTranslation( const Vector &offset )
+{
+	_ball.center += offset;
+	_circle.center += offset;
+	_hand.palmPosition += offset;
+	_swipe.curPosition += offset;
+	_swipe.startPosition += offset;
+	_tap.position += offset;
+
+	for( int i = 0; i < NFinger::FINGER_COUNT; i++ )
+	{
+		_hand.fingers[i].tipPosition += offset;
+	}
+}
+
+void SFrame::ApplyRotation( CBaseCombatCharacter *entity )
+{
+	// Convert the players direction vector to angles.
+	QAngle ownerAngles;
+	VectorAngles( entity->BodyDirection2D(), ownerAngles );
+
+	const float yawAngle = ownerAngles.y;
+
+	// We only need to rotate the forward and side components of the vector.
+	// Height can be left alone.
+	VectorYawRotate( _ball.center, yawAngle, _ball.center );
+	VectorYawRotate( _circle.center, yawAngle, _circle.center );
+	VectorYawRotate( _hand.palmPosition, yawAngle, _hand.palmPosition );
+	VectorYawRotate( _swipe.curPosition, yawAngle, _swipe.curPosition );
+	VectorYawRotate( _swipe.startPosition, yawAngle, _swipe.startPosition );
+	VectorYawRotate( _tap.position, yawAngle, _tap.position );
+
+	for( int i = 0; i < NFinger::FINGER_COUNT; i++ )
+	{
+		VectorYawRotate( _hand.fingers[i].tipPosition, yawAngle, _hand.fingers[i].tipPosition );
 	}
 }
 #endif

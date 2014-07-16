@@ -42,7 +42,7 @@ void CHoloHand::Spawn()
 	CreateVPhysics();
 
 	// Set the bounding box size.
-	const Vector bounds = GetBoundingBox();
+	const Vector bounds = Vector( 2, 2, 2 );
 	SetCollisionGroup( COLLISION_GROUP_PLAYER );
 	SetCollisionBounds( -bounds, bounds );
 
@@ -88,10 +88,12 @@ void CHoloHand::ProcessFrame( const SFrame &frame )
 		return;
 	}
 
+	CBasePlayer *owner = dynamic_cast<CBasePlayer *>( GetOwnerEntity() );
+	Assert( owner );
+
 	// Move the hands into the correct position (relative to the player).
 	SFrame processedFrame = frame;
-	ApplyVectorRotations( processedFrame );
-	ApplyVectorOffsets( processedFrame );
+	processedFrame.ToEntitySpace( owner, GetOriginOffset() );
 
 	// Save the frame for future use.
 	_curFrame = processedFrame;
@@ -99,7 +101,7 @@ void CHoloHand::ProcessFrame( const SFrame &frame )
 	// Update the position of the hand entity within the world.
 	SetAbsOrigin( processedFrame._hand.palmPosition );
 
-	if( holo_render_debug_hand.GetBool() )
+	if( holo_render_debug_hand.GetInt() != 0 )
 	{
 		RenderDebugHand();
 	}
@@ -135,9 +137,7 @@ void CHoloHand::RenderDebugHand()
 	// Draw the palm box.
 	debugoverlay->AddBoxOverlay( palmPosition, -handBounds, handBounds, vec3_angle, m_clrRender.GetR(), m_clrRender.GetG(), m_clrRender.GetB(), 127, duration );
 
-	const Vector bounds = GetBoundingBox();
-	debugoverlay->AddBoxOverlay( GetAbsOrigin(), -bounds, bounds, vec3_angle, 255, 255, 255, 63, duration );
-
+	// Draw all fingers.
 	for( int i = 0; i < NFinger::FINGER_COUNT; i++ )
 	{
 		const Vector &tipPosition = _curFrame._hand.fingers[i].tipPosition;
@@ -146,7 +146,22 @@ void CHoloHand::RenderDebugHand()
 		debugoverlay->AddBoxOverlay( tipPosition, -fingerBounds, fingerBounds, vec3_angle, m_clrRender.GetR(), m_clrRender.GetG(), m_clrRender.GetB(), 127, duration );
 
 		// Draw the finger bone.
-		debugoverlay->AddLineOverlayAlpha( palmPosition, tipPosition, m_clrRender.GetR(), m_clrRender.GetG(), m_clrRender.GetB(), 127, true, 1.0f / 30.0f );
+		debugoverlay->AddLineOverlayAlpha( palmPosition, tipPosition, m_clrRender.GetR(), m_clrRender.GetG(), m_clrRender.GetB(), 127, false, duration );
+	}
+
+	if( holo_render_debug_hand.GetInt() == 2 )
+	{
+		// Draw the ball gesture.
+		const SBallGesture &ball = _curFrame._ball;
+		NDebugOverlay::Sphere( ball.center, ball.radius, 0, 0, 255, false, duration );
+	}
+
+	if( holo_render_debug_hand.GetInt() == 3 )
+	{
+		// Draw the bounding box.
+		const Vector mins = CollisionProp()->OBBMins();
+		const Vector maxs = CollisionProp()->OBBMaxs();
+		debugoverlay->AddBoxOverlay( GetAbsOrigin(), mins, maxs, vec3_angle, 255, 255, 255, 63, duration );
 	}
 }
 
@@ -163,64 +178,6 @@ bool CHoloHand::IsValidFrame( const holo::SFrame &frame )
 	}
 
 	return true;
-}
-
-//-----------------------------------------------------------------------------
-// Move the frame vectors into the correct position (relative to the player).
-//-----------------------------------------------------------------------------
-void CHoloHand::ApplyVectorOffsets( SFrame &frame )
-{
-	CBaseEntity *owner = GetOwnerEntity();
-	Assert( owner );
-
-	const Vector offset = GetOriginOffset() + owner->GetAbsOrigin();
-
-	frame._ball.center += offset;
-	frame._circle.center += offset;
-	frame._hand.palmPosition += offset;
-	frame._swipe.curPosition += offset;
-	frame._swipe.startPosition += offset;
-	frame._tap.position += offset;
-
-	for( int i = 0; i < NFinger::FINGER_COUNT; i++ )
-	{
-		frame._hand.fingers[i].tipPosition += offset;
-	}
-}
-
-//-----------------------------------------------------------------------------
-// Rotate the frame vectors to match the players direction.
-//-----------------------------------------------------------------------------
-void CHoloHand::ApplyVectorRotations( holo::SFrame &frame )
-{
-	// Just a macro to make rotating a vector and storing the result back into the vector simple.
-	#define VectorYawRotateTemp( vec, angle )		{ Vector temp;	\
-		VectorYawRotate( (vec), (angle), temp );					\
-		(vec) = temp;												\
-	}
-
-	CBasePlayer *owner = dynamic_cast<CBasePlayer *>( GetOwnerEntity() );
-	Assert( owner );
-
-	// Convert the players direction vector to angles.
-	QAngle ownerAngles;
-	VectorAngles( owner->BodyDirection2D(), ownerAngles );
-
-	const float yawAngle = ownerAngles.y;
-
-	// We only need to rotate the forward and side components of the vector.
-	// Height can be left alone.
-	VectorYawRotateTemp( frame._ball.center, yawAngle );
-	VectorYawRotateTemp( frame._circle.center, yawAngle );
-	VectorYawRotateTemp( frame._hand.palmPosition, yawAngle );
-	VectorYawRotateTemp( frame._swipe.curPosition, yawAngle );
-	VectorYawRotateTemp( frame._swipe.startPosition, yawAngle );
-	VectorYawRotateTemp( frame._tap.position, yawAngle );
-
-	for( int i = 0; i < NFinger::FINGER_COUNT; i++ )
-	{
-		VectorYawRotateTemp( frame._hand.fingers[i].tipPosition, yawAngle );
-	}
 }
 
 //-----------------------------------------------------------------------------
@@ -244,11 +201,4 @@ Vector CHoloHand::GetOriginOffset() const
 #else
 	return Vector( 0, 0, 60 );
 #endif
-}
-
-//-----------------------------------------------------------------------------
-//-----------------------------------------------------------------------------
-Vector CHoloHand::GetBoundingBox() const
-{
-	return Vector( 4, 4, 4 );
 }

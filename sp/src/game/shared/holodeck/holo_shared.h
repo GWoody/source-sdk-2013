@@ -197,6 +197,10 @@ namespace holo
 		bool			IsGestureActive( EGesture gesture ) const	{ return ( _gestureBits & gesture ) != 0; }
 		void			SetGestureActive( EGesture gesture )		{ _gestureBits |= ( 1 << gesture ); }
 
+#ifdef GAME_DLL
+		void			ToEntitySpace( CBaseCombatCharacter *entity, const Vector &delta );
+#endif
+
 		// Frame data.
 		SHand			_hand;
 		SBallGesture	_ball;
@@ -205,6 +209,11 @@ namespace holo
 		STapGesture		_tap;
 
 	private:
+#ifdef GAME_DLL
+		void			ApplyTranslation( const Vector &offset );
+		void			ApplyRotation( CBaseCombatCharacter *entity );
+#endif
+
 		int				_gestureBits;
 		bool			_marked;
 	};
@@ -217,8 +226,8 @@ namespace holo
 //=============================================================================
 #ifdef CLIENT_DLL
 	Vector			LeapToHoloCoordinates( const Leap::Vector &v );
-
 	EFinger			LeapToHoloFingerCode( const Leap::Finger::Type &finger );
+	float			LeapToHoloDistance( float distance );
 #endif
 	
 }
