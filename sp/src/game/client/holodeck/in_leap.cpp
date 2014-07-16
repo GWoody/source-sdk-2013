@@ -9,6 +9,7 @@
 
 #include "cbase.h"
 #include "in_leap.h"
+#include "in_buttons.h"
 #include "holodeck/holo_shared.h"
 
 using namespace std;
@@ -106,6 +107,7 @@ CLeapMotion::~CLeapMotion()
 void CLeapMotion::CreateMove( CUserCmd *cmd )
 {
 	cmd->holo_frame = BuildFinalFrame();
+	HandleWeapons( cmd );
 }
 
 //----------------------------------------------------------------------------
@@ -147,9 +149,29 @@ SFrame CLeapMotion::BuildFinalFrame()
 		} while( !curframe.IsMarked() );
 	}
 
-	//Warning( "%f %f %f\n", finalFrame._hand.palmPosition.x, finalFrame._hand.palmPosition.y, finalFrame._hand.palmPosition.z );
-
 	return finalFrame;
+}
+
+//----------------------------------------------------------------------------
+//----------------------------------------------------------------------------
+void CLeapMotion::HandleWeapons( CUserCmd *cmd )
+{
+	const float PHYSCANNON_GRAB_STRENGTH = 0.025f;
+	static float lastGrabStrength = 0.0f;
+
+	float curGrabStrength = cmd->holo_frame._ball.grabStrength;
+	if( curGrabStrength > PHYSCANNON_GRAB_STRENGTH )
+	{
+		// The user has started clenching their hand this frame.
+		cmd->buttons |= IN_ATTACK2;
+	}
+	else if( curGrabStrength < PHYSCANNON_GRAB_STRENGTH && lastGrabStrength >= PHYSCANNON_GRAB_STRENGTH )
+	{
+		// The user has unclenched their hand this frame.
+		cmd->buttons |= IN_ATTACK;
+	}
+
+	lastGrabStrength = curGrabStrength;
 }
 
 //----------------------------------------------------------------------------

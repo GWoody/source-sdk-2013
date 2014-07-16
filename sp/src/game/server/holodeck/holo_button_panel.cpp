@@ -38,6 +38,8 @@ public:
 	virtual void	EndTouch( CBaseEntity *pOther );
 
 private:
+	float			ActivationDirectionDelta( const Vector &v );
+
 	// Hammer attributes.
 	QAngle			_activationAngle;		// Direction of the Leap Motion press gesture required to activate this entity.
 	string_t		_pressSound;			// Name of the sound to play when the button is pressed.
@@ -120,19 +122,19 @@ bool CHoloButtonPanel::PassesTriggerFilters( CBaseEntity *pOther )
 		return false;
 	}
 
+	// Access required structures.
 	CHoloHand *pHand = (CHoloHand *)pOther;
-
-	// Ensure the finger is facing the correct direction.
 	const SFinger &pointer = pHand->GetFinger( NFinger::FINGER_POINTER );
 	const SHand &hand = pHand->GetHand();
-	const Vector normalizedFinger = ( pointer.tipPosition - hand.palmPosition ).Normalized();
 
-	float dot = _activationDirection.Dot( normalizedFinger );
-	float mag = _activationDirection.Length() * normalizedFinger.Length();
-	float angleBetween = acos( dot / mag );
-	angleBetween = RAD2DEG( angleBetween );
+	const Vector normalizedDirection = ( pointer.tipPosition - hand.palmPosition ).Normalized();
+	const Vector normalizedVelocity = pointer.tipVelocity.Normalized();
 
-	if( angleBetween < 33.0f )
+	// Ensure the finger and movement is pointing towards the button.
+	const float TOLERANCE = 33.0f;
+	float directionDelta = ActivationDirectionDelta( normalizedDirection );
+	float velocityDelta = ActivationDirectionDelta( normalizedVelocity );
+	if( directionDelta < TOLERANCE && velocityDelta < TOLERANCE )
 	{
 		// The finger and button angles can differ by up to 33 degrees and still be accepted.
 		return true;
@@ -182,17 +184,26 @@ void CHoloButtonPanel::Touch( CBaseEntity *pOther )
 //-----------------------------------------------------------------------------
 void CHoloButtonPanel::EndTouch( CBaseEntity *pOther )
 {
-	// We use the base `PassesTriggerFilters` because we don't care if a hand leaving
-	// this trigger volume is facing the correct direction.
-	if( !BaseClass::PassesTriggerFilters( pOther ) )
+	CHoloHand *pHand = dynamic_cast<CHoloHand *>( pOther );
+	if( !pHand )
 	{
 		return;
 	}
 
-	CHoloHand *pHand = (CHoloHand *)pOther;
 	pHand->DebugEndTouch();
 
 	m_bDisabled = false;
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+float CHoloButtonPanel::ActivationDirectionDelta( const Vector &v )
+{
+	const Vector norm = v.Normalized();
+	float dot = _activationDirection.Dot( norm );
+	float mag = _activationDirection.Length() * norm.Length();
+	float delta = acos( dot / mag );
+	return RAD2DEG( delta );
 }
 
 //-----------------------------------------------------------------------------
