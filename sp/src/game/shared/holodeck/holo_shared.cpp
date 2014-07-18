@@ -35,7 +35,7 @@ static inline ostream &operator<<( ostream &ss, const Vector &v )
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-const char *NFinger::ToString( EFinger finger )
+const char *EFingerToString( EFinger finger )
 {
 	switch( finger )
 	{
@@ -66,7 +66,7 @@ const char *NFinger::ToString( EFinger finger )
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-const char *NGesture::ToString( EGesture gesture )
+const char *EGestureToString( EGesture gesture )
 {
 	switch( gesture )
 	{
@@ -87,6 +87,22 @@ const char *NGesture::ToString( EGesture gesture )
 	}
 
 	return "GESTURE_INVALID";
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+const char *EGlobalsToString( EGlobals global )
+{
+	switch( global )
+	{
+		case INVALID_INDEX:
+			return "INVALID_INDEX";
+
+		default:
+			break;
+	}
+
+	return "EGLOBAL_INVALID_CODE";
 }
 
 #ifdef CLIENT_DLL
@@ -507,7 +523,7 @@ void SFrame::ApplyTranslation( const Vector &offset )
 	_swipe.startPosition += offset;
 	_tap.position += offset;
 
-	for( int i = 0; i < NFinger::FINGER_COUNT; i++ )
+	for( int i = 0; i < FINGER_COUNT; i++ )
 	{
 		_hand.fingers[i].tipPosition += offset;
 	}
@@ -530,7 +546,7 @@ void SFrame::ApplyRotation( CBaseCombatCharacter *entity )
 	VectorYawRotate( _swipe.startPosition, yawAngle, _swipe.startPosition );
 	VectorYawRotate( _tap.position, yawAngle, _tap.position );
 
-	for( int i = 0; i < NFinger::FINGER_COUNT; i++ )
+	for( int i = 0; i < FINGER_COUNT; i++ )
 	{
 		VectorYawRotate( _hand.fingers[i].tipPosition, yawAngle, _hand.fingers[i].tipPosition );
 	}

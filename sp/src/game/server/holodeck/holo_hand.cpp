@@ -68,7 +68,7 @@ bool CHoloHand::CreateVPhysics()
 //-----------------------------------------------------------------------------
 const SFinger &CHoloHand::GetFinger( EFinger finger ) const
 {
-	Assert( finger >= 0 && finger < NFinger::FINGER_COUNT );
+	Assert( finger >= 0 && finger < FINGER_COUNT );
 	return _curFrame._hand.fingers[finger];
 }
 
@@ -134,7 +134,7 @@ void CHoloHand::RenderDebugHand()
 	debugoverlay->AddBoxOverlay( palmPosition, -handBounds, handBounds, vec3_angle, m_clrRender.GetR(), m_clrRender.GetG(), m_clrRender.GetB(), 127, duration );
 
 	// Draw all fingers.
-	for( int i = 0; i < NFinger::FINGER_COUNT; i++ )
+	for( int i = 0; i < FINGER_COUNT; i++ )
 	{
 		const Vector &tipPosition = _curFrame._hand.fingers[i].tipPosition;
 

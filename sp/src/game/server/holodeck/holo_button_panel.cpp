@@ -124,10 +124,10 @@ bool CHoloButtonPanel::PassesTriggerFilters( CBaseEntity *pOther )
 
 	// Access required structures.
 	CHoloHand *pHand = (CHoloHand *)pOther;
-	const SFinger &pointer = pHand->GetFinger( NFinger::FINGER_POINTER );
+	const SFinger &pointer = pHand->GetFinger( FINGER_POINTER );
 	const SHand &hand = pHand->GetHand();
 
-	const Vector normalizedDirection = ( pointer.tipPosition - hand.palmPosition ).Normalized();
+	const Vector normalizedDirection = pointer.direction.Normalized();
 	const Vector normalizedVelocity = pointer.tipVelocity.Normalized();
 
 	// Ensure the finger and movement is pointing towards the button.

@@ -23,42 +23,33 @@ namespace holo
 //=============================================================================
 // Constants.
 //=============================================================================
-	namespace NFinger
+	enum EFinger
 	{
-		enum type
-		{
-			FINGER_THUMB,
-			FINGER_POINTER,
-			FINGER_MIDDLE,
-			FINGER_RING,
-			FINGER_PINKY,
+		FINGER_THUMB,
+		FINGER_POINTER,
+		FINGER_MIDDLE,
+		FINGER_RING,
+		FINGER_PINKY,
 
-			FINGER_COUNT
-		};
+		FINGER_COUNT
+	};
+	const char *EFingerToString( EFinger finger );
 
-		const char *ToString( type finger );
-	}
-	typedef NFinger::type EFinger;
-
-	namespace NGesture
+	enum EGesture
 	{
-		enum type
-		{
-			GESTURE_CIRCLE,
-			GESTURE_SWIPE,
-			GESTURE_TAP,
+		GESTURE_CIRCLE,
+		GESTURE_SWIPE,
+		GESTURE_TAP,
 
-			GESTURE_COUNT
-		};
-
-		const char *ToString( type gesture );
-	}
-	typedef NGesture::type EGesture;
+		GESTURE_COUNT
+	};
+	const char *EGestureToString( EGesture gesture );
 
 	enum EGlobals
 	{
 		INVALID_INDEX = -1
 	};
+	const char *EGlobalsToString( EGlobals global );
 
 //=============================================================================
 // Structures.
