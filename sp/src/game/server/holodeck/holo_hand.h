@@ -31,6 +31,7 @@ public:
 	// Accessors.
 	const holo::SFinger &	GetFinger( holo::EFinger finger ) const;
 	const holo::SHand &	GetHand() const;
+	const holo::SFrame &	GetFrame() const;
 
 	// Frame processing.
 	void			ProcessFrame( const holo::SFrame &frame );

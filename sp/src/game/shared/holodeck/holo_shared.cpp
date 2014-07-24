@@ -13,6 +13,8 @@
 using namespace std;
 using namespace holo;
 
+static ConVar holo_arm_length( "holo_arm_length", "650", FCVAR_ARCHIVE, "Users arm length in mm" );
+
 //-----------------------------------------------------------------------------
 // Reads a Source vector from a stream.
 //-----------------------------------------------------------------------------
@@ -115,7 +117,7 @@ Vector holo::LeapToHoloCoordinates( const Leap::Vector &v )
 	Vector ov;
 
 	// Set the origin of the Leap space to be 20cm above, and 50cm behind the device.
-	Leap::Vector translated = v + Leap::Vector( 0, -200, -500 );
+	Leap::Vector translated = v + Leap::Vector( 0, -200, -holo_arm_length.GetInt() );
 
 	// Source uses	{ forward, left, up }.
 	// Leap uses	{ right, up, back }.
@@ -290,18 +292,28 @@ void SCircleGesture::FromLeap( const Leap::CircleGesture &c )
 	radius = LeapToHoloDistance( c.radius() );
 	center = LeapToHoloCoordinates( c.center() );
 	normal = LeapToHoloCoordinates( c.normal() );
+	duration = c.durationSeconds();
+
+	// According to the Leap SDK:
+	// If you draw the circle clockwise, the normal vector points in the same general direction as the pointable object drawing the circle.
+	// If you draw the circle counterclockwise, the normal points back toward the pointable.
+	//
+	// Therefore if the angle to the normal (from the pointable) is less than 90 degrees (PI/2 radians) the directions are roughly the same,
+	// which means the circle is clockwise.
+	const Leap::Vector &pointableDir = c.pointable().direction();
+	clockwise = pointableDir.angleTo( c.normal() ) <= ( M_PI / 2 );
 }
 #endif
 
 istream &holo::operator>>( istream &ss, SCircleGesture &c )
 {
-	ss >> c.handId >> c.fingerId >> c.center >> c.normal >> c.radius;
+	ss >> c.handId >> c.fingerId >> c.center >> c.normal >> c.radius >> c.duration >> c.clockwise;
 	return ss;
 }
 
 ostream &holo::operator<<( ostream &ss, const SCircleGesture &c )
 {
-	ss << c.handId << " " << c.fingerId << " " << c.center << " " << c.normal << " " << c.radius;
+	ss << c.handId << " " << c.fingerId << " " << c.center << " " << c.normal << " " << c.radius << " " << c.duration << " " << c.clockwise;
 	return ss;
 }
 

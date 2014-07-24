@@ -18,12 +18,22 @@
 	normal(angle) : "Circle Normal" : "0 0 0" : "The normal of the circle gesture required to trigger this panel."
 	useTime(float) : "Use Time" : "3.0" : "The length of time the user must make the circle gesture to trigger this panel."
 	
+	// Flags.
+	spawnflags(flags) =
+	[
+		2048: "Starts locked" : 0
+		4096 : "Starts Open" : 0
+		8192 : "Open Clockwise" : 0
+	]
+	
 	// Inputs.
 	input SetUseTime(float) : "Updates the use time attribute."
+	input Lock(void) : "Lock the button, preventing it from functioning."
+	input Unlock(void) : "Unlock the button, allowing it to function."
 	
 	// Outputs.
-	output OnFullyActivated(void) : "Fired when the the use time has been fully incremented."
-	output OnFullyDeactivated(void) : "Fired when the the use time has been fully decremented."
+	output OnFullyOpen(void) : "Fired when the circle gesture has been performed inside the entity for the required time (after the entity was closed), and required direction."
+	output OnFullyClosed(void) : "Fired when the circle gesture has been performed inside the entity for the required time (after the entity was opened), and required direction."
 ]
 
 //-------------------------------------------------------------------------

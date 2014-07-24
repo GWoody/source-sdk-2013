@@ -67,6 +67,7 @@ BEGIN_DATADESC( CHoloButtonPanel )
 
 	// Save fields.
 	DEFINE_FIELD( _locked, FIELD_BOOLEAN ),
+	DEFINE_FIELD( _activationDirection, FIELD_VECTOR ),
 
 	// Attributes.
 	DEFINE_KEYFIELD( _pressSound, FIELD_SOUNDNAME, "pressSound" ),
@@ -125,7 +126,6 @@ bool CHoloButtonPanel::PassesTriggerFilters( CBaseEntity *pOther )
 	// Access required structures.
 	CHoloHand *pHand = (CHoloHand *)pOther;
 	const SFinger &pointer = pHand->GetFinger( FINGER_POINTER );
-	const SHand &hand = pHand->GetHand();
 
 	const Vector normalizedDirection = pointer.direction.Normalized();
 	const Vector normalizedVelocity = pointer.tipVelocity.Normalized();

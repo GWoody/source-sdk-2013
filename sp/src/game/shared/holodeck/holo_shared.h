@@ -106,8 +106,9 @@ namespace holo
 #endif
 
 		int			handId, fingerId;
-		float		radius;
+		float		radius, duration;
 		Vector		center, normal;
+		bool		clockwise;
 	};
 
 	std::istream &operator>>( std::istream &ss, SCircleGesture &c );
@@ -185,7 +186,7 @@ namespace holo
 		void			Mark()				{ _marked = true; }
 		bool			IsMarked()			{ return _marked; }
 
-		bool			IsGestureActive( EGesture gesture ) const	{ return ( _gestureBits & gesture ) != 0; }
+		bool			IsGestureActive( EGesture gesture ) const	{ return ( _gestureBits & ( 1 << gesture ) ) != 0; }
 		void			SetGestureActive( EGesture gesture )		{ _gestureBits |= ( 1 << gesture ); }
 
 #ifdef GAME_DLL
