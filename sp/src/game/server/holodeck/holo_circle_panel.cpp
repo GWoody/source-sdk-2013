@@ -94,6 +94,7 @@ END_DATADESC()
 void CHoloCirclePanel::Spawn()
 {
 	BaseClass::Spawn();
+
 	_locked = HasSpawnFlags( SF_PANEL_LOCKED );
 	_isOpen = HasSpawnFlags( SF_START_OPEN );
 	_openCW = HasSpawnFlags( SF_OPEN_CW );
@@ -137,7 +138,7 @@ bool CHoloCirclePanel::PassesTriggerFilters( CBaseEntity *pOther )
 //-----------------------------------------------------------------------------
 void CHoloCirclePanel::Touch( CBaseEntity *pOther )
 {
-	if( m_bDisabled || !PassesTriggerFilters( pOther ) )
+	if( _locked || !PassesTriggerFilters( pOther ) )
 	{
 		return;
 	}

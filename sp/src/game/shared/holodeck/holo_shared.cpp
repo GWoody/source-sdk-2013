@@ -554,13 +554,16 @@ void SFrame::ApplyRotation( CBaseCombatCharacter *entity )
 	VectorYawRotate( _ball.center, yawAngle, _ball.center );
 	VectorYawRotate( _circle.center, yawAngle, _circle.center );
 	VectorYawRotate( _hand.palmPosition, yawAngle, _hand.palmPosition );
+	VectorYawRotate( _swipe.direction, yawAngle, _swipe.direction );
 	VectorYawRotate( _swipe.curPosition, yawAngle, _swipe.curPosition );
 	VectorYawRotate( _swipe.startPosition, yawAngle, _swipe.startPosition );
 	VectorYawRotate( _tap.position, yawAngle, _tap.position );
+	VectorYawRotate( _tap.direction, yawAngle, _tap.direction );
 
 	for( int i = 0; i < FINGER_COUNT; i++ )
 	{
 		VectorYawRotate( _hand.fingers[i].tipPosition, yawAngle, _hand.fingers[i].tipPosition );
+		VectorYawRotate( _hand.fingers[i].direction, yawAngle, _hand.fingers[i].direction );
 	}
 }
 #endif

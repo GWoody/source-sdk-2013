@@ -17,7 +17,15 @@
 using namespace std;
 using namespace holo;
 
-static ConVar holo_render_debug_hand( "holo_render_debug_hand", "1" );
+static const char *holo_render_debug_hand_options = "Rendering options:\n\
+0 - off,\n\
+1 - wireframe,\n\
+2 - ball gesture,\n\
+3 - collision box,\n\
+4 - finger directions.\
+";
+
+static ConVar holo_render_debug_hand( "holo_render_debug_hand", "1", NULL, holo_render_debug_hand_options );
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
@@ -165,6 +173,17 @@ void CHoloHand::RenderDebugHand()
 		const Vector mins = CollisionProp()->OBBMins();
 		const Vector maxs = CollisionProp()->OBBMaxs();
 		debugoverlay->AddBoxOverlay( GetAbsOrigin(), mins, maxs, vec3_angle, 255, 255, 255, 63, duration );
+	}
+
+	if( holo_render_debug_hand.GetInt() == 4 )
+	{
+		for( int i = 0; i < FINGER_COUNT; i++ )
+		{
+			const Vector &tipPosition = _curFrame._hand.fingers[i].tipPosition;
+			const Vector &direction = _curFrame._hand.fingers[i].direction;
+
+			debugoverlay->AddLineOverlayAlpha( tipPosition, tipPosition + direction, 0, 0, m_clrRender.GetB(), 127, false, duration );
+		}
 	}
 }
 
