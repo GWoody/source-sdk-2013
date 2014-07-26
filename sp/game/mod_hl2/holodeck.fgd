@@ -41,15 +41,15 @@
 @SolidClass base(GesturePanel) = holo_swipe_panel : "A volume in which swipe gestures are detected."
 [
 	// Attributes.
-	swipeDirection(angle) : "Swipe Direction" : "0 0 0" : "The direction of the swipe gesture required to trigger this panel."
+	swipeAngle(angle) : "Swipe Angle" : "0 0 0" : "The direction of the swipe gesture required to trigger this panel."
 	minSpeed(float) : "Use Time (mm/s)" : "3.0" : "The required speed of the swipe to activate trigger this panel."
 	
 	// Inputs.
 	input SetMinSpeed(float) : "Updates the minimum speed attribute."
 	
 	// Outputs.
-	output OnSwipePositive(void) : "Fired when the swipe matches the required direction."
-	output OnSwipeNegative(void) : "Fired when the swipe is opposite to the required direction."
+	output OnSwipe(void) : "Fired when the swipe matches the required direction."
+	output OnReverseSwipe(void) : "Fired when the swipe is opposite to the required direction."
 ]
 
 //-------------------------------------------------------------------------

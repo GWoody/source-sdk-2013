@@ -71,6 +71,7 @@ $Configuration
 		$IgnoreImportLibrary			"TRUE"
 		$AdditionalDependencies			"$BASE winmm.lib"	[$WIN32]
 		$AdditionalDependencies			"$BASE wsock32.lib Ws2_32.lib" [$BUILD_REPLAY]
+		$AdditionalDependencies			"$BASE dinput8.lib"	[$HOLODECK]
 	}
 }
 
@@ -83,9 +84,16 @@ $Project
 			$File	"$SRCDIR\..\..\..\LeapSDK\include\Leap.h"
 			$Lib	"$SRCDIR\..\..\..\LeapSDK\lib\x86\Leap"
 		}
+		
+		$Folder "DirectX SDK"
+		{
+			$Lib	"$SRCDIR\thirdparty\dxsdk\lib\x86\dxguid"
+		}
 	
 		$File	"holodeck\in_leap.cpp"
 		$File	"holodeck\in_leap.h"
+		$File	"holodeck\in_dinput.cpp"
+		$File	"holodeck\in_dinput.h"
 		$File	"$SRCDIR\game\shared\holodeck\holo_shared.cpp"
 		$File	"$SRCDIR\game\shared\holodeck\holo_shared.h"
 	}
