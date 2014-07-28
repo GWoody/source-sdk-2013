@@ -10,6 +10,14 @@
 #ifndef __IN_DINPUT_H__
 #define __IN_DINPUT_H__
 
+/*
+struct DI_ENUM_CONTEXT
+{
+    DIJOYCONFIG* pPreferredJoyCfg;
+    bool bPreferredJoyCfgValid;
+};
+DIJOYCONFIG PreferredJoyCfg = {0};*/
+
 // Pre definition.
 class CUserCmd;
 
@@ -46,6 +54,9 @@ private:
 
 	// Server side convars.
 	const ConVarRef	hl2_walkspeed, hl2_normspeed, hl2_sprintspeed;
+
+	// Joystick specific stuff
+
 };
 
 #endif // __IN_DINPUT_H__

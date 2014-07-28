@@ -8,12 +8,16 @@
 */
 
 #include "cbase.h"
+
+#define DIRECTINPUT_VERSION	0x0800
+
+#define S_OK 0x00000000
+
+#include "dinput_lite.h"
+
 #include "in_dinput.h"
 #include "in_buttons.h"
 #include "c_basehlplayer.h"
-
-#define DIRECTINPUT_VERSION	0x0800
-#include "dinput_lite.h"
 
 CDirectInput *CDirectInput::_instance;
 
@@ -21,8 +25,8 @@ CDirectInput *CDirectInput::_instance;
 // <dinput.h> within "in_dinput.h".
 // This would pollute the engine code with references to an API that it shouldn't
 // have access to.
-static LPDIRECTINPUT8		gDirectInput = NULL;
-static LPDIRECTINPUTDEVICE8	gJoystick = NULL;
+LPDIRECTINPUT8		gDirectInput = NULL;
+LPDIRECTINPUTDEVICE8	gJoystick = NULL;
 
 //----------------------------------------------------------------------------
 //----------------------------------------------------------------------------
@@ -36,15 +40,7 @@ void free_message( const char *message )
 	LocalFree( (HLOCAL)message );
 }
 
-//----------------------------------------------------------------------------
-// Attempts to connect to any devices detected by Direct Input.
-//----------------------------------------------------------------------------
-BOOL FAR PASCAL enumerate_devices( LPCDIDEVICEINSTANCE device, LPVOID pvRef )
-{
-	Warning( "HOLODECK: Attempting connection to %s\n", device->tszProductName );
-	gDirectInput->CreateDevice( device->guidInstance, &gJoystick, NULL );
-	return gJoystick ? DIENUM_STOP : DIENUM_CONTINUE;
-}
+
 
 //----------------------------------------------------------------------------
 //----------------------------------------------------------------------------
@@ -57,13 +53,14 @@ CDirectInput::CDirectInput() :
 }
 
 //----------------------------------------------------------------------------
+// Destructor
 //----------------------------------------------------------------------------
 CDirectInput::~CDirectInput()
 {
-
 }
 
 //----------------------------------------------------------------------------
+// Init method
 //----------------------------------------------------------------------------
 bool CDirectInput::Init()
 {
@@ -103,7 +100,59 @@ bool CDirectInput::CreateDirectInput()
 		return false;
 	}
 
+	Warning("HOLODECK: CreateDirectInput has been created. Moving on...\n");
+
 	return true;
+}
+
+
+//-----------------------------------------------------------------------------
+// Name: EnumObjectsCallback()
+// Desc: Callback function for enumerating objects (axes, buttons, POVs) on a 
+//       Joystick. This function enables user interface elements for objects
+//       that are found to exist, and scales axes min/max values.
+//-----------------------------------------------------------------------------
+BOOL CALLBACK  EnumObjectsCallback( const DIDEVICEOBJECTINSTANCE* pdidoi, VOID* pContext )
+{
+    static int nSliderCount = 0;  // Number of returned slider controls
+    static int nPOVCount = 0;     // Number of returned POV controls
+
+    // For axes that are returned, set the DIPROP_RANGE property for the
+    // enumerated axis in order to scale min/max values.
+    if( pdidoi->dwType & DIDFT_AXIS )
+    {
+        DIPROPRANGE diprg;
+        diprg.diph.dwSize = sizeof( DIPROPRANGE );
+        diprg.diph.dwHeaderSize = sizeof( DIPROPHEADER );
+        diprg.diph.dwHow = DIPH_BYID;
+        diprg.diph.dwObj = pdidoi->dwType; // Specify the enumerated axis
+        diprg.lMin = -10;
+        diprg.lMax = +10;
+
+        // Set the range for the axis
+        if( FAILED( gJoystick->SetProperty( DIPROP_RANGE, &diprg.diph)))
+            return DIENUM_STOP;
+
+	}
+
+    return DIENUM_CONTINUE;
+}
+
+//----------------------------------------------------------------------------
+// Attempts to connect to any devices detected by Direct Input.
+//----------------------------------------------------------------------------
+BOOL CALLBACK enumerate_devices(const DIDEVICEINSTANCE *device, LPVOID pvRef )
+{
+	Warning( "HOLODECK: Attempting connection to %s\n", device->tszProductName );
+
+	HRESULT deviceCreated;
+	deviceCreated = gDirectInput->CreateDevice( device->guidInstance, &gJoystick, NULL );
+	if( FAILED (deviceCreated) ){
+		return DIENUM_CONTINUE;
+	} else {
+		Warning("HOLODECK: Device created successfully.\n");
+		return DIENUM_STOP; // stop enumming
+	}
 }
 
 //----------------------------------------------------------------------------
@@ -112,12 +161,15 @@ void CDirectInput::FindJoysticks()
 {
 	if( gDirectInput )
 	{
+
+		/*DI_ENUM_CONTEXT enumContext;
+		enumContext.pPreferredJoyCfg = &PreferredJoyCfg;
+		enumContext.bPreferredJoyCfgValid = false;
+		*/
 		gDirectInput->EnumDevices( DI8DEVCLASS_GAMECTRL, enumerate_devices, NULL, DIEDFL_ATTACHEDONLY );
 
-		if( gJoystick )
-		{
-			gJoystick->SetCooperativeLevel( GetActiveWindow(), DISCL_EXCLUSIVE | DISCL_FOREGROUND );
-
+		if( gJoystick->Acquire() )
+		{			
 			DIDEVICEINSTANCE di;
 			memset( &di, 0, sizeof(di) );
 			di.dwSize = sizeof(di);
@@ -126,6 +178,22 @@ void CDirectInput::FindJoysticks()
 			if( hr == DI_OK )
 			{
 				Warning( "HOLODECK: Found joystick \"%s\"\n", di.tszProductName );
+				if( SUCCEEDED(gJoystick->SetDataFormat( &c_dfDIJoystick2 )))
+					Warning("HOLODECK: Data format set successfully...\n");
+				else
+					Warning("HOLODECK: Failed to set data format!\n");
+
+				if( SUCCEEDED(gJoystick->SetCooperativeLevel( GetActiveWindow(), DISCL_EXCLUSIVE | DISCL_FOREGROUND )))
+					Warning("HOLODECK: Co-op level set successfully!\n");
+				else
+					Warning("HOLODECK: Failed to set cooperative level\n");
+
+				//HWND hDlg = ( HWND )pContext;
+
+				HRESULT h2;
+				h2 = gJoystick->EnumObjects(EnumObjectsCallback, NULL, DIDFT_ALL);
+
+
 			}
 			else
 			{
@@ -141,6 +209,7 @@ void CDirectInput::FindJoysticks()
 		}
 	}
 }
+
 
 //----------------------------------------------------------------------------
 //----------------------------------------------------------------------------
@@ -168,12 +237,60 @@ void CDirectInput::CreateMove( CUserCmd *cmd )
 	const ConVarRef *movespeed = player->IsSprinting() ? &hl2_sprintspeed : &hl2_normspeed;
 	const float maxPlayerVelocity = movespeed->GetFloat();
 
-	// JAMESTODO: Poll the axis values.
-	const float forwardAxis = 0.0f;
-	const float sideAxis = 0.0f;
+	/** The Polling System **/
+	HRESULT hr;
+	DIJOYSTATE2 js;
 
-	cmd->forwardmove = forwardAxis * maxPlayerVelocity;
-	cmd->sidemove = sideAxis * maxPlayerVelocity;
+	if (gJoystick == NULL)
+		Warning("HOLODECK: Unable to find joystick...\n");
+
+	//Msg("Creating move...\n");
+	hr = gJoystick->Poll();
+	const char *message;
+				format_message( hr, &message );
+	//Warning("HOLODECK: %s", message);
+	
+	if( FAILED( hr ) )
+    {
+        // DInput is telling us that the input stream has been
+        // interrupted. We aren't tracking any state between polls, so
+        // we don't have any special reset that needs to be done. We
+        // just re-acquire and try again.
+        hr = gJoystick->Acquire();
+        while( hr != DI_OK)
+            hr = gJoystick->Acquire();
+
+		// If we encounter a fatal error, return failure.
+        if ((hr == DIERR_INVALIDPARAM) || (hr == DIERR_NOTINITIALIZED)) {
+            // Do nothing
+        }
+
+        // hr may be DIERR_OTHERAPPHASPRIO or other errors.  This
+        // may occur when the app is minimized or in the process of 
+        // switching, so just try again later 
+        //turn;
+    }
+
+	// Get the input's device state
+    hr = gJoystick->GetDeviceState( sizeof( DIJOYSTATE2 ), &js );
+
+	// JAMESTODO: Poll the axis values.
+	long forwardAxis = js.lY*-1;
+	long sideAxis = js.lX;
+	bool jmp = js.rgbButtons[0];
+
+	Msg("F: %d, S: %d, J:%d\n", forwardAxis, sideAxis, jmp);
+
+	if(forwardAxis < -2 || forwardAxis > 2)
+		cmd->forwardmove = forwardAxis * maxPlayerVelocity;
+
+	if(sideAxis < -2 || sideAxis > 2)
+		cmd->sidemove = sideAxis * maxPlayerVelocity;
+
+	if(jmp)
+		cmd->upmove = maxPlayerVelocity;
+
+	//cmd->viewangles[YAW];
 
 	// Do this last.
 	FillBitFields( cmd );
@@ -200,13 +317,20 @@ void CDirectInput::FillBitFields( CUserCmd *cmd )
 	{
 		cmd->buttons |= IN_LEFT;
 	}
+
+	if( cmd->upmove > 0 )
+	{
+		cmd->buttons |= IN_JUMP;
+	}
 }
 
 //----------------------------------------------------------------------------
 //----------------------------------------------------------------------------
-static ConVar holo_enable_dinput( "holo_enable_dinput", "0", FCVAR_ARCHIVE );
+//static ConVar holo_enable_dinput( "holo_enable_dinput", "0", FCVAR_ARCHIVE );
 
 bool CDirectInput::Enabled()
 {
-	return holo_enable_dinput.GetBool();
+	// Change to false to use the keyboard.
+	// THIS IS A HACK!
+	return true;
 }
