@@ -27,6 +27,8 @@ public:
 	void			Shutdown();
 	void			CreateMove( CUserCmd *cmd );
 
+	static bool		Enabled();
+
 private:
 	// Singleton methods.
 					CDirectInput();

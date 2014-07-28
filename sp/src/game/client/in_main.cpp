@@ -1287,7 +1287,11 @@ void CInput::CreateMove ( int sequence_number, float input_sample_frametime, boo
 
 #ifdef HOLODECK
 	CLeapMotion::get().CreateMove( cmd );
-	CDirectInput::Get().CreateMove( cmd );
+
+	if( CDirectInput::Enabled() )
+	{
+		CDirectInput::Get().CreateMove( cmd );
+	}
 #endif
 
 	pVerified->m_cmd = *cmd;
@@ -1684,9 +1688,12 @@ void CInput::Init_All (void)
 
 #ifdef HOLODECK
 	CLeapMotion::create();
-	CDirectInput::Create();
 
-	Assert( CDirectInput::Get().Init() );
+	if( CDirectInput::Enabled() )
+	{
+		CDirectInput::Create();
+		Assert( CDirectInput::Get().Init() );
+	}
 #endif
 }
 
@@ -1709,8 +1716,11 @@ void CInput::Shutdown_All(void)
 #ifdef HOLODECK
 	CLeapMotion::destroy();
 
-	CDirectInput::Get().Shutdown();
-	CDirectInput::Destroy();
+	if( CDirectInput::Enabled() )
+	{
+		CDirectInput::Get().Shutdown();
+		CDirectInput::Destroy();
+	}
 #endif
 }
 

@@ -118,12 +118,9 @@ SFrame CLeapMotion::BuildFinalFrame()
 
 	if( !_queue->isEmpty() )
 	{
-		// Mark the position of the (current) last frame.
-		_queue->markLast();
-
 		holo::SFrame curframe;
 
-		do
+		while( !_queue->isEmpty() )
 		{
 			curframe = _queue->popOffQueue();
 
@@ -146,7 +143,7 @@ SFrame CLeapMotion::BuildFinalFrame()
 			finalFrame._ball = curframe._ball;
 			finalFrame._hand = curframe._hand;
 
-		} while( !curframe.IsMarked() );
+		}
 	}
 
 	return finalFrame;

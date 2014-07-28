@@ -201,3 +201,12 @@ void CDirectInput::FillBitFields( CUserCmd *cmd )
 		cmd->buttons |= IN_LEFT;
 	}
 }
+
+//----------------------------------------------------------------------------
+//----------------------------------------------------------------------------
+static ConVar holo_enable_dinput( "holo_enable_dinput", "0", FCVAR_ARCHIVE );
+
+bool CDirectInput::Enabled()
+{
+	return holo_enable_dinput.GetBool();
+}
