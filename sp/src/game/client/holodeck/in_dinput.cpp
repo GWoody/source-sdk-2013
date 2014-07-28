@@ -10,7 +10,6 @@
 #include "cbase.h"
 
 #define DIRECTINPUT_VERSION	0x0800
-
 #define S_OK 0x00000000
 
 #include "dinput_lite.h"
@@ -107,6 +106,7 @@ bool CDirectInput::CreateDirectInput()
 
 
 //-----------------------------------------------------------------------------
+// TAKEN FROM DIRECTX SAMPLE (2010, FEB)
 // Name: EnumObjectsCallback()
 // Desc: Callback function for enumerating objects (axes, buttons, POVs) on a 
 //       Joystick. This function enables user interface elements for objects
@@ -244,12 +244,7 @@ void CDirectInput::CreateMove( CUserCmd *cmd )
 	if (gJoystick == NULL)
 		Warning("HOLODECK: Unable to find joystick...\n");
 
-	//Msg("Creating move...\n");
 	hr = gJoystick->Poll();
-	const char *message;
-				format_message( hr, &message );
-	//Warning("HOLODECK: %s", message);
-	
 	if( FAILED( hr ) )
     {
         // DInput is telling us that the input stream has been
@@ -262,7 +257,7 @@ void CDirectInput::CreateMove( CUserCmd *cmd )
 
 		// If we encounter a fatal error, return failure.
         if ((hr == DIERR_INVALIDPARAM) || (hr == DIERR_NOTINITIALIZED)) {
-            // Do nothing
+            exit E_FAIL;
         }
 
         // hr may be DIERR_OTHERAPPHASPRIO or other errors.  This
@@ -278,19 +273,21 @@ void CDirectInput::CreateMove( CUserCmd *cmd )
 	long forwardAxis = js.lY*-1;
 	long sideAxis = js.lX;
 	bool jmp = js.rgbButtons[0];
-
-	Msg("F: %d, S: %d, J:%d\n", forwardAxis, sideAxis, jmp);
-
+	
 	if(forwardAxis < -2 || forwardAxis > 2)
+	{
 		cmd->forwardmove = forwardAxis * maxPlayerVelocity;
+	}
 
 	if(sideAxis < -2 || sideAxis > 2)
+	{
 		cmd->sidemove = sideAxis * maxPlayerVelocity;
+	}
 
 	if(jmp)
+	{	
 		cmd->upmove = maxPlayerVelocity;
-
-	//cmd->viewangles[YAW];
+	}
 
 	// Do this last.
 	FillBitFields( cmd );
