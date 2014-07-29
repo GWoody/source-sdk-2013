@@ -241,30 +241,38 @@ void CDirectInput::CreateMove( CUserCmd *cmd )
 	HRESULT hr;
 	DIJOYSTATE2 js;
 
-	if (gJoystick == NULL)
-		Warning("HOLODECK: Unable to find joystick...\n");
+	if( gJoystick == NULL )
+	{
+		return;
+	}
 
 	hr = gJoystick->Poll();
 	if( FAILED( hr ) )
     {
-        // DInput is telling us that the input stream has been
-        // interrupted. We aren't tracking any state between polls, so
-        // we don't have any special reset that needs to be done. We
-        // just re-acquire and try again.
-        hr = gJoystick->Acquire();
-        while( hr != DI_OK)
-            hr = gJoystick->Acquire();
+		// DInput is telling us that the input stream has been
+		// interrupted. We aren't tracking any state between polls, so
+		// we don't have any special reset that needs to be done. We
+		// just re-acquire and try again.
+		hr = gJoystick->Acquire();
+		int loops = 0;
+		const int MAX_LOOPS = 5;
+		while( hr != DI_OK && loops < MAX_LOOPS )
+		{
+			hr = gJoystick->Acquire();
+			loops++;
+		}
 
 		// If we encounter a fatal error, return failure.
-        if ((hr == DIERR_INVALIDPARAM) || (hr == DIERR_NOTINITIALIZED)) {
-            exit E_FAIL;
-        }
+		if ( loops == MAX_LOOPS || hr == DIERR_INVALIDPARAM || hr == DIERR_NOTINITIALIZED ) 
+		{
+			return;
+		}
 
-        // hr may be DIERR_OTHERAPPHASPRIO or other errors.  This
-        // may occur when the app is minimized or in the process of 
-        // switching, so just try again later 
-        //turn;
-    }
+		// hr may be DIERR_OTHERAPPHASPRIO or other errors.  This
+		// may occur when the app is minimized or in the process of 
+		// switching, so just try again later 
+		//turn;
+	}
 
 	// Get the input's device state
     hr = gJoystick->GetDeviceState( sizeof( DIJOYSTATE2 ), &js );
