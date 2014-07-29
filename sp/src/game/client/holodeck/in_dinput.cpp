@@ -270,18 +270,30 @@ void CDirectInput::CreateMove( CUserCmd *cmd )
     hr = gJoystick->GetDeviceState( sizeof( DIJOYSTATE2 ), &js );
 
 	// JAMESTODO: Poll the axis values.
-	long forwardAxis = js.lY*-1;
-	long sideAxis = js.lX;
+	long lForwardAxis = js.lY*-1;
+	long lSideAxis = js.lX;
+	long lYaw = js.lRz;
 	bool jmp = js.rgbButtons[0];
 	
-	if(forwardAxis < -2 || forwardAxis > 2)
+	// Scale from the range [-10, 10] to [-1, 1] so we can use the axis values as
+	// movement speed scalars.
+	float fForwardAxis = lForwardAxis / 10.0f;
+	float fSideAxis = lSideAxis / 10.0f;
+	
+	if( abs( lForwardAxis ) > 1 )
 	{
-		cmd->forwardmove = forwardAxis * maxPlayerVelocity;
+		cmd->forwardmove = fForwardAxis * maxPlayerVelocity;
 	}
 
-	if(sideAxis < -2 || sideAxis > 2)
+	if( abs( lSideAxis ) > 1 )
 	{
-		cmd->sidemove = sideAxis * maxPlayerVelocity;
+		cmd->sidemove = fSideAxis * maxPlayerVelocity;
+	}
+
+	if( abs( lYaw ) > 2 )
+	{
+		cmd->viewangles[YAW] -= lYaw / 10.0f;
+		engine->SetViewAngles( cmd->viewangles );
 	}
 
 	if(jmp)
