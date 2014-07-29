@@ -168,7 +168,7 @@ void CDirectInput::FindJoysticks()
 		*/
 		gDirectInput->EnumDevices( DI8DEVCLASS_GAMECTRL, enumerate_devices, NULL, DIEDFL_ATTACHEDONLY );
 
-		if( gJoystick->Acquire() )
+		if( gJoystick && gJoystick->Acquire() )
 		{			
 			DIDEVICEINSTANCE di;
 			memset( &di, 0, sizeof(di) );
