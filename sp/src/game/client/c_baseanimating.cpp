@@ -168,6 +168,9 @@ void RecvProxy_Sequence( const CRecvProxyData *pData, void *pStruct, void *pOut 
 }
 
 IMPLEMENT_CLIENTCLASS_DT(C_BaseAnimating, DT_BaseAnimating, CBaseAnimating)
+#ifdef HOLODECK_GLOWS_ENABLE
+	RecvPropBool( RECVINFO( m_bGlowEnabled ) ),
+#endif
 	RecvPropInt(RECVINFO(m_nSequence), 0, RecvProxy_Sequence),
 	RecvPropInt(RECVINFO(m_nForceBone)),
 	RecvPropVector(RECVINFO(m_vecForce)),
@@ -734,6 +737,12 @@ C_BaseAnimating::C_BaseAnimating() :
 	Q_memset(&m_mouth, 0, sizeof(m_mouth));
 	m_flCycle = 0;
 	m_flOldCycle = 0;
+
+#ifdef HOLODECK_GLOWS_ENABLE
+	m_pGlowEffect = NULL;
+	m_bGlowEnabled = false;
+	m_bOldGlowEnabled = false;
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -764,6 +773,10 @@ C_BaseAnimating::~C_BaseAnimating()
 		m_pAttachedTo->RemoveBoneAttachment( this );
 		m_pAttachedTo = NULL;
 	}
+
+#ifdef HOLODECK_GLOWS_ENABLE
+	DestroyGlowEffect();
+#endif
 }
 
 bool C_BaseAnimating::UsesPowerOfTwoFrameBufferTexture( void )
@@ -4517,6 +4530,10 @@ void C_BaseAnimating::OnPreDataChanged( DataUpdateType_t updateType )
 	BaseClass::OnPreDataChanged( updateType );
 
 	m_bLastClientSideFrameReset = m_bClientSideFrameReset;
+
+#ifdef HOLODECK_GLOWS_ENABLE
+	m_bOldGlowEnabled = m_bGlowEnabled;
+#endif
 }
 
 void C_BaseAnimating::ForceSetupBonesAtTime( matrix3x4_t *pBonesOut, float flTime )
@@ -4789,6 +4806,13 @@ void C_BaseAnimating::OnDataChanged( DataUpdateType_t updateType )
 		delete m_pRagdollInfo;
 		m_pRagdollInfo = NULL;
 	}
+
+#ifdef HOLODECK_GLOWS_ENABLE
+	if ( m_bOldGlowEnabled != m_bGlowEnabled )
+	{
+		UpdateGlowEffect();
+	}
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -4905,6 +4929,17 @@ void C_BaseAnimating::Simulate()
 	{
 		ClearRagdoll();
 	}
+
+#ifdef HOLODECK_GLOWS_ENABLE
+	// Allow for dynamic setting of the glow color each frame.
+	if( m_bGlowEnabled && m_pGlowEffect )
+	{
+		Vector rgb;
+		GetGlowEffectColor( &rgb[0], &rgb[1], &rgb[2] );
+
+		m_pGlowEffect->SetColor( rgb );
+	}
+#endif
 }
 
 
@@ -6431,3 +6466,45 @@ void C_BaseAnimating::MoveBoneAttachments( C_BaseAnimating* attachTarget )
 		}
 	}
 }
+
+#ifdef HOLODECK_GLOWS_ENABLE
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void C_BaseAnimating::GetGlowEffectColor( float *r, float *g, float *b )
+{
+	*r = 0.76f;
+	*g = 0.76f;
+	*b = 0.76f;
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void C_BaseAnimating::UpdateGlowEffect( void )
+{
+	// destroy the existing effect
+	if ( m_pGlowEffect )
+	{
+		DestroyGlowEffect();
+	}
+
+	// create a new effect
+	if ( m_bGlowEnabled )
+	{
+		float r, g, b;
+		GetGlowEffectColor( &r, &g, &b );
+
+		m_pGlowEffect = new CGlowObject( this, Vector( r, g, b ), 1.0, true );
+	}
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void C_BaseAnimating::DestroyGlowEffect( void )
+{
+	if ( m_pGlowEffect )
+	{
+		delete m_pGlowEffect;
+		m_pGlowEffect = NULL;
+	}
+}
+#endif

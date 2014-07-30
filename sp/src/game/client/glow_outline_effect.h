@@ -122,6 +122,7 @@ private:
 
 	struct GlowObjectDefinition_t
 	{
+#ifndef HOLODECK
 		bool ShouldDraw( int nSlot ) const
 		{
 			return m_hEntity.Get() && 
@@ -130,6 +131,9 @@ private:
 				   m_hEntity->ShouldDraw() && 
 				   !m_hEntity->IsDormant();
 		}
+#else
+		bool ShouldDraw( int nSlot ) const;
+#endif
 
 		bool IsUnused() const { return m_nNextFreeSlot != GlowObjectDefinition_t::ENTRY_IN_USE; }
 		void DrawModel();

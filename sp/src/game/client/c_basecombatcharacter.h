@@ -14,9 +14,11 @@
 
 #include "shareddefs.h"
 #include "c_baseflex.h"
+#ifndef HOLODECK_GLOWS_ENABLE
 #ifdef GLOWS_ENABLE
 #include "glow_outline_effect.h"
 #endif // GLOWS_ENABLE
+#endif
 
 class C_BaseCombatWeapon;
 class C_WeaponCombatShield;
@@ -94,10 +96,12 @@ public:
 
 	virtual void		DoMuzzleFlash();
 
+#ifndef HOLODECK_GLOWS_ENABLE
 #ifdef GLOWS_ENABLE
 	CGlowObject			*GetGlowObject( void ){ return m_pGlowEffect; }
 	virtual void		GetGlowEffectColor( float *r, float *g, float *b );
 #endif // GLOWS_ENABLE
+#endif
 
 public:
 
@@ -105,10 +109,12 @@ public:
 
 protected:
 
+#ifndef HOLODECK_GLOWS_ENABLE
 #ifdef GLOWS_ENABLE	
 	virtual void		UpdateGlowEffect( void );
 	virtual void		DestroyGlowEffect( void );
 #endif // GLOWS_ENABLE
+#endif
 
 	int			m_bloodColor;			// color of blood particless
 
@@ -120,11 +126,13 @@ private:
 	CHandle<C_BaseCombatWeapon>		m_hMyWeapons[MAX_WEAPONS];
 	CHandle< C_BaseCombatWeapon > m_hActiveWeapon;
 
+#ifndef HOLODECK_GLOWS_ENABLE
 #ifdef GLOWS_ENABLE
 	bool				m_bGlowEnabled;
 	bool				m_bOldGlowEnabled;
 	CGlowObject			*m_pGlowEffect;
 #endif // GLOWS_ENABLE
+#endif
 
 private:
 	C_BaseCombatCharacter( const C_BaseCombatCharacter & ); // not defined, not accessible

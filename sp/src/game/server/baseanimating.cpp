@@ -227,6 +227,10 @@ void *SendProxy_ClientSideAnimation( const SendProp *pProp, const void *pStruct,
 
 // SendTable stuff.
 IMPLEMENT_SERVERCLASS_ST(CBaseAnimating, DT_BaseAnimating)
+#ifdef HOLODECK_GLOWS_ENABLE
+	SendPropBool( SENDINFO( m_bGlowEnabled ) ),
+#endif
+
 	SendPropInt		( SENDINFO(m_nForceBone), 8, 0 ),
 	SendPropVector	( SENDINFO(m_vecForce), -1, SPROP_NOSCALE ),
 
@@ -288,6 +292,10 @@ CBaseAnimating::CBaseAnimating()
 	m_fadeMaxDist = 0;
 	m_flFadeScale = 0.0f;
 	m_fBoneCacheFlags = 0;
+
+#ifdef HOLODECK_GLOWS_ENABLE
+	m_bGlowEnabled.Set( false );
+#endif
 }
 
 CBaseAnimating::~CBaseAnimating()
@@ -1360,6 +1368,54 @@ void	CBaseAnimating::PopulatePoseParameters( void )
 {
 
 }
+
+#ifdef HOLODECK_GLOWS_ENABLE
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void CBaseAnimating::AddGlowEffect( void )
+{
+	SetTransmitState( FL_EDICT_ALWAYS );
+	m_bGlowEnabled.Set( true );
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void CBaseAnimating::RemoveGlowEffect( void )
+{
+	m_bGlowEnabled.Set( false );
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+bool CBaseAnimating::IsGlowEffectActive( void )
+{
+	return m_bGlowEnabled;
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void CBaseAnimating::ChangeTeam( int team )
+{
+	RemoveGlowEffect();
+	BaseClass::ChangeTeam( team );
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void CBaseAnimating::UpdateOnRemove( void )
+{
+	RemoveGlowEffect();
+	BaseClass::UpdateOnRemove();
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void CBaseAnimating::Event_Killed( const CTakeDamageInfo &info )
+{
+	RemoveGlowEffect();
+	BaseClass::Event_Killed( info );
+}
+#endif
 
 //=========================================================
 // Purpose: from input of 75% to 200% of maximum range, rescale smoothly from 75% to 100%

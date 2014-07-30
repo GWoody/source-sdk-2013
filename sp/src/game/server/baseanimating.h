@@ -162,6 +162,20 @@ protected:
 	// save off your pose parameters in member variables in your derivation of this function:
 	virtual void	PopulatePoseParameters( void );
 
+#ifdef HOLODECK_GLOWS_ENABLE
+public:
+	// Glows
+	void				AddGlowEffect( void );
+	void				RemoveGlowEffect( void );
+	bool				IsGlowEffectActive( void );
+
+	virtual void		ChangeTeam( int team );
+	virtual void		UpdateOnRemove( void );
+	virtual void		Event_Killed( const CTakeDamageInfo &info );
+
+protected:
+	CNetworkVar( bool, m_bGlowEnabled );
+#endif
 
 public:
 

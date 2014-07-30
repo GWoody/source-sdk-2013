@@ -412,12 +412,14 @@ public:
 	// -----------------------
 	virtual void		OnPursuedBy( INextBot * RESTRICT pPursuer ){} // called every frame while pursued by a bot in DirectChase.
 
+#ifndef HOLODECK_GLOWS_ENABLE
 #ifdef GLOWS_ENABLE
 	// Glows
 	void				AddGlowEffect( void );
 	void				RemoveGlowEffect( void );
 	bool				IsGlowEffectActive( void );
 #endif // GLOWS_ENABLE
+#endif
 
 #ifdef INVASION_DLL
 public:
@@ -456,10 +458,12 @@ protected:
 public:
 	CNetworkVar( float, m_flNextAttack );			// cannot attack again until this time
 
+#ifndef HOLODECK_GLOWS_ENABLE
 #ifdef GLOWS_ENABLE
 protected:
 	CNetworkVar( bool, m_bGlowEnabled );
 #endif // GLOWS_ENABLE
+#endif
 
 private:
 	Hull_t		m_eHull;

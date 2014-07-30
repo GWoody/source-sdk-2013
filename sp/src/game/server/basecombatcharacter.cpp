@@ -190,9 +190,12 @@ END_SEND_TABLE();
 // This table encodes the CBaseCombatCharacter
 //-----------------------------------------------------------------------------
 IMPLEMENT_SERVERCLASS_ST(CBaseCombatCharacter, DT_BaseCombatCharacter)
+#ifndef HOLODECK_GLOWS_ENABLE
 #ifdef GLOWS_ENABLE
 	SendPropBool( SENDINFO( m_bGlowEnabled ) ),
 #endif // GLOWS_ENABLE
+#endif
+
 	// Data that only gets sent to the local player.
 	SendPropDataTable( "bcc_localdata", 0, &REFERENCE_SEND_TABLE(DT_BCCLocalPlayerExclusive), SendProxy_SendBaseCombatCharacterLocalDataTable ),
 
@@ -744,9 +747,11 @@ CBaseCombatCharacter::CBaseCombatCharacter( void )
 
 	m_bForceServerRagdoll = ai_force_serverside_ragdoll.GetBool();
 
+#ifndef HOLODECK_GLOWS_ENABLE
 #ifdef GLOWS_ENABLE
 	m_bGlowEnabled.Set( false );
 #endif // GLOWS_ENABLE
+#endif
 }
 
 //------------------------------------------------------------------------------
@@ -851,9 +856,11 @@ void CBaseCombatCharacter::UpdateOnRemove( void )
 		SetOwnerEntity( NULL );
 	}
 
+#ifndef HOLODECK_GLOWS_ENABLE
 #ifdef GLOWS_ENABLE
 	RemoveGlowEffect();
 #endif // GLOWS_ENABLE
+#endif
 
 	// Chain at end to mimic destructor unwind order
 	BaseClass::UpdateOnRemove();
@@ -1677,9 +1684,11 @@ void CBaseCombatCharacter::Event_Killed( const CTakeDamageInfo &info )
 	TheNextBots().OnKilled( this, info );
 #endif
 
+#ifndef HOLODECK_GLOWS_ENABLE
 #ifdef GLOWS_ENABLE
 	RemoveGlowEffect();
 #endif // GLOWS_ENABLE
+#endif
 }
 
 void CBaseCombatCharacter::Event_Dying( const CTakeDamageInfo &info )
@@ -3230,6 +3239,7 @@ float CBaseCombatCharacter::GetSpreadBias( CBaseCombatWeapon *pWeapon, CBaseEnti
 	return 1.0;
 }
 
+#ifndef HOLODECK_GLOWS_ENABLE
 #ifdef GLOWS_ENABLE
 //-----------------------------------------------------------------------------
 // Purpose: 
@@ -3256,6 +3266,7 @@ bool CBaseCombatCharacter::IsGlowEffectActive( void )
 	return m_bGlowEnabled;
 }
 #endif // GLOWS_ENABLE
+#endif
 
 //-----------------------------------------------------------------------------
 // Assume everyone is average with every weapon. Override this to make exceptions.
@@ -3522,9 +3533,11 @@ void CBaseCombatCharacter::ChangeTeam( int iTeamNum )
 	// old team member no longer in the nav mesh
 	ClearLastKnownArea();
 
+#ifndef HOLODECK_GLOWS_ENABLE
 #ifdef GLOWS_ENABLE
 	RemoveGlowEffect();
 #endif // GLOWS_ENABLE
+#endif
 
 	BaseClass::ChangeTeam( iTeamNum );
 }

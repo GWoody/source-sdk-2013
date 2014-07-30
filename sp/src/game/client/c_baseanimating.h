@@ -27,6 +27,10 @@
 #include "tier0/threadtools.h"
 #include "datacache/idatacache.h"
 
+#ifdef HOLODECK_GLOWS_ENABLE
+#include "glow_outline_effect.h"
+#endif
+
 #define LIPSYNC_POSEPARAM_NAME "mouth"
 #define NUM_HITBOX_FIRES	10
 
@@ -444,6 +448,21 @@ public:
 	virtual bool					ShouldResetSequenceOnNewModel( void );
 
 	virtual bool					IsViewModel() const;
+
+#ifdef HOLODECK_GLOWS_ENABLE
+public:
+	CGlowObject			*GetGlowObject( void ){ return m_pGlowEffect; }
+	virtual void		GetGlowEffectColor( float *r, float *g, float *b );
+
+protected:
+	virtual void		UpdateGlowEffect( void );
+	virtual void		DestroyGlowEffect( void );
+
+private:
+	bool				m_bGlowEnabled;
+	bool				m_bOldGlowEnabled;
+	CGlowObject			*m_pGlowEffect;
+#endif
 
 protected:
 	// View models scale their attachment positions to account for FOV. To get the unmodified

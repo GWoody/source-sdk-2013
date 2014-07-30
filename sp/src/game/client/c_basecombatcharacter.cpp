@@ -30,11 +30,13 @@ C_BaseCombatCharacter::C_BaseCombatCharacter()
 		m_iAmmo.Set( i, 0 );
 	}
 
+#ifndef HOLODECK_GLOWS_ENABLE
 #ifdef GLOWS_ENABLE
 	m_pGlowEffect = NULL;
 	m_bGlowEnabled = false;
 	m_bOldGlowEnabled = false;
 #endif // GLOWS_ENABLE
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -42,9 +44,11 @@ C_BaseCombatCharacter::C_BaseCombatCharacter()
 //-----------------------------------------------------------------------------
 C_BaseCombatCharacter::~C_BaseCombatCharacter()
 {
+#ifndef HOLODECK_GLOWS_ENABLE
 #ifdef GLOWS_ENABLE
 	DestroyGlowEffect();
 #endif // GLOWS_ENABLE
+#endif
 }
 
 /*
@@ -64,9 +68,11 @@ void C_BaseCombatCharacter::OnPreDataChanged( DataUpdateType_t updateType )
 {
 	BaseClass::OnPreDataChanged( updateType );
 
+#ifndef HOLODECK_GLOWS_ENABLE
 #ifdef GLOWS_ENABLE
 	m_bOldGlowEnabled = m_bGlowEnabled;
 #endif // GLOWS_ENABLE
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -76,12 +82,14 @@ void C_BaseCombatCharacter::OnDataChanged( DataUpdateType_t updateType )
 {
 	BaseClass::OnDataChanged( updateType );
 
+#ifndef HOLODECK_GLOWS_ENABLE
 #ifdef GLOWS_ENABLE
 	if ( m_bOldGlowEnabled != m_bGlowEnabled )
 	{
 		UpdateGlowEffect();
 	}
 #endif // GLOWS_ENABLE
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -102,6 +110,7 @@ void C_BaseCombatCharacter::DoMuzzleFlash()
 	}
 }
 
+#ifndef HOLODECK_GLOWS_ENABLE
 #ifdef GLOWS_ENABLE
 //-----------------------------------------------------------------------------
 // Purpose: 
@@ -146,6 +155,7 @@ void C_BaseCombatCharacter::DestroyGlowEffect( void )
 	}
 }
 #endif // GLOWS_ENABLE
+#endif
 
 IMPLEMENT_CLIENTCLASS(C_BaseCombatCharacter, DT_BaseCombatCharacter, CBaseCombatCharacter);
 
@@ -159,9 +169,11 @@ BEGIN_RECV_TABLE(C_BaseCombatCharacter, DT_BaseCombatCharacter)
 	RecvPropDataTable( "bcc_localdata", 0, 0, &REFERENCE_RECV_TABLE(DT_BCCLocalPlayerExclusive) ),
 	RecvPropEHandle( RECVINFO( m_hActiveWeapon ) ),
 	RecvPropArray3( RECVINFO_ARRAY(m_hMyWeapons), RecvPropEHandle( RECVINFO( m_hMyWeapons[0] ) ) ),
+#ifndef HOLODECK_GLOWS_ENABLE
 #ifdef GLOWS_ENABLE
 	RecvPropBool( RECVINFO( m_bGlowEnabled ) ),
 #endif // GLOWS_ENABLE
+#endif
 
 #ifdef INVASION_CLIENT_DLL
 	RecvPropInt( RECVINFO( m_iPowerups ) ),
