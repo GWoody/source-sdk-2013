@@ -2522,6 +2522,9 @@ void CPhysicsProp::Spawn( )
 		DisableAutoFade();
 	}
 	
+#ifdef HOLODECK
+	AddGlowEffect();
+#endif
 }
 
 //-----------------------------------------------------------------------------
