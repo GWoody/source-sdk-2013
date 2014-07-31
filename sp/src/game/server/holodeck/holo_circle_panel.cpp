@@ -10,6 +10,7 @@
 #include "cbase.h"
 #include "base_holo_panel.h"
 #include "holo_hand.h"
+#include "sprite.h"
 
 using namespace holo;
 
@@ -41,11 +42,13 @@ public:
 
 	// CBaseHoloPanel implementation.
 	bool			UsesAnimatedSprite() const			{ return true; }
-	float			GetAnimatedSpriteScale() const		{ return 0.1f; }
-	QAngle			GetAnimatedSpriteAngles() const		{ return QAngle(0, 0, 0 ); }
-	const char *	GetAnimatedSpritePath() const		{ return "holodeck/tap_overlay.vmt"; }
+	float			GetAnimatedSpriteScale() const		{ return 0.05f; }
+	QAngle			GetAnimatedSpriteAngles() const		{ return _circleNormal; }
+	const char *	GetAnimatedSpritePath() const		{ return "holodeck/circle_overlay.vmt"; }
 
 private:
+	void			RotateThink();
+
 	// Hammer attributes.
 	float			_useTime;				// Length of time (after the gesture is first recognised) the user must 
 											// make the circle gesture in order to activate this entity.
@@ -96,6 +99,9 @@ BEGIN_DATADESC( CHoloCirclePanel )
 	DEFINE_OUTPUT( _onFullyOpen, "OnFullyOpen" ),
 	DEFINE_OUTPUT( _onFullyClosed, "OnFullyClosed" ),
 
+	// Functions.
+	DEFINE_THINKFUNC( RotateThink ),
+
 END_DATADESC()
 
 //-----------------------------------------------------------------------------
@@ -116,6 +122,9 @@ void CHoloCirclePanel::Spawn()
 	// Convert the activation angle into a direction vector.
 	AngleVectors( _circleNormal, &_circleDirection );
 	_circleDirection.NormalizeInPlace();
+
+	SetThink( &CHoloCirclePanel::RotateThink );
+	SetNextThink( gpGlobals->curtime + gpGlobals->frametime );
 }
 
 //-----------------------------------------------------------------------------
@@ -207,4 +216,25 @@ void CHoloCirclePanel::InputLock( inputdata_t &inputdata )
 void CHoloCirclePanel::InputUnlock( inputdata_t &inputdata )
 {
 	_locked = false;
+}
+
+//-----------------------------------------------------------------------------
+// Updates the rotation of the animation.
+//-----------------------------------------------------------------------------
+void CHoloCirclePanel::RotateThink()
+{
+	QAngle angle = _animation->GetAbsAngles();
+
+	// Rotate 90 degrees every second.
+	angle[ROLL] -= gpGlobals->frametime * 90.0f;
+
+	// Ensure the angle stays within the range [0, 360].
+	if( angle[ROLL] < 0 )
+	{
+		angle[ROLL] = 360.0f + angle[ROLL];
+	}
+
+	_animation->SetAbsAngles( angle );
+
+	SetNextThink( gpGlobals->curtime + gpGlobals->frametime );
 }

@@ -41,7 +41,7 @@ public:
 	// CBaseHoloPanel implementation.
 	bool			UsesAnimatedSprite() const			{ return true; }
 	float			GetAnimatedSpriteScale() const		{ return 0.1f; }
-	QAngle			GetAnimatedSpriteAngles() const		{ return _activationAngle - QAngle(0, 180, 0 ); }
+	QAngle			GetAnimatedSpriteAngles() const		{ return _activationAngle; }
 	const char *	GetAnimatedSpritePath() const		{ return "holodeck/tap_overlay.vmt"; }
 
 private:

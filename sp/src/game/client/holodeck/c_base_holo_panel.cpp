@@ -46,9 +46,9 @@ Vector4D C_BaseHoloPanel::CalculateAnimatedSpriteColor() const
 	Vector direction = player->GetAbsOrigin() - GetAbsOrigin();
 	float distance = direction.Length();
 
-	const float MIN_PICKUP_DISTANCE = 0.0f;
-	const float MAX_PICKUP_DISTANCE = 384.0f;
-	const float MAX_VISIBLE_DISTANCE = 640.0f;
+	const float MIN_PICKUP_DISTANCE = 48.0f;
+	const float MAX_PICKUP_DISTANCE = 192.0f;
+	const float MAX_VISIBLE_DISTANCE = 400.0f;
 
 	// The object is close enough to be picked up by the player.
 	// Make it bright green.

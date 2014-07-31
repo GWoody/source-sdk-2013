@@ -37,6 +37,9 @@ public:
 	virtual QAngle	GetAnimatedSpriteAngles() const = 0;
 	virtual const char *	GetAnimatedSpritePath() const = 0;
 
+protected:
+	CNetworkHandle( CSpriteOriented, _animation );
+
 private:
 	void			InitEntityGlow();
 	void			RemoveEntityGlow();
@@ -46,7 +49,6 @@ private:
 
 	// Save state.
 	EHANDLE			_glowTarget;
-	CNetworkHandle( CSpriteOriented, _animation );
 
 	// Hammer attributes.
 	string_t		_glowTargetName;
