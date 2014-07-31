@@ -6,7 +6,7 @@
 
 //-------------------------------------------------------------------------
 //-------------------------------------------------------------------------
-@BaseClass base(Targetname, EnableDisable) = GesturePanel
+@BaseClass base(Targetname, EnableDisable, Origin) = GesturePanel
 [
 	// Attributes.
 	glowtarget(target_destination) : "Glow entity" : "" : "The model based entity associated with this panel."

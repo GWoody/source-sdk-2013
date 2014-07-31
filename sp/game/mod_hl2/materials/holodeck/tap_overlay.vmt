@@ -1,7 +1,9 @@
-"UnlitGeneric"
+Sprite
 {
 	$basetexture	"holodeck/tap_overlay"
 	$alphatest		1
+	$spriteorientation	"oriented"
+	$spriteorigin	"[0.53 0.29]"
 	
 	"Proxies"
 	{

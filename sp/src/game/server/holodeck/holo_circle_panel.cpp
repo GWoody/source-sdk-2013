@@ -26,6 +26,7 @@ class CHoloCirclePanel : public CBaseHoloPanel
 
 public:
 	DECLARE_CLASS( CHoloCirclePanel, CBaseHoloPanel );
+	DECLARE_SERVERCLASS();
 	DECLARE_DATADESC();
 
 	// CBaseEntity overrides.
@@ -37,6 +38,12 @@ public:
 	// CTriggerMultiple overrides.
 	virtual void	Touch( CBaseEntity *pOther );
 	virtual void	EndTouch( CBaseEntity *pOther );
+
+	// CBaseHoloPanel implementation.
+	bool			UsesAnimatedSprite() const			{ return true; }
+	float			GetAnimatedSpriteScale() const		{ return 0.1f; }
+	QAngle			GetAnimatedSpriteAngles() const		{ return QAngle(0, 0, 0 ); }
+	const char *	GetAnimatedSpritePath() const		{ return "holodeck/tap_overlay.vmt"; }
 
 private:
 	// Hammer attributes.
@@ -66,6 +73,8 @@ private:
 //-----------------------------------------------------------------------------
 LINK_ENTITY_TO_CLASS( holo_circle_panel, CHoloCirclePanel );
 
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 BEGIN_DATADESC( CHoloCirclePanel )
 
 	// Save fields.
@@ -88,6 +97,11 @@ BEGIN_DATADESC( CHoloCirclePanel )
 	DEFINE_OUTPUT( _onFullyClosed, "OnFullyClosed" ),
 
 END_DATADESC()
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+IMPLEMENT_SERVERCLASS_ST( CHoloCirclePanel, DT_HoloCirclePanel )
+END_SEND_TABLE()
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------

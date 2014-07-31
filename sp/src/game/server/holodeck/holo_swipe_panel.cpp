@@ -24,6 +24,7 @@ class CHoloSwipePanel : public CBaseHoloPanel
 
 public:
 	DECLARE_CLASS( CHoloSwipePanel, CBaseHoloPanel );
+	DECLARE_SERVERCLASS();
 	DECLARE_DATADESC();
 
 	// CBaseEntity overrides.
@@ -35,6 +36,12 @@ public:
 	// CTriggerMultiple overrides.
 	virtual void	Touch( CBaseEntity *pOther );
 	virtual void	EndTouch( CBaseEntity *pOther );
+
+	// CBaseHoloPanel implementation.
+	bool			UsesAnimatedSprite() const			{ return true; }
+	float			GetAnimatedSpriteScale() const		{ return 0.1f; }
+	QAngle			GetAnimatedSpriteAngles() const		{ return QAngle(0, 0, 0 ); }
+	const char *	GetAnimatedSpritePath() const		{ return "holodeck/tap_overlay.vmt"; }
 
 private:
 	float			ActivationDirectionDelta( const Vector &v );
@@ -60,6 +67,8 @@ private:
 //-----------------------------------------------------------------------------
 LINK_ENTITY_TO_CLASS( holo_swipe_panel, CHoloSwipePanel );
 
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 BEGIN_DATADESC( CHoloSwipePanel )
 
 	// Save fields.
@@ -79,6 +88,11 @@ BEGIN_DATADESC( CHoloSwipePanel )
 	DEFINE_OUTPUT( _onReverseSwipe, "OnReverseSwipe" ),
 
 END_DATADESC()
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+IMPLEMENT_SERVERCLASS_ST( CHoloSwipePanel, DT_HoloSwipePanel )
+END_SEND_TABLE()
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------

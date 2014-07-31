@@ -24,6 +24,7 @@ class CHoloButtonPanel : public CBaseHoloPanel
 
 public:
 	DECLARE_CLASS( CHoloButtonPanel, CBaseHoloPanel );
+	DECLARE_SERVERCLASS();
 	DECLARE_DATADESC();
 
 	// CBaseEntity overrides.
@@ -36,6 +37,12 @@ public:
 	// CTriggerMultiple overrides.
 	virtual void	Touch( CBaseEntity *pOther );
 	virtual void	EndTouch( CBaseEntity *pOther );
+
+	// CBaseHoloPanel implementation.
+	bool			UsesAnimatedSprite() const			{ return true; }
+	float			GetAnimatedSpriteScale() const		{ return 0.1f; }
+	QAngle			GetAnimatedSpriteAngles() const		{ return _activationAngle - QAngle(0, 180, 0 ); }
+	const char *	GetAnimatedSpritePath() const		{ return "holodeck/tap_overlay.vmt"; }
 
 private:
 	float			ActivationDirectionDelta( const Vector &v );
@@ -59,6 +66,8 @@ private:
 	Vector			_activationDirection;
 };
 
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 LINK_ENTITY_TO_CLASS( holo_button_panel, CHoloButtonPanel );
 
 //-----------------------------------------------------------------------------
@@ -87,9 +96,17 @@ END_DATADESC()
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
+IMPLEMENT_SERVERCLASS_ST( CHoloButtonPanel, DT_HoloButtonPanel )
+END_SEND_TABLE()
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 void CHoloButtonPanel::Spawn()
 {
+	Precache();
+
 	BaseClass::Spawn();
+
 	_locked = HasSpawnFlags( SF_BUTTON_LOCKED );
 	_volume = clamp( _volume, 0.0f, 1.0f );
 

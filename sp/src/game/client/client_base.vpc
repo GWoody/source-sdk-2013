@@ -89,7 +89,12 @@ $Project
 		{
 			$Lib	"$SRCDIR\thirdparty\dxsdk\lib\x86\dxguid"
 		}
-	
+		
+		$File	"holodeck\c_base_holo_panel.cpp"
+		$File	"holodeck\c_base_holo_panel.h"
+		$File	"holodeck\c_holo_button_panel.cpp"
+		$File	"holodeck\c_holo_circle_panel.cpp"
+		$File	"holodeck\c_holo_swipe_panel.cpp"
 		$File	"holodeck\in_leap.cpp"
 		$File	"holodeck\in_leap.h"
 		$File	"holodeck\in_dinput.cpp"
