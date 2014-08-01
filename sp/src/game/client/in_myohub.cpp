@@ -10,12 +10,13 @@
 */
 #include "in_myohub.h"
 
-
 CMyoHub::CMyoHub()
 {
+
 }
 
 
 CMyoHub::~CMyoHub()
 {
+
 }

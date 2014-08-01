@@ -9,11 +9,16 @@
 ==============================================================================
 */
 
-#pragma once
+#ifndef __IN_MYOHUB_H__
+#define __IN_MYOHUB_H__
+
+
 class CMyoHub
 {
 public:
 	CMyoHub();
 	~CMyoHub();
 };
+
+#endif //__IN_MYOHUB_H__
 
