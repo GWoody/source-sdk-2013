@@ -69,11 +69,14 @@ config.cfg
 *.cache
 
 #Block specific files
-mathlib.lib
-tier1.lib
-vgui_controls.lib
+
 voice_ban.dt
 stats.txt
-test_buttonpanel.aim
+test_buttonpanel.ain
 GameState.txt
 server_blacklist.txt
+
+sp/src/lib/public/mathlib.lib
+sp/src/lib/public/mathlib.lib
+sp/src/lib/public/tier1.lib
+sp/src/lib/public/vgui_controls.lib
