@@ -4,6 +4,4 @@ Sprite
 	$alphatest		1
 	$spriteorientation	"oriented"
 	$spriteorigin	"[0.5 0.5]"
-	
-	"$angle" 		"0.0"
 }

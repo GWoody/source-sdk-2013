@@ -1,7 +1,7 @@
 /*
 ===============================================================================
 
-	holo_swipe_panel.h
+	holo_swipe_panel.cpp
 		Implements the `holo_swipe_panel` entity.
 
 ===============================================================================
@@ -38,10 +38,8 @@ public:
 	virtual void	EndTouch( CBaseEntity *pOther );
 
 	// CBaseHoloPanel implementation.
-	bool			UsesAnimatedSprite() const			{ return true; }
-	float			GetAnimatedSpriteScale() const		{ return 0.1f; }
-	QAngle			GetAnimatedSpriteAngles() const		{ return QAngle(0, 0, 0 ); }
-	const char *	GetAnimatedSpritePath() const		{ return "holodeck/tap_overlay.vmt"; }
+	bool			UsesPanelSprite() const			{ return true; }
+	SPanelSprite	GetPanelSprite() const			{ return SPanelSprite( 0.075f, _swipeAngle + QAngle(0, 90, 0), "holodeck/swipe_overlay.vmt" ); }
 
 private:
 	float			ActivationDirectionDelta( const Vector &v );

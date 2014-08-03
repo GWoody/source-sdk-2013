@@ -16,6 +16,27 @@ class CSpriteOriented;
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
+struct SPanelSprite
+{
+	// Default constructor.
+	SPanelSprite():
+		scale( 0.0f ), angle( 0.0f, 0.0f, 0.0f ), path( "" )
+	{
+	}
+
+	// Initialisation constructor.
+	SPanelSprite( float _scale, const QAngle &_angle, const CUtlString &_path ) :
+		scale( _scale ), angle( _angle ), path( _path )
+	{
+	}
+
+	float			scale;
+	QAngle			angle;
+	CUtlString		path;
+};
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 class CBaseHoloPanel : public CTriggerMultiple
 {
 public:
@@ -32,10 +53,8 @@ public:
 	virtual bool	PassesTriggerFilters( CBaseEntity *pOther );
 
 	// Animation helpers.
-	virtual bool	UsesAnimatedSprite() const = 0;
-	virtual float	GetAnimatedSpriteScale() const = 0;
-	virtual QAngle	GetAnimatedSpriteAngles() const = 0;
-	virtual const char *	GetAnimatedSpritePath() const = 0;
+	virtual bool	UsesPanelSprite() const = 0;
+	virtual SPanelSprite	GetPanelSprite() const = 0;
 
 protected:
 	CNetworkHandle( CSpriteOriented, _animation );

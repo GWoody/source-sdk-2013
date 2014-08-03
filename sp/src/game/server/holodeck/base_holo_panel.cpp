@@ -133,7 +133,7 @@ void CBaseHoloPanel::RemoveEntityGlow()
 void CBaseHoloPanel::InitAnimation()
 {
 	_animation.Set( NULL );
-	if( UsesAnimatedSprite() )
+	if( UsesPanelSprite() )
 	{
 		CBaseEntity *ent = CreateEntityByName( "env_sprite_oriented" );
 		if( ent )
@@ -141,10 +141,12 @@ void CBaseHoloPanel::InitAnimation()
 			CSpriteOriented *sprite = dynamic_cast<CSpriteOriented *>( ent );
 			if( sprite )
 			{
+				const SPanelSprite parms = GetPanelSprite();
+
 				// Setup per panel properties.
-				sprite->SpriteInit( GetAnimatedSpritePath(), GetAbsOrigin() );
-				sprite->SetScale( GetAnimatedSpriteScale() );
-				sprite->SetAbsAngles( GetAnimatedSpriteAngles() );
+				sprite->SpriteInit( parms.path, GetAbsOrigin() );
+				sprite->SetScale( parms.scale );
+				sprite->SetAbsAngles( parms.angle );
 				sprite->m_nRenderMode = kRenderWorldGlow;
 
 				// Setup generic engine properties.

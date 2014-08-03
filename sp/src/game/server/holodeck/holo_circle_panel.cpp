@@ -1,7 +1,7 @@
 /*
 ===============================================================================
 
-	holo_circle_panel.h
+	holo_circle_panel.cpp
 		Implements the `holo_circle_panel` entity.
 
 ===============================================================================
@@ -41,10 +41,8 @@ public:
 	virtual void	EndTouch( CBaseEntity *pOther );
 
 	// CBaseHoloPanel implementation.
-	bool			UsesAnimatedSprite() const			{ return true; }
-	float			GetAnimatedSpriteScale() const		{ return 0.05f; }
-	QAngle			GetAnimatedSpriteAngles() const		{ return _circleNormal; }
-	const char *	GetAnimatedSpritePath() const		{ return "holodeck/circle_overlay.vmt"; }
+	bool			UsesPanelSprite() const			{ return true; }
+	SPanelSprite	GetPanelSprite() const			{ return SPanelSprite( 0.05f, _circleNormal, "holodeck/circle_overlay.vmt" ); }
 
 private:
 	void			RotateThink();

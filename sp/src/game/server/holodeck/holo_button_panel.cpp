@@ -39,10 +39,8 @@ public:
 	virtual void	EndTouch( CBaseEntity *pOther );
 
 	// CBaseHoloPanel implementation.
-	bool			UsesAnimatedSprite() const			{ return true; }
-	float			GetAnimatedSpriteScale() const		{ return 0.1f; }
-	QAngle			GetAnimatedSpriteAngles() const		{ return _activationAngle; }
-	const char *	GetAnimatedSpritePath() const		{ return "holodeck/tap_overlay.vmt"; }
+	bool			UsesPanelSprite() const			{ return true; }
+	SPanelSprite	GetPanelSprite() const			{ return SPanelSprite( 0.1f, _activationAngle, "holodeck/tap_overlay.vmt" ); }
 
 private:
 	float			ActivationDirectionDelta( const Vector &v );
