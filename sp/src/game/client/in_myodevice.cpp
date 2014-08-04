@@ -8,11 +8,14 @@
 
 ==============================================================================
 */
+
+#include "cbase.h"
 #include "in_myodevice.h"
 
 
 CMyoDevice::CMyoDevice()
 {
+	
 }
 
 
