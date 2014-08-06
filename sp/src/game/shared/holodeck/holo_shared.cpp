@@ -169,6 +169,49 @@ EFinger holo::LeapToHoloFingerCode( const Leap::Finger::Type &finger )
 
 #endif
 
+
+//=============================================================================
+// SBone implementation.
+//=============================================================================
+
+SBone::SBone()
+{
+	nextJoint = prevJoint = vec3_origin;
+}
+
+#ifdef CLIENT_DLL
+
+SBone::SBone(const Leap::Bone &b)
+{
+	FromLeap(b);
+}
+
+void SBone::FromLeap(const Leap::Bone &b)
+{
+
+	nextJoint = LeapToHoloCoordinates(b.nextJoint());
+	prevJoint = LeapToHoloCoordinates(b.prevJoint());
+}
+
+#endif
+
+std::istream &operator>>(std::istream &ss, SBone &b)
+{
+	ss >> b.nextJoint >> b.prevJoint;
+
+	return ss;
+}
+
+std::ostream &operator<<(std::ostream &ss, const SBone &b)
+{
+	ss << b.nextJoint << " " << b.prevJoint;
+
+	return ss;
+
+}
+
+
+
 //=============================================================================
 // SFinger implementation.
 //=============================================================================

@@ -56,6 +56,28 @@ namespace holo
 //=============================================================================
 	//-------------------------------------------------------------------------
 	//-------------------------------------------------------------------------
+
+
+	struct SBone
+	{
+		SBone();
+#ifdef CLIENT_DLL
+		SBone(const Leap::Bone &b);
+		void		FromLeap(const Leap::Bone &b);
+#endif
+
+		Vector		nextJoint;
+		Vector		prevJoint;
+	};
+
+	std::istream &operator>>(std::istream &ss, SBone &b);
+	std::ostream &operator<<(std::ostream &ss, const SBone &b);
+
+
+	//-------------------------------------------------------------------------
+	//-------------------------------------------------------------------------
+
+
 	struct SFinger
 	{
 					SFinger();
