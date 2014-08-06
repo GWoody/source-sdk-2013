@@ -1,7 +1,7 @@
 /*
 ===============================================================================
 
-	holo_swipe_panel.h
+	holo_swipe_panel.cpp
 		Implements the `holo_swipe_panel` entity.
 
 ===============================================================================
@@ -24,6 +24,7 @@ class CHoloSwipePanel : public CBaseHoloPanel
 
 public:
 	DECLARE_CLASS( CHoloSwipePanel, CBaseHoloPanel );
+	DECLARE_SERVERCLASS();
 	DECLARE_DATADESC();
 
 	// CBaseEntity overrides.
@@ -35,6 +36,10 @@ public:
 	// CTriggerMultiple overrides.
 	virtual void	Touch( CBaseEntity *pOther );
 	virtual void	EndTouch( CBaseEntity *pOther );
+
+	// CBaseHoloPanel implementation.
+	bool			UsesPanelSprite() const			{ return true; }
+	SPanelSprite	GetPanelSprite() const			{ return SPanelSprite( 0.075f, _swipeAngle + QAngle(0, 90, 0), "holodeck/swipe_overlay.vmt" ); }
 
 private:
 	float			ActivationDirectionDelta( const Vector &v );
@@ -60,6 +65,8 @@ private:
 //-----------------------------------------------------------------------------
 LINK_ENTITY_TO_CLASS( holo_swipe_panel, CHoloSwipePanel );
 
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 BEGIN_DATADESC( CHoloSwipePanel )
 
 	// Save fields.
@@ -79,6 +86,11 @@ BEGIN_DATADESC( CHoloSwipePanel )
 	DEFINE_OUTPUT( _onReverseSwipe, "OnReverseSwipe" ),
 
 END_DATADESC()
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+IMPLEMENT_SERVERCLASS_ST( CHoloSwipePanel, DT_HoloSwipePanel )
+END_SEND_TABLE()
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------

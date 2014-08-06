@@ -25,6 +25,15 @@ public:
 
 	// Copy fade from another breakable prop
 	void CopyFadeFrom( C_BreakableProp *pSource );
+
+#ifdef HOLODECK
+public:
+	virtual void	Simulate();
+	virtual void	GetGlowEffectColor( float *r, float *g, float *b );
+
+private:
+	float			_glowAlpha;
+#endif
 };
 
 #endif // C_BREAKABLEPROP_H

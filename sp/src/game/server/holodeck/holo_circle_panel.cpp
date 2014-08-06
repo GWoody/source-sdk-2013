@@ -1,7 +1,7 @@
 /*
 ===============================================================================
 
-	holo_circle_panel.h
+	holo_circle_panel.cpp
 		Implements the `holo_circle_panel` entity.
 
 ===============================================================================
@@ -10,6 +10,7 @@
 #include "cbase.h"
 #include "base_holo_panel.h"
 #include "holo_hand.h"
+#include "sprite.h"
 
 using namespace holo;
 
@@ -26,6 +27,7 @@ class CHoloCirclePanel : public CBaseHoloPanel
 
 public:
 	DECLARE_CLASS( CHoloCirclePanel, CBaseHoloPanel );
+	DECLARE_SERVERCLASS();
 	DECLARE_DATADESC();
 
 	// CBaseEntity overrides.
@@ -38,7 +40,13 @@ public:
 	virtual void	Touch( CBaseEntity *pOther );
 	virtual void	EndTouch( CBaseEntity *pOther );
 
+	// CBaseHoloPanel implementation.
+	bool			UsesPanelSprite() const			{ return true; }
+	SPanelSprite	GetPanelSprite() const			{ return SPanelSprite( 0.05f, _circleNormal, "holodeck/circle_overlay.vmt" ); }
+
 private:
+	void			RotateThink();
+
 	// Hammer attributes.
 	float			_useTime;				// Length of time (after the gesture is first recognised) the user must 
 											// make the circle gesture in order to activate this entity.
@@ -66,6 +74,8 @@ private:
 //-----------------------------------------------------------------------------
 LINK_ENTITY_TO_CLASS( holo_circle_panel, CHoloCirclePanel );
 
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 BEGIN_DATADESC( CHoloCirclePanel )
 
 	// Save fields.
@@ -87,7 +97,15 @@ BEGIN_DATADESC( CHoloCirclePanel )
 	DEFINE_OUTPUT( _onFullyOpen, "OnFullyOpen" ),
 	DEFINE_OUTPUT( _onFullyClosed, "OnFullyClosed" ),
 
+	// Functions.
+	DEFINE_THINKFUNC( RotateThink ),
+
 END_DATADESC()
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+IMPLEMENT_SERVERCLASS_ST( CHoloCirclePanel, DT_HoloCirclePanel )
+END_SEND_TABLE()
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
@@ -102,6 +120,9 @@ void CHoloCirclePanel::Spawn()
 	// Convert the activation angle into a direction vector.
 	AngleVectors( _circleNormal, &_circleDirection );
 	_circleDirection.NormalizeInPlace();
+
+	SetThink( &CHoloCirclePanel::RotateThink );
+	SetNextThink( gpGlobals->curtime + gpGlobals->frametime );
 }
 
 //-----------------------------------------------------------------------------
@@ -193,4 +214,25 @@ void CHoloCirclePanel::InputLock( inputdata_t &inputdata )
 void CHoloCirclePanel::InputUnlock( inputdata_t &inputdata )
 {
 	_locked = false;
+}
+
+//-----------------------------------------------------------------------------
+// Updates the rotation of the animation.
+//-----------------------------------------------------------------------------
+void CHoloCirclePanel::RotateThink()
+{
+	QAngle angle = _animation->GetAbsAngles();
+
+	// Rotate 90 degrees every second.
+	angle[ROLL] -= gpGlobals->frametime * 90.0f;
+
+	// Ensure the angle stays within the range [0, 360].
+	if( angle[ROLL] < 0 )
+	{
+		angle[ROLL] = 360.0f + angle[ROLL];
+	}
+
+	_animation->SetAbsAngles( angle );
+
+	SetNextThink( gpGlobals->curtime + gpGlobals->frametime );
 }

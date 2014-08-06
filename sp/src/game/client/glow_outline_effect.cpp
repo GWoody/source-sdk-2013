@@ -328,4 +328,15 @@ void CGlowObjectManager::GlowObjectDefinition_t::DrawModel()
 	}
 }
 
+#ifdef HOLODECK
+bool CGlowObjectManager::GlowObjectDefinition_t::ShouldDraw( int nSlot ) const
+{
+	return m_hEntity.Get() && 
+			( m_nSplitScreenSlot == GLOW_FOR_ALL_SPLIT_SCREEN_SLOTS || m_nSplitScreenSlot == nSlot ) && 
+			( m_bRenderWhenOccluded || m_bRenderWhenUnoccluded ) && 
+			m_hEntity->ShouldDraw() && 
+			!m_hEntity->IsDormant();
+}
+#endif
+
 #endif // GLOWS_ENABLE

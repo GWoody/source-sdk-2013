@@ -1,0 +1,4 @@
+nolod 1
+nocompress 1
+clamps 1
+clampt 1
