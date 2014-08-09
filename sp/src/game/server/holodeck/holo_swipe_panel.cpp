@@ -133,7 +133,6 @@ bool CHoloSwipePanel::PassesTriggerFilters( CBaseEntity *pOther )
 	{
 		const float TOLERANCE = 33.0f;
 		float delta = ActivationDirectionDelta( swipe.direction );
-		Msg( "%f\n", delta );
 
 		if( delta > TOLERANCE && delta < 180.0f - TOLERANCE )
 		{

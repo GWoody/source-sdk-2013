@@ -617,6 +617,10 @@ protected:
 	CUtlVector<CHandle<C_EconWearable > >	m_hMyWearables;
 #endif
 
+#ifdef HOLODECK
+	EHANDLE			m_hHand;
+#endif
+
 private:
 
 	struct StepSoundCache_t

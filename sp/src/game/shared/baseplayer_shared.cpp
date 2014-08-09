@@ -1067,12 +1067,23 @@ float IntervalDistance( float x, float x0, float x1 )
 
 CBaseEntity *CBasePlayer::FindUseEntity()
 {
+#ifdef GAME_DLL
+
+#ifndef HOLODECK
 	Vector forward, up;
 	EyeVectors( &forward, NULL, &up );
 
 	trace_t tr;
 	// Search for objects in a sphere (tests for entities that are not solid, yet still useable)
 	Vector searchCenter = EyePosition();
+#else
+	Vector forward = m_hHand->GetFrame()._hand.direction;
+	Vector up = -m_hHand->GetFrame()._hand.normal;
+
+	trace_t tr;
+	// Search for objects in a sphere (tests for entities that are not solid, yet still useable)
+	Vector searchCenter = m_hHand->GetAbsOrigin();
+#endif
 
 	// NOTE: Some debris objects are useable too, so hit those as well
 	// A button, etc. can be made out of clip brushes, make sure it's +useable via a traceline, too.
@@ -1267,6 +1278,10 @@ CBaseEntity *CBasePlayer::FindUseEntity()
 	}
 
 	return pNearest;
+#else
+	Assert( 0 );
+	return NULL;
+#endif
 }
 
 //-----------------------------------------------------------------------------

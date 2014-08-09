@@ -456,6 +456,9 @@ BEGIN_DATADESC( CBasePlayer )
 
 	DEFINE_FIELD( m_nNumCrateHudHints, FIELD_INTEGER ),
 
+#ifdef HOLODECK
+	DEFINE_FIELD( m_hHand, FIELD_EHANDLE ),
+#endif
 
 
 	// DEFINE_FIELD( m_nBodyPitchPoseParam, FIELD_INTEGER ),
@@ -3472,8 +3475,7 @@ void CBasePlayer::ProcessUsercmds( CUserCmd *cmds, int numcmds, int totalcmds,
 	ctx->paused				= paused;
 
 #ifdef HOLODECK
-	CHoloHand *pHand = (CHoloHand *)m_hHandEntity.Get();
-	pHand->ProcessFrame( finalHoloFrame );
+	m_hHand->ProcessFrame( finalHoloFrame );
 #endif
 		
 	// If the server is paused, zero out motion,buttons,view changes
@@ -5076,11 +5078,11 @@ void CBasePlayer::Spawn( void )
 	m_weaponFiredTimer.Invalidate();
 
 #ifdef HOLODECK
-	CBaseEntity *pHand = CreateEntityByName( "holo_hand" );
+	CHoloHand *pHand = dynamic_cast<CHoloHand *>( CreateEntityByName( "holo_hand" ) );
 	Assert( pHand );
 	pHand->Spawn();
 	pHand->SetOwnerEntity( this );
-	m_hHandEntity.Set( pHand );
+	m_hHand.Set( pHand );
 #endif
 }
 
@@ -8044,6 +8046,10 @@ void SendProxy_CropFlagsToPlayerFlagBitsLength( const SendProp *pProp, const voi
 
 		// Data that only gets sent to the local player.
 		SendPropDataTable( "localdata", 0, &REFERENCE_SEND_TABLE(DT_LocalPlayerExclusive), SendProxy_SendLocalDataTable ),
+
+#ifdef HOLODECK
+		SendPropEHandle	( SENDINFO(m_hHand) ),
+#endif
 
 	END_SEND_TABLE()
 

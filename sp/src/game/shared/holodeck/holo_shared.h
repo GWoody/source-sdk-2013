@@ -100,13 +100,14 @@ namespace holo
 #ifdef CLIENT_DLL
 					SHand( const Leap::Hand &h );
 		void		FromLeap( const Leap::Hand &h );
+		void		BuildFingers( const Leap::Hand &h );
 #endif
 
 		int			id;
 		float		confidence;
-		Vector		palmPosition;
-		Vector		palmVelocity;
-		Vector		palmNormal;
+		Vector		direction, normal;
+		Vector		position;
+		Vector		velocity;
 		SFinger		fingers[EFinger::FINGER_COUNT];
 	};
 
@@ -229,15 +230,6 @@ namespace holo
 
 	std::istream &operator>>( std::istream &ss, SFrame &f );
 	std::ostream &operator<<( std::ostream &ss, const SFrame &f );
-
-//=============================================================================
-// Code
-//=============================================================================
-#ifdef CLIENT_DLL
-	Vector			LeapToHoloCoordinates( const Leap::Vector &v );
-	EFinger			LeapToHoloFingerCode( const Leap::Finger::Type &finger );
-	float			LeapToHoloDistance( float distance );
-#endif
 	
 }
 

@@ -138,6 +138,8 @@ bool CHoloCirclePanel::PassesTriggerFilters( CBaseEntity *pOther )
 	CHoloHand *pHand = (CHoloHand *)pOther;
 	const SFrame &frame = pHand->GetFrame();
 
+	pHand->DebugStartTouch();
+
 	// Obviously the circle gesture must be active for the trigger for fire.
 	if( !frame.IsGestureActive( EGesture::GESTURE_CIRCLE ) )
 	{
@@ -168,8 +170,6 @@ void CHoloCirclePanel::Touch( CBaseEntity *pOther )
 	CHoloHand *pHand = (CHoloHand *)pOther;
 	const SFrame &frame = pHand->GetFrame();
 	const SCircleGesture &circle = frame._circle;
-
-	pHand->DebugStartTouch();
 
 	if( circle.duration >= _useTime )
 	{

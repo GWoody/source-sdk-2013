@@ -15,6 +15,15 @@ using namespace holo;
 
 static ConVar holo_arm_length( "holo_arm_length", "650", FCVAR_ARCHIVE, "Users arm length in mm" );
 
+//===============================================================================
+// Leap -> Source conversion.
+//===============================================================================
+#ifdef CLIENT_DLL
+	Vector			LeapToSourceVector( const Leap::Vector &v, bool transform = false );
+	EFinger			LeapToSourceFingerCode( const Leap::Finger::Type &finger );
+	float			LeapToSourceDistance( float distance );
+#endif
+
 //-----------------------------------------------------------------------------
 // Reads a Source vector from a stream.
 //-----------------------------------------------------------------------------
@@ -111,27 +120,34 @@ const char *EGlobalsToString( EGlobals global )
 
 //----------------------------------------------------------------------------
 // Contains the code necessary to convert a Leap Motion Vector into Valve Vector.
+// 
+// Set `transform` to `true` when dealing with position vectors, `false` for
+// other vectors (normal, velocity, direction, etc).
 //----------------------------------------------------------------------------
-Vector holo::LeapToHoloCoordinates( const Leap::Vector &v )
+Vector LeapToSourceVector( const Leap::Vector &v, bool transform /*= false*/ )
 {
+	Leap::Vector transformed = v;
 	Vector ov;
 
-	// Set the origin of the Leap space to be 20cm above, and 50cm behind the device.
-	Leap::Vector translated = v + Leap::Vector( 0, -200, -holo_arm_length.GetInt() );
+	if( transform )
+	{
+		// Set the origin of the Leap space to be 20cm above, and 50cm behind the device.
+		transformed += Leap::Vector( 0, -200, -holo_arm_length.GetInt() );
+	}
 
 	// Source uses	{ forward, left, up }.
 	// Leap uses	{ right, up, back }.
-	ov.x = -translated.z;
-	ov.y = -translated.x;
-	ov.z = translated.y;
+	ov.x = -transformed.z;
+	ov.y = -transformed.x;
+	ov.z = transformed.y;
 
-	ov.x = LeapToHoloDistance( ov.x );
-	ov.y = LeapToHoloDistance( ov.y );
-	ov.z = LeapToHoloDistance( ov.z );
+	ov.x = LeapToSourceDistance( ov.x );
+	ov.y = LeapToSourceDistance( ov.y );
+	ov.z = LeapToSourceDistance( ov.z );
 	return ov;
 }
 
-float holo::LeapToHoloDistance( float distance )
+float LeapToSourceDistance( float distance )
 {
 	// Leap uses millimeters, Source uses inches.
 	// The player is 72 units tall, which is estimated to be [5ft 10in]\[1.778m].
@@ -140,7 +156,7 @@ float holo::LeapToHoloDistance( float distance )
 	return distance * scaleFactor;
 }
 
-EFinger holo::LeapToHoloFingerCode( const Leap::Finger::Type &finger )
+EFinger LeapToSourceFingerCode( const Leap::Finger::Type &finger )
 {
 	switch( finger )
 	{
@@ -183,14 +199,13 @@ SBone::SBone()
 
 SBone::SBone(const Leap::Bone &b)
 {
-	FromLeap(b);
+	FromLeap( b );
 }
 
 void SBone::FromLeap(const Leap::Bone &b)
 {
-
-	nextJoint = LeapToHoloCoordinates(b.nextJoint());
-	prevJoint = LeapToHoloCoordinates(b.prevJoint());
+	nextJoint = LeapToSourceVector( b.nextJoint(), true );
+	prevJoint = LeapToSourceVector( b.prevJoint(), true );
 }
 
 #endif
@@ -209,8 +224,6 @@ std::ostream &operator<<(std::ostream &ss, const SBone &b)
 	return ss;
 
 }
-
-
 
 //=============================================================================
 // SFinger implementation.
@@ -231,11 +244,13 @@ SFinger::SFinger( const Leap::Finger &f )
 void SFinger::FromLeap( const Leap::Finger &f )
 {
 	id = f.id();
-	direction = LeapToHoloCoordinates( f.direction() );
-	tipPosition = LeapToHoloCoordinates( f.tipPosition() );
-	tipVelocity = LeapToHoloCoordinates( f.tipVelocity() );
-	width = f.width();
-	length = f.length();
+	direction = LeapToSourceVector( f.direction() );
+	tipPosition = LeapToSourceVector( f.tipPosition(), true );
+	tipVelocity = LeapToSourceVector( f.tipVelocity() );
+	width = LeapToSourceDistance( f.width() );
+	length = LeapToSourceDistance( f.length() );
+
+	direction.NormalizeInPlace();
 }
 #endif
 
@@ -258,7 +273,7 @@ SHand::SHand()
 {
 	id = INVALID_INDEX;
 	confidence = 0.0f;
-	palmPosition = palmVelocity = palmNormal = vec3_origin;
+	direction = position = velocity = normal = vec3_origin;
 }
 
 #ifdef CLIENT_DLL
@@ -269,26 +284,33 @@ SHand::SHand( const Leap::Hand &h )
 
 void SHand::FromLeap( const Leap::Hand &h )
 {
-	// Read all fingers.
+	BuildFingers( h );
+
+	id = h.id();
+	confidence = h.confidence();
+	velocity = LeapToSourceVector( h.palmVelocity() );
+	normal = LeapToSourceVector( h.palmNormal() );
+	direction = LeapToSourceVector( h.direction() );
+	position = LeapToSourceVector( h.palmPosition(), true );
+
+	normal.NormalizeInPlace();
+	direction.NormalizeInPlace();
+}
+
+void SHand::BuildFingers( const Leap::Hand &h )
+{
 	const Leap::FingerList &fingerlist = h.fingers();
 	for each( const Leap::Finger &f in fingerlist )
 	{
-		EFinger idx = LeapToHoloFingerCode( f.type() );
+		EFinger idx = LeapToSourceFingerCode( f.type() );
 		fingers[idx].FromLeap( f );
 	}
-
-	// Read hand.
-	id = h.id();
-	confidence = h.confidence();
-	palmPosition = LeapToHoloCoordinates( h.palmPosition() );
-	palmVelocity = LeapToHoloCoordinates( h.palmVelocity() );
-	palmNormal = LeapToHoloCoordinates( h.palmNormal() );
 }
 #endif
 
 istream &holo::operator>>( istream &ss, SHand &h )
 {
-	ss >> h.id >> h.confidence >> h.palmPosition >> h.palmVelocity >> h.palmNormal;
+	ss >> h.id >> h.confidence >> h.position >> h.velocity >> h.normal >> h.direction;
 
 	for( int i = 0; i < EFinger::FINGER_COUNT; i++ )
 	{
@@ -300,7 +322,7 @@ istream &holo::operator>>( istream &ss, SHand &h )
 
 ostream &holo::operator<<( ostream &ss, const SHand &h )
 {
-	ss << " " << h.id << " " << h.confidence << " " << h.palmPosition << " " << h.palmVelocity << " " << h.palmNormal;
+	ss << " " << h.id << " " << h.confidence << " " << h.position << " " << h.velocity << " " << h.normal << " " << h.direction;
 
 	for( int i = 0; i < EFinger::FINGER_COUNT; i++ )
 	{
@@ -332,9 +354,9 @@ void SCircleGesture::FromLeap( const Leap::CircleGesture &c )
 
 	handId = hands[0].id();
 	fingerId = c.pointable().id();
-	radius = LeapToHoloDistance( c.radius() );
-	center = LeapToHoloCoordinates( c.center() );
-	normal = LeapToHoloCoordinates( c.normal() );
+	radius = LeapToSourceDistance( c.radius() );
+	center = LeapToSourceVector( c.center(), true );
+	normal = LeapToSourceVector( c.normal() );
 	duration = c.durationSeconds();
 
 	// According to the Leap SDK:
@@ -382,9 +404,9 @@ void SSwipeGesture::FromLeap( const Leap::SwipeGesture &s )
 
 	handId = hands[0].id();
 	speed = s.speed();
-	direction = LeapToHoloCoordinates( s.direction() );
-	curPosition = LeapToHoloCoordinates( s.position() );
-	startPosition = LeapToHoloCoordinates( s.startPosition() );
+	direction = LeapToSourceVector( s.direction() );
+	curPosition = LeapToSourceVector( s.position(), true );
+	startPosition = LeapToSourceVector( s.startPosition(), true );
 }
 #endif
 
@@ -426,8 +448,8 @@ void STapGesture::FromLeap( const Leap::KeyTapGesture &k )
 
 	handId = hands[0].id();
 	fingerId = k.pointable().id();
-	direction = LeapToHoloCoordinates( k.direction() );
-	position = LeapToHoloCoordinates( k.position() );
+	direction = LeapToSourceVector( k.direction() );
+	position = LeapToSourceVector( k.position(), true );
 }
 
 void STapGesture::FromLeap( const Leap::ScreenTapGesture &s )
@@ -436,8 +458,8 @@ void STapGesture::FromLeap( const Leap::ScreenTapGesture &s )
 
 	handId = hands[0].id();
 	fingerId = s.pointable().id();
-	direction = LeapToHoloCoordinates( s.direction() );
-	position = LeapToHoloCoordinates( s.position() );
+	direction = LeapToSourceVector( s.direction() );
+	position = LeapToSourceVector( s.position(), true );
 }
 #endif
 
@@ -472,9 +494,9 @@ SBallGesture::SBallGesture( const Leap::Hand &h )
 void SBallGesture::FromLeap( const Leap::Hand &h )
 {
 	handId = h.id();
-	radius = LeapToHoloDistance( h.sphereRadius() );
+	radius = LeapToSourceDistance( h.sphereRadius() );
 	grabStrength = h.grabStrength();
-	center = LeapToHoloCoordinates( h.sphereCenter() );
+	center = LeapToSourceVector( h.sphereCenter(), true );
 }
 #endif
 
@@ -542,18 +564,8 @@ void SFrame::FromLeap( const Leap::Frame &f )
 
 	if (!hands.isEmpty())
 	{
-		// Holodeck only needs to support a single hand for now.
-#if 0
-		for ( Leap::HandList::const_iterator it = hands.begin(); it != hands.end(); it++ )
-		{
-			const Leap::Hand &hand = *it;
-#else
-		{
-			const Leap::Hand &hand = hands[0];
-#endif
-			_hand = SHand( hand );
-			_ball = SBallGesture( hand );
-		}
+		_hand = SHand( hands[0] );
+		_ball = SBallGesture( hands[0] );
 	}
 }
 #endif
@@ -616,7 +628,7 @@ void SFrame::ApplyTranslation( const Vector &offset )
 {
 	_ball.center += offset;
 	_circle.center += offset;
-	_hand.palmPosition += offset;
+	_hand.position += offset;
 	_swipe.curPosition += offset;
 	_swipe.startPosition += offset;
 	_tap.position += offset;
@@ -639,7 +651,10 @@ void SFrame::ApplyRotation( CBaseCombatCharacter *entity )
 	// Height can be left alone.
 	VectorYawRotate( _ball.center, yawAngle, _ball.center );
 	VectorYawRotate( _circle.center, yawAngle, _circle.center );
-	VectorYawRotate( _hand.palmPosition, yawAngle, _hand.palmPosition );
+	VectorYawRotate( _circle.normal, yawAngle, _circle.normal );
+	VectorYawRotate( _hand.position, yawAngle, _hand.position );
+	VectorYawRotate( _hand.normal, yawAngle, _hand.normal );
+	VectorYawRotate( _hand.direction, yawAngle, _hand.direction );
 	VectorYawRotate( _swipe.direction, yawAngle, _swipe.direction );
 	VectorYawRotate( _swipe.curPosition, yawAngle, _swipe.curPosition );
 	VectorYawRotate( _swipe.startPosition, yawAngle, _swipe.startPosition );
