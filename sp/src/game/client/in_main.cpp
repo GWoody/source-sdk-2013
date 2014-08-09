@@ -1286,7 +1286,7 @@ void CInput::CreateMove ( int sequence_number, float input_sample_frametime, boo
 #endif
 
 #ifdef HOLODECK
-	CLeapMotion::get().CreateMove( cmd );
+	CLeapMotion::Get().CreateMove( cmd );
 
 	if( CDirectInput::Enabled() )
 	{
@@ -1687,7 +1687,7 @@ void CInput::Init_All (void)
 	Init_Camera();
 
 #ifdef HOLODECK
-	CLeapMotion::create();
+	CLeapMotion::Create();
 
 	if( CDirectInput::Enabled() )
 	{
@@ -1714,7 +1714,7 @@ void CInput::Shutdown_All(void)
 	m_pVerifiedCommands = NULL;
 
 #ifdef HOLODECK
-	CLeapMotion::destroy();
+	CLeapMotion::Destroy();
 
 	if( CDirectInput::Enabled() )
 	{

@@ -496,7 +496,6 @@ ostream &holo::operator<<( ostream &ss, const SBallGesture &b )
 SFrame::SFrame()
 {
 	_gestureBits = 0;
-	_marked = false;
 }
 
 #ifdef CLIENT_DLL
@@ -559,8 +558,52 @@ void SFrame::FromLeap( const Leap::Frame &f )
 }
 #endif
 
+void SFrame::ToBitBuffer( bf_write *buf ) const
+{
+	buf->WriteBytes( &_hand, sizeof(_hand) );
+	buf->WriteBytes( &_ball, sizeof(_ball) );
+	buf->WriteVarInt32( _gestureBits );
+
+	if( IsGestureActive( GESTURE_CIRCLE ) )
+	{
+		buf->WriteBytes( &_circle, sizeof(_circle) );
+	}
+
+	if( IsGestureActive( GESTURE_SWIPE ) )
+	{
+		buf->WriteBytes( &_swipe, sizeof(_swipe) );
+	}
+
+	if( IsGestureActive( GESTURE_TAP ) )
+	{
+		buf->WriteBytes( &_tap, sizeof(_tap) );
+	}
+}
+
+void SFrame::FromBitBuffer( bf_read *buf )
+{
+	buf->ReadBytes( &_hand, sizeof(_hand) );
+	buf->ReadBytes( &_ball, sizeof(_ball) );
+	_gestureBits = buf->ReadVarInt32();
+
+	if( IsGestureActive( GESTURE_CIRCLE ) )
+	{
+		buf->ReadBytes( &_circle, sizeof(_circle) );
+	}
+
+	if( IsGestureActive( GESTURE_SWIPE ) )
+	{
+		buf->ReadBytes( &_swipe, sizeof(_swipe) );
+	}
+
+	if( IsGestureActive( GESTURE_TAP ) )
+	{
+		buf->ReadBytes( &_tap, sizeof(_tap) );
+	}
+}
+
 #ifdef GAME_DLL
-// Translates the frame data to be positioned relative to the given entity.
+// Transforms the frame data to be positioned relative to the given entity.
 void SFrame::ToEntitySpace( CBaseCombatCharacter *entity, const Vector &delta )
 {
 	ApplyRotation( entity );

@@ -56,13 +56,11 @@ namespace holo
 //=============================================================================
 	//-------------------------------------------------------------------------
 	//-------------------------------------------------------------------------
-
-
 	struct SBone
 	{
-		SBone();
+					SBone();
 #ifdef CLIENT_DLL
-		SBone(const Leap::Bone &b);
+					SBone(const Leap::Bone &b);
 		void		FromLeap(const Leap::Bone &b);
 #endif
 
@@ -76,8 +74,6 @@ namespace holo
 
 	//-------------------------------------------------------------------------
 	//-------------------------------------------------------------------------
-
-
 	struct SFinger
 	{
 					SFinger();
@@ -205,8 +201,8 @@ namespace holo
 		void			FromLeap( const Leap::Frame &f );
 #endif
 
-		void			Mark()				{ _marked = true; }
-		bool			IsMarked()			{ return _marked; }
+		void			ToBitBuffer( bf_write *buf ) const;
+		void			FromBitBuffer( bf_read *buf );
 
 		bool			IsGestureActive( EGesture gesture ) const	{ return ( _gestureBits & ( 1 << gesture ) ) != 0; }
 		void			SetGestureActive( EGesture gesture )		{ _gestureBits |= ( 1 << gesture ); }
@@ -229,7 +225,6 @@ namespace holo
 #endif
 
 		int				_gestureBits;
-		bool			_marked;
 	};
 
 	std::istream &operator>>( std::istream &ss, SFrame &f );

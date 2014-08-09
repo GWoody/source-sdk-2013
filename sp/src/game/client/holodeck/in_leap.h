@@ -28,12 +28,10 @@ class CLeapMotionListener;
 struct SFrameQueue
 {
 public:
-	void			pushOnToQueue( const holo::SFrame &frame );
-	holo::SFrame	popOffQueue();
-	holo::SFrame 	peek();
-	bool			isEmpty();
-
-	void			markLast()	{ _frameQueue.back().Mark(); }
+	void			Push( const holo::SFrame &frame );
+	holo::SFrame	Pop();
+	holo::SFrame 	Peek();
+	bool			IsEmpty();
 
 private:
 	std::queue<holo::SFrame>	_frameQueue;
@@ -47,12 +45,12 @@ class CLeapMotion
 {
 public:
 	// Singleton methods.
-	static CLeapMotion &	get()		{ return *_instance; }
-	static void		create()			{ _instance = new CLeapMotion; }
-	static void		destroy()			{ delete _instance; }
+	static CLeapMotion &	Get()		{ return *_instance; }
+	static void		Create()			{ _instance = new CLeapMotion; }
+	static void		Destroy()			{ delete _instance; }
 
 	// Accessors.
-	SFrameQueue &	getQueue()			{ return *_queue; }
+	SFrameQueue &	GetQueue()			{ return *_queue; }
 
 	void			CreateMove( CUserCmd *cmd );
 

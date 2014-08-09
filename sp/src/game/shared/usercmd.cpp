@@ -189,7 +189,7 @@ void WriteUsercmd( bf_write *buf, const CUserCmd *to, const CUserCmd *from )
 #endif
 
 #ifdef HOLODECK
-	buf->WriteBytes( &to->holo_frame, sizeof(to->holo_frame) );
+	to->holo_frame.ToBitBuffer( buf );
 #endif
 }
 
@@ -309,6 +309,6 @@ void ReadUsercmd( bf_read *buf, CUserCmd *move, CUserCmd *from )
 #endif
 
 #ifdef HOLODECK
-	buf->ReadBytes( &move->holo_frame, sizeof(move->holo_frame) );
+	move->holo_frame.FromBitBuffer( buf );
 #endif
 }
