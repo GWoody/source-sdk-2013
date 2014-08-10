@@ -117,14 +117,14 @@ bool CHoloSwipePanel::PassesTriggerFilters( CBaseEntity *pOther )
 	}
 
 	CHoloHand *pHand = (CHoloHand *)pOther;
-	const SFrame &frame = pHand->GetFrame();
+	const CFrame &frame = pHand->GetFrame();
 
 	if( !frame.IsGestureActive( EGesture::GESTURE_SWIPE ) )
 	{
 		return false;
 	}
 
-	const SSwipeGesture &swipe = frame._swipe;
+	const CSwipeGesture &swipe = frame._swipe;
 
 	//
 	// Delta must be within the range (0 ± TOLERANCE) degrees OR the range
@@ -159,8 +159,8 @@ void CHoloSwipePanel::Touch( CBaseEntity *pOther )
 
 	CBasePlayer *pPlayer = UTIL_GetLocalPlayer();
 	CHoloHand *pHand = (CHoloHand *)pOther;
-	const SFrame &frame = pHand->GetFrame();
-	const SSwipeGesture &swipe = frame._swipe;
+	const CFrame &frame = pHand->GetFrame();
+	const CSwipeGesture &swipe = frame._swipe;
 
 	pHand->DebugStartTouch();
 

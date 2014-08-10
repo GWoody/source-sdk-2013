@@ -3430,7 +3430,7 @@ void CBasePlayer::ProcessUsercmds( CUserCmd *cmds, int numcmds, int totalcmds,
 	Assert( ctx );
 
 #ifdef HOLODECK
-	holo::SFrame finalHoloFrame;
+	holo::CFrame finalHoloFrame;
 #endif
 
 	int i;
@@ -3446,7 +3446,7 @@ void CBasePlayer::ProcessUsercmds( CUserCmd *cmds, int numcmds, int totalcmds,
 
 #ifdef HOLODECK
 		// Take the newest version of all frame attributes.
-		const holo::SFrame &curframe = pCmd->holo_frame;
+		const holo::CFrame &curframe = pCmd->holo_frame;
 		if( curframe.IsGestureActive( holo::EGesture::GESTURE_CIRCLE ) )
 		{
 			finalHoloFrame._circle = curframe._circle;

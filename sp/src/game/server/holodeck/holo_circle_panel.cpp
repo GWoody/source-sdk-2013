@@ -136,7 +136,7 @@ bool CHoloCirclePanel::PassesTriggerFilters( CBaseEntity *pOther )
 	}
 
 	CHoloHand *pHand = (CHoloHand *)pOther;
-	const SFrame &frame = pHand->GetFrame();
+	const CFrame &frame = pHand->GetFrame();
 
 	pHand->DebugStartTouch();
 
@@ -147,7 +147,7 @@ bool CHoloCirclePanel::PassesTriggerFilters( CBaseEntity *pOther )
 	}
 
 	// Ensure the circle gesture is going the correct direction to trigger.
-	const SCircleGesture &circle = frame._circle;
+	const CCircleGesture &circle = frame._circle;
 	bool panelRequiresClockwise = ( _isOpen != _openCW );
 	if( circle.clockwise != panelRequiresClockwise )
 	{
@@ -168,8 +168,8 @@ void CHoloCirclePanel::Touch( CBaseEntity *pOther )
 
 	CBasePlayer *pPlayer = UTIL_GetLocalPlayer();
 	CHoloHand *pHand = (CHoloHand *)pOther;
-	const SFrame &frame = pHand->GetFrame();
-	const SCircleGesture &circle = frame._circle;
+	const CFrame &frame = pHand->GetFrame();
+	const CCircleGesture &circle = frame._circle;
 
 	if( circle.duration >= _useTime )
 	{

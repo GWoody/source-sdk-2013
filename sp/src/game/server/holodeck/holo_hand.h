@@ -29,12 +29,12 @@ public:
 	virtual	bool	CreateVPhysics();
 
 	// Accessors.
-	const holo::SFinger &	GetFinger( holo::EFinger finger ) const;
-	const holo::SHand &	GetHand() const;
-	const holo::SFrame &	GetFrame() const;
+	const holo::CFinger &	GetFinger( holo::EFinger finger ) const;
+	const holo::CHand &	GetHand() const;
+	const holo::CFrame &	GetFrame() const;
 
 	// Frame processing.
-	void			ProcessFrame( const holo::SFrame &frame );
+	void			ProcessFrame( const holo::CFrame &frame );
 
 	void			DebugStartTouch();
 	void			DebugEndTouch();
@@ -43,11 +43,11 @@ private:
 	void			RenderDebugHand();
 
 	// Frame processing.
-	bool			IsValidFrame( const holo::SFrame &frame );
+	bool			IsValidFrame( const holo::CFrame &frame );
 
 	Vector			GetOriginOffset() const;
 
-	holo::SFrame	_curFrame;
+	holo::CFrame	_curFrame;
 	int				_activeGestures;
 };
 

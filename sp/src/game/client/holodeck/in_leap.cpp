@@ -20,7 +20,7 @@ CLeapMotion *CLeapMotion::_instance;
 //----------------------------------------------------------------------------
 // Contains the code necessary to push a string onto an STL defined queue.
 //----------------------------------------------------------------------------
-void SFrameQueue::Push( const SFrame &frame )
+void SFrameQueue::Push( const CFrame &frame )
 {
 	_mutex.Lock();
 		// Disregard frames older than 1 second (Leap Motion samples at 60 frames per second).
@@ -36,9 +36,9 @@ void SFrameQueue::Push( const SFrame &frame )
 //----------------------------------------------------------------------------
 // Contains the code necessary to pop off a string in a STL defined queue.
 //----------------------------------------------------------------------------
-SFrame SFrameQueue::Pop()
+CFrame SFrameQueue::Pop()
 {
-	SFrame frame;
+	CFrame frame;
 
 	_mutex.Lock();
 		if( !_frameQueue.empty() )
@@ -54,9 +54,9 @@ SFrame SFrameQueue::Pop()
 //----------------------------------------------------------------------------
 // Provides a preview of the top frame in the queue.
 //----------------------------------------------------------------------------
-SFrame SFrameQueue::Peek()
+CFrame SFrameQueue::Peek()
 {
-	SFrame frame;
+	CFrame frame;
 
 	_mutex.Lock();
 		if( !_frameQueue.empty() )
@@ -112,13 +112,13 @@ void CLeapMotion::CreateMove( CUserCmd *cmd )
 
 //----------------------------------------------------------------------------
 //----------------------------------------------------------------------------
-SFrame CLeapMotion::BuildFinalFrame()
+CFrame CLeapMotion::BuildFinalFrame()
 {
-	SFrame finalFrame;
+	CFrame finalFrame;
 
 	if( !_queue->IsEmpty() )
 	{
-		holo::SFrame curframe;
+		holo::CFrame curframe;
 
 		while( !_queue->IsEmpty() )
 		{
@@ -198,7 +198,7 @@ void CLeapMotionListener::onConnect( const Leap::Controller &controller )
 void CLeapMotionListener::onFrame( const Leap::Controller &controller )
 {
 	const Leap::Frame &frame = controller.frame();
-	SFrame newFrame( frame );
+	CFrame newFrame( frame );
 
 	// Add the constructed frame to the queue.
 	CLeapMotion::Get().GetQueue().Push( newFrame );

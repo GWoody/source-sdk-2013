@@ -167,7 +167,7 @@ public:
 #endif
 
 #ifdef HOLODECK
-	holo::SFrame holo_frame;
+	holo::CFrame holo_frame;
 #endif
 };
 

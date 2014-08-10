@@ -56,12 +56,12 @@ namespace holo
 //=============================================================================
 	//-------------------------------------------------------------------------
 	//-------------------------------------------------------------------------
-	struct SBone
+	struct CBone
 	{
-						SBone();
+						CBone();
 #ifdef CLIENT_DLL
-						SBone(const Leap::Bone &b);
-		void			FromLeap(const Leap::Bone &b);
+						CBone( const Leap::Bone &b );
+		void			FromLeap( const Leap::Bone &b );
 #endif
 
 		void			ToBitBuffer( bf_write *buf ) const;
@@ -75,11 +75,11 @@ namespace holo
 
 	//-------------------------------------------------------------------------
 	//-------------------------------------------------------------------------
-	struct SFinger
+	struct CFinger
 	{
-						SFinger();
+						CFinger();
 #ifdef CLIENT_DLL
-						SFinger( const Leap::Finger &f );
+						CFinger( const Leap::Finger &f );
 		void			FromLeap( const Leap::Finger &f );
 #endif
 
@@ -97,11 +97,11 @@ namespace holo
 
 	//-------------------------------------------------------------------------
 	//-------------------------------------------------------------------------
-	struct SHand
+	struct CHand
 	{
-						SHand();
+						CHand();
 #ifdef CLIENT_DLL
-						SHand( const Leap::Hand &h );
+						CHand( const Leap::Hand &h );
 		void			FromLeap( const Leap::Hand &h );
 		void			BuildFingers( const Leap::Hand &h );
 #endif
@@ -116,16 +116,16 @@ namespace holo
 		Vector			direction, normal;
 		Vector			position;
 		Vector			velocity;
-		SFinger			fingers[EFinger::FINGER_COUNT];
+		CFinger			fingers[EFinger::FINGER_COUNT];
 	};
 
 	//-------------------------------------------------------------------------
 	//-------------------------------------------------------------------------
-	struct SCircleGesture
+	struct CCircleGesture
 	{
-						SCircleGesture();
+						CCircleGesture();
 #ifdef CLIENT_DLL
-						SCircleGesture( const Leap::CircleGesture &c );
+						CCircleGesture( const Leap::CircleGesture &c );
 		void			FromLeap( const Leap::CircleGesture &c );
 #endif
 
@@ -142,11 +142,11 @@ namespace holo
 
 	//-------------------------------------------------------------------------
 	//-------------------------------------------------------------------------
-	struct SSwipeGesture
+	struct CSwipeGesture
 	{
-						SSwipeGesture();
+						CSwipeGesture();
 #ifdef CLIENT_DLL
-						SSwipeGesture( const Leap::SwipeGesture &s );
+						CSwipeGesture( const Leap::SwipeGesture &s );
 		void			FromLeap( const Leap::SwipeGesture &s );
 #endif
 
@@ -162,12 +162,12 @@ namespace holo
 
 	//-------------------------------------------------------------------------
 	//-------------------------------------------------------------------------
-	struct STapGesture
+	struct CTapGesture
 	{
-						STapGesture();
+						CTapGesture();
 #ifdef CLIENT_DLL
-						STapGesture( const Leap::KeyTapGesture &k );
-						STapGesture( const Leap::ScreenTapGesture &s );
+						CTapGesture( const Leap::KeyTapGesture &k );
+						CTapGesture( const Leap::ScreenTapGesture &s );
 		void			FromLeap( const Leap::KeyTapGesture &k );
 		void			FromLeap( const Leap::ScreenTapGesture &s );
 #endif
@@ -183,11 +183,11 @@ namespace holo
 
 	//-------------------------------------------------------------------------
 	//-------------------------------------------------------------------------
-	struct SBallGesture
+	struct CBallGesture
 	{
-						SBallGesture();
+						CBallGesture();
 #ifdef CLIENT_DLL
-						SBallGesture( const Leap::Hand &h );
+						CBallGesture( const Leap::Hand &h );
 		void			FromLeap( const Leap::Hand &h );
 #endif
 
@@ -204,11 +204,11 @@ namespace holo
 	//-------------------------------------------------------------------------
 	//-------------------------------------------------------------------------
 	// THIS IS NOT THREAD SAFE!!!
-	struct SFrame
+	struct CFrame
 	{
-						SFrame();
+						CFrame();
 #ifdef CLIENT_DLL
-						SFrame( const Leap::Frame &f );
+						CFrame( const Leap::Frame &f );
 		void			FromLeap( const Leap::Frame &f );
 #endif
 
@@ -223,11 +223,11 @@ namespace holo
 #endif
 
 		// Frame data.
-		SHand			_hand;
-		SBallGesture	_ball;
-		SCircleGesture	_circle;
-		SSwipeGesture	_swipe;
-		STapGesture		_tap;
+		CHand			_hand;
+		CBallGesture	_ball;
+		CCircleGesture	_circle;
+		CSwipeGesture	_swipe;
+		CTapGesture		_tap;
 
 	private:
 		int				_gestureBits;

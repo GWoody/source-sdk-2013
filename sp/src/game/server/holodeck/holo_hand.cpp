@@ -75,7 +75,7 @@ bool CHoloHand::CreateVPhysics()
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-const SFinger &CHoloHand::GetFinger( EFinger finger ) const
+const CFinger &CHoloHand::GetFinger( EFinger finger ) const
 {
 	Assert( finger >= 0 && finger < FINGER_COUNT );
 	return _curFrame._hand.fingers[finger];
@@ -83,21 +83,21 @@ const SFinger &CHoloHand::GetFinger( EFinger finger ) const
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-const SHand &CHoloHand::GetHand() const
+const CHand &CHoloHand::GetHand() const
 {
 	return _curFrame._hand;
 }
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-const SFrame &CHoloHand::GetFrame() const
+const CFrame &CHoloHand::GetFrame() const
 {
 	return _curFrame;
 }
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void CHoloHand::ProcessFrame( const SFrame &frame )
+void CHoloHand::ProcessFrame( const CFrame &frame )
 {
 	if( !IsValidFrame( frame ) )
 	{
@@ -108,7 +108,7 @@ void CHoloHand::ProcessFrame( const SFrame &frame )
 	Assert( owner );
 
 	// Move the hands into the correct position (relative to the player).
-	SFrame processedFrame = frame;
+	CFrame processedFrame = frame;
 	processedFrame.ToEntitySpace( owner, GetOriginOffset() );
 
 	// Save the frame for future use.
@@ -165,7 +165,7 @@ void CHoloHand::RenderDebugHand()
 	if( holo_render_debug_hand.GetInt() == 2 )
 	{
 		// Draw the ball gesture.
-		const SBallGesture &ball = _curFrame._ball;
+		const CBallGesture &ball = _curFrame._ball;
 		NDebugOverlay::Sphere( ball.center, ball.radius, 0, 0, 255, false, duration );
 	}
 
@@ -195,7 +195,7 @@ void CHoloHand::RenderDebugHand()
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-bool CHoloHand::IsValidFrame( const holo::SFrame &frame )
+bool CHoloHand::IsValidFrame( const holo::CFrame &frame )
 {
 	if( frame._hand.position.IsZero() )
 	{

@@ -140,7 +140,7 @@ bool CHoloButtonPanel::PassesTriggerFilters( CBaseEntity *pOther )
 
 	// Access required structures.
 	CHoloHand *pHand = (CHoloHand *)pOther;
-	const SFinger &pointer = pHand->GetFinger( FINGER_POINTER );
+	const CFinger &pointer = pHand->GetFinger( FINGER_POINTER );
 
 	const Vector normalizedDirection = pointer.direction.Normalized();
 	const Vector normalizedVelocity = pointer.tipVelocity.Normalized();
