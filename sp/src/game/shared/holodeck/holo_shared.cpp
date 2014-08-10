@@ -25,26 +25,6 @@ static ConVar holo_arm_length( "holo_arm_length", "650", FCVAR_ARCHIVE, "Users a
 #endif
 
 //-----------------------------------------------------------------------------
-// Reads a Source vector from a stream.
-//-----------------------------------------------------------------------------
-static inline istream &operator>>( istream &ss, Vector &v )
-{
-	ss >> v.x >> v.y >> v.z;
-	return ss;
-}
-
-//-----------------------------------------------------------------------------
-// Writes a Source vector to a stream.
-//-----------------------------------------------------------------------------
-static inline ostream &operator<<( ostream &ss, const Vector &v )
-{
-	ss << v.x << " "
-		<< v.y << " "
-		<< v.z;
-	return ss;
-}
-
-//-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 const char *EFingerToString( EFinger finger )
 {
@@ -227,20 +207,6 @@ void SBone::Transform( float yaw, const Vector &translation )
 	
 }
 
-std::istream &operator>>(std::istream &ss, SBone &b)
-{
-	ss >> b.nextJoint >> b.prevJoint;
-
-	return ss;
-}
-
-std::ostream &operator<<(std::ostream &ss, const SBone &b)
-{
-	ss << b.nextJoint << " " << b.prevJoint;
-
-	return ss;
-}
-
 //=============================================================================
 // SFinger implementation.
 //=============================================================================
@@ -298,18 +264,6 @@ void SFinger::Transform( float yaw, const Vector &translation )
 
 	// Apply translations.
 	tipPosition += translation;
-}
-
-istream &holo::operator>>( istream &ss, SFinger &f )
-{
-	ss >> f.id >> f.direction >> f.tipPosition >> f.tipVelocity >> f.width >> f.length;
-	return ss;
-}
-
-ostream &holo::operator<<( ostream &ss, const SFinger &f )
-{
-	ss << " " << f.id << " " << f.direction << " " << f.tipPosition << " " << f.tipVelocity << " " << f.width << " " << f.length;
-	return ss;
 }
 
 //=============================================================================
@@ -401,30 +355,6 @@ void SHand::Transform( float yaw, const Vector &translation )
 	}
 }
 
-istream &holo::operator>>( istream &ss, SHand &h )
-{
-	ss >> h.id >> h.confidence >> h.position >> h.velocity >> h.normal >> h.direction;
-
-	for( int i = 0; i < EFinger::FINGER_COUNT; i++ )
-	{
-		ss >> h.fingers[i];
-	}
-
-	return ss;
-}
-
-ostream &holo::operator<<( ostream &ss, const SHand &h )
-{
-	ss << " " << h.id << " " << h.confidence << " " << h.position << " " << h.velocity << " " << h.normal << " " << h.direction;
-
-	for( int i = 0; i < EFinger::FINGER_COUNT; i++ )
-	{
-		ss << h.fingers[i];
-	}
-
-	return ss;
-}
-
 //=============================================================================
 // SCircleGesture implementation.
 //=============================================================================
@@ -495,18 +425,6 @@ void SCircleGesture::Transform( float yaw, const Vector &translation )
 	center += translation;
 }
 
-istream &holo::operator>>( istream &ss, SCircleGesture &c )
-{
-	ss >> c.handId >> c.fingerId >> c.center >> c.normal >> c.radius >> c.duration >> c.clockwise;
-	return ss;
-}
-
-ostream &holo::operator<<( ostream &ss, const SCircleGesture &c )
-{
-	ss << c.handId << " " << c.fingerId << " " << c.center << " " << c.normal << " " << c.radius << " " << c.duration << " " << c.clockwise;
-	return ss;
-}
-
 //=============================================================================
 // SSwipeGesture implementation.
 //=============================================================================
@@ -563,18 +481,6 @@ void SSwipeGesture::Transform( float yaw, const Vector &translation )
 	// Apply translations.
 	curPosition += translation;
 	startPosition += translation;
-}
-
-istream &holo::operator>>( istream &ss, SSwipeGesture &s )
-{
-	ss >> s.handId >> s.speed >> s.direction >> s.startPosition >> s.curPosition;
-	return ss;
-}
-
-ostream &holo::operator<<( ostream &ss, const SSwipeGesture &s )
-{
-	ss << s.handId << " " << s.speed << " " << s.direction << " " << s.startPosition << " " << s.curPosition;
-	return ss;
 }
 
 //=============================================================================
@@ -644,18 +550,6 @@ void STapGesture::Transform( float yaw, const Vector &translation )
 	position += translation;
 }
 
-istream &holo::operator>>( istream &ss, STapGesture &t )
-{
-	ss >> t.handId >> t.fingerId >> t.direction >> t.position;
-	return ss;
-}
-
-ostream &holo::operator<<( ostream &ss, const STapGesture &t )
-{
-	ss << t.handId << " " << t.fingerId << " " << t.direction << " " << t.position;
-	return ss;
-}
-
 //=============================================================================
 // SBallGesture implementation.
 //=============================================================================
@@ -704,18 +598,6 @@ void SBallGesture::Transform( float yaw, const Vector &translation )
 
 	// Apply translations.
 	center += translation;
-}
-
-istream &holo::operator>>( istream &ss, SBallGesture &b )
-{
-	ss >> b.handId >> b.radius >> b.grabStrength >> b.center;
-	return ss;
-}
-
-ostream &holo::operator<<( ostream &ss, const SBallGesture &b )
-{
-	ss << b.handId << " " << b.radius << " " << b.grabStrength << " " << b.center;
-	return ss;
 }
 
 //=============================================================================
@@ -838,15 +720,3 @@ void SFrame::ToEntitySpace( CBaseCombatCharacter *entity, const Vector &delta )
 	_tap.Transform( yaw, translation );
 }
 #endif
-
-istream &holo::operator>>( istream &ss, SFrame &f )
-{
-	ss >> f._hand >> f._gestureBits >> f._ball >> f._circle >> f._swipe >> f._tap;
-	return ss;
-}
-
-ostream &holo::operator<<( ostream &ss, const SFrame &f )
-{
-	ss << " " << f._hand << " " << f._gestureBits << " " << f._ball << " " << f._circle << " " << f._swipe << " " << f._tap;
-	return ss;
-}

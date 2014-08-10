@@ -73,10 +73,6 @@ namespace holo
 		Vector			prevJoint;
 	};
 
-	std::istream &operator>>(std::istream &ss, SBone &b);
-	std::ostream &operator<<(std::ostream &ss, const SBone &b);
-
-
 	//-------------------------------------------------------------------------
 	//-------------------------------------------------------------------------
 	struct SFinger
@@ -98,9 +94,6 @@ namespace holo
 		Vector			tipVelocity;
 		float			width, length;
 	};
-
-	std::istream &operator>>( std::istream &ss, SFinger &f );
-	std::ostream &operator<<( std::ostream &ss, const SFinger &f );
 
 	//-------------------------------------------------------------------------
 	//-------------------------------------------------------------------------
@@ -126,9 +119,6 @@ namespace holo
 		SFinger			fingers[EFinger::FINGER_COUNT];
 	};
 
-	std::istream &operator>>( std::istream &ss, SHand &h );
-	std::ostream &operator<<( std::ostream &ss, const SHand &h );
-
 	//-------------------------------------------------------------------------
 	//-------------------------------------------------------------------------
 	struct SCircleGesture
@@ -150,9 +140,6 @@ namespace holo
 		bool			clockwise;
 	};
 
-	std::istream &operator>>( std::istream &ss, SCircleGesture &c );
-	std::ostream &operator<<( std::ostream &ss, const SCircleGesture &c );
-
 	//-------------------------------------------------------------------------
 	//-------------------------------------------------------------------------
 	struct SSwipeGesture
@@ -172,9 +159,6 @@ namespace holo
 		float			speed;
 		Vector			direction, curPosition, startPosition;
 	};
-
-	std::istream &operator>>( std::istream &ss, SSwipeGesture &s );
-	std::ostream &operator<<( std::ostream &ss, const SSwipeGesture &s );
 
 	//-------------------------------------------------------------------------
 	//-------------------------------------------------------------------------
@@ -197,9 +181,6 @@ namespace holo
 		Vector			direction, position;
 	};
 
-	std::istream &operator>>( std::istream &ss, STapGesture &t );
-	std::ostream &operator<<( std::ostream &ss, const STapGesture &t );
-
 	//-------------------------------------------------------------------------
 	//-------------------------------------------------------------------------
 	struct SBallGesture
@@ -220,17 +201,11 @@ namespace holo
 		Vector			center;
 	};
 
-	std::istream &operator>>( std::istream &ss, SBallGesture &b );
-	std::ostream &operator<<( std::ostream &ss, const SBallGesture &b );
-
 	//-------------------------------------------------------------------------
 	//-------------------------------------------------------------------------
 	// THIS IS NOT THREAD SAFE!!!
 	struct SFrame
 	{
-		friend std::istream &operator>>( std::istream &ss, SFrame &f );
-		friend std::ostream &operator<<( std::ostream &ss, const SFrame &f );
-
 						SFrame();
 #ifdef CLIENT_DLL
 						SFrame( const Leap::Frame &f );
@@ -257,9 +232,6 @@ namespace holo
 	private:
 		int				_gestureBits;
 	};
-
-	std::istream &operator>>( std::istream &ss, SFrame &f );
-	std::ostream &operator<<( std::ostream &ss, const SFrame &f );
 	
 }
 
