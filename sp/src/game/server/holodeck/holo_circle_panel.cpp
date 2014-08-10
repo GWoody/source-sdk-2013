@@ -147,9 +147,9 @@ bool CHoloCirclePanel::PassesTriggerFilters( CBaseEntity *pOther )
 	}
 
 	// Ensure the circle gesture is going the correct direction to trigger.
-	const CCircleGesture &circle = frame._circle;
+	const CCircleGesture &circle = frame.GetCircleGesture();
 	bool panelRequiresClockwise = ( _isOpen != _openCW );
-	if( circle.clockwise != panelRequiresClockwise )
+	if( circle.IsClockwise() != panelRequiresClockwise )
 	{
 		return false;
 	}
@@ -169,9 +169,9 @@ void CHoloCirclePanel::Touch( CBaseEntity *pOther )
 	CBasePlayer *pPlayer = UTIL_GetLocalPlayer();
 	CHoloHand *pHand = (CHoloHand *)pOther;
 	const CFrame &frame = pHand->GetFrame();
-	const CCircleGesture &circle = frame._circle;
+	const CCircleGesture &circle = frame.GetCircleGesture();
 
-	if( circle.duration >= _useTime )
+	if( circle.GetDuration() >= _useTime )
 	{
 		// The circle gesture has been made long enough.
 		// Fire the map event.

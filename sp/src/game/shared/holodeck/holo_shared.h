@@ -52,7 +52,7 @@ namespace holo
 	const char *EGlobalsToString( EGlobals global );
 
 //=============================================================================
-// Structures.
+// Classes.
 //=============================================================================
 	//-------------------------------------------------------------------------
 	//-------------------------------------------------------------------------
@@ -69,8 +69,15 @@ namespace holo
 
 		void			Transform( float yaw, const Vector &translation );
 
-		Vector			nextJoint;
-		Vector			prevJoint;
+		// Accessors.
+		inline const Vector &	GetNextJoint() const				{ return _nextJoint; }
+		inline const Vector &	GetPrevJoint() const				{ return _prevJoint; }
+		inline Vector	GetDirection() const						{ return ( _nextJoint - _prevJoint ).Normalized(); }
+		inline Vector	GetCenter() const							{ return ( _nextJoint + _prevJoint ) / 2; }
+
+	private:
+		Vector			_nextJoint;
+		Vector			_prevJoint;
 	};
 
 	//-------------------------------------------------------------------------
@@ -88,11 +95,20 @@ namespace holo
 
 		void			Transform( float yaw, const Vector &translation );
 
-		int				id;
-		Vector			direction;
-		Vector			tipPosition;
-		Vector			tipVelocity;
-		float			width, length;
+		// Accessors.
+		inline int		GetId() const								{ return _id; }
+		inline const Vector &	GetDirection() const				{ return _direction; }
+		inline const Vector &	GetTipPosition() const				{ return _tipPosition; }
+		inline const Vector &	GetTipVelocity() const				{ return _tipVelocity; }
+		inline float	GetWidth() const							{ return _width; }
+		inline float	GetLength() const							{ return _length; }
+
+	private:
+		int				_id;
+		Vector			_direction;
+		Vector			_tipPosition;
+		Vector			_tipVelocity;
+		float			_width, _length;
 	};
 
 	//-------------------------------------------------------------------------
@@ -111,12 +127,23 @@ namespace holo
 
 		void			Transform( float yaw, const Vector &translation );
 
-		int				id;
-		float			confidence;
-		Vector			direction, normal;
-		Vector			position;
-		Vector			velocity;
-		CFinger			fingers[EFinger::FINGER_COUNT];
+		// Accessors.
+		inline int		GetId() const								{ return _id; }
+		inline float	GetConfidence() const						{ return _confidence; }
+		inline const Vector &	GetDirection() const				{ return _direction; }
+		inline const Vector &	GetNormal() const					{ return _normal; }
+		inline const Vector &	GetPosition() const					{ return _position; }
+		inline const Vector &	GetVelocity() const					{ return _velocity; }
+		inline const CFinger &	GetFingerByType( EFinger f ) const	{ return _fingers[f]; }
+		inline const CFinger *	GetFingerById( int id ) const;
+
+	private:
+		int				_id;
+		float			_confidence;
+		Vector			_direction, _normal;
+		Vector			_position;
+		Vector			_velocity;
+		CFinger			_fingers[EFinger::FINGER_COUNT];
 	};
 
 	//-------------------------------------------------------------------------
@@ -134,10 +161,20 @@ namespace holo
 
 		void			Transform( float yaw, const Vector &translation );
 
-		int				handId, fingerId;
-		float			radius, duration;
-		Vector			center, normal;
-		bool			clockwise;
+		// Accessors.
+		inline int		GetHandId() const							{ return _handId; }
+		inline int		GetFingerId() const							{ return _fingerId; }
+		inline float	GetRadius() const							{ return _radius; }
+		inline float	GetDuration() const							{ return _duration; }
+		inline const Vector &	GetCenter() const					{ return _center; }
+		inline const Vector &	GetNormal() const					{ return _normal; }
+		inline bool		IsClockwise() const							{ return _clockwise; }
+
+	private:
+		int				_handId, _fingerId;
+		float			_radius, _duration;
+		Vector			_center, _normal;
+		bool			_clockwise;
 	};
 
 	//-------------------------------------------------------------------------
@@ -155,9 +192,17 @@ namespace holo
 
 		void			Transform( float yaw, const Vector &translation );
 
-		int				handId;
-		float			speed;
-		Vector			direction, curPosition, startPosition;
+		// Accessors.
+		inline int		GetHandId() const							{ return _handId; }
+		inline float	GetSpeed() const							{ return _speed; }
+		inline const Vector &	GetDirection() const				{ return _direction; }
+		inline const Vector &	GetCurrentPosition() const			{ return _curPosition; }
+		inline const Vector &	GetStartPosition() const			{ return _startPosition; }
+
+	private:
+		int				_handId;
+		float			_speed;
+		Vector			_direction, _curPosition, _startPosition;
 	};
 
 	//-------------------------------------------------------------------------
@@ -177,8 +222,15 @@ namespace holo
 
 		void			Transform( float yaw, const Vector &translation );
 
-		int				handId, fingerId;
-		Vector			direction, position;
+		// Accessors.
+		inline int		GetHandId() const							{ return _handId; }
+		inline int		GetFingerId() const							{ return _fingerId; }
+		inline const Vector &	GetDirection() const				{ return _direction; }
+		inline const Vector &	GetPosition() const					{ return _position; }
+
+	private:
+		int				_handId, _fingerId;
+		Vector			_direction, _position;
 	};
 
 	//-------------------------------------------------------------------------
@@ -196,14 +248,20 @@ namespace holo
 
 		void			Transform( float yaw, const Vector &translation );
 
-		int				handId;
-		float			radius, grabStrength;
-		Vector			center;
+		// Accessors.
+		inline int		GetHandId() const							{ return _handId; }
+		inline float	GetRadius() const							{ return _radius; }
+		inline float	GetGrabStrength() const						{ return _grabStrength; }
+		inline Vector	GetCenter() const							{ return _center; }
+
+	private:
+		int				_handId;
+		float			_radius, _grabStrength;
+		Vector			_center;
 	};
 
 	//-------------------------------------------------------------------------
 	//-------------------------------------------------------------------------
-	// THIS IS NOT THREAD SAFE!!!
 	struct CFrame
 	{
 						CFrame();
@@ -215,13 +273,29 @@ namespace holo
 		void			ToBitBuffer( bf_write *buf ) const;
 		void			FromBitBuffer( bf_read *buf );
 
-		bool			IsGestureActive( EGesture gesture ) const	{ return ( _gestureBits & ( 1 << gesture ) ) != 0; }
-		void			SetGestureActive( EGesture gesture )		{ _gestureBits |= ( 1 << gesture ); }
-
 #ifdef GAME_DLL
 		void			ToEntitySpace( CBaseCombatCharacter *entity, const Vector &delta );
 #endif
 
+		bool			IsGestureActive( EGesture gesture ) const	{ return ( _gestureBits & ( 1 << gesture ) ) != 0; }
+		void			SetGestureActive( EGesture gesture )		{ _gestureBits |= ( 1 << gesture ); }
+
+		// Frame data accessors.
+		inline const CHand &	GetHand() const						{ return _hand; }
+		inline const CHand *	GetHandById( int id ) const;
+		inline const CBallGesture &	GetBallGesture() const			{ return _ball; }
+		inline const CCircleGesture &	GetCircleGesture() const	{ return _circle; }
+		inline const CSwipeGesture &	GetSwipeGesture() const		{ return _swipe; }
+		inline const CTapGesture &	GetTapGesture() const			{ return _tap; }
+
+		// Frame data mutators.
+		inline void		SetHand( const CHand &h )					{ _hand = h; }
+		inline void		SetBallGesture( const CBallGesture &g )		{ _ball = g; }
+		inline void		SetCircleGesture( const CCircleGesture &g )	{ _circle = g;	SetGestureActive( GESTURE_CIRCLE ); }
+		inline void		SetSwipeGesture( const CSwipeGesture &g )	{ _swipe = g;	SetGestureActive( GESTURE_SWIPE ); }
+		inline void		SetTapGesture( const CTapGesture &g )		{ _tap = g;		SetGestureActive( GESTURE_TAP ); }
+
+	private:
 		// Frame data.
 		CHand			_hand;
 		CBallGesture	_ball;
@@ -229,7 +303,6 @@ namespace holo
 		CSwipeGesture	_swipe;
 		CTapGesture		_tap;
 
-	private:
 		int				_gestureBits;
 	};
 	

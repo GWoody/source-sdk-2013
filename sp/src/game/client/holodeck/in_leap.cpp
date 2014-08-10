@@ -126,23 +126,19 @@ CFrame CLeapMotion::BuildFinalFrame()
 
 			if( curframe.IsGestureActive( EGesture::GESTURE_CIRCLE ) )
 			{
-				finalFrame._circle = curframe._circle;
-				finalFrame.SetGestureActive( EGesture::GESTURE_CIRCLE );
+				finalFrame.SetCircleGesture( curframe.GetCircleGesture() );
 			}
 			if( curframe.IsGestureActive( EGesture::GESTURE_SWIPE ) )
 			{
-				finalFrame._swipe = curframe._swipe;
-				finalFrame.SetGestureActive( EGesture::GESTURE_SWIPE );
+				finalFrame.SetSwipeGesture( curframe.GetSwipeGesture() );
 			}
 			if( curframe.IsGestureActive( EGesture::GESTURE_TAP ) )
 			{
-				finalFrame._tap = curframe._tap;
-				finalFrame.SetGestureActive( EGesture::GESTURE_TAP );
+				finalFrame.SetTapGesture( curframe.GetTapGesture() );
 			}
 
-			finalFrame._ball = curframe._ball;
-			finalFrame._hand = curframe._hand;
-
+			finalFrame.SetBallGesture( curframe.GetBallGesture() );
+			finalFrame.SetHand( curframe.GetHand() );
 		}
 	}
 
@@ -156,7 +152,7 @@ void CLeapMotion::HandleWeapons( CUserCmd *cmd )
 	const float PHYSCANNON_GRAB_STRENGTH = 0.025f;
 	static float lastGrabStrength = 0.0f;
 
-	float curGrabStrength = cmd->holo_frame._ball.grabStrength;
+	float curGrabStrength = cmd->holo_frame.GetBallGesture().GetGrabStrength();
 	if( curGrabStrength > PHYSCANNON_GRAB_STRENGTH )
 	{
 		// The user has started clenching their hand this frame.

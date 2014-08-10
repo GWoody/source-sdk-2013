@@ -124,7 +124,7 @@ bool CHoloSwipePanel::PassesTriggerFilters( CBaseEntity *pOther )
 		return false;
 	}
 
-	const CSwipeGesture &swipe = frame._swipe;
+	const CSwipeGesture &swipe = frame.GetSwipeGesture();
 
 	//
 	// Delta must be within the range (0 ± TOLERANCE) degrees OR the range
@@ -132,7 +132,7 @@ bool CHoloSwipePanel::PassesTriggerFilters( CBaseEntity *pOther )
 	//
 	{
 		const float TOLERANCE = 33.0f;
-		float delta = ActivationDirectionDelta( swipe.direction );
+		float delta = ActivationDirectionDelta( swipe.GetDirection() );
 
 		if( delta > TOLERANCE && delta < 180.0f - TOLERANCE )
 		{
@@ -160,11 +160,11 @@ void CHoloSwipePanel::Touch( CBaseEntity *pOther )
 	CBasePlayer *pPlayer = UTIL_GetLocalPlayer();
 	CHoloHand *pHand = (CHoloHand *)pOther;
 	const CFrame &frame = pHand->GetFrame();
-	const CSwipeGesture &swipe = frame._swipe;
+	const CSwipeGesture &swipe = frame.GetSwipeGesture();
 
 	pHand->DebugStartTouch();
 
-	float delta = ActivationDirectionDelta( swipe.direction );
+	float delta = ActivationDirectionDelta( swipe.GetDirection() );
 	COutputEvent *event = ( delta <= 270 && delta >= 90 ) ? &_onReverseSwipe : &_onSwipe;
 
 	event->FireOutput( pPlayer, this );

@@ -1077,8 +1077,8 @@ CBaseEntity *CBasePlayer::FindUseEntity()
 	// Search for objects in a sphere (tests for entities that are not solid, yet still useable)
 	Vector searchCenter = EyePosition();
 #else
-	Vector forward = m_hHand->GetFrame()._hand.direction;
-	Vector up = -m_hHand->GetFrame()._hand.normal;
+	Vector forward = m_hHand->GetFrame().GetHand().GetDirection();
+	Vector up = -m_hHand->GetFrame().GetHand().GetNormal();
 
 	trace_t tr;
 	// Search for objects in a sphere (tests for entities that are not solid, yet still useable)

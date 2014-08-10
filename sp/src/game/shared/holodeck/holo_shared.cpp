@@ -171,7 +171,7 @@ EFinger LeapToSourceFingerCode( const Leap::Finger::Type &finger )
 //=============================================================================
 CBone::CBone()
 {
-	nextJoint = prevJoint = vec3_origin;
+	_nextJoint = _prevJoint = vec3_origin;
 }
 
 #ifdef CLIENT_DLL
@@ -183,22 +183,22 @@ CBone::CBone(const Leap::Bone &b)
 
 void CBone::FromLeap(const Leap::Bone &b)
 {
-	nextJoint = LeapToSourceVector( b.nextJoint(), true );
-	prevJoint = LeapToSourceVector( b.prevJoint(), true );
+	_nextJoint = LeapToSourceVector( b.nextJoint(), true );
+	_prevJoint = LeapToSourceVector( b.prevJoint(), true );
 }
 
 #endif
 
 void CBone::ToBitBuffer( bf_write *buf ) const
 {
-	buf->WriteBitVec3Coord( nextJoint );
-	buf->WriteBitVec3Coord( prevJoint );
+	buf->WriteBitVec3Coord( _nextJoint );
+	buf->WriteBitVec3Coord( _prevJoint );
 }
 
 void CBone::FromBitBuffer( bf_read *buf )
 {
-	buf->ReadBitVec3Coord( nextJoint );
-	buf->ReadBitVec3Coord( prevJoint );
+	buf->ReadBitVec3Coord( _nextJoint );
+	buf->ReadBitVec3Coord( _prevJoint );
 }
 
 void CBone::Transform( float yaw, const Vector &translation )
@@ -211,9 +211,9 @@ void CBone::Transform( float yaw, const Vector &translation )
 //=============================================================================
 CFinger::CFinger()
 {
-	id = -1;
-	width = length = 0.0f;
-	direction = tipPosition = tipVelocity = vec3_origin;
+	_id = -1;
+	_width = _length = 0.0f;
+	_direction = _tipPosition = _tipVelocity = vec3_origin;
 }
 
 #ifdef CLIENT_DLL
@@ -224,45 +224,45 @@ CFinger::CFinger( const Leap::Finger &f )
 
 void CFinger::FromLeap( const Leap::Finger &f )
 {
-	id = f.id();
-	direction = LeapToSourceVector( f.direction() );
-	tipPosition = LeapToSourceVector( f.tipPosition(), true );
-	tipVelocity = LeapToSourceVector( f.tipVelocity() );
-	width = LeapToSourceDistance( f.width() );
-	length = LeapToSourceDistance( f.length() );
+	_id = f.id();
+	_direction = LeapToSourceVector( f.direction() );
+	_tipPosition = LeapToSourceVector( f.tipPosition(), true );
+	_tipVelocity = LeapToSourceVector( f.tipVelocity() );
+	_width = LeapToSourceDistance( f.width() );
+	_length = LeapToSourceDistance( f.length() );
 
-	direction.NormalizeInPlace();
+	_direction.NormalizeInPlace();
 }
 #endif
 
 void CFinger::ToBitBuffer( bf_write *buf ) const
 {
-	buf->WriteVarInt32( id );
-	buf->WriteBitVec3Normal( direction );
-	buf->WriteBitVec3Coord( tipPosition );
-	buf->WriteBitVec3Normal( tipVelocity );
-	buf->WriteFloat( width );
-	buf->WriteFloat( length );
+	buf->WriteVarInt32( _id );
+	buf->WriteBitVec3Normal( _direction );
+	buf->WriteBitVec3Coord( _tipPosition );
+	buf->WriteBitVec3Normal( _tipVelocity );
+	buf->WriteFloat( _width );
+	buf->WriteFloat( _length );
 }
 
 void CFinger::FromBitBuffer( bf_read *buf )
 {
-	id = buf->ReadVarInt32();
-	buf->ReadBitVec3Normal( direction );
-	buf->ReadBitVec3Coord( tipPosition );
-	buf->ReadBitVec3Normal( tipVelocity );
-	width = buf->ReadFloat();
-	length = buf->ReadFloat();
+	_id = buf->ReadVarInt32();
+	buf->ReadBitVec3Normal( _direction );
+	buf->ReadBitVec3Coord( _tipPosition );
+	buf->ReadBitVec3Normal( _tipVelocity );
+	_width = buf->ReadFloat();
+	_length = buf->ReadFloat();
 }
 
 void CFinger::Transform( float yaw, const Vector &translation )
 {
 	// Apply rotations.
-	VectorYawRotate( tipPosition, yaw, tipPosition );
-	VectorYawRotate( direction, yaw, direction );
+	VectorYawRotate( _tipPosition, yaw, _tipPosition );
+	VectorYawRotate( _direction, yaw, _direction );
 
 	// Apply translations.
-	tipPosition += translation;
+	_tipPosition += translation;
 }
 
 //=============================================================================
@@ -270,9 +270,9 @@ void CFinger::Transform( float yaw, const Vector &translation )
 //=============================================================================
 CHand::CHand()
 {
-	id = INVALID_INDEX;
-	confidence = 0.0f;
-	direction = position = velocity = normal = vec3_origin;
+	_id = INVALID_INDEX;
+	_confidence = 0.0f;
+	_direction = _position = _velocity = _normal = vec3_origin;
 }
 
 #ifdef CLIENT_DLL
@@ -285,15 +285,15 @@ void CHand::FromLeap( const Leap::Hand &h )
 {
 	BuildFingers( h );
 
-	id = h.id();
-	confidence = h.confidence();
-	velocity = LeapToSourceVector( h.palmVelocity() );
-	normal = LeapToSourceVector( h.palmNormal() );
-	direction = LeapToSourceVector( h.direction() );
-	position = LeapToSourceVector( h.palmPosition(), true );
+	_id = h.id();
+	_confidence = h.confidence();
+	_velocity = LeapToSourceVector( h.palmVelocity() );
+	_normal = LeapToSourceVector( h.palmNormal() );
+	_direction = LeapToSourceVector( h.direction() );
+	_position = LeapToSourceVector( h.palmPosition(), true );
 
-	normal.NormalizeInPlace();
-	direction.NormalizeInPlace();
+	_normal.NormalizeInPlace();
+	_direction.NormalizeInPlace();
 }
 
 void CHand::BuildFingers( const Leap::Hand &h )
@@ -302,56 +302,69 @@ void CHand::BuildFingers( const Leap::Hand &h )
 	for each( const Leap::Finger &f in fingerlist )
 	{
 		EFinger idx = LeapToSourceFingerCode( f.type() );
-		fingers[idx].FromLeap( f );
+		_fingers[idx].FromLeap( f );
 	}
 }
 #endif
 
 void CHand::ToBitBuffer( bf_write *buf ) const
 {
-	buf->WriteVarInt32( id );
-	buf->WriteFloat( confidence );
-	buf->WriteBitVec3Normal( direction );
-	buf->WriteBitVec3Normal( normal );
-	buf->WriteBitVec3Coord( position );
-	buf->WriteBitVec3Normal( velocity );
+	buf->WriteVarInt32( _id );
+	buf->WriteFloat( _confidence );
+	buf->WriteBitVec3Normal( _direction );
+	buf->WriteBitVec3Normal( _normal );
+	buf->WriteBitVec3Coord( _position );
+	buf->WriteBitVec3Normal( _velocity );
 
 	for( int i = 0; i < EFinger::FINGER_COUNT; i++ )
 	{
-		fingers[i].ToBitBuffer( buf );
+		_fingers[i].ToBitBuffer( buf );
 	}
 }
 
 void CHand::FromBitBuffer( bf_read *buf )
 {
-	id = buf->ReadVarInt32();
-	confidence = buf->ReadFloat();
-	buf->ReadBitVec3Normal( direction );
-	buf->ReadBitVec3Normal( normal );
-	buf->ReadBitVec3Coord( position );
-	buf->ReadBitVec3Normal( velocity );
+	_id = buf->ReadVarInt32();
+	_confidence = buf->ReadFloat();
+	buf->ReadBitVec3Normal( _direction );
+	buf->ReadBitVec3Normal( _normal );
+	buf->ReadBitVec3Coord( _position );
+	buf->ReadBitVec3Normal( _velocity );
 
 	for( int i = 0; i < EFinger::FINGER_COUNT; i++ )
 	{
-		fingers[i].FromBitBuffer( buf );
+		_fingers[i].FromBitBuffer( buf );
 	}
 }
 
 void CHand::Transform( float yaw, const Vector &translation )
 {
 	// Apply rotations.
-	VectorYawRotate( position, yaw, position );
-	VectorYawRotate( normal, yaw, normal );
-	VectorYawRotate( direction, yaw, direction );
+	VectorYawRotate( _position, yaw, _position );
+	VectorYawRotate( _normal, yaw, _normal );
+	VectorYawRotate( _direction, yaw, _direction );
 
 	// Apply translations.
-	position += translation;
+	_position += translation;
 	
 	// Transform fingers.
 	for( int i = 0; i < FINGER_COUNT; i++ )
 	{
-		fingers[i].Transform( yaw, translation );
+		_fingers[i].Transform( yaw, translation );
 	}
+}
+
+inline const CFinger *CHand::GetFingerById( int id ) const
+{
+	for( int i = 0; i < FINGER_COUNT; i++ )
+	{
+		if( _fingers[i].GetId() == id )
+		{
+			return &_fingers[i];
+		}
+	}
+
+	return NULL;
 }
 
 //=============================================================================
@@ -359,9 +372,9 @@ void CHand::Transform( float yaw, const Vector &translation )
 //=============================================================================
 CCircleGesture::CCircleGesture()
 {
-	handId = fingerId = INVALID_INDEX;
-	radius = 0.0f;
-	center = normal = vec3_origin;
+	_handId = _fingerId = INVALID_INDEX;
+	_radius = _duration = 0.0f;
+	_center = _normal = vec3_origin;
 }
 
 #ifdef CLIENT_DLL
@@ -374,12 +387,12 @@ void CCircleGesture::FromLeap( const Leap::CircleGesture &c )
 {
 	const Leap::HandList &hands = c.hands();
 
-	handId = hands[0].id();
-	fingerId = c.pointable().id();
-	radius = LeapToSourceDistance( c.radius() );
-	center = LeapToSourceVector( c.center(), true );
-	normal = LeapToSourceVector( c.normal() );
-	duration = c.durationSeconds();
+	_handId = hands[0].id();
+	_fingerId = c.pointable().id();
+	_radius = LeapToSourceDistance( c.radius() );
+	_center = LeapToSourceVector( c.center(), true );
+	_normal = LeapToSourceVector( c.normal() );
+	_duration = c.durationSeconds();
 
 	// According to the Leap SDK:
 	// If you draw the circle clockwise, the normal vector points in the same general direction as the pointable object drawing the circle.
@@ -388,40 +401,40 @@ void CCircleGesture::FromLeap( const Leap::CircleGesture &c )
 	// Therefore if the angle to the normal (from the pointable) is less than 90 degrees (PI/2 radians) the directions are roughly the same,
 	// which means the circle is clockwise.
 	const Leap::Vector &pointableDir = c.pointable().direction();
-	clockwise = pointableDir.angleTo( c.normal() ) <= ( M_PI / 2 );
+	_clockwise = pointableDir.angleTo( c.normal() ) <= ( M_PI / 2 );
 }
 #endif
 
 void CCircleGesture::ToBitBuffer( bf_write *buf ) const
 {
-	buf->WriteVarInt32( handId );
-	buf->WriteVarInt32( fingerId );
-	buf->WriteFloat( radius );
-	buf->WriteFloat( duration );
-	buf->WriteBitVec3Coord( center );
-	buf->WriteBitVec3Normal( normal );
-	buf->WriteVarInt32( clockwise );
+	buf->WriteVarInt32( _handId );
+	buf->WriteVarInt32( _fingerId );
+	buf->WriteFloat( _radius );
+	buf->WriteFloat( _duration );
+	buf->WriteBitVec3Coord( _center );
+	buf->WriteBitVec3Normal( _normal );
+	buf->WriteVarInt32( _clockwise );
 }
 
 void CCircleGesture::FromBitBuffer( bf_read *buf )
 {
-	handId = buf->ReadVarInt32();
-	fingerId = buf->ReadVarInt32();
-	radius = buf->ReadFloat();
-	duration = buf->ReadFloat();
-	buf->ReadBitVec3Coord( center );
-	buf->ReadBitVec3Normal( normal );
-	clockwise = buf->ReadVarInt32() != 0 ? true : false;
+	_handId = buf->ReadVarInt32();
+	_fingerId = buf->ReadVarInt32();
+	_radius = buf->ReadFloat();
+	_duration = buf->ReadFloat();
+	buf->ReadBitVec3Coord( _center );
+	buf->ReadBitVec3Normal( _normal );
+	_clockwise = buf->ReadVarInt32() != 0 ? true : false;
 }
 
 void CCircleGesture::Transform( float yaw, const Vector &translation )
 {
 	// Apply rotations.
-	VectorYawRotate( center, yaw, center );
-	VectorYawRotate( normal, yaw, normal );
+	VectorYawRotate( _center, yaw, _center );
+	VectorYawRotate( _normal, yaw, _normal );
 
 	// Apply translation.
-	center += translation;
+	_center += translation;
 }
 
 //=============================================================================
@@ -429,9 +442,9 @@ void CCircleGesture::Transform( float yaw, const Vector &translation )
 //=============================================================================
 CSwipeGesture::CSwipeGesture()
 {
-	handId = INVALID_INDEX;
-	speed = 0;
-	direction = curPosition = startPosition = vec3_origin;
+	_handId = INVALID_INDEX;
+	_speed = 0;
+	_direction = _curPosition = _startPosition = vec3_origin;
 }
 
 #ifdef CLIENT_DLL
@@ -444,42 +457,42 @@ void CSwipeGesture::FromLeap( const Leap::SwipeGesture &s )
 {
 	const Leap::HandList &hands = s.hands();
 
-	handId = hands[0].id();
-	speed = s.speed();
-	direction = LeapToSourceVector( s.direction() );
-	curPosition = LeapToSourceVector( s.position(), true );
-	startPosition = LeapToSourceVector( s.startPosition(), true );
+	_handId = hands[0].id();
+	_speed = s.speed();
+	_direction = LeapToSourceVector( s.direction() );
+	_curPosition = LeapToSourceVector( s.position(), true );
+	_startPosition = LeapToSourceVector( s.startPosition(), true );
 }
 #endif
 
 void CSwipeGesture::ToBitBuffer( bf_write *buf ) const
 {
-	buf->WriteVarInt32( handId );
-	buf->WriteFloat( speed );
-	buf->WriteBitVec3Normal( direction );
-	buf->WriteBitVec3Coord( curPosition );
-	buf->WriteBitVec3Coord( startPosition );
+	buf->WriteVarInt32( _handId );
+	buf->WriteFloat( _speed );
+	buf->WriteBitVec3Normal( _direction );
+	buf->WriteBitVec3Coord( _curPosition );
+	buf->WriteBitVec3Coord( _startPosition );
 }
 
 void CSwipeGesture::FromBitBuffer( bf_read *buf )
 {
-	handId = buf->ReadVarInt32();
-	speed = buf->ReadFloat();
-	buf->ReadBitVec3Normal( direction );
-	buf->ReadBitVec3Coord( curPosition );
-	buf->ReadBitVec3Coord( startPosition );
+	_handId = buf->ReadVarInt32();
+	_speed = buf->ReadFloat();
+	buf->ReadBitVec3Normal( _direction );
+	buf->ReadBitVec3Coord( _curPosition );
+	buf->ReadBitVec3Coord( _startPosition );
 }
 
 void CSwipeGesture::Transform( float yaw, const Vector &translation )
 {
 	// Apply rotations.
-	VectorYawRotate( direction, yaw, direction );
-	VectorYawRotate( curPosition, yaw, curPosition );
-	VectorYawRotate( startPosition, yaw, startPosition );
+	VectorYawRotate( _direction, yaw, _direction );
+	VectorYawRotate( _curPosition, yaw, _curPosition );
+	VectorYawRotate( _startPosition, yaw, _startPosition );
 
 	// Apply translations.
-	curPosition += translation;
-	startPosition += translation;
+	_curPosition += translation;
+	_startPosition += translation;
 }
 
 //=============================================================================
@@ -487,8 +500,8 @@ void CSwipeGesture::Transform( float yaw, const Vector &translation )
 //=============================================================================
 CTapGesture::CTapGesture()
 {
-	handId = fingerId = INVALID_INDEX;
-	direction = position = vec3_origin;
+	_handId = _fingerId = INVALID_INDEX;
+	_direction = _position = vec3_origin;
 }
 
 #ifdef CLIENT_DLL
@@ -506,47 +519,47 @@ void CTapGesture::FromLeap( const Leap::KeyTapGesture &k )
 {
 	const Leap::HandList &hands = k.hands();
 
-	handId = hands[0].id();
-	fingerId = k.pointable().id();
-	direction = LeapToSourceVector( k.direction() );
-	position = LeapToSourceVector( k.position(), true );
+	_handId = hands[0].id();
+	_fingerId = k.pointable().id();
+	_direction = LeapToSourceVector( k.direction() );
+	_position = LeapToSourceVector( k.position(), true );
 }
 
 void CTapGesture::FromLeap( const Leap::ScreenTapGesture &s )
 {
 	const Leap::HandList &hands = s.hands();
 
-	handId = hands[0].id();
-	fingerId = s.pointable().id();
-	direction = LeapToSourceVector( s.direction() );
-	position = LeapToSourceVector( s.position(), true );
+	_handId = hands[0].id();
+	_fingerId = s.pointable().id();
+	_direction = LeapToSourceVector( s.direction() );
+	_position = LeapToSourceVector( s.position(), true );
 }
 #endif
 
 void CTapGesture::ToBitBuffer( bf_write *buf ) const
 {
-	buf->WriteVarInt32( handId );
-	buf->WriteVarInt32( fingerId );
-	buf->WriteBitVec3Normal( direction );
-	buf->WriteBitVec3Coord( position );
+	buf->WriteVarInt32( _handId );
+	buf->WriteVarInt32( _fingerId );
+	buf->WriteBitVec3Normal( _direction );
+	buf->WriteBitVec3Coord( _position );
 }
 
 void CTapGesture::FromBitBuffer( bf_read *buf )
 {
-	handId = buf->ReadVarInt32();
-	fingerId = buf->ReadVarInt32();
-	buf->ReadBitVec3Normal( direction );
-	buf->ReadBitVec3Coord( position );
+	_handId = buf->ReadVarInt32();
+	_fingerId = buf->ReadVarInt32();
+	buf->ReadBitVec3Normal( _direction );
+	buf->ReadBitVec3Coord( _position );
 }
 
 void CTapGesture::Transform( float yaw, const Vector &translation )
 {
 	// Apply rotations.
-	VectorYawRotate( position, yaw, position );
-	VectorYawRotate( direction, yaw, direction );
+	VectorYawRotate( _position, yaw, _position );
+	VectorYawRotate( _direction, yaw, _direction );
 
 	// Apply translations.
-	position += translation;
+	_position += translation;
 }
 
 //=============================================================================
@@ -554,9 +567,9 @@ void CTapGesture::Transform( float yaw, const Vector &translation )
 //=============================================================================
 CBallGesture::CBallGesture()
 {
-	handId = INVALID_INDEX;
-	radius = grabStrength = 0.0f;
-	center = vec3_origin;
+	_handId = INVALID_INDEX;
+	_radius = _grabStrength = 0.0f;
+	_center = vec3_origin;
 }
 
 #ifdef CLIENT_DLL
@@ -567,36 +580,36 @@ CBallGesture::CBallGesture( const Leap::Hand &h )
 
 void CBallGesture::FromLeap( const Leap::Hand &h )
 {
-	handId = h.id();
-	radius = LeapToSourceDistance( h.sphereRadius() );
-	grabStrength = h.grabStrength();
-	center = LeapToSourceVector( h.sphereCenter(), true );
+	_handId = h.id();
+	_radius = LeapToSourceDistance( h.sphereRadius() );
+	_grabStrength = h.grabStrength();
+	_center = LeapToSourceVector( h.sphereCenter(), true );
 }
 #endif
 
 void CBallGesture::ToBitBuffer( bf_write *buf ) const
 {
-	buf->WriteSignedVarInt32( handId );
-	buf->WriteFloat( radius );
-	buf->WriteFloat( grabStrength );
-	buf->WriteBitVec3Coord( center );
+	buf->WriteSignedVarInt32( _handId );
+	buf->WriteFloat( _radius );
+	buf->WriteFloat( _grabStrength );
+	buf->WriteBitVec3Coord( _center );
 }
 
 void CBallGesture::FromBitBuffer( bf_read *buf )
 {
-	handId = buf->ReadSignedVarInt32();
-	radius = buf->ReadFloat();
-	grabStrength = buf->ReadFloat();
-	buf->ReadBitVec3Coord( center );
+	_handId = buf->ReadSignedVarInt32();
+	_radius = buf->ReadFloat();
+	_grabStrength = buf->ReadFloat();
+	buf->ReadBitVec3Coord( _center );
 }
 
 void CBallGesture::Transform( float yaw, const Vector &translation )
 {
 	// Apply rotations.
-	VectorYawRotate( center, yaw, center );
+	VectorYawRotate( _center, yaw, _center );
 
 	// Apply translations.
-	center += translation;
+	_center += translation;
 }
 
 //=============================================================================
@@ -719,3 +732,8 @@ void CFrame::ToEntitySpace( CBaseCombatCharacter *entity, const Vector &delta )
 	_tap.Transform( yaw, translation );
 }
 #endif
+
+inline const CHand *CFrame::GetHandById( int id ) const
+{
+	return _hand.GetId() == id ? &_hand : NULL;
+}

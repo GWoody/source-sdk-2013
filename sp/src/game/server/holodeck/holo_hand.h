@@ -29,8 +29,6 @@ public:
 	virtual	bool	CreateVPhysics();
 
 	// Accessors.
-	const holo::CFinger &	GetFinger( holo::EFinger finger ) const;
-	const holo::CHand &	GetHand() const;
 	const holo::CFrame &	GetFrame() const;
 
 	// Frame processing.

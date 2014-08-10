@@ -75,21 +75,6 @@ bool CHoloHand::CreateVPhysics()
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-const CFinger &CHoloHand::GetFinger( EFinger finger ) const
-{
-	Assert( finger >= 0 && finger < FINGER_COUNT );
-	return _curFrame._hand.fingers[finger];
-}
-
-//-----------------------------------------------------------------------------
-//-----------------------------------------------------------------------------
-const CHand &CHoloHand::GetHand() const
-{
-	return _curFrame._hand;
-}
-
-//-----------------------------------------------------------------------------
-//-----------------------------------------------------------------------------
 const CFrame &CHoloHand::GetFrame() const
 {
 	return _curFrame;
@@ -115,7 +100,7 @@ void CHoloHand::ProcessFrame( const CFrame &frame )
 	_curFrame = processedFrame;
 
 	// Update the position of the hand entity within the world.
-	SetAbsOrigin( processedFrame._hand.position );
+	SetAbsOrigin( processedFrame.GetHand().GetPosition() );
 
 	if( holo_render_debug_hand.GetInt() != 0 )
 	{
@@ -143,7 +128,7 @@ void CHoloHand::RenderDebugHand()
 {
 	const Vector handBounds( 0.25f, 0.25f, 0.25f );
 	const Vector fingerBounds( 0.1f, 0.1f, 0.1f );
-	const Vector &palmPosition = _curFrame._hand.position;
+	const Vector &palmPosition = _curFrame.GetHand().GetPosition();
 	const float duration = 1.0f / 15.0f;
 
 	// Draw the palm box.
@@ -152,8 +137,8 @@ void CHoloHand::RenderDebugHand()
 	// Draw all fingers.
 	for( int i = 0; i < FINGER_COUNT; i++ )
 	{
-		const Vector &tipPosition = _curFrame._hand.fingers[i].tipPosition;
-		const Vector &direction = _curFrame._hand.fingers[i].direction;
+		const Vector &tipPosition = _curFrame.GetHand().GetFingerByType( (EFinger)i ).GetTipPosition();
+		const Vector &direction = _curFrame.GetHand().GetFingerByType( (EFinger)i ).GetDirection();
 
 		// Draw the finger tip box.
 		debugoverlay->AddBoxOverlay( tipPosition, -fingerBounds, fingerBounds, vec3_angle, m_clrRender.GetR(), m_clrRender.GetG(), m_clrRender.GetB(), 127, duration );
@@ -165,8 +150,8 @@ void CHoloHand::RenderDebugHand()
 	if( holo_render_debug_hand.GetInt() == 2 )
 	{
 		// Draw the ball gesture.
-		const CBallGesture &ball = _curFrame._ball;
-		NDebugOverlay::Sphere( ball.center, ball.radius, 0, 0, 255, false, duration );
+		const CBallGesture &ball = _curFrame.GetBallGesture();
+		NDebugOverlay::Sphere( ball.GetCenter(), ball.GetRadius(), 0, 0, 255, false, duration );
 	}
 
 	if( holo_render_debug_hand.GetInt() == 3 )
@@ -180,16 +165,16 @@ void CHoloHand::RenderDebugHand()
 	if( holo_render_debug_hand.GetInt() == 4 )
 	{
 		// Draw the palm normal vector.
-		debugoverlay->AddLineOverlayAlpha( palmPosition, palmPosition + _curFrame._hand.normal, 255, 0, 0, 127, false, duration );
+		debugoverlay->AddLineOverlayAlpha( palmPosition, palmPosition + _curFrame.GetHand().GetNormal(), 255, 0, 0, 127, false, duration );
 
 		// Draw the palm direction vector.
-		debugoverlay->AddLineOverlayAlpha( palmPosition, palmPosition + _curFrame._hand.direction, 0, 0, 255, 127, false, duration );
+		debugoverlay->AddLineOverlayAlpha( palmPosition, palmPosition + _curFrame.GetHand().GetDirection(), 0, 0, 255, 127, false, duration );
 	}
 
 	if( holo_render_debug_hand.GetInt() == 5 )
 	{
 		// Draw velocity.
-		debugoverlay->AddLineOverlay( palmPosition, palmPosition + _curFrame._hand.velocity, 255, 0, 0, false, duration );
+		debugoverlay->AddLineOverlay( palmPosition, palmPosition + _curFrame.GetHand().GetVelocity(), 255, 0, 0, false, duration );
 	}
 }
 
@@ -197,7 +182,7 @@ void CHoloHand::RenderDebugHand()
 //-----------------------------------------------------------------------------
 bool CHoloHand::IsValidFrame( const holo::CFrame &frame )
 {
-	if( frame._hand.position.IsZero() )
+	if( frame.GetHand().GetPosition().IsZero() )
 	{
 		// The Leap will periodically send frames with (0,0,0) as the position.
 		// These should be ignored because they make the hand entity's position

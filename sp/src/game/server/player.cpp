@@ -3449,22 +3449,19 @@ void CBasePlayer::ProcessUsercmds( CUserCmd *cmds, int numcmds, int totalcmds,
 		const holo::CFrame &curframe = pCmd->holo_frame;
 		if( curframe.IsGestureActive( holo::EGesture::GESTURE_CIRCLE ) )
 		{
-			finalHoloFrame._circle = curframe._circle;
-			finalHoloFrame.SetGestureActive( holo::EGesture::GESTURE_CIRCLE );
+			finalHoloFrame.SetCircleGesture( curframe.GetCircleGesture() );
 		}
 		if( curframe.IsGestureActive( holo::EGesture::GESTURE_SWIPE ) )
 		{
-			finalHoloFrame._swipe = curframe._swipe;
-			finalHoloFrame.SetGestureActive( holo::EGesture::GESTURE_SWIPE );
+			finalHoloFrame.SetSwipeGesture( curframe.GetSwipeGesture() );
 		}
 		if( curframe.IsGestureActive( holo::EGesture::GESTURE_TAP ) )
 		{
-			finalHoloFrame._tap = curframe._tap;
-			finalHoloFrame.SetGestureActive( holo::EGesture::GESTURE_TAP );
+			finalHoloFrame.SetTapGesture( curframe.GetTapGesture() );
 		}
 
-		finalHoloFrame._ball = curframe._ball;
-		finalHoloFrame._hand = curframe._hand;
+		finalHoloFrame.SetBallGesture( curframe.GetBallGesture() );
+		finalHoloFrame.SetHand( curframe.GetHand() );
 #endif
 
 		ctx->cmds.AddToTail( *pCmd );
