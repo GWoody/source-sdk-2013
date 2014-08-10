@@ -76,7 +76,7 @@ void C_BreakableProp::GetGlowEffectColor( float *r, float *g, float *b )
 	Vector direction = player->GetAbsOrigin() - GetAbsOrigin();
 	float distance = direction.Length();
 
-	const float MIN_PICKUP_DISTANCE = 96.0f;	// As defined in `CBasePlayer::PlayerUse`.
+	const float MIN_PICKUP_DISTANCE = PLAYER_USE_RADIUS;
 	const float MAX_PICKUP_DISTANCE = 384.0f;
 	const float MAX_VISIBLE_DISTANCE = 640.0f;
 

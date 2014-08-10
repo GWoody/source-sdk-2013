@@ -85,7 +85,7 @@ const CFrame &CHoloHand::GetFrame() const
 //-----------------------------------------------------------------------------
 void CHoloHand::ProcessFrame( const CFrame &frame )
 {
-	if( !IsValidFrame( frame ) )
+	if( !frame.IsValid() )
 	{
 		return;
 	}
@@ -188,21 +188,6 @@ void CHoloHand::RenderDebugHand()
 			debugoverlay->AddLineOverlayAlpha( tipPosition, tipPosition + direction, 255, 0, 0, 127, false, duration );
 		}
 	}
-}
-
-//-----------------------------------------------------------------------------
-//-----------------------------------------------------------------------------
-bool CHoloHand::IsValidFrame( const holo::CFrame &frame )
-{
-	if( frame.GetHand().GetPosition().IsZero() )
-	{
-		// The Leap will periodically send frames with (0,0,0) as the position.
-		// These should be ignored because they make the hand entity's position
-		// flucuate rapidly.
-		return false;
-	}
-
-	return true;
 }
 
 //-----------------------------------------------------------------------------

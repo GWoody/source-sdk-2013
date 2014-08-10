@@ -107,7 +107,10 @@ CLeapMotion::~CLeapMotion()
 void CLeapMotion::CreateMove( CUserCmd *cmd )
 {
 	cmd->holo_frame = BuildFinalFrame();
-	HandleWeapons( cmd );
+	if( cmd->holo_frame.IsValid() )
+	{
+		HandleWeapons( cmd );
+	}
 }
 
 //----------------------------------------------------------------------------
@@ -116,30 +119,28 @@ CFrame CLeapMotion::BuildFinalFrame()
 {
 	CFrame finalFrame;
 
-	if( !_queue->IsEmpty() )
+	bool empty = _queue->IsEmpty();
+	finalFrame.SetValid( !empty );
+	
+	while( !_queue->IsEmpty() )
 	{
-		holo::CFrame curframe;
+		CFrame curframe = _queue->Pop();
 
-		while( !_queue->IsEmpty() )
+		if( curframe.IsGestureActive( EGesture::GESTURE_CIRCLE ) )
 		{
-			curframe = _queue->Pop();
-
-			if( curframe.IsGestureActive( EGesture::GESTURE_CIRCLE ) )
-			{
-				finalFrame.SetCircleGesture( curframe.GetCircleGesture() );
-			}
-			if( curframe.IsGestureActive( EGesture::GESTURE_SWIPE ) )
-			{
-				finalFrame.SetSwipeGesture( curframe.GetSwipeGesture() );
-			}
-			if( curframe.IsGestureActive( EGesture::GESTURE_TAP ) )
-			{
-				finalFrame.SetTapGesture( curframe.GetTapGesture() );
-			}
-
-			finalFrame.SetBallGesture( curframe.GetBallGesture() );
-			finalFrame.SetHand( curframe.GetHand() );
+			finalFrame.SetCircleGesture( curframe.GetCircleGesture() );
 		}
+		if( curframe.IsGestureActive( EGesture::GESTURE_SWIPE ) )
+		{
+			finalFrame.SetSwipeGesture( curframe.GetSwipeGesture() );
+		}
+		if( curframe.IsGestureActive( EGesture::GESTURE_TAP ) )
+		{
+			finalFrame.SetTapGesture( curframe.GetTapGesture() );
+		}
+
+		finalFrame.SetBallGesture( curframe.GetBallGesture() );
+		finalFrame.SetHand( curframe.GetHand() );
 	}
 
 	return finalFrame;
@@ -149,22 +150,22 @@ CFrame CLeapMotion::BuildFinalFrame()
 //----------------------------------------------------------------------------
 void CLeapMotion::HandleWeapons( CUserCmd *cmd )
 {
-	const float PHYSCANNON_GRAB_STRENGTH = 0.025f;
-	static float lastGrabStrength = 0.0f;
+	const float GRAB_STRENGTH = 1.0f;
+	static float lastRadius = 0.0f;
 
-	float curGrabStrength = cmd->holo_frame.GetBallGesture().GetGrabStrength();
-	if( curGrabStrength > PHYSCANNON_GRAB_STRENGTH )
+	float curRadius = cmd->holo_frame.GetBallGesture().GetRadius();
+	if( curRadius >= GRAB_STRENGTH && lastRadius < GRAB_STRENGTH )
 	{
 		// The user has started clenching their hand this frame.
-		cmd->buttons |= IN_ATTACK2;
+		cmd->buttons |= IN_USE;
 	}
-	else if( curGrabStrength < PHYSCANNON_GRAB_STRENGTH && lastGrabStrength >= PHYSCANNON_GRAB_STRENGTH )
+	else if( curRadius < GRAB_STRENGTH && lastRadius >= GRAB_STRENGTH )
 	{
 		// The user has unclenched their hand this frame.
-		cmd->buttons |= IN_ATTACK;
+		cmd->buttons |= IN_USE;
 	}
 
-	lastGrabStrength = curGrabStrength;
+	lastRadius = curRadius;
 }
 
 //----------------------------------------------------------------------------

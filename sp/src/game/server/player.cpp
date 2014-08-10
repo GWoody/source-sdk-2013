@@ -3431,6 +3431,7 @@ void CBasePlayer::ProcessUsercmds( CUserCmd *cmds, int numcmds, int totalcmds,
 
 #ifdef HOLODECK
 	holo::CFrame finalHoloFrame;
+	finalHoloFrame.SetValid( false );
 #endif
 
 	int i;
@@ -3462,6 +3463,7 @@ void CBasePlayer::ProcessUsercmds( CUserCmd *cmds, int numcmds, int totalcmds,
 
 		finalHoloFrame.SetBallGesture( curframe.GetBallGesture() );
 		finalHoloFrame.SetHand( curframe.GetHand() );
+		finalHoloFrame.SetValid( true );
 #endif
 
 		ctx->cmds.AddToTail( *pCmd );

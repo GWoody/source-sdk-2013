@@ -294,6 +294,9 @@ namespace holo
 		void			ToEntitySpace( CBaseCombatCharacter *entity, const Vector &delta );
 #endif
 
+		void			SetValid( bool valid )						{ _valid = valid; }
+		bool			IsValid() const								{ return _valid; }
+
 		bool			IsGestureActive( EGesture gesture ) const	{ return ( _gestureBits & ( 1 << gesture ) ) != 0; }
 		void			SetGestureActive( EGesture gesture )		{ _gestureBits |= ( 1 << gesture ); }
 
@@ -320,6 +323,7 @@ namespace holo
 		CSwipeGesture	_swipe;
 		CTapGesture		_tap;
 
+		bool			_valid;
 		int				_gestureBits;
 	};
 	

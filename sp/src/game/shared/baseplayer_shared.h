@@ -12,7 +12,11 @@
 #endif
 
 // PlayerUse defines
+#ifdef HOLODECK
+#define PLAYER_USE_RADIUS	256.0f
+#else
 #define	PLAYER_USE_RADIUS	80.f
+#endif
 #define CONE_45_DEGREES		0.707f
 #define CONE_15_DEGREES		0.9659258f
 #define CONE_90_DEGREES		0

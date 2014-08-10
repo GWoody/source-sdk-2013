@@ -750,6 +750,7 @@ void CBallGesture::Transform( float yaw, const Vector &translation )
 //=============================================================================
 CFrame::CFrame()
 {
+	_valid = false;
 	_gestureBits = 0;
 }
 
@@ -805,6 +806,12 @@ void CFrame::FromLeap( const Leap::Frame &f )
 
 void CFrame::ToBitBuffer( bf_write *buf ) const
 {
+	buf->WriteVarInt32( _valid );
+	if( !_valid )
+	{
+		return;
+	}
+
 	_hand.ToBitBuffer( buf );
 	_ball.ToBitBuffer( buf );
 	buf->WriteVarInt32( _gestureBits );
@@ -827,6 +834,12 @@ void CFrame::ToBitBuffer( bf_write *buf ) const
 
 void CFrame::FromBitBuffer( bf_read *buf )
 {
+	_valid = buf->ReadVarInt32() != 0 ? true : false;
+	if( !_valid )
+	{
+		return;
+	}
+
 	_hand.FromBitBuffer( buf );
 	_ball.FromBitBuffer( buf );
 	_gestureBits = buf->ReadVarInt32();

@@ -40,9 +40,6 @@ public:
 private:
 	void			RenderDebugHand();
 
-	// Frame processing.
-	bool			IsValidFrame( const holo::CFrame &frame );
-
 	Vector			GetOriginOffset() const;
 
 	holo::CFrame	_curFrame;
