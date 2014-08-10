@@ -222,6 +222,11 @@ void SBone::FromBitBuffer( bf_read *buf )
 	buf->ReadBitVec3Coord( prevJoint );
 }
 
+void SBone::Transform( float yaw, const Vector &translation )
+{
+	
+}
+
 std::istream &operator>>(std::istream &ss, SBone &b)
 {
 	ss >> b.nextJoint >> b.prevJoint;
@@ -283,6 +288,16 @@ void SFinger::FromBitBuffer( bf_read *buf )
 	buf->ReadBitVec3Normal( tipVelocity );
 	width = buf->ReadFloat();
 	length = buf->ReadFloat();
+}
+
+void SFinger::Transform( float yaw, const Vector &translation )
+{
+	// Apply rotations.
+	VectorYawRotate( tipPosition, yaw, tipPosition );
+	VectorYawRotate( direction, yaw, direction );
+
+	// Apply translations.
+	tipPosition += translation;
 }
 
 istream &holo::operator>>( istream &ss, SFinger &f )
@@ -366,6 +381,23 @@ void SHand::FromBitBuffer( bf_read *buf )
 	for( int i = 0; i < EFinger::FINGER_COUNT; i++ )
 	{
 		fingers[i].FromBitBuffer( buf );
+	}
+}
+
+void SHand::Transform( float yaw, const Vector &translation )
+{
+	// Apply rotations.
+	VectorYawRotate( position, yaw, position );
+	VectorYawRotate( normal, yaw, normal );
+	VectorYawRotate( direction, yaw, direction );
+
+	// Apply translations.
+	position += translation;
+	
+	// Transform fingers.
+	for( int i = 0; i < FINGER_COUNT; i++ )
+	{
+		fingers[i].Transform( yaw, translation );
 	}
 }
 
@@ -453,6 +485,16 @@ void SCircleGesture::FromBitBuffer( bf_read *buf )
 	clockwise = buf->ReadVarInt32() != 0 ? true : false;
 }
 
+void SCircleGesture::Transform( float yaw, const Vector &translation )
+{
+	// Apply rotations.
+	VectorYawRotate( center, yaw, center );
+	VectorYawRotate( normal, yaw, normal );
+
+	// Apply translation.
+	center += translation;
+}
+
 istream &holo::operator>>( istream &ss, SCircleGesture &c )
 {
 	ss >> c.handId >> c.fingerId >> c.center >> c.normal >> c.radius >> c.duration >> c.clockwise;
@@ -509,6 +551,18 @@ void SSwipeGesture::FromBitBuffer( bf_read *buf )
 	buf->ReadBitVec3Normal( direction );
 	buf->ReadBitVec3Coord( curPosition );
 	buf->ReadBitVec3Coord( startPosition );
+}
+
+void SSwipeGesture::Transform( float yaw, const Vector &translation )
+{
+	// Apply rotations.
+	VectorYawRotate( direction, yaw, direction );
+	VectorYawRotate( curPosition, yaw, curPosition );
+	VectorYawRotate( startPosition, yaw, startPosition );
+
+	// Apply translations.
+	curPosition += translation;
+	startPosition += translation;
 }
 
 istream &holo::operator>>( istream &ss, SSwipeGesture &s )
@@ -580,6 +634,16 @@ void STapGesture::FromBitBuffer( bf_read *buf )
 	buf->ReadBitVec3Coord( position );
 }
 
+void STapGesture::Transform( float yaw, const Vector &translation )
+{
+	// Apply rotations.
+	VectorYawRotate( position, yaw, position );
+	VectorYawRotate( direction, yaw, direction );
+
+	// Apply translations.
+	position += translation;
+}
+
 istream &holo::operator>>( istream &ss, STapGesture &t )
 {
 	ss >> t.handId >> t.fingerId >> t.direction >> t.position;
@@ -631,6 +695,15 @@ void SBallGesture::FromBitBuffer( bf_read *buf )
 	radius = buf->ReadFloat();
 	grabStrength = buf->ReadFloat();
 	buf->ReadBitVec3Coord( center );
+}
+
+void SBallGesture::Transform( float yaw, const Vector &translation )
+{
+	// Apply rotations.
+	VectorYawRotate( center, yaw, center );
+
+	// Apply translations.
+	center += translation;
 }
 
 istream &holo::operator>>( istream &ss, SBallGesture &b )
@@ -751,54 +824,18 @@ void SFrame::FromBitBuffer( bf_read *buf )
 // Transforms the frame data to be positioned relative to the given entity.
 void SFrame::ToEntitySpace( CBaseCombatCharacter *entity, const Vector &delta )
 {
-	ApplyRotation( entity );
-
-	Vector offset = entity->GetAbsOrigin() + delta;
-	ApplyTranslation( offset );
-}
-
-void SFrame::ApplyTranslation( const Vector &offset )
-{
-	_ball.center += offset;
-	_circle.center += offset;
-	_hand.position += offset;
-	_swipe.curPosition += offset;
-	_swipe.startPosition += offset;
-	_tap.position += offset;
-
-	for( int i = 0; i < FINGER_COUNT; i++ )
-	{
-		_hand.fingers[i].tipPosition += offset;
-	}
-}
-
-void SFrame::ApplyRotation( CBaseCombatCharacter *entity )
-{
 	// Convert the players direction vector to angles.
 	QAngle ownerAngles;
 	VectorAngles( entity->BodyDirection2D(), ownerAngles );
 
-	const float yawAngle = ownerAngles.y;
+	Vector translation = entity->GetAbsOrigin() + delta;
+	const float yaw = ownerAngles.y;
 
-	// We only need to rotate the forward and side components of the vector.
-	// Height can be left alone.
-	VectorYawRotate( _ball.center, yawAngle, _ball.center );
-	VectorYawRotate( _circle.center, yawAngle, _circle.center );
-	VectorYawRotate( _circle.normal, yawAngle, _circle.normal );
-	VectorYawRotate( _hand.position, yawAngle, _hand.position );
-	VectorYawRotate( _hand.normal, yawAngle, _hand.normal );
-	VectorYawRotate( _hand.direction, yawAngle, _hand.direction );
-	VectorYawRotate( _swipe.direction, yawAngle, _swipe.direction );
-	VectorYawRotate( _swipe.curPosition, yawAngle, _swipe.curPosition );
-	VectorYawRotate( _swipe.startPosition, yawAngle, _swipe.startPosition );
-	VectorYawRotate( _tap.position, yawAngle, _tap.position );
-	VectorYawRotate( _tap.direction, yawAngle, _tap.direction );
-
-	for( int i = 0; i < FINGER_COUNT; i++ )
-	{
-		VectorYawRotate( _hand.fingers[i].tipPosition, yawAngle, _hand.fingers[i].tipPosition );
-		VectorYawRotate( _hand.fingers[i].direction, yawAngle, _hand.fingers[i].direction );
-	}
+	_hand.Transform( yaw, translation );
+	_ball.Transform( yaw, translation );
+	_circle.Transform( yaw, translation );
+	_swipe.Transform( yaw, translation );
+	_tap.Transform( yaw, translation );
 }
 #endif
 

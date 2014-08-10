@@ -67,6 +67,8 @@ namespace holo
 		void			ToBitBuffer( bf_write *buf ) const;
 		void			FromBitBuffer( bf_read *buf );
 
+		void			Transform( float yaw, const Vector &translation );
+
 		Vector			nextJoint;
 		Vector			prevJoint;
 	};
@@ -87,6 +89,8 @@ namespace holo
 
 		void			ToBitBuffer( bf_write *buf ) const;
 		void			FromBitBuffer( bf_read *buf );
+
+		void			Transform( float yaw, const Vector &translation );
 
 		int				id;
 		Vector			direction;
@@ -112,6 +116,8 @@ namespace holo
 		void			ToBitBuffer( bf_write *buf ) const;
 		void			FromBitBuffer( bf_read *buf );
 
+		void			Transform( float yaw, const Vector &translation );
+
 		int				id;
 		float			confidence;
 		Vector			direction, normal;
@@ -136,6 +142,8 @@ namespace holo
 		void			ToBitBuffer( bf_write *buf ) const;
 		void			FromBitBuffer( bf_read *buf );
 
+		void			Transform( float yaw, const Vector &translation );
+
 		int				handId, fingerId;
 		float			radius, duration;
 		Vector			center, normal;
@@ -157,6 +165,8 @@ namespace holo
 
 		void			ToBitBuffer( bf_write *buf ) const;
 		void			FromBitBuffer( bf_read *buf );
+
+		void			Transform( float yaw, const Vector &translation );
 
 		int				handId;
 		float			speed;
@@ -181,6 +191,8 @@ namespace holo
 		void			ToBitBuffer( bf_write *buf ) const;
 		void			FromBitBuffer( bf_read *buf );
 
+		void			Transform( float yaw, const Vector &translation );
+
 		int				handId, fingerId;
 		Vector			direction, position;
 	};
@@ -200,6 +212,8 @@ namespace holo
 
 		void			ToBitBuffer( bf_write *buf ) const;
 		void			FromBitBuffer( bf_read *buf );
+
+		void			Transform( float yaw, const Vector &translation );
 
 		int				handId;
 		float			radius, grabStrength;
@@ -241,11 +255,6 @@ namespace holo
 		STapGesture		_tap;
 
 	private:
-#ifdef GAME_DLL
-		void			ApplyTranslation( const Vector &offset );
-		void			ApplyRotation( CBaseCombatCharacter *entity );
-#endif
-
 		int				_gestureBits;
 	};
 
