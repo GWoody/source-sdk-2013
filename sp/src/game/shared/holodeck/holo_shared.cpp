@@ -271,7 +271,7 @@ void CFinger::Transform( float yaw, const Vector &translation )
 CHand::CHand()
 {
 	_id = INVALID_INDEX;
-	_confidence = 0.0f;
+	_confidence = _pinchStrength = 0.0f;
 	_direction = _position = _velocity = _normal = vec3_origin;
 }
 
@@ -287,6 +287,7 @@ void CHand::FromLeap( const Leap::Hand &h )
 
 	_id = h.id();
 	_confidence = h.confidence();
+	_pinchStrength = h.pinchStrength();
 	_velocity = LeapToSourceVector( h.palmVelocity() );
 	_normal = LeapToSourceVector( h.palmNormal() );
 	_direction = LeapToSourceVector( h.direction() );
@@ -311,6 +312,7 @@ void CHand::ToBitBuffer( bf_write *buf ) const
 {
 	buf->WriteVarInt32( _id );
 	buf->WriteFloat( _confidence );
+	buf->WriteFloat( _pinchStrength );
 	buf->WriteBitVec3Normal( _direction );
 	buf->WriteBitVec3Normal( _normal );
 	buf->WriteBitVec3Coord( _position );
@@ -326,6 +328,7 @@ void CHand::FromBitBuffer( bf_read *buf )
 {
 	_id = buf->ReadVarInt32();
 	_confidence = buf->ReadFloat();
+	_pinchStrength = buf->ReadFloat();
 	buf->ReadBitVec3Normal( _direction );
 	buf->ReadBitVec3Normal( _normal );
 	buf->ReadBitVec3Coord( _position );
@@ -365,6 +368,30 @@ inline const CFinger *CHand::GetFingerById( int id ) const
 	}
 
 	return NULL;
+}
+
+inline const CFinger &CHand::GetClosestFingerTo( EFinger to, EFinger f ) const
+{
+	EFinger closest = EFinger::FINGER_THUMB;
+	float closestDistance = FLT_MAX;
+
+	for( int i = 0; i < EFinger::FINGER_COUNT; i++ )
+	{
+		// Don't compare the target finger against itself.
+		if( i == to )
+			continue;
+
+		Vector direction = _fingers[to].GetTipPosition() - _fingers[i].GetTipPosition();
+		float distance = fabs( direction.LengthSqr() );
+
+		if( distance < closestDistance )
+		{
+			closest = (EFinger)i;
+			closestDistance = distance;
+		}
+	}
+
+	return _fingers[closest];
 }
 
 //=============================================================================

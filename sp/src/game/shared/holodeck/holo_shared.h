@@ -130,16 +130,20 @@ namespace holo
 		// Accessors.
 		inline int		GetId() const								{ return _id; }
 		inline float	GetConfidence() const						{ return _confidence; }
+		inline float	GetPinchStrength() const					{ return _pinchStrength; }
 		inline const Vector &	GetDirection() const				{ return _direction; }
 		inline const Vector &	GetNormal() const					{ return _normal; }
 		inline const Vector &	GetPosition() const					{ return _position; }
 		inline const Vector &	GetVelocity() const					{ return _velocity; }
 		inline const CFinger &	GetFingerByType( EFinger f ) const	{ return _fingers[f]; }
+
+		// Computed accessors.
 		inline const CFinger *	GetFingerById( int id ) const;
+		inline const CFinger &	GetClosestFingerTo( EFinger to, EFinger f ) const;
 
 	private:
 		int				_id;
-		float			_confidence;
+		float			_confidence, _pinchStrength;
 		Vector			_direction, _normal;
 		Vector			_position;
 		Vector			_velocity;
