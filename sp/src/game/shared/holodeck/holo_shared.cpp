@@ -210,6 +210,18 @@ void SBone::FromLeap(const Leap::Bone &b)
 
 #endif
 
+void SBone::ToBitBuffer( bf_write *buf ) const
+{
+	buf->WriteBitVec3Coord( nextJoint );
+	buf->WriteBitVec3Coord( prevJoint );
+}
+
+void SBone::FromBitBuffer( bf_read *buf )
+{
+	buf->ReadBitVec3Coord( nextJoint );
+	buf->ReadBitVec3Coord( prevJoint );
+}
+
 std::istream &operator>>(std::istream &ss, SBone &b)
 {
 	ss >> b.nextJoint >> b.prevJoint;
@@ -222,7 +234,6 @@ std::ostream &operator<<(std::ostream &ss, const SBone &b)
 	ss << b.nextJoint << " " << b.prevJoint;
 
 	return ss;
-
 }
 
 //=============================================================================
@@ -253,6 +264,26 @@ void SFinger::FromLeap( const Leap::Finger &f )
 	direction.NormalizeInPlace();
 }
 #endif
+
+void SFinger::ToBitBuffer( bf_write *buf ) const
+{
+	buf->WriteVarInt32( id );
+	buf->WriteBitVec3Normal( direction );
+	buf->WriteBitVec3Coord( tipPosition );
+	buf->WriteBitVec3Normal( tipVelocity );
+	buf->WriteFloat( width );
+	buf->WriteFloat( length );
+}
+
+void SFinger::FromBitBuffer( bf_read *buf )
+{
+	id = buf->ReadVarInt32();
+	buf->ReadBitVec3Normal( direction );
+	buf->ReadBitVec3Coord( tipPosition );
+	buf->ReadBitVec3Normal( tipVelocity );
+	width = buf->ReadFloat();
+	length = buf->ReadFloat();
+}
 
 istream &holo::operator>>( istream &ss, SFinger &f )
 {
@@ -307,6 +338,36 @@ void SHand::BuildFingers( const Leap::Hand &h )
 	}
 }
 #endif
+
+void SHand::ToBitBuffer( bf_write *buf ) const
+{
+	buf->WriteVarInt32( id );
+	buf->WriteFloat( confidence );
+	buf->WriteBitVec3Normal( direction );
+	buf->WriteBitVec3Normal( normal );
+	buf->WriteBitVec3Coord( position );
+	buf->WriteBitVec3Normal( velocity );
+
+	for( int i = 0; i < EFinger::FINGER_COUNT; i++ )
+	{
+		fingers[i].ToBitBuffer( buf );
+	}
+}
+
+void SHand::FromBitBuffer( bf_read *buf )
+{
+	id = buf->ReadVarInt32();
+	confidence = buf->ReadFloat();
+	buf->ReadBitVec3Normal( direction );
+	buf->ReadBitVec3Normal( normal );
+	buf->ReadBitVec3Coord( position );
+	buf->ReadBitVec3Normal( velocity );
+
+	for( int i = 0; i < EFinger::FINGER_COUNT; i++ )
+	{
+		fingers[i].FromBitBuffer( buf );
+	}
+}
 
 istream &holo::operator>>( istream &ss, SHand &h )
 {
@@ -370,6 +431,28 @@ void SCircleGesture::FromLeap( const Leap::CircleGesture &c )
 }
 #endif
 
+void SCircleGesture::ToBitBuffer( bf_write *buf ) const
+{
+	buf->WriteVarInt32( handId );
+	buf->WriteVarInt32( fingerId );
+	buf->WriteFloat( radius );
+	buf->WriteFloat( duration );
+	buf->WriteBitVec3Coord( center );
+	buf->WriteBitVec3Normal( normal );
+	buf->WriteVarInt32( clockwise );
+}
+
+void SCircleGesture::FromBitBuffer( bf_read *buf )
+{
+	handId = buf->ReadVarInt32();
+	fingerId = buf->ReadVarInt32();
+	radius = buf->ReadFloat();
+	duration = buf->ReadFloat();
+	buf->ReadBitVec3Coord( center );
+	buf->ReadBitVec3Normal( normal );
+	clockwise = buf->ReadVarInt32() != 0 ? true : false;
+}
+
 istream &holo::operator>>( istream &ss, SCircleGesture &c )
 {
 	ss >> c.handId >> c.fingerId >> c.center >> c.normal >> c.radius >> c.duration >> c.clockwise;
@@ -409,6 +492,24 @@ void SSwipeGesture::FromLeap( const Leap::SwipeGesture &s )
 	startPosition = LeapToSourceVector( s.startPosition(), true );
 }
 #endif
+
+void SSwipeGesture::ToBitBuffer( bf_write *buf ) const
+{
+	buf->WriteVarInt32( handId );
+	buf->WriteFloat( speed );
+	buf->WriteBitVec3Normal( direction );
+	buf->WriteBitVec3Coord( curPosition );
+	buf->WriteBitVec3Coord( startPosition );
+}
+
+void SSwipeGesture::FromBitBuffer( bf_read *buf )
+{
+	handId = buf->ReadVarInt32();
+	speed = buf->ReadFloat();
+	buf->ReadBitVec3Normal( direction );
+	buf->ReadBitVec3Coord( curPosition );
+	buf->ReadBitVec3Coord( startPosition );
+}
 
 istream &holo::operator>>( istream &ss, SSwipeGesture &s )
 {
@@ -463,6 +564,22 @@ void STapGesture::FromLeap( const Leap::ScreenTapGesture &s )
 }
 #endif
 
+void STapGesture::ToBitBuffer( bf_write *buf ) const
+{
+	buf->WriteVarInt32( handId );
+	buf->WriteVarInt32( fingerId );
+	buf->WriteBitVec3Normal( direction );
+	buf->WriteBitVec3Coord( position );
+}
+
+void STapGesture::FromBitBuffer( bf_read *buf )
+{
+	handId = buf->ReadVarInt32();
+	fingerId = buf->ReadVarInt32();
+	buf->ReadBitVec3Normal( direction );
+	buf->ReadBitVec3Coord( position );
+}
+
 istream &holo::operator>>( istream &ss, STapGesture &t )
 {
 	ss >> t.handId >> t.fingerId >> t.direction >> t.position;
@@ -499,6 +616,22 @@ void SBallGesture::FromLeap( const Leap::Hand &h )
 	center = LeapToSourceVector( h.sphereCenter(), true );
 }
 #endif
+
+void SBallGesture::ToBitBuffer( bf_write *buf ) const
+{
+	buf->WriteSignedVarInt32( handId );
+	buf->WriteFloat( radius );
+	buf->WriteFloat( grabStrength );
+	buf->WriteBitVec3Coord( center );
+}
+
+void SBallGesture::FromBitBuffer( bf_read *buf )
+{
+	handId = buf->ReadSignedVarInt32();
+	radius = buf->ReadFloat();
+	grabStrength = buf->ReadFloat();
+	buf->ReadBitVec3Coord( center );
+}
 
 istream &holo::operator>>( istream &ss, SBallGesture &b )
 {
@@ -572,45 +705,45 @@ void SFrame::FromLeap( const Leap::Frame &f )
 
 void SFrame::ToBitBuffer( bf_write *buf ) const
 {
-	buf->WriteBytes( &_hand, sizeof(_hand) );
-	buf->WriteBytes( &_ball, sizeof(_ball) );
+	_hand.ToBitBuffer( buf );
+	_ball.ToBitBuffer( buf );
 	buf->WriteVarInt32( _gestureBits );
 
 	if( IsGestureActive( GESTURE_CIRCLE ) )
 	{
-		buf->WriteBytes( &_circle, sizeof(_circle) );
+		_circle.ToBitBuffer( buf );
 	}
 
 	if( IsGestureActive( GESTURE_SWIPE ) )
 	{
-		buf->WriteBytes( &_swipe, sizeof(_swipe) );
+		_swipe.ToBitBuffer( buf );
 	}
 
 	if( IsGestureActive( GESTURE_TAP ) )
 	{
-		buf->WriteBytes( &_tap, sizeof(_tap) );
+		_tap.ToBitBuffer( buf );
 	}
 }
 
 void SFrame::FromBitBuffer( bf_read *buf )
 {
-	buf->ReadBytes( &_hand, sizeof(_hand) );
-	buf->ReadBytes( &_ball, sizeof(_ball) );
+	_hand.FromBitBuffer( buf );
+	_ball.FromBitBuffer( buf );
 	_gestureBits = buf->ReadVarInt32();
 
 	if( IsGestureActive( GESTURE_CIRCLE ) )
 	{
-		buf->ReadBytes( &_circle, sizeof(_circle) );
+		_circle.FromBitBuffer( buf );
 	}
 
 	if( IsGestureActive( GESTURE_SWIPE ) )
 	{
-		buf->ReadBytes( &_swipe, sizeof(_swipe) );
+		_swipe.FromBitBuffer( buf );
 	}
 
 	if( IsGestureActive( GESTURE_TAP ) )
 	{
-		buf->ReadBytes( &_tap, sizeof(_tap) );
+		_tap.FromBitBuffer( buf );
 	}
 }
 

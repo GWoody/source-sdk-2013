@@ -58,14 +58,17 @@ namespace holo
 	//-------------------------------------------------------------------------
 	struct SBone
 	{
-					SBone();
+						SBone();
 #ifdef CLIENT_DLL
-					SBone(const Leap::Bone &b);
-		void		FromLeap(const Leap::Bone &b);
+						SBone(const Leap::Bone &b);
+		void			FromLeap(const Leap::Bone &b);
 #endif
 
-		Vector		nextJoint;
-		Vector		prevJoint;
+		void			ToBitBuffer( bf_write *buf ) const;
+		void			FromBitBuffer( bf_read *buf );
+
+		Vector			nextJoint;
+		Vector			prevJoint;
 	};
 
 	std::istream &operator>>(std::istream &ss, SBone &b);
@@ -76,17 +79,20 @@ namespace holo
 	//-------------------------------------------------------------------------
 	struct SFinger
 	{
-					SFinger();
+						SFinger();
 #ifdef CLIENT_DLL
-					SFinger( const Leap::Finger &f );
-		void		FromLeap( const Leap::Finger &f );
+						SFinger( const Leap::Finger &f );
+		void			FromLeap( const Leap::Finger &f );
 #endif
 
-		int			id;
-		Vector		direction;
-		Vector		tipPosition;
-		Vector		tipVelocity;
-		float		width, length;
+		void			ToBitBuffer( bf_write *buf ) const;
+		void			FromBitBuffer( bf_read *buf );
+
+		int				id;
+		Vector			direction;
+		Vector			tipPosition;
+		Vector			tipVelocity;
+		float			width, length;
 	};
 
 	std::istream &operator>>( std::istream &ss, SFinger &f );
@@ -96,19 +102,22 @@ namespace holo
 	//-------------------------------------------------------------------------
 	struct SHand
 	{
-					SHand();
+						SHand();
 #ifdef CLIENT_DLL
-					SHand( const Leap::Hand &h );
-		void		FromLeap( const Leap::Hand &h );
-		void		BuildFingers( const Leap::Hand &h );
+						SHand( const Leap::Hand &h );
+		void			FromLeap( const Leap::Hand &h );
+		void			BuildFingers( const Leap::Hand &h );
 #endif
 
-		int			id;
-		float		confidence;
-		Vector		direction, normal;
-		Vector		position;
-		Vector		velocity;
-		SFinger		fingers[EFinger::FINGER_COUNT];
+		void			ToBitBuffer( bf_write *buf ) const;
+		void			FromBitBuffer( bf_read *buf );
+
+		int				id;
+		float			confidence;
+		Vector			direction, normal;
+		Vector			position;
+		Vector			velocity;
+		SFinger			fingers[EFinger::FINGER_COUNT];
 	};
 
 	std::istream &operator>>( std::istream &ss, SHand &h );
@@ -118,16 +127,19 @@ namespace holo
 	//-------------------------------------------------------------------------
 	struct SCircleGesture
 	{
-					SCircleGesture();
+						SCircleGesture();
 #ifdef CLIENT_DLL
-					SCircleGesture( const Leap::CircleGesture &c );
-		void		FromLeap( const Leap::CircleGesture &c );
+						SCircleGesture( const Leap::CircleGesture &c );
+		void			FromLeap( const Leap::CircleGesture &c );
 #endif
 
-		int			handId, fingerId;
-		float		radius, duration;
-		Vector		center, normal;
-		bool		clockwise;
+		void			ToBitBuffer( bf_write *buf ) const;
+		void			FromBitBuffer( bf_read *buf );
+
+		int				handId, fingerId;
+		float			radius, duration;
+		Vector			center, normal;
+		bool			clockwise;
 	};
 
 	std::istream &operator>>( std::istream &ss, SCircleGesture &c );
@@ -137,15 +149,18 @@ namespace holo
 	//-------------------------------------------------------------------------
 	struct SSwipeGesture
 	{
-					SSwipeGesture();
+						SSwipeGesture();
 #ifdef CLIENT_DLL
-					SSwipeGesture( const Leap::SwipeGesture &s );
-		void		FromLeap( const Leap::SwipeGesture &s );
+						SSwipeGesture( const Leap::SwipeGesture &s );
+		void			FromLeap( const Leap::SwipeGesture &s );
 #endif
 
-		int			handId;
-		float		speed;
-		Vector		direction, curPosition, startPosition;
+		void			ToBitBuffer( bf_write *buf ) const;
+		void			FromBitBuffer( bf_read *buf );
+
+		int				handId;
+		float			speed;
+		Vector			direction, curPosition, startPosition;
 	};
 
 	std::istream &operator>>( std::istream &ss, SSwipeGesture &s );
@@ -155,16 +170,19 @@ namespace holo
 	//-------------------------------------------------------------------------
 	struct STapGesture
 	{
-					STapGesture();
+						STapGesture();
 #ifdef CLIENT_DLL
-					STapGesture( const Leap::KeyTapGesture &k );
-					STapGesture( const Leap::ScreenTapGesture &s );
-		void		FromLeap( const Leap::KeyTapGesture &k );
-		void		FromLeap( const Leap::ScreenTapGesture &s );
+						STapGesture( const Leap::KeyTapGesture &k );
+						STapGesture( const Leap::ScreenTapGesture &s );
+		void			FromLeap( const Leap::KeyTapGesture &k );
+		void			FromLeap( const Leap::ScreenTapGesture &s );
 #endif
 
-		int			handId, fingerId;
-		Vector		direction, position;
+		void			ToBitBuffer( bf_write *buf ) const;
+		void			FromBitBuffer( bf_read *buf );
+
+		int				handId, fingerId;
+		Vector			direction, position;
 	};
 
 	std::istream &operator>>( std::istream &ss, STapGesture &t );
@@ -174,15 +192,18 @@ namespace holo
 	//-------------------------------------------------------------------------
 	struct SBallGesture
 	{
-					SBallGesture();
+						SBallGesture();
 #ifdef CLIENT_DLL
-					SBallGesture( const Leap::Hand &h );
-		void		FromLeap( const Leap::Hand &h );
+						SBallGesture( const Leap::Hand &h );
+		void			FromLeap( const Leap::Hand &h );
 #endif
 
-		int			handId;
-		float		radius, grabStrength;
-		Vector		center;
+		void			ToBitBuffer( bf_write *buf ) const;
+		void			FromBitBuffer( bf_read *buf );
+
+		int				handId;
+		float			radius, grabStrength;
+		Vector			center;
 	};
 
 	std::istream &operator>>( std::istream &ss, SBallGesture &b );
