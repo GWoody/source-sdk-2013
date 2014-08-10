@@ -21,7 +21,10 @@ static ConVar holo_arm_length( "holo_arm_length", "650", FCVAR_ARCHIVE, "Users a
 #ifdef CLIENT_DLL
 	Vector			LeapToSourceVector( const Leap::Vector &v, bool transform = false );
 	EFinger			LeapToSourceFingerCode( const Leap::Finger::Type &finger );
+	EBone			LeapToSourceBoneCode( const Leap::Bone::Type &bone );
 	float			LeapToSourceDistance( float distance );
+
+	Leap::Bone::Type	SourceToLeapBoneCode( EBone bone );
 #endif
 
 //-----------------------------------------------------------------------------
@@ -78,6 +81,34 @@ const char *EGestureToString( EGesture gesture )
 	}
 
 	return "GESTURE_INVALID";
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+const char *EBoneToString( EBone bone )
+{
+	switch( bone )
+	{
+		case BONE_METACARPAL:
+			return "BONE_METACARPAL";
+
+		case BONE_PROXIMAL:
+			return "BONE_PROXIMAL";
+
+		case BONE_INTERMEDIATE:
+			return "BONE_INTERMEDIATE";
+
+		case BONE_DISTAL:
+			return "BONE_DISTAL";
+
+		case BONE_COUNT:
+			return "BONE_COUNT";
+
+		default:
+			break;
+	}
+
+	return "BONE_INVALID";
 }
 
 //-----------------------------------------------------------------------------
@@ -163,6 +194,54 @@ EFinger LeapToSourceFingerCode( const Leap::Finger::Type &finger )
 	return EFinger::FINGER_COUNT;
 }
 
+EBone LeapToSourceBoneCode( const Leap::Bone::Type &bone )
+{
+	switch( bone )
+	{
+		case Leap::Bone::TYPE_METACARPAL:
+			return EBone::BONE_METACARPAL;
+
+		case Leap::Bone::TYPE_PROXIMAL:
+			return EBone::BONE_PROXIMAL;
+
+		case Leap::Bone::TYPE_INTERMEDIATE:
+			return EBone::BONE_INTERMEDIATE;
+
+		case Leap::Bone::TYPE_DISTAL:
+			return EBone::BONE_DISTAL;
+
+		default:
+			break;
+	}
+
+	Assert( 0 );
+	return EBone::BONE_COUNT;
+}
+
+Leap::Bone::Type SourceToLeapBoneCode( EBone bone )
+{
+	switch( bone )
+	{
+		case EBone::BONE_METACARPAL:
+			return Leap::Bone::TYPE_METACARPAL;
+
+		case EBone::BONE_PROXIMAL:
+			return  Leap::Bone::TYPE_PROXIMAL;
+
+		case EBone::BONE_INTERMEDIATE:
+			return Leap::Bone::TYPE_INTERMEDIATE;
+
+		case EBone::BONE_DISTAL:
+			return Leap::Bone::TYPE_DISTAL;
+
+		default:
+			break;
+	}
+
+	Assert( 0 );
+	return Leap::Bone::TYPE_METACARPAL;
+}
+
 #endif
 
 
@@ -203,7 +282,13 @@ void CBone::FromBitBuffer( bf_read *buf )
 
 void CBone::Transform( float yaw, const Vector &translation )
 {
-	
+	// Apply rotations.
+	VectorYawRotate( _nextJoint, yaw, _nextJoint );
+	VectorYawRotate( _prevJoint, yaw, _prevJoint );
+
+	// Apply translations.
+	_nextJoint += translation;
+	_prevJoint += translation;
 }
 
 //=============================================================================
@@ -232,6 +317,12 @@ void CFinger::FromLeap( const Leap::Finger &f )
 	_length = LeapToSourceDistance( f.length() );
 
 	_direction.NormalizeInPlace();
+
+	for( int i = 0; i < EBone::BONE_COUNT; i++ )
+	{
+		Leap::Bone::Type leapBone = SourceToLeapBoneCode( (EBone)i );
+		_bones[i].FromLeap( f.bone( leapBone ) );
+	}
 }
 #endif
 
@@ -243,6 +334,11 @@ void CFinger::ToBitBuffer( bf_write *buf ) const
 	buf->WriteBitVec3Normal( _tipVelocity );
 	buf->WriteFloat( _width );
 	buf->WriteFloat( _length );
+
+	for( int i = 0; i < EBone::BONE_COUNT; i++ )
+	{
+		_bones[i].ToBitBuffer( buf );
+	}
 }
 
 void CFinger::FromBitBuffer( bf_read *buf )
@@ -253,6 +349,11 @@ void CFinger::FromBitBuffer( bf_read *buf )
 	buf->ReadBitVec3Normal( _tipVelocity );
 	_width = buf->ReadFloat();
 	_length = buf->ReadFloat();
+
+	for( int i = 0; i < EBone::BONE_COUNT; i++ )
+	{
+		_bones[i].FromBitBuffer( buf );
+	}
 }
 
 void CFinger::Transform( float yaw, const Vector &translation )
@@ -263,6 +364,11 @@ void CFinger::Transform( float yaw, const Vector &translation )
 
 	// Apply translations.
 	_tipPosition += translation;
+
+	for( int i = 0; i < EBone::BONE_COUNT; i++ )
+	{
+		_bones[i].Transform( yaw, translation );
+	}
 }
 
 //=============================================================================

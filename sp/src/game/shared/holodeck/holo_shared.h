@@ -45,6 +45,17 @@ namespace holo
 	};
 	const char *EGestureToString( EGesture gesture );
 
+	enum EBone
+	{
+		BONE_METACARPAL,
+		BONE_PROXIMAL,
+		BONE_INTERMEDIATE,
+		BONE_DISTAL,
+
+		BONE_COUNT
+	};
+	const char *EBoneToString( EBone bone );
+
 	enum EGlobals
 	{
 		INVALID_INDEX = -1
@@ -102,6 +113,7 @@ namespace holo
 		inline const Vector &	GetTipVelocity() const				{ return _tipVelocity; }
 		inline float	GetWidth() const							{ return _width; }
 		inline float	GetLength() const							{ return _length; }
+		inline const CBone &	GetBone( EBone bone ) const			{ return _bones[bone]; }
 
 	private:
 		int				_id;
@@ -109,6 +121,7 @@ namespace holo
 		Vector			_tipPosition;
 		Vector			_tipVelocity;
 		float			_width, _length;
+		CBone			_bones[BONE_COUNT];
 	};
 
 	//-------------------------------------------------------------------------

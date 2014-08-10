@@ -19,11 +19,12 @@ using namespace holo;
 
 static const char *holo_render_debug_hand_options = "Rendering options:\n\
 0 - off,\n\
-1 - palm + finger tips + finger directions,\n\
+1 - wireframe hand,\n\
 2 - ball gesture,\n\
 3 - collision box,\n\
-4 - palm direction + normal.\
-5 - velocity vector.\
+4 - palm direction + normal.\n\
+5 - velocity vector.\n\
+6 - finger direction vectors.\n\
 ";
 
 static ConVar holo_render_debug_hand( "holo_render_debug_hand", "1", NULL, holo_render_debug_hand_options );
@@ -127,24 +128,24 @@ void CHoloHand::DebugEndTouch()
 void CHoloHand::RenderDebugHand()
 {
 	const Vector handBounds( 0.25f, 0.25f, 0.25f );
-	const Vector fingerBounds( 0.1f, 0.1f, 0.1f );
+	const Vector fingerBounds( 0.05f, 0.05f, 0.05f );
 	const Vector &palmPosition = _curFrame.GetHand().GetPosition();
 	const float duration = 1.0f / 15.0f;
 
 	// Draw the palm box.
-	debugoverlay->AddBoxOverlay( palmPosition, -handBounds, handBounds, vec3_angle, m_clrRender.GetR(), m_clrRender.GetG(), m_clrRender.GetB(), 127, duration );
+	//debugoverlay->AddBoxOverlay( palmPosition, -handBounds, handBounds, vec3_angle, m_clrRender.GetR(), m_clrRender.GetG(), m_clrRender.GetB(), 127, duration );
 
 	// Draw all fingers.
 	for( int i = 0; i < FINGER_COUNT; i++ )
 	{
-		const Vector &tipPosition = _curFrame.GetHand().GetFingerByType( (EFinger)i ).GetTipPosition();
-		const Vector &direction = _curFrame.GetHand().GetFingerByType( (EFinger)i ).GetDirection();
-
-		// Draw the finger tip box.
-		debugoverlay->AddBoxOverlay( tipPosition, -fingerBounds, fingerBounds, vec3_angle, m_clrRender.GetR(), m_clrRender.GetG(), m_clrRender.GetB(), 127, duration );
-
-		// Draw the finger direction.
-		debugoverlay->AddLineOverlayAlpha( tipPosition, tipPosition + direction, m_clrRender.GetR(), m_clrRender.GetG(), m_clrRender.GetB(), 127, false, duration );
+		const CFinger &finger = _curFrame.GetHand().GetFingerByType( (EFinger)i );
+		for( int j = 0; j < EBone::BONE_COUNT; j++ )
+		{
+			const CBone &bone = finger.GetBone( (EBone)j );
+			
+			debugoverlay->AddLineOverlay( bone.GetPrevJoint(), bone.GetNextJoint(), m_clrRender.GetR(), m_clrRender.GetG(), m_clrRender.GetB(), false, duration );
+			debugoverlay->AddBoxOverlay( bone.GetNextJoint(), -fingerBounds, fingerBounds, vec3_angle, m_clrRender.GetR(), m_clrRender.GetG(), m_clrRender.GetB(), 127, duration );
+		}
 	}
 
 	if( holo_render_debug_hand.GetInt() == 2 )
@@ -175,6 +176,17 @@ void CHoloHand::RenderDebugHand()
 	{
 		// Draw velocity.
 		debugoverlay->AddLineOverlay( palmPosition, palmPosition + _curFrame.GetHand().GetVelocity(), 255, 0, 0, false, duration );
+	}
+
+	if( holo_render_debug_hand.GetInt() == 6 )
+	{
+		// Draw finger directions.
+		for( int i = 0; i < FINGER_COUNT; i++ )
+		{
+			const Vector &tipPosition = _curFrame.GetHand().GetFingerByType( (EFinger)i ).GetTipPosition();
+			const Vector &direction = _curFrame.GetHand().GetFingerByType( (EFinger)i ).GetDirection();
+			debugoverlay->AddLineOverlayAlpha( tipPosition, tipPosition + direction, 255, 0, 0, 127, false, duration );
+		}
 	}
 }
 
