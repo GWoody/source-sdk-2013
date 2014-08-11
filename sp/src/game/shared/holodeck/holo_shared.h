@@ -145,6 +145,7 @@ namespace holo
 		inline float	GetConfidence() const						{ return _confidence; }
 		inline float	GetPinchStrength() const					{ return _pinchStrength; }
 		inline const Vector &	GetDirection() const				{ return _direction; }
+		inline QAngle	GetAngles() const							{ QAngle angles; VectorAngles( _direction, angles ); return angles; }
 		inline const Vector &	GetNormal() const					{ return _normal; }
 		inline const Vector &	GetPosition() const					{ return _position; }
 		inline const Vector &	GetVelocity() const					{ return _velocity; }

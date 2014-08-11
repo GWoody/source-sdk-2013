@@ -2743,9 +2743,17 @@ bool CGrabController::UpdateObject( CBasePlayer *pPlayer, float flError )
 		return false;
 	}
 
+#ifndef HOLODECK
 	Vector forward, right, up;
 	QAngle playerAngles = pPlayer->EyeAngles();
 	AngleVectors( playerAngles, &forward, &right, &up );
+#else
+	const holo::CFrame &frame = pPlayer->GetHandEntity()->GetFrame();
+	QAngle playerAngles = frame.GetHand().GetAngles();
+	Vector forward = frame.GetHand().GetPosition() - pPlayer->EyePosition();
+
+	forward.NormalizeInPlace();
+#endif
 
 	if ( HL2GameRules()->MegaPhyscannonActive() )
 	{

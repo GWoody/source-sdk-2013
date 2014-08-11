@@ -258,7 +258,7 @@ private:
 	CNetworkHandle( CHoloHand, m_hHand );				// The hand entity which is used to interact with the environment.
 
 public:
-	CBaseEntity *			GetHandEntity() const		{ return m_hHand.Get(); }
+	CHoloHand *				GetHandEntity() const		{ return m_hHand.Get(); }
 #endif
 
 	// IPlayerInfo passthrough (because we can't do multiple inheritance)

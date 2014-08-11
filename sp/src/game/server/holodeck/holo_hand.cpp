@@ -113,7 +113,7 @@ void CHoloHand::ProcessFrame( const CFrame &frame )
 //-----------------------------------------------------------------------------
 void CHoloHand::DebugStartTouch()
 {
-	SetRenderColor( 255, 0, 0 );
+	SetRenderColor( 0, 0, 255 );
 }
 
 //-----------------------------------------------------------------------------
@@ -131,6 +131,7 @@ void CHoloHand::RenderDebugHand()
 	const Vector fingerBounds( 0.05f, 0.05f, 0.05f );
 	const Vector &palmPosition = _curFrame.GetHand().GetPosition();
 	const float duration = 1.0f / 15.0f;
+	const int r = ( 1.0f - _curFrame.GetHand().GetConfidence() ) * 255.0f;
 
 	// Draw the palm box.
 	//debugoverlay->AddBoxOverlay( palmPosition, -handBounds, handBounds, vec3_angle, m_clrRender.GetR(), m_clrRender.GetG(), m_clrRender.GetB(), 127, duration );
@@ -143,8 +144,8 @@ void CHoloHand::RenderDebugHand()
 		{
 			const CBone &bone = finger.GetBone( (EBone)j );
 			
-			debugoverlay->AddLineOverlay( bone.GetPrevJoint(), bone.GetNextJoint(), m_clrRender.GetR(), m_clrRender.GetG(), m_clrRender.GetB(), false, duration );
-			debugoverlay->AddBoxOverlay( bone.GetNextJoint(), -fingerBounds, fingerBounds, vec3_angle, m_clrRender.GetR(), m_clrRender.GetG(), m_clrRender.GetB(), 127, duration );
+			debugoverlay->AddLineOverlay( bone.GetPrevJoint(), bone.GetNextJoint(), r, m_clrRender.GetG(), m_clrRender.GetB(), false, duration );
+			debugoverlay->AddBoxOverlay( bone.GetNextJoint(), -fingerBounds, fingerBounds, vec3_angle, r, m_clrRender.GetG(), m_clrRender.GetB(), 127, duration );
 		}
 	}
 
