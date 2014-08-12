@@ -296,7 +296,7 @@ namespace holo
 #endif
 
 		void			SetValid( bool valid )						{ _valid = valid; }
-		bool			IsValid() const								{ return _valid; }
+		bool			IsValid() const;
 
 		bool			IsGestureActive( EGesture gesture ) const	{ return ( _gestureBits & ( 1 << gesture ) ) != 0; }
 		void			SetGestureActive( EGesture gesture )		{ _gestureBits |= ( 1 << gesture ); }

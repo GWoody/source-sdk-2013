@@ -879,7 +879,18 @@ void CFrame::ToEntitySpace( CBaseCombatCharacter *entity, const Vector &delta )
 }
 #endif
 
+bool CFrame::IsValid() const
+{
+	if( _hand.GetPosition().IsZero() )
+	{
+		return false;
+	}
+
+	return _valid;
+}
+
 inline const CHand *CFrame::GetHandById( int id ) const
 {
+	// In case we ever want the support multiple hands.
 	return _hand.GetId() == id ? &_hand : NULL;
 }

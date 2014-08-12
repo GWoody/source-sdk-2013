@@ -817,6 +817,13 @@ void CBasePlayer::SetStepSoundTime( stepsoundtimes_t iStepSoundTime, bool bWalki
 
 Vector CBasePlayer::Weapon_ShootPosition( )
 {
+#ifdef HOLODECK
+	if ( m_hUseEntity != NULL )
+	{
+		// The player is holding an object.
+		return m_hHand->GetAbsOrigin();
+	}
+#endif
 	return EyePosition();
 }
 
