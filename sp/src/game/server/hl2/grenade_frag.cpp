@@ -122,7 +122,12 @@ void CGrenadeFrag::Spawn( void )
 	m_takedamage	= DAMAGE_YES;
 	m_iHealth		= 1;
 
+#ifndef HOLODECK
 	SetSize( -Vector(4,4,4), Vector(4,4,4) );
+#else
+	// Make the bounding box bigger so it is easier to pick up.
+	SetSize( -Vector(8,8,8), Vector(8,8,8) );
+#endif
 	SetCollisionGroup( COLLISION_GROUP_WEAPON );
 	CreateVPhysics();
 

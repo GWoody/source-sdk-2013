@@ -1150,6 +1150,10 @@ void CPlayerPickupController::Use( CBaseEntity *pActivator, CBaseEntity *pCaller
 			massFactor = RemapVal( massFactor, 0.5, 15, 0.5, 4 );
 			vecLaunch *= player_throwforce.GetFloat() * massFactor;
 
+#ifdef HOLODECK
+			// HOLOTODO: get direction should affect the thrown object.
+#endif
+
 			pPhys->ApplyForceCenter( vecLaunch );
 			AngularImpulse aVel = RandomAngularImpulse( -10, 10 ) * massFactor;
 			pPhys->ApplyTorqueCenter( aVel );
