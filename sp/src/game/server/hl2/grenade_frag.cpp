@@ -315,6 +315,10 @@ void CGrenadeFrag::OnPhysGunPickup( CBasePlayer *pPhysGunUser, PhysGunPickup_t r
 	}
 #endif
 
+#ifdef HOLODECK
+	SetTimer( 6.0f, 6.0f - FRAG_GRENADE_WARN_TIME );
+#endif
+
 #ifdef HL2_EPISODIC
 	SetPunted( true );
 #endif
