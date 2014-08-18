@@ -1145,6 +1145,7 @@ void CNPC_Barnacle::LiftPhysicsObject( float flBiteZOffset )
 		// If we got a physics prop, wait until the thing has settled down
 		m_bLiftingPrey = false;
 
+#ifdef HL2_EPISODIC
 		if ( hl2_episodic.GetBool() )
 		{
 			CBounceBomb *pBounce = dynamic_cast<CBounceBomb *>( pVictim );
@@ -1166,6 +1167,7 @@ void CNPC_Barnacle::LiftPhysicsObject( float flBiteZOffset )
 			}
 		}
 		else
+#endif
 		{
 			// Start the bite animation. The anim event in it will finish the job.
 			SetActivity( (Activity)ACT_BARNACLE_TASTE_SPIT );

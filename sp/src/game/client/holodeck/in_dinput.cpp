@@ -44,9 +44,7 @@ void free_message( const char *message )
 //----------------------------------------------------------------------------
 //----------------------------------------------------------------------------
 CDirectInput::CDirectInput() :
-	hl2_walkspeed( "hl2_walkspeed" ),
-	hl2_normspeed( "hl2_normspeed" ),
-	hl2_sprintspeed( "hl2_sprintspeed" )
+	cl_forwardspeed( "cl_forwardspeed" )
 {
 
 }
@@ -234,8 +232,7 @@ void CDirectInput::CreateMove( CUserCmd *cmd )
 	C_BaseHLPlayer *player = dynamic_cast<C_BaseHLPlayer *>( C_BasePlayer::GetLocalPlayer() );
 
 	// The players move speed is stored within a ConVar.
-	const ConVarRef *movespeed = player->IsSprinting() ? &hl2_sprintspeed : &hl2_normspeed;
-	const float maxPlayerVelocity = movespeed->GetFloat();
+	const float maxPlayerVelocity = cl_forwardspeed.GetFloat();
 
 	/** The Polling System **/
 	HRESULT hr;

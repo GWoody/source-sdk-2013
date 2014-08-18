@@ -9546,7 +9546,6 @@ void CAI_BaseNPC::CollectShotStats( const Vector &vecShootOrigin, const Vector &
 #endif
 }
 
-#ifdef HL2_DLL
 //-----------------------------------------------------------------------------
 // Purpose: Return the actual position the NPC wants to fire at when it's trying
 //			to hit it's current enemy.
@@ -9586,6 +9585,7 @@ Vector CAI_BaseNPC::GetActualShootPosition( const Vector &shootOrigin )
 	return (vecTargetPosition + ( GetEnemy()->GetSmoothedVelocity() * ai_lead_time.GetFloat() ));
 }
 
+#ifdef HL2_DLL
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------

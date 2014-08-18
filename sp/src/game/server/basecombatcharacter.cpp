@@ -1652,7 +1652,7 @@ void CBaseCombatCharacter::Event_Killed( const CTakeDamageInfo &info )
 				pDroppedWeapon->Dissolve( NULL, gpGlobals->curtime, false, nDissolveType );
 			}
 		}
-#ifdef HL2_DLL
+#if defined( HL2_DLL )
 		else if ( PlayerHasMegaPhysCannon() )
 		{
 			if ( pDroppedWeapon )

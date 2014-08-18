@@ -2136,6 +2136,7 @@ void CNPC_Vortigaunt::ZapBeam( int nHand )
 		// Our zaps do special things to antlions
 		if ( FClassnameIs( pEntity, "npc_antlion" ) )
 		{
+#ifdef HL2_EPISODIC
 			// Make a worker flip instead of explode
 			if ( IsAntlionWorker( pEntity ) )
 			{
@@ -2143,6 +2144,7 @@ void CNPC_Vortigaunt::ZapBeam( int nHand )
 				pAntlion->Flip();
 			}
 			else
+#endif
 			{
 				// Always gib the antlion hit!
 				dmgInfo.ScaleDamage( 4.0f );
@@ -2306,10 +2308,12 @@ int CNPC_Vortigaunt::IRelationPriority( CBaseEntity *pTarget )
 		priority++;
 	}
 
+#ifndef GRID_DLL
 	// Flipped antlions are of lower priority
 	CAI_BaseNPC *pNPC = pTarget->MyNPCPointer();
 	if ( pNPC && pNPC->Classify() == CLASS_ANTLION && pNPC->GetActivity() == ACT_ANTLION_ZAP_FLIP )
 		priority--;
+#endif
 
 	return priority;
 }
@@ -2460,6 +2464,7 @@ void CNPC_Vortigaunt::GatherConditions( void )
 //-----------------------------------------------------------------------------
 void CNPC_Vortigaunt::DispelAntlions( const Vector &vecOrigin, float flRadius, bool bDispel /*= true*/ )
 {
+#ifndef GRID_DLL
 	// More effects
 	if ( bDispel )
 	{
@@ -2575,6 +2580,7 @@ void CNPC_Vortigaunt::DispelAntlions( const Vector &vecOrigin, float flRadius, b
 	{
 		EndHandGlow( VORTIGAUNT_BEAM_ALL );
 	}
+#endif
 }
 
 //-----------------------------------------------------------------------------
