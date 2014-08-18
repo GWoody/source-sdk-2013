@@ -1,34 +1,37 @@
 /*
 ===============================================================================
 
-	grid_gamemovement.cpp
-	Mostly borrowed from `hl_gamemovement.cpp`
+	grid_vgui_rootpanel.cpp
+	VGUI stubs.
 
 ===============================================================================
 */
-
 #include "cbase.h"
-#include "grid_gamemovement.h"
+#include "vgui_int.h"
+#include "ienginevgui.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
 //-----------------------------------------------------------------------------
-// Create required objects.
 //-----------------------------------------------------------------------------
-static CMoveData g_MoveData;
-CMoveData *g_pMoveData = &g_MoveData;
+void VGUI_CreateClientDLLRootPanel( void )
+{
+	// Just using PANEL_ROOT in HL2 right now
+}
 
-IPredictionSystem *IPredictionSystem::g_pPredictionSystems = NULL;
-
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-CGridGameMovement::CGridGameMovement()
+void VGUI_DestroyClientDLLRootPanel( void )
 {
 }
 
-// Expose our interface.
-static CGridGameMovement g_GameMovement;
-IGameMovement *g_pGameMovement = ( IGameMovement * )&g_GameMovement;
-
-EXPOSE_SINGLE_INTERFACE_GLOBALVAR(CGameMovement, IGameMovement,INTERFACENAME_GAMEMOVEMENT, g_GameMovement );
+//-----------------------------------------------------------------------------
+// Purpose: Game specific root panel
+// Output : vgui::Panel
+//-----------------------------------------------------------------------------
+vgui::VPANEL VGui_GetClientDLLRootPanel( void )
+{
+	vgui::VPANEL root = enginevgui->GetPanel( PANEL_CLIENTDLL );
+	return root;
+}

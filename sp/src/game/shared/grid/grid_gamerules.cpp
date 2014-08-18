@@ -47,7 +47,7 @@ END_NETWORK_TABLE()
 #ifdef CLIENT_DLL
 	void RecvProxy_GridGameRules( const RecvProp *pProp, void **pOut, void *pData, int objectID )
 	{
-		CHalfLife2 *pRules = HL2GameRules();
+		CGridRules *pRules = GridRules();
 		Assert( pRules );
 		*pOut = pRules;
 	}
@@ -69,8 +69,14 @@ END_NETWORK_TABLE()
 	END_SEND_TABLE()
 #endif
 
+#ifdef CLIENT_DLL
+
+#else
+
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 void CGridRules::PlayerThink( CBasePlayer *pPlayer )
 {
 }
+
+#endif

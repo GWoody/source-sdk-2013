@@ -1,0 +1,51 @@
+//-----------------------------------------------------------------------------
+//	CLIENT_HL2.VPC
+//
+//	Project Script
+//-----------------------------------------------------------------------------
+
+$Macro SRCDIR		"..\.."
+$Macro GAMENAME 	"grid" [!$SOURCESDK]
+$Macro GAMENAME 	"mod_hl2" [$SOURCESDK]
+
+$Include "$SRCDIR\game\client\client_base.vpc"
+$Include "$SRCDIR\game\protobuf_include.vpc"
+
+$Configuration
+{
+	$Compiler
+	{
+		$AdditionalIncludeDirectories	".\grid;$SRCDIR\game\shared\grid;$BASE"
+		$PreprocessorDefinitions		"$BASE;GRID_CLIENT_DLL"
+	}
+}
+
+$Project "Client (Grid)"
+{
+	$Folder	"Source Files"
+	{
+		$File	"hud_chat.cpp"
+
+		$Folder	"HL2 DLL"
+		{
+			$File	"hl2\c_barnacle.cpp"
+		}
+		
+		$Folder	"Grid DLL"
+		{
+			$File	"grid/grid_clientmode.cpp"
+			$File	"grid/grid_clientmodenormal.cpp"
+			$File	"grid/grid_clientmodenormal.h"
+			$File	"grid/grid_in_main.cpp"
+			$File	"grid/grid_prediction.cpp"
+			$File	"grid/grid_vgui_rootpanel.cpp"
+			
+			$File	"$SRCDIR/game/shared/grid/grid_ammodef.cpp"
+			$File	"$SRCDIR/game/shared/grid/grid_gamerules.cpp"
+			$File	"$SRCDIR/game/shared/grid/grid_gamerules.h"
+			$File	"$SRCDIR/game/shared/grid/grid_gamemovement.cpp"
+			$File	"$SRCDIR/game/shared/grid/grid_gamemovement.h"
+			$File	"$SRCDIR/game/shared/grid/grid_usermessages.cpp"
+		}
+	}
+}

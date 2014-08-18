@@ -16,7 +16,6 @@
 
 #include "in_dinput.h"
 #include "in_buttons.h"
-#include "c_basehlplayer.h"
 
 CDirectInput *CDirectInput::_instance;
 
@@ -38,8 +37,6 @@ void free_message( const char *message )
 {
 	LocalFree( (HLOCAL)message );
 }
-
-
 
 //----------------------------------------------------------------------------
 //----------------------------------------------------------------------------
@@ -228,9 +225,6 @@ void CDirectInput::Shutdown()
 //----------------------------------------------------------------------------
 void CDirectInput::CreateMove( CUserCmd *cmd )
 {
-	// Get the players client side entity singleton.
-	C_BaseHLPlayer *player = dynamic_cast<C_BaseHLPlayer *>( C_BasePlayer::GetLocalPlayer() );
-
 	// The players move speed is stored within a ConVar.
 	const float maxPlayerVelocity = cl_forwardspeed.GetFloat();
 

@@ -1,3 +1,3 @@
 pushd %~dp0
-devtools\bin\vpc.exe /grid +gamedlls /mksln games.sln
+devtools\bin\vpc.exe /grid /define:HOLODECK +gamedlls /mksln games.sln
 popd
