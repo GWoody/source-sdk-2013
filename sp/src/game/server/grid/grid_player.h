@@ -24,6 +24,9 @@ public:
 		CGridPlayer::s_PlayerEdict = ed;
 		return (CGridPlayer*)CreateEntityByName( className );
 	}
+
+	// CBasePlayer overrides.
+	virtual void	Spawn();
 };
 
 #endif // __GRID_PLAYER_H__

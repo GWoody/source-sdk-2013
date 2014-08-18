@@ -29,6 +29,7 @@ $Project "Client (Grid)"
 		$Folder	"HL2 DLL"
 		{
 			$File	"hl2\c_barnacle.cpp"
+			$File	"episodic\c_vort_charge_token.cpp"
 		}
 		
 		$Folder	"Grid DLL"

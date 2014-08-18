@@ -119,5 +119,5 @@ void GameStartFrame( void )
 //-----------------------------------------------------------------------------
 void InstallGameRules()
 {
-	CreateGameRulesObject( "CGridGameRules" );
+	CreateGameRulesObject( "CGridRules" );
 }

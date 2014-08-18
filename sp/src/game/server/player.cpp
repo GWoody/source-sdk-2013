@@ -6822,6 +6822,7 @@ void CBasePlayer::UpdateClientData( void )
 		world->SetDisplayTitle( false );
 	}
 
+#ifndef GRID_DLL
 	if (m_ArmorValue != m_iClientBattery)
 	{
 		m_iClientBattery = m_ArmorValue;
@@ -6834,6 +6835,7 @@ void CBasePlayer::UpdateClientData( void )
 			MessageEnd();
 		}
 	}
+#endif
 
 #if 0 // BYE BYE!!
 	// Update Flashlight
