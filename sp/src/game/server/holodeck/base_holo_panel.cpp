@@ -10,6 +10,7 @@
 #include "cbase.h"
 #include "base_holo_panel.h"
 #include "sprite.h"
+#include "grid_player.h"
 
 //-----------------------------------------------------------------------------
 // Specify the fields to load from the BSP, and the fields to write to the save.
@@ -73,7 +74,7 @@ bool CBaseHoloPanel::PassesTriggerFilters( CBaseEntity *pOther )
 		return false;
 	}
 
-	CBasePlayer *pPlayer = UTIL_GetLocalPlayer();
+	CGridPlayer *pPlayer = dynamic_cast<CGridPlayer *>( UTIL_GetLocalPlayer() );
 	Assert( pPlayer );
 
 	CBaseEntity *pHand = pPlayer->GetHandEntity();

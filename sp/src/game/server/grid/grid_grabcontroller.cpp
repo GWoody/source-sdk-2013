@@ -14,6 +14,7 @@
 #include "props.h"
 #include "vphysics/friction.h"
 #include "grid_gamerules.h"
+#include "grid_player.h"
 
 //-----------------------------------------------------------------------------
 // ConVars
@@ -635,7 +636,10 @@ bool CGrabController::UpdateObject( CBasePlayer *pPlayer, float flError )
 		return false;
 	}
 
-	const holo::CFrame &frame = pPlayer->GetHandEntity()->GetFrame();
+	CGridPlayer *gridPlayer = dynamic_cast<CGridPlayer *>( pPlayer );
+	Assert( gridPlayer );
+
+	const holo::CFrame &frame = gridPlayer->GetHandEntity()->GetFrame();
 	QAngle playerAngles = frame.GetHand().GetAngles();
 	Vector forward = frame.GetHand().GetPosition() - pPlayer->EyePosition();
 
