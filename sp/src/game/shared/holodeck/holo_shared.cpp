@@ -331,7 +331,7 @@ void CFinger::ToBitBuffer( bf_write *buf ) const
 	buf->WriteVarInt32( _id );
 	buf->WriteBitVec3Normal( _direction );
 	buf->WriteBitVec3Coord( _tipPosition );
-	buf->WriteBitVec3Normal( _tipVelocity );
+	buf->WriteBitVec3Coord( _tipVelocity );
 	buf->WriteFloat( _width );
 	buf->WriteFloat( _length );
 
@@ -346,7 +346,7 @@ void CFinger::FromBitBuffer( bf_read *buf )
 	_id = buf->ReadVarInt32();
 	buf->ReadBitVec3Normal( _direction );
 	buf->ReadBitVec3Coord( _tipPosition );
-	buf->ReadBitVec3Normal( _tipVelocity );
+	buf->ReadBitVec3Coord( _tipVelocity );
 	_width = buf->ReadFloat();
 	_length = buf->ReadFloat();
 
@@ -359,6 +359,7 @@ void CFinger::FromBitBuffer( bf_read *buf )
 void CFinger::Transform( float yaw, const Vector &translation )
 {
 	// Apply rotations.
+	VectorYawRotate( _tipVelocity, yaw, _tipVelocity );
 	VectorYawRotate( _tipPosition, yaw, _tipPosition );
 	VectorYawRotate( _direction, yaw, _direction );
 
@@ -422,7 +423,7 @@ void CHand::ToBitBuffer( bf_write *buf ) const
 	buf->WriteBitVec3Normal( _direction );
 	buf->WriteBitVec3Normal( _normal );
 	buf->WriteBitVec3Coord( _position );
-	buf->WriteBitVec3Normal( _velocity );
+	buf->WriteBitVec3Coord( _velocity );
 
 	for( int i = 0; i < EFinger::FINGER_COUNT; i++ )
 	{
@@ -438,7 +439,7 @@ void CHand::FromBitBuffer( bf_read *buf )
 	buf->ReadBitVec3Normal( _direction );
 	buf->ReadBitVec3Normal( _normal );
 	buf->ReadBitVec3Coord( _position );
-	buf->ReadBitVec3Normal( _velocity );
+	buf->ReadBitVec3Coord( _velocity );
 
 	for( int i = 0; i < EFinger::FINGER_COUNT; i++ )
 	{
