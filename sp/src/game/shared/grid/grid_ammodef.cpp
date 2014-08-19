@@ -28,6 +28,7 @@ ConVar	sk_max_largeround		( "sk_max_357", "9999", FCVAR_REPLICATED );
 ConVar	sk_plr_dmg_buckshot		( "sk_plr_dmg_buckshot", "0", FCVAR_REPLICATED );	
 ConVar	sk_npc_dmg_buckshot		( "sk_npc_dmg_buckshot", "0", FCVAR_REPLICATED );
 ConVar	sk_max_buckshot			( "sk_max_buckshot", "9999", FCVAR_REPLICATED );
+ConVar	sk_plr_num_shotgun_pellets( "sk_plr_num_shotgun_pellets", "7", FCVAR_REPLICATED );
 
 ConVar	sk_plr_dmg_grenade		( "sk_plr_dmg_grenade", "0", FCVAR_REPLICATED );
 ConVar	sk_npc_dmg_grenade		( "sk_npc_dmg_grenade", "0", FCVAR_REPLICATED );

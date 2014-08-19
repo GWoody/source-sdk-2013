@@ -238,7 +238,7 @@ END_DATADESC()
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-
+#ifndef GRID_DLL
 class CMattsPipe : public CWeaponCrowbar
 {
 	DECLARE_CLASS( CMattsPipe, CWeaponCrowbar );
@@ -246,6 +246,7 @@ class CMattsPipe : public CWeaponCrowbar
 	const char *GetWorldModel() const	{ return "models/props_canal/mattpipe.mdl"; }
 	void SetPickupTouch( void )	{	/* do nothing */ }
 };
+#endif
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
@@ -373,8 +374,9 @@ CSimpleSimTimer CNPC_Citizen::gm_PlayerSquadEvaluateTimer;
 bool CNPC_Citizen::CreateBehaviors()
 {
 	BaseClass::CreateBehaviors();
+#ifndef GRID_DLL
 	AddBehavior( &m_FuncTankBehavior );
-	
+#endif
 	return true;
 }
 
@@ -508,12 +510,14 @@ void CNPC_Citizen::Spawn()
 
 	m_flNextHealthSearchTime = gpGlobals->curtime;
 
+#ifndef GRID_DLL
 	CWeaponRPG *pRPG = dynamic_cast<CWeaponRPG*>(GetActiveWeapon());
 	if ( pRPG )
 	{
 		CapabilitiesRemove( bits_CAP_USE_SHOT_REGULATOR );
 		pRPG->StopGuiding();
 	}
+#endif
 
 	m_flTimePlayerStare = FLT_MAX;
 
@@ -750,6 +754,7 @@ void CNPC_Citizen::SelectExpressionType()
 //-----------------------------------------------------------------------------
 void CNPC_Citizen::FixupMattWeapon()
 {
+#ifndef GRID_DLL
 	CBaseCombatWeapon *pWeapon = GetActiveWeapon();
 	if ( pWeapon && pWeapon->ClassMatches( "weapon_crowbar" ) && NameMatches( "matt" ) )
 	{
@@ -766,6 +771,7 @@ void CNPC_Citizen::FixupMattWeapon()
 		pWeapon->Activate();
 		Weapon_Equip( pWeapon );
 	}
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -839,6 +845,7 @@ bool CNPC_Citizen::ShouldAlwaysThink()
 #define CITIZEN_FOLLOWER_DESERT_FUNCTANK_DIST	45.0f*12.0f
 bool CNPC_Citizen::ShouldBehaviorSelectSchedule( CAI_BehaviorBase *pBehavior )
 {
+#ifndef GRID_DLL
 	if( pBehavior == &m_FollowBehavior )
 	{
 		// Suppress follow behavior if I have a func_tank and the func tank is near
@@ -870,12 +877,13 @@ bool CNPC_Citizen::ShouldBehaviorSelectSchedule( CAI_BehaviorBase *pBehavior )
 			}
 		}
 	}
-
+#endif
 	return BaseClass::ShouldBehaviorSelectSchedule( pBehavior );
 }
 
 void CNPC_Citizen::OnChangeRunningBehavior( CAI_BehaviorBase *pOldBehavior,  CAI_BehaviorBase *pNewBehavior )
 {
+#ifndef GRID_DLL
 	if ( pNewBehavior == &m_FuncTankBehavior )
 	{
 		m_bReadinessCapable = false;
@@ -884,6 +892,7 @@ void CNPC_Citizen::OnChangeRunningBehavior( CAI_BehaviorBase *pOldBehavior,  CAI
 	{
 		m_bReadinessCapable = IsReadinessCapable();
 	}
+#endif
 
 	BaseClass::OnChangeRunningBehavior( pOldBehavior, pNewBehavior );
 }
@@ -1174,13 +1183,15 @@ int CNPC_Citizen::SelectSchedule()
 		return SCHED_CITIZEN_SIT_ON_TRAIN;
 	}
 
+#ifndef GRID_DLL
 	CWeaponRPG *pRPG = dynamic_cast<CWeaponRPG*>(GetActiveWeapon());
 	if ( pRPG && pRPG->IsGuiding() )
 	{
 		DevMsg( "Citizen in select schedule but RPG is guiding?\n");
 		pRPG->StopGuiding();
 	}
-	
+#endif
+
 	return BaseClass::SelectSchedule();
 }
 
@@ -1724,6 +1735,7 @@ void CNPC_Citizen::RunTask( const Task_t *pTask )
 
 #endif
 
+#ifndef GRID_DLL
 		case TASK_CIT_RPG_AUGER:
 			{
 				// Keep augering until the RPG has been destroyed
@@ -1804,6 +1816,7 @@ void CNPC_Citizen::RunTask( const Task_t *pTask )
 				pRPG->UpdateNPCLaserPosition( vecLaserPos );
 			}
 			break;
+#endif
 
 		default:
 			BaseClass::RunTask( pTask );
@@ -1950,6 +1963,7 @@ void CNPC_Citizen::PickupItem( CBaseEntity *pItem )
 //-----------------------------------------------------------------------------
 bool CNPC_Citizen::IgnorePlayerPushing( void )
 {
+#ifndef GRID_DLL
 	// If the NPC's on a func_tank that the player cannot man, ignore player pushing
 	if ( m_FuncTankBehavior.IsMounted() )
 	{
@@ -1957,7 +1971,7 @@ bool CNPC_Citizen::IgnorePlayerPushing( void )
 		if ( pTank && !pTank->IsControllable() )
 			return true;
 	}
-
+#endif
 	return false;
 }
 
@@ -2103,6 +2117,7 @@ Vector CNPC_Citizen::GetActualShootPosition( const Vector &shootOrigin )
 {
 	Vector vecTarget = BaseClass::GetActualShootPosition( shootOrigin );
 
+#ifndef GRID_DLL
 	CWeaponRPG *pRPG = dynamic_cast<CWeaponRPG*>(GetActiveWeapon());
 	// If we're firing an RPG at a gunship, aim off to it's side, because we'll auger towards it.
 	if ( pRPG && GetEnemy() )
@@ -2144,6 +2159,7 @@ Vector CNPC_Citizen::GetActualShootPosition( const Vector &shootOrigin )
 		}
 
 	}
+#endif
 
 	return vecTarget;
 }
@@ -3307,6 +3323,7 @@ void CNPC_Citizen::SetSquad( CAI_Squad *pSquad )
 //-----------------------------------------------------------------------------
 bool CNPC_Citizen::HandleInteraction(int interactionType, void *data, CBaseCombatCharacter* sourceEnt)
 {
+#ifndef GRID_DLL
 	// TODO:  As citizen gets more complex, we will have to only allow
 	//		  these interruptions to happen from certain schedules
 	if (interactionType ==	g_interactionScannerInspect)
@@ -3368,6 +3385,16 @@ bool CNPC_Citizen::HandleInteraction(int interactionType, void *data, CBaseComba
 		}
 		return true;
 	}
+#else
+	if (interactionType == g_interactionHitByPlayerThrownPhysObj )
+	{
+		if ( IsOkToSpeakInResponseToPlayer() )
+		{
+			Speak( TLK_PLYR_PHYSATK );
+		}
+		return true;
+	}
+#endif
 
 	return BaseClass::HandleInteraction( interactionType, data, sourceEnt );
 }
