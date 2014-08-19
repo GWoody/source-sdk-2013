@@ -39,7 +39,12 @@ public:
 	virtual void	ProcessUsercmds( CUserCmd *cmds, int numcmds, int totalcmds, int dropped_packets, bool paused );
 
 	// Object interaction.
+	virtual void	PickupObject( CBaseEntity *pObject, bool bLimitMassAndSize );
+	virtual bool	CanPickupObject( CBaseEntity *pObject, float massLimit, float sizeLimit );
+	virtual void	PlayerUse();
 	virtual CBaseEntity *	FindUseEntity();
+	virtual bool	IsHoldingEntity( CBaseEntity *pEnt );
+	virtual float	GetHeldObjectMass( IPhysicsObject *pHeldObject );
 
 	// Frame updates.
 	virtual void	PreThink();

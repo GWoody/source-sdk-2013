@@ -10,11 +10,19 @@
 #include "cbase.h"
 #include "ai_basenpc.h"
 #include "grid_player.h"
+#include "in_buttons.h"
 
 //-----------------------------------------------------------------------------
 // ConVars.
 //-----------------------------------------------------------------------------
 extern ConVar sv_debug_player_use;
+
+//-----------------------------------------------------------------------------
+// External functions.
+//-----------------------------------------------------------------------------
+extern bool PlayerPickupControllerIsHoldingEntity( CBaseEntity *pPickupController, CBaseEntity *pHeldEntity );
+extern float PlayerPickupGetHeldObjectMass( CBaseEntity *pPickupControllerEntity, IPhysicsObject *pHeldObject );
+extern void PlayerPickupObject( CBasePlayer *pPlayer, CBaseEntity *pObject );
 
 //-----------------------------------------------------------------------------
 // Source entity configuration.
@@ -107,6 +115,159 @@ void CGridPlayer::ProcessUsercmds( CUserCmd *cmds, int numcmds, int totalcmds, i
 	m_hHand->ProcessFrame( finalHoloFrame );
 
 	BaseClass::ProcessUsercmds( cmds, numcmds, totalcmds, dropped_packets, paused );
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+bool CGridPlayer::IsHoldingEntity( CBaseEntity *pEnt )
+{
+	return PlayerPickupControllerIsHoldingEntity( m_hUseEntity, pEnt );
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+float CGridPlayer::GetHeldObjectMass( IPhysicsObject *pHeldObject )
+{
+	return PlayerPickupGetHeldObjectMass( m_hUseEntity, pHeldObject );
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void CGridPlayer::PickupObject( CBaseEntity *pObject, bool bLimitMassAndSize )
+{
+	// can't pick up what you're standing on
+	if ( GetGroundEntity() == pObject )
+		return;
+	
+	if ( bLimitMassAndSize == true )
+	{
+		if ( CanPickupObject( pObject, 35, 128 ) == false )
+			 return;
+	}
+
+	// Can't be picked up if NPCs are on me
+	if ( pObject->HasNPCsOnIt() )
+		return;
+
+	PlayerPickupObject( this, pObject );
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+bool CGridPlayer::CanPickupObject( CBaseEntity *pObject, float massLimit, float sizeLimit )
+{
+	//Must be valid
+	if ( pObject == NULL )
+		return false;
+
+	//Must move with physics
+	if ( pObject->GetMoveType() != MOVETYPE_VPHYSICS )
+		return false;
+
+	IPhysicsObject *pList[VPHYSICS_MAX_OBJECT_LIST_COUNT];
+	int count = pObject->VPhysicsGetObjectList( pList, ARRAYSIZE(pList) );
+
+	//Must have a physics object
+	if (!count)
+		return false;
+
+	float objectMass = 0;
+	bool checkEnable = false;
+	for ( int i = 0; i < count; i++ )
+	{
+		objectMass += pList[i]->GetMass();
+		if ( !pList[i]->IsMoveable() )
+		{
+			checkEnable = true;
+		}
+		if ( pList[i]->GetGameFlags() & FVPHYSICS_NO_PLAYER_PICKUP )
+			return false;
+		if ( pList[i]->IsHinged() )
+			return false;
+	}
+
+	//Must be under our threshold weight
+	if ( massLimit > 0 && objectMass > massLimit )
+		return false;
+
+	if ( sizeLimit > 0 )
+	{
+		const Vector &size = pObject->CollisionProp()->OBBSize();
+		if ( size.x > sizeLimit || size.y > sizeLimit || size.z > sizeLimit )
+			return false;
+	}
+
+	return true;
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void CGridPlayer::PlayerUse ( void )
+{
+	// Was use pressed or released?
+	if ( ! ((m_nButtons | m_afButtonPressed | m_afButtonReleased) & IN_USE) )
+		return;
+
+	if ( m_afButtonPressed & IN_USE )
+	{
+		// Currently using a latched entity?
+		if ( ClearUseEntity() )
+		{
+			return;
+		}
+
+		// Tracker 3926:  We can't +USE something if we're climbing a ladder
+		if ( GetMoveType() == MOVETYPE_LADDER )
+		{
+			return;
+		}
+	}
+
+	CBaseEntity *pUseEntity = FindUseEntity();
+
+	bool usedSomething = false;
+
+	// Found an object
+	if ( pUseEntity )
+	{
+		//!!!UNDONE: traceline here to prevent +USEing buttons through walls			
+		int caps = pUseEntity->ObjectCaps();
+		variant_t emptyVariant;
+
+		if ( m_afButtonPressed & IN_USE )
+		{
+			// Robin: Don't play sounds for NPCs, because NPCs will allow respond with speech.
+			if ( !pUseEntity->MyNPCPointer() )
+			{
+				EmitSound( "HL2Player.Use" );
+			}
+		}
+
+		if ( ( (m_nButtons & IN_USE) && (caps & FCAP_CONTINUOUS_USE) ) ||
+			 ( (m_afButtonPressed & IN_USE) && (caps & (FCAP_IMPULSE_USE|FCAP_ONOFF_USE)) ) )
+		{
+			if ( caps & FCAP_CONTINUOUS_USE )
+				m_afPhysicsFlags |= PFLAG_USING;
+
+			pUseEntity->AcceptInput( "Use", this, this, emptyVariant, USE_TOGGLE );
+
+			usedSomething = true;
+		}
+		// UNDONE: Send different USE codes for ON/OFF.  Cache last ONOFF_USE object to send 'off' if you turn away
+		else if ( (m_afButtonReleased & IN_USE) && (pUseEntity->ObjectCaps() & FCAP_ONOFF_USE) )	// BUGBUG This is an "off" use
+		{
+			pUseEntity->AcceptInput( "Use", this, this, emptyVariant, USE_TOGGLE );
+
+			usedSomething = true;
+		}
+	}
+
+	// Debounce the use key
+	if ( usedSomething && pUseEntity )
+	{
+		m_Local.m_nOldButtons |= IN_USE;
+		m_afButtonPressed &= ~IN_USE;
+	}
 }
 
 //-----------------------------------------------------------------------------
