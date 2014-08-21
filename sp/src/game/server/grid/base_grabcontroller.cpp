@@ -1,14 +1,14 @@
 /*
 ===============================================================================
 
-	grid_grabcontroller.cpp
+	base_grabcontroller.cpp
 		Mostly borrowed from `hl2/weapon_physcannon.cpp`
 
 ===============================================================================
 */
 
 #include "cbase.h"
-#include "grid_grabcontroller.h"
+#include "base_grabcontroller.h"
 #include "player_pickup.h"
 #include "physics_prop_ragdoll.h"
 #include "props.h"

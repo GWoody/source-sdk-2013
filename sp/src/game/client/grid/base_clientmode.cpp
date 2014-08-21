@@ -1,14 +1,14 @@
 /*
 ===============================================================================
 
-	grid_clientmode.cpp
+	base_clientmode.cpp
 
 ===============================================================================
 */
 
 #include "cbase.h"
 #include "ivmodemanager.h"
-#include "grid_clientmodenormal.h"
+#include "base_clientmodenormal.h"
 #include "panelmetaclassmgr.h"
 
 // memdbgon must be the last include file in a .cpp file!!!

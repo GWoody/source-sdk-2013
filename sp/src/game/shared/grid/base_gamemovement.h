@@ -1,28 +1,25 @@
 /*
 ===============================================================================
 
-	grid_gamestats.cpp
-		Registers a gamestats instance.
+	base_gamemovement.h
+	Mostly borrowed from `hl_gamemovement.h`
 
 ===============================================================================
 */
 
-#include "cbase.h"
-#include "gamestats.h"
+#ifndef __GRID_GAMEMOVEMENT_H__
+#define __GRID_GAMEMOVEMENT_H__
+
+#include "gamemovement.h"
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-class CGameStats : public CBaseGameStats
+class CGridGameMovement : public CGameMovement
 {
+	typedef CGameMovement BaseClass;
+	
 public:
-	CGameStats( void )
-	{
-		// Set this game stats instance to be the global stat manager.
-		gamestats = &s_GameStats;
-	}
-		
-private:
-	static CGameStats s_GameStats;
+	CGridGameMovement();
 };
 
-CGameStats CGameStats::s_GameStats;
+#endif // __GRID_GAMEMOVEMENT_H__

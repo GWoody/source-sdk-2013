@@ -1,7 +1,7 @@
 /*
 ===============================================================================
 
-	grid_airelationships.cpp
+	base_airelationships.cpp
 	Borrowed from `hl2_gamerules.cpp`. Required for every AI character to know
 	their disposition to every other AI character.
 

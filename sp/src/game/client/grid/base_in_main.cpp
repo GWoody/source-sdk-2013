@@ -1,25 +1,27 @@
 /*
 ===============================================================================
 
-	grid_gamemovement.h
-	Mostly borrowed from `hl_gamemovement.h`
+	base_in_main.cpp
+	Grid specific input handling.
 
 ===============================================================================
 */
 
-#ifndef __GRID_GAMEMOVEMENT_H__
-#define __GRID_GAMEMOVEMENT_H__
+#include "cbase.h"
+#include "kbutton.h"
+#include "input.h"
 
-#include "gamemovement.h"
+// memdbgon must be the last include file in a .cpp file!!!
+#include "tier0/memdbgon.h"
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-class CGridGameMovement : public CGameMovement
+class CGridInput : public CInput
 {
-	typedef CGameMovement BaseClass;
-	
 public:
-	CGridGameMovement();
 };
 
-#endif // __GRID_GAMEMOVEMENT_H__
+static CGridInput g_Input;
+
+// Expose this interface
+IInput *input = &g_Input;

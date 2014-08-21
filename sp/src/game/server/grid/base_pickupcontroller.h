@@ -1,7 +1,7 @@
 /*
 ===============================================================================
 
-	grid_grabcontroller.h
+	base_grabcontroller.h
 		Mostly borrowed from `hl2/weapon_physcannon.cpp`
 
 ===============================================================================
@@ -10,7 +10,7 @@
 #ifndef __GRID_PICKUPCONTROLLER_H__
 #define __GRID_PICKUPCONTROLLER_H__
 
-#include "grid_grabcontroller.h"
+#include "base_grabcontroller.h"
 
 //-----------------------------------------------------------------------------
 // Player pickup controller

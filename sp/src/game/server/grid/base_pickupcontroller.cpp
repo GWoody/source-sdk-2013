@@ -1,14 +1,14 @@
 /*
 ===============================================================================
 
-	grid_pickupcontroller.cpp
+	base_pickupcontroller.cpp
 		Mostly borrowed from `hl2/weapon_physcannon.cpp`
 
 ===============================================================================
 */
 
 #include "cbase.h"
-#include "grid_pickupcontroller.h"
+#include "base_pickupcontroller.h"
 #include "player_pickup.h"
 #include "in_buttons.h"
 #include "physics_saverestore.h"

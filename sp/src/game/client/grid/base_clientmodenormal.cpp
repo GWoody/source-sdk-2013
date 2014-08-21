@@ -1,14 +1,14 @@
 /*
 ===============================================================================
 
-	grid_clientmodenormal.cpp
+	base_clientmodenormal.cpp
 	Draws the Grid hud.
 
 ===============================================================================
 */
 
 #include "cbase.h"
-#include "grid_clientmodenormal.h"
+#include "base_clientmodenormal.h"
 #include "vgui_int.h"
 #include "hud.h"
 #include <vgui/IInput.h>

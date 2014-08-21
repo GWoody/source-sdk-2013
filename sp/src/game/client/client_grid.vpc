@@ -39,21 +39,21 @@ $Project "Client (Grid)"
 		
 		$Folder	"Grid DLL"
 		{
-			$File	"grid/grid_clientmode.cpp"
-			$File	"grid/grid_clientmodenormal.cpp"
-			$File	"grid/grid_clientmodenormal.h"
-			$File	"grid/grid_in_main.cpp"
-			$File	"grid/grid_prediction.cpp"
-			$File	"grid/grid_vgui_rootpanel.cpp"
+			$File	"grid/base_clientmode.cpp"
+			$File	"grid/base_clientmodenormal.cpp"
+			$File	"grid/base_clientmodenormal.h"
+            $File   "grid/base_fx_impacts.cpp"
+			$File	"grid/base_in_main.cpp"
+			$File	"grid/base_prediction.cpp"
+			$File	"grid/base_vgui_rootpanel.cpp"
 			$File	"grid/c_grid_player.cpp"
-			$File   "grid/grid_fx_impacts.cpp"
             
+            $File	"$SRCDIR/game/shared/grid/base_gamemovement.cpp"
+			$File	"$SRCDIR/game/shared/grid/base_gamemovement.h"
+			$File	"$SRCDIR/game/shared/grid/base_usermessages.cpp"
 			$File	"$SRCDIR/game/shared/grid/grid_ammodef.cpp"
 			$File	"$SRCDIR/game/shared/grid/grid_gamerules.cpp"
 			$File	"$SRCDIR/game/shared/grid/grid_gamerules.h"
-			$File	"$SRCDIR/game/shared/grid/grid_gamemovement.cpp"
-			$File	"$SRCDIR/game/shared/grid/grid_gamemovement.h"
-			$File	"$SRCDIR/game/shared/grid/grid_usermessages.cpp"
 		}
 	}
 }

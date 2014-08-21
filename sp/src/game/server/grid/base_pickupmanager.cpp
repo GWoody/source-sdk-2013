@@ -1,15 +1,15 @@
 /*
 ===============================================================================
 
-	grid_pickupmanager.cpp
+	base_pickupmanager.cpp
 		Mostly borrowed from `hl2/weapon_physcannon.cpp`
 
 ===============================================================================
 */
 
 #include "cbase.h"
-#include "grid_pickupcontroller.h"
-#include "grid_grabcontroller.h"
+#include "base_pickupcontroller.h"
+#include "base_grabcontroller.h"
 
 //-----------------------------------------------------------------------------
 // Purpose: 
