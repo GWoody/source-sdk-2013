@@ -26,6 +26,13 @@ extern void PlayerPickupObject( CBasePlayer *pPlayer, CBaseEntity *pObject );
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
+CBaseGridPlayer::CBaseGridPlayer()
+{
+	_attemptingPickup = _lastAttemptingPickup = false;
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 bool CBaseGridPlayer::IsHoldingEntity( CBaseEntity *pEnt )
 {
 	return PlayerPickupControllerIsHoldingEntity( m_hUseEntity, pEnt );
@@ -111,15 +118,15 @@ bool CBaseGridPlayer::CanPickupObject( CBaseEntity *pObject, float massLimit, fl
 //-----------------------------------------------------------------------------
 void CBaseGridPlayer::PlayerUse ( void )
 {
-	// Was use pressed or released?
-	if ( ! ((m_nButtons | m_afButtonPressed | m_afButtonReleased) & IN_USE) )
+	if( _attemptingPickup == _lastAttemptingPickup )
 		return;
 
-	if ( m_afButtonPressed & IN_USE )
+	if ( !_attemptingPickup )
 	{
 		// Currently using a latched entity?
 		if ( ClearUseEntity() )
 		{
+			_attemptingPickup = _lastAttemptingPickup = false;
 			return;
 		}
 	}
@@ -135,18 +142,14 @@ void CBaseGridPlayer::PlayerUse ( void )
 		int caps = pUseEntity->ObjectCaps();
 		variant_t emptyVariant;
 
-		if ( ( (m_nButtons & IN_USE) && (caps & FCAP_CONTINUOUS_USE) ) ||
-			 ( (m_afButtonPressed & IN_USE) && (caps & (FCAP_IMPULSE_USE|FCAP_ONOFF_USE)) ) )
+		if ( _attemptingPickup && (caps & (FCAP_IMPULSE_USE|FCAP_ONOFF_USE)) )
 		{
-			if ( caps & FCAP_CONTINUOUS_USE )
-				m_afPhysicsFlags |= PFLAG_USING;
-
 			pUseEntity->AcceptInput( "Use", this, this, emptyVariant, USE_TOGGLE );
 
 			usedSomething = true;
 		}
 		// UNDONE: Send different USE codes for ON/OFF.  Cache last ONOFF_USE object to send 'off' if you turn away
-		else if ( (m_afButtonReleased & IN_USE) && (pUseEntity->ObjectCaps() & FCAP_ONOFF_USE) )	// BUGBUG This is an "off" use
+		else if ( _attemptingPickup && (pUseEntity->ObjectCaps() & FCAP_ONOFF_USE) )	// BUGBUG This is an "off" use
 		{
 			pUseEntity->AcceptInput( "Use", this, this, emptyVariant, USE_TOGGLE );
 
@@ -157,8 +160,7 @@ void CBaseGridPlayer::PlayerUse ( void )
 	// Debounce the use key
 	if ( usedSomething && pUseEntity )
 	{
-		m_Local.m_nOldButtons |= IN_USE;
-		m_afButtonPressed &= ~IN_USE;
+		_lastAttemptingPickup = _attemptingPickup;
 	}
 }
 

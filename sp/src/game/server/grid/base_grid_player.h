@@ -19,6 +19,12 @@ class CBaseGridPlayer : public CBasePlayer
 public:
 	DECLARE_CLASS( CBaseGridPlayer, CBasePlayer );
 
+	CBaseGridPlayer();
+
+	// GRID SPECIFIC METHODS.
+	void			SetAttemptObjectPickup( bool pickup )	{ _attemptingPickup = pickup; }
+	bool			IsAttemptingObjectPickup()				{ return _attemptingPickup; }
+
 	// Object interaction.
 	virtual void	PickupObject( CBaseEntity *pObject, bool bLimitMassAndSize );
 	virtual bool	CanPickupObject( CBaseEntity *pObject, float massLimit, float sizeLimit );
@@ -29,6 +35,9 @@ public:
 
 private:
 	float			IntervalDistance( float x, float x0, float x1 );
+
+	// GRID SPECIFIC VARIABLES.
+	bool			_attemptingPickup, _lastAttemptingPickup;
 };
 
 #endif // __BASE_GRID_PLAYER_H__

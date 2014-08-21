@@ -10,6 +10,9 @@
 #include "cbase.h"
 #include "grid_player.h"
 
+using namespace holo;
+using namespace grid;
+
 //-----------------------------------------------------------------------------
 // Source entity configuration.
 //-----------------------------------------------------------------------------
@@ -35,11 +38,16 @@ void CGridPlayer::Spawn()
 {
 	SetModel( "models/player.mdl" );
 
+	// Create the hand entity.
 	CHoloHand *pHand = dynamic_cast<CHoloHand *>( CreateEntityByName( "holo_hand" ) );
 	Assert( pHand );
 	pHand->Spawn();
 	pHand->SetOwnerEntity( this );
 	m_hHand.Set( pHand );
+
+	// Enable all gestures.
+	_gestureDetector.SetGestureEnabled( grid::EGesture::PICKUP, true );
+	_gestureDetector.SetGestureEnabled( grid::EGesture::GUN, true );
 
 	BaseClass::Spawn();
 }
@@ -64,7 +72,22 @@ bool CGridPlayer::BumpWeapon( CBaseCombatWeapon *pWeapon )
 //-----------------------------------------------------------------------------
 void CGridPlayer::ProcessUsercmds( CUserCmd *cmds, int numcmds, int totalcmds, int dropped_packets, bool paused )
 {
-	holo::CFrame finalHoloFrame;
+	CFrame finalHoloFrame = AccumulateHoloFrame( cmds, numcmds, totalcmds, dropped_packets, paused );
+	
+	if( finalHoloFrame.IsValid() )
+	{
+		m_hHand->ProcessFrame( finalHoloFrame );
+		ProcessFrame( finalHoloFrame );
+	}
+
+	BaseClass::ProcessUsercmds( cmds, numcmds, totalcmds, dropped_packets, paused );
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+CFrame CGridPlayer::AccumulateHoloFrame( CUserCmd *cmds, int numcmds, int totalcmds, int dropped_packets, bool paused )
+{
+	CFrame finalHoloFrame;
 	finalHoloFrame.SetValid( false );
 
 	for ( int i = totalcmds - 1; i >= 0; i-- )
@@ -79,7 +102,7 @@ void CGridPlayer::ProcessUsercmds( CUserCmd *cmds, int numcmds, int totalcmds, i
 		}
 
 		// Take the newest version of all frame attributes.
-		const holo::CFrame &curframe = pCmd->holo_frame;
+		const CFrame &curframe = pCmd->holo_frame;
 		if( curframe.IsGestureActive( holo::EGesture::GESTURE_CIRCLE ) )
 		{
 			finalHoloFrame.SetCircleGesture( curframe.GetCircleGesture() );
@@ -98,9 +121,35 @@ void CGridPlayer::ProcessUsercmds( CUserCmd *cmds, int numcmds, int totalcmds, i
 		finalHoloFrame.SetValid( true );
 	}
 
-	m_hHand->ProcessFrame( finalHoloFrame );
+	return finalHoloFrame;
+}
 
-	BaseClass::ProcessUsercmds( cmds, numcmds, totalcmds, dropped_packets, paused );
+//-----------------------------------------------------------------------------
+// Detects custom user gestures.
+//-----------------------------------------------------------------------------
+void CGridPlayer::ProcessFrame( const holo::CFrame &frame )
+{
+	_gestureDetector.SetFrame( frame );
+
+	HandlePickup();
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void CGridPlayer::HandlePickup()
+{
+	CPickupGesture pickup = _gestureDetector.DetectPickupGesture();
+	if( pickup.IsActive() )
+	{
+		if( pickup.HasClenchStarted() )
+		{
+			SetAttemptObjectPickup( true );
+		}
+		else if( pickup.HasClenchFinished() )
+		{
+			SetAttemptObjectPickup( false );
+		}
+	}
 }
 
 //-----------------------------------------------------------------------------

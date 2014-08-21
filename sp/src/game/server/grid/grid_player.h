@@ -11,6 +11,7 @@
 #define __GRID_PLAYER_H__
 
 #include "base_grid_player.h"
+#include "grid_gesture_detector.h"
 #include "holodeck/holo_hand.h"
 
 //-----------------------------------------------------------------------------
@@ -46,7 +47,14 @@ public:
 	CHoloHand *		GetHandEntity() const				{ return m_hHand.Get(); }
 
 private:
+	// UserCmd processing.
+	holo::CFrame	AccumulateHoloFrame( CUserCmd *cmds, int numcmds, int totalcmds, int dropped_packets, bool paused );
+	void			ProcessFrame( const holo::CFrame &frame );
+	void			HandlePickup();
+
 	CNetworkHandle( CHoloHand, m_hHand );				// The hand entity which is used to interact with the environment.
+
+	grid::CGestureDetector	_gestureDetector;
 };
 
 #endif // __GRID_PLAYER_H__
