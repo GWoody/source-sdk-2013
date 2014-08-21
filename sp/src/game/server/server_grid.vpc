@@ -23,6 +23,7 @@ $Project "Server (Grid)"
 {
 	$Folder	"Source Files"
 	{
+        $File	"ai_relationship.cpp"
 		$File	"base_gameinterface.cpp"
 		$File	"basegrenade_timed.cpp"
 		$File	"grenadethrown.cpp"
@@ -31,8 +32,13 @@ $Project "Server (Grid)"
 
 		$Folder	"HL2 DLL"
 		{
+            $File   "$SRCDIR\game\shared\hl2\basehlcombatweapon_shared.cpp"
+            $File   "$SRCDIR\game\shared\hl2\basehlcombatweapon_shared.h"
+            
 			$File	"hl2\ai_behavior_actbusy.cpp"
 			$File	"hl2\ai_behavior_actbusy.h"
+            $File   "hl2\basehlcombatweapon.cpp"
+            $File   "hl2\basehlcombatweapon.h"
 			$File	"hl2\grenade_frag.cpp"
 			$File	"hl2\grenade_frag.h"
 			$File	"hl2\item_healthkit.cpp"
@@ -49,10 +55,15 @@ $Project "Server (Grid)"
 			$File	"hl2\npc_playercompanion.h"
 			$File	"hl2\npc_vortigaunt_episodic.cpp"
 			$File	"hl2\npc_vortigaunt_episodic.h"
+            $File   "hl2\weapon_ar2.cpp"
+            $File   "hl2\weapon_pistol.cpp"
+            $File   "hl2\weapon_shotgun.cpp"
+            $File   "hl2\weapon_smg1.cpp"
 		}
 		
 		$Folder "Grid DLL"
 		{
+            $File	"grid/grid_airelationships.cpp"
 			$File	"grid/grid_gamestats.cpp"
 			$File	"grid/grid_pickupmanager.cpp"
 			$File	"grid/grid_pickupcontroller.cpp"

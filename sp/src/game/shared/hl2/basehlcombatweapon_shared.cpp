@@ -7,7 +7,13 @@
 #include "cbase.h"
 #include "basehlcombatweapon_shared.h"
 
+#if defined( GRID_DLL )
+#include "player.h"
+#elif defined( GRID_CLIENT_DLL )
+#include "c_baseplayer.h"
+#else
 #include "hl2_player_shared.h"
+#endif
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -117,6 +123,7 @@ bool CBaseHLCombatWeapon::Ready( void )
 //-----------------------------------------------------------------------------
 bool CBaseHLCombatWeapon::Deploy( void )
 {
+#if !defined( GRID_DLL ) && !defined( GRID_CLIENT_DLL )
 	// If we should be lowered, deploy in the lowered position
 	// We have to ask the player if the last time it checked, the weapon was lowered
 	if ( GetOwner() && GetOwner()->IsPlayer() )
@@ -139,7 +146,7 @@ bool CBaseHLCombatWeapon::Deploy( void )
 			}
 		}
 	}
-
+#endif
 	m_bLowered = false;
 	return BaseClass::Deploy();
 }
@@ -191,7 +198,7 @@ void CBaseHLCombatWeapon::WeaponIdle( void )
 	//See if we should idle high or low
 	if ( WeaponShouldBeLowered() )
 	{
-#if !defined( CLIENT_DLL )
+#if !defined( CLIENT_DLL ) && !defined( GRID_DLL ) && !defined( GRID_CLIENT_DLL )
 		CHL2_Player *pPlayer = dynamic_cast<CHL2_Player*>(GetOwner());
 
 		if( pPlayer )

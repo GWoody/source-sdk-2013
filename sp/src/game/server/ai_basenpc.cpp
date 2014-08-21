@@ -9653,6 +9653,7 @@ Vector CAI_BaseNPC::GetAttackSpread( CBaseCombatWeapon *pWeapon, CBaseEntity *pT
 	}
 	return baseResult;
 }
+#endif // HL2_DLL
 
 //-----------------------------------------------------------------------------
 // Similar to calling GetShootEnemyDir, but returns the exact trajectory to 
@@ -9742,11 +9743,13 @@ Vector CAI_BaseNPC::GetActualShootTrajectory( const Vector &shootOrigin )
 	bool bUsePerfectAccuracy = false;
 	if ( GetEnemy() && GetEnemy()->Classify() == CLASS_BULLSEYE )
 	{
+#ifndef GRID_DLL
 		CNPC_Bullseye *pBullseye = dynamic_cast<CNPC_Bullseye*>(GetEnemy()); 
 		if ( pBullseye && pBullseye->UsePerfectAccuracy() )
 		{
 			bUsePerfectAccuracy = true;
 		}
+#endif
 	}
 
 	if ( !bUsePerfectAccuracy )
@@ -9785,7 +9788,6 @@ Vector CAI_BaseNPC::GetActualShootTrajectory( const Vector &shootOrigin )
 
 	return shotDir;
 }
-#endif // HL2_DLL
 
 //-----------------------------------------------------------------------------
 

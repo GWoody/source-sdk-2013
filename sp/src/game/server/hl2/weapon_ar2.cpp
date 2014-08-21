@@ -229,12 +229,16 @@ void CWeaponAR2::DelayedAttack( void )
 	Vector vecVelocity = vecAiming * 1000.0f;
 
 	// Fire the combine ball
+#ifndef GRID_DLL
 	CreateCombineBall(	vecSrc, 
 						vecVelocity, 
 						sk_weapon_ar2_alt_fire_radius.GetFloat(), 
 						sk_weapon_ar2_alt_fire_mass.GetFloat(),
 						sk_weapon_ar2_alt_fire_duration.GetFloat(),
 						pOwner );
+#else
+	Msg( "no alt fire in grid :(\n" );
+#endif
 
 	// View effects
 	color32 white = {255, 255, 255, 64};
@@ -402,6 +406,7 @@ void CWeaponAR2::FireNPCSecondaryAttack( CBaseCombatCharacter *pOperator, bool b
 		VectorNormalize( vecAiming );
 	}
 
+#ifndef GRID_DLL
 	Vector impactPoint = vecSrc + ( vecAiming * MAX_TRACE_LENGTH );
 
 	float flAmmoRatio = 1.0f;
@@ -418,6 +423,9 @@ void CWeaponAR2::FireNPCSecondaryAttack( CBaseCombatCharacter *pOperator, bool b
 		sk_weapon_ar2_alt_fire_mass.GetFloat(),
 		flDuration,
 		pNPC );
+#else
+	Msg( "no alt fire in grid :(\n" );
+#endif
 }
 
 //-----------------------------------------------------------------------------

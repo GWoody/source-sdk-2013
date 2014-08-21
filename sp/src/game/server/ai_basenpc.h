@@ -1767,8 +1767,8 @@ public:
 
 	virtual Vector		GetShootEnemyDir( const Vector &shootOrigin, bool bNoisy = true );
 	virtual Vector		GetActualShootPosition( const Vector &shootOrigin );
-#ifdef HL2_DLL
 	virtual Vector		GetActualShootTrajectory( const Vector &shootOrigin );
+#ifdef HL2_DLL
 	virtual	Vector		GetAttackSpread( CBaseCombatWeapon *pWeapon, CBaseEntity *pTarget = NULL );
 	virtual	float		GetSpreadBias( CBaseCombatWeapon *pWeapon, CBaseEntity *pTarget );
 #endif //HL2_DLL

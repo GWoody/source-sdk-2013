@@ -44,6 +44,9 @@ public:
 	// CGameRules implementation.
 	virtual void	PlayerThink( CBasePlayer *pPlayer );
 
+	virtual void	InitDefaultAIRelationships();
+	virtual const char *	AIClassText( int classType );
+
 #endif
 };
 

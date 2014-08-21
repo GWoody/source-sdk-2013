@@ -2392,6 +2392,7 @@ bool CNPC_Citizen::IsCommandMoving()
 //-----------------------------------------------------------------------------
 bool CNPC_Citizen::ShouldAutoSummon()
 {
+#ifndef GRID_DLL
 	if ( !AI_IsSinglePlayer() || !IsFollowingCommandPoint() || !IsInPlayerSquad() )
 		return false;
 
@@ -2504,6 +2505,7 @@ bool CNPC_Citizen::ShouldAutoSummon()
 		
 		return bSetFollow;
 	}
+#endif
 	return false;
 }
 
@@ -2566,6 +2568,7 @@ bool CNPC_Citizen::TargetOrder( CBaseEntity *pTarget, CAI_BaseNPC **Allies, int 
 //-----------------------------------------------------------------------------
 void CNPC_Citizen::MoveOrder( const Vector &vecDest, CAI_BaseNPC **Allies, int numAllies )
 {
+#ifndef GRID_DLL
 	if ( !AI_IsSinglePlayer() )
 		return;
 
@@ -2641,6 +2644,7 @@ void CNPC_Citizen::MoveOrder( const Vector &vecDest, CAI_BaseNPC **Allies, int n
 	m_OnStationOrder.FireOutput( this, this );
 
 	BaseClass::MoveOrder( vecDest, Allies, numAllies );
+#endif
 }
 
 //-----------------------------------------------------------------------------

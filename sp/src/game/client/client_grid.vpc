@@ -15,7 +15,7 @@ $Configuration
 {
 	$Compiler
 	{
-		$AdditionalIncludeDirectories	".\grid;$SRCDIR\game\shared\grid;$BASE"
+		$AdditionalIncludeDirectories	".\grid;$SRCDIR\game\shared\grid;$SRCDIR\game\shared\hl2;$BASE"
 		$PreprocessorDefinitions		"$BASE;GRID_CLIENT_DLL"
 	}
 }
@@ -29,6 +29,11 @@ $Project "Client (Grid)"
 		$Folder	"HL2 DLL"
 		{
 			$File	"hl2\c_barnacle.cpp"
+            $File   "hl2\c_basehlcombatweapon.cpp"
+            $File   "hl2\c_basehlcombatweapon.h"
+            $File   "hl2\c_weapon__stubs_hl2.cpp"
+            $File   "$SRCDIR\game\shared\hl2\basehlcombatweapon_shared.cpp"
+            $File   "$SRCDIR\game\shared\hl2\basehlcombatweapon_shared.h"
 			$File	"episodic\c_vort_charge_token.cpp"
 		}
 		
@@ -41,7 +46,8 @@ $Project "Client (Grid)"
 			$File	"grid/grid_prediction.cpp"
 			$File	"grid/grid_vgui_rootpanel.cpp"
 			$File	"grid/c_grid_player.cpp"
-			
+			$File   "grid/grid_fx_impacts.cpp"
+            
 			$File	"$SRCDIR/game/shared/grid/grid_ammodef.cpp"
 			$File	"$SRCDIR/game/shared/grid/grid_gamerules.cpp"
 			$File	"$SRCDIR/game/shared/grid/grid_gamerules.h"

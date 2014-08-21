@@ -79,6 +79,8 @@ void ClientGamePrecache( void )
 	CBaseEntity::PrecacheScriptSound( "Bullets.DefaultNearmiss" );	
 	CBaseEntity::PrecacheScriptSound( "Geiger.BeepHigh" );
 	CBaseEntity::PrecacheScriptSound( "Geiger.BeepLow" );
+
+	PrecacheParticleSystem( "grenade_explosion_01" );
 }
 
 //-----------------------------------------------------------------------------
