@@ -74,9 +74,9 @@ void CGridPlayer::ProcessUsercmds( CUserCmd *cmds, int numcmds, int totalcmds, i
 {
 	CFrame finalHoloFrame = AccumulateHoloFrame( cmds, numcmds, totalcmds, dropped_packets, paused );
 	
+	m_hHand->ProcessFrame( finalHoloFrame );
 	if( finalHoloFrame.IsValid() )
 	{
-		m_hHand->ProcessFrame( finalHoloFrame );
 		ProcessFrame( finalHoloFrame );
 	}
 

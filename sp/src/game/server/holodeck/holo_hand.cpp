@@ -78,30 +78,32 @@ bool CHoloHand::CreateVPhysics()
 //-----------------------------------------------------------------------------
 const CFrame &CHoloHand::GetFrame() const
 {
-	return _curFrame;
+	return _transformedFrame;
 }
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 void CHoloHand::ProcessFrame( const CFrame &frame )
 {
-	if( !frame.IsValid() )
-	{
-		return;
-	}
-
 	CBasePlayer *owner = dynamic_cast<CBasePlayer *>( GetOwnerEntity() );
 	Assert( owner );
 
-	// Move the hands into the correct position (relative to the player).
-	CFrame processedFrame = frame;
-	processedFrame.ToEntitySpace( owner, GetOriginOffset() );
+	if( !frame.IsValid() )
+	{
+		// Use last frames data.
+		_transformedFrame = _untransformedFrame;
+	}
+	else
+	{
+		_untransformedFrame = _transformedFrame = frame;
+	}
 
-	// Save the frame for future use.
-	_curFrame = processedFrame;
+	// Move the hands into the correct position (relative to the player).
+	_transformedFrame.ToEntitySpace( owner, GetOriginOffset() );
 
 	// Update the position of the hand entity within the world.
-	SetAbsOrigin( processedFrame.GetHand().GetPosition() );
+	SetAbsOrigin( _transformedFrame.GetHand().GetPosition() );
+	_lastOriginDelta = GetAbsOrigin() - owner->GetAbsOrigin();
 
 	if( holo_render_debug_hand.GetInt() != 0 )
 	{
@@ -129,9 +131,9 @@ void CHoloHand::RenderDebugHand()
 {
 	const Vector handBounds( 0.25f, 0.25f, 0.25f );
 	const Vector fingerBounds( 0.05f, 0.05f, 0.05f );
-	const Vector &palmPosition = _curFrame.GetHand().GetPosition();
+	const Vector &palmPosition = _transformedFrame.GetHand().GetPosition();
 	const float duration = 1.0f / 15.0f;
-	const int r = ( 1.0f - _curFrame.GetHand().GetConfidence() ) * 255.0f;
+	const int r = ( 1.0f - _transformedFrame.GetHand().GetConfidence() ) * 255.0f;
 
 	// Draw the palm box.
 	//debugoverlay->AddBoxOverlay( palmPosition, -handBounds, handBounds, vec3_angle, m_clrRender.GetR(), m_clrRender.GetG(), m_clrRender.GetB(), 127, duration );
@@ -139,7 +141,7 @@ void CHoloHand::RenderDebugHand()
 	// Draw all fingers.
 	for( int i = 0; i < FINGER_COUNT; i++ )
 	{
-		const CFinger &finger = _curFrame.GetHand().GetFingerByType( (EFinger)i );
+		const CFinger &finger = _transformedFrame.GetHand().GetFingerByType( (EFinger)i );
 		for( int j = 0; j < EBone::BONE_COUNT; j++ )
 		{
 			const CBone &bone = finger.GetBone( (EBone)j );
@@ -152,7 +154,7 @@ void CHoloHand::RenderDebugHand()
 	if( holo_render_debug_hand.GetInt() == 2 )
 	{
 		// Draw the ball gesture.
-		const CBallGesture &ball = _curFrame.GetBallGesture();
+		const CBallGesture &ball = _transformedFrame.GetBallGesture();
 		NDebugOverlay::Sphere( ball.GetCenter(), ball.GetRadius(), 0, 0, 255, false, duration );
 	}
 
@@ -167,16 +169,16 @@ void CHoloHand::RenderDebugHand()
 	if( holo_render_debug_hand.GetInt() == 4 )
 	{
 		// Draw the palm normal vector.
-		debugoverlay->AddLineOverlayAlpha( palmPosition, palmPosition + _curFrame.GetHand().GetNormal(), 255, 0, 0, 127, false, duration );
+		debugoverlay->AddLineOverlayAlpha( palmPosition, palmPosition + _transformedFrame.GetHand().GetNormal(), 255, 0, 0, 127, false, duration );
 
 		// Draw the palm direction vector.
-		debugoverlay->AddLineOverlayAlpha( palmPosition, palmPosition + _curFrame.GetHand().GetDirection(), 0, 0, 255, 127, false, duration );
+		debugoverlay->AddLineOverlayAlpha( palmPosition, palmPosition + _transformedFrame.GetHand().GetDirection(), 0, 0, 255, 127, false, duration );
 	}
 
 	if( holo_render_debug_hand.GetInt() == 5 )
 	{
 		// Draw velocity.
-		debugoverlay->AddLineOverlay( palmPosition, palmPosition + _curFrame.GetHand().GetVelocity(), 255, 0, 0, false, duration );
+		debugoverlay->AddLineOverlay( palmPosition, palmPosition + _transformedFrame.GetHand().GetVelocity(), 255, 0, 0, false, duration );
 	}
 
 	if( holo_render_debug_hand.GetInt() == 6 )
@@ -184,8 +186,8 @@ void CHoloHand::RenderDebugHand()
 		// Draw finger directions.
 		for( int i = 0; i < FINGER_COUNT; i++ )
 		{
-			const Vector &tipPosition = _curFrame.GetHand().GetFingerByType( (EFinger)i ).GetTipPosition();
-			const Vector &direction = _curFrame.GetHand().GetFingerByType( (EFinger)i ).GetDirection();
+			const Vector &tipPosition = _transformedFrame.GetHand().GetFingerByType( (EFinger)i ).GetTipPosition();
+			const Vector &direction = _transformedFrame.GetHand().GetFingerByType( (EFinger)i ).GetDirection();
 			debugoverlay->AddLineOverlayAlpha( tipPosition, tipPosition + direction, 255, 0, 0, 127, false, duration );
 		}
 	}

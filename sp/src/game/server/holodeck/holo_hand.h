@@ -42,8 +42,12 @@ private:
 
 	Vector			GetOriginOffset() const;
 
-	holo::CFrame	_curFrame;
+	void			ExtrapolateFrame();
+
+	holo::CFrame	_transformedFrame, _untransformedFrame;
 	int				_activeGestures;
+
+	Vector			_lastOriginDelta;
 };
 
 #endif // __HOLO_HAND_H__
