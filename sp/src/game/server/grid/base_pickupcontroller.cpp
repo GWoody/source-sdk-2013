@@ -12,11 +12,12 @@
 #include "player_pickup.h"
 #include "in_buttons.h"
 #include "physics_saverestore.h"
+#include "grid_player.h"
 
 //-----------------------------------------------------------------------------
 // ConVars
 //-----------------------------------------------------------------------------
-ConVar player_throwforce( "player_throwforce", "1000" );
+ConVar player_throwforce( "player_throwforce", "100" );
 
 LINK_ENTITY_TO_CLASS( player_pickup, CPlayerPickupController );
 
@@ -122,19 +123,45 @@ void CPlayerPickupController::Use( CBaseEntity *pActivator, CBaseEntity *pCaller
 	{
 		CBaseEntity *pAttached = m_grabController.GetAttached();
 
-		// UNDONE: Use vphysics stress to decide to drop objects
-		// UNDONE: Must fix case of forcing objects into the ground you're standing on (causes stress) before that will work
-		if ( !pAttached || useType == USE_OFF || (m_pPlayer->m_nButtons & IN_ATTACK2) || m_grabController.ComputeError() > 12 )
-		{
-			Shutdown();
-			return;
-		}
-		
 		//Adrian: Oops, our object became motion disabled, let go!
 		IPhysicsObject *pPhys = pAttached->VPhysicsGetObject();
 		if ( pPhys && pPhys->IsMoveable() == false )
 		{
 			Shutdown();
+			return;
+		}
+
+		// UNDONE: Use vphysics stress to decide to drop objects
+		// UNDONE: Must fix case of forcing objects into the ground you're standing on (causes stress) before that will work
+		if ( !pAttached || useType == USE_OFF || m_grabController.ComputeError() > 12 )
+		{
+			Shutdown( true );
+			Vector vecLaunch;
+			
+			// HOLODECK: Base launch direction is now the (eye->hand) vector.
+			CGridPlayer *gridplayer = dynamic_cast<CGridPlayer *>( m_pPlayer );
+			Assert( gridplayer );
+			const holo::CHand &hand = gridplayer->GetHandEntity()->GetFrame().GetHand();
+			vecLaunch = hand.GetPosition() - m_pPlayer->EyePosition();
+			vecLaunch.NormalizeInPlace();
+
+			// JAY: Scale this with mass because some small objects really go flying
+			float massFactor = clamp( pPhys->GetMass(), 0.5, 15 );
+			massFactor = RemapVal( massFactor, 0.5, 15, 0.5, 4 );
+			vecLaunch *= player_throwforce.GetFloat() * massFactor;
+
+			// HOLODECK: made the launch velocity affected by the hand velocity.
+			Vector handVelocity = hand.GetVelocity();
+			
+			// Ensure the sign of `vecLaunch` is preserved.
+			handVelocity.x = fabs( handVelocity.x );
+			handVelocity.y = fabs( handVelocity.y );
+			handVelocity.z = fabs( handVelocity.z );
+			vecLaunch *= handVelocity;
+
+			pPhys->ApplyForceCenter( vecLaunch );
+			AngularImpulse aVel = RandomAngularImpulse( -10, 10 ) * massFactor;
+			pPhys->ApplyTorqueCenter( aVel );
 			return;
 		}
 
@@ -147,26 +174,6 @@ void CPlayerPickupController::Use( CBaseEntity *pActivator, CBaseEntity *pCaller
 			return;
 		}
 #endif
-		// +ATTACK will throw phys objects
-		if ( m_pPlayer->m_nButtons & IN_ATTACK )
-		{
-			Shutdown( true );
-			Vector vecLaunch;
-			m_pPlayer->EyeVectors( &vecLaunch );
-			// JAY: Scale this with mass because some small objects really go flying
-			float massFactor = clamp( pPhys->GetMass(), 0.5, 15 );
-			massFactor = RemapVal( massFactor, 0.5, 15, 0.5, 4 );
-			vecLaunch *= player_throwforce.GetFloat() * massFactor;
-
-#ifdef HOLODECK
-			// HOLOTODO: get direction should affect the thrown object.
-#endif
-
-			pPhys->ApplyForceCenter( vecLaunch );
-			AngularImpulse aVel = RandomAngularImpulse( -10, 10 ) * massFactor;
-			pPhys->ApplyTorqueCenter( aVel );
-			return;
-		}
 
 		if ( useType == USE_SET )
 		{

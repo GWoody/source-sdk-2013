@@ -453,7 +453,8 @@ void CHand::Transform( float yaw, const Vector &translation )
 	VectorYawRotate( _position, yaw, _position );
 	VectorYawRotate( _normal, yaw, _normal );
 	VectorYawRotate( _direction, yaw, _direction );
-
+	VectorYawRotate( _velocity, yaw, _velocity );
+	
 	// Apply translations.
 	_position += translation;
 	
