@@ -13,26 +13,27 @@
 //-----------------------------------------------------------------------------
 // ConVars.
 //-----------------------------------------------------------------------------
-ConVar	sk_plr_dmg_smallround	( "sk_plr_dmg_pistol", "0", FCVAR_REPLICATED );
-ConVar	sk_npc_dmg_smallround	( "sk_npc_dmg_pistol", "0", FCVAR_REPLICATED );
-ConVar	sk_max_smallround		( "sk_max_pistol", "9999", FCVAR_REPLICATED );
+ConVar	sk_plr_dmg_ar2			( "sk_plr_dmg_ar2","0", FCVAR_REPLICATED );
+ConVar	sk_npc_dmg_ar2			( "sk_npc_dmg_ar2","0", FCVAR_REPLICATED);
+ConVar	sk_max_ar2				( "sk_max_ar2","0", FCVAR_REPLICATED);
+ConVar	sk_max_ar2_altfire		( "sk_max_ar2_altfire","0", FCVAR_REPLICATED);
 
-ConVar	sk_plr_dmg_mediumround	( "sk_plr_dmg_smg1", "0", FCVAR_REPLICATED );
-ConVar	sk_npc_dmg_mediumround	( "sk_npc_dmg_smg1", "0", FCVAR_REPLICATED );
-ConVar	sk_max_mediumround		( "sk_max_smg1", "9999", FCVAR_REPLICATED );
+ConVar	sk_plr_dmg_smg1			( "sk_plr_dmg_smg1","0", FCVAR_REPLICATED );
+ConVar	sk_npc_dmg_smg1			( "sk_npc_dmg_smg1","0", FCVAR_REPLICATED);
+ConVar	sk_max_smg1				( "sk_max_smg1","0", FCVAR_REPLICATED);
 
-ConVar	sk_plr_dmg_largeround	( "sk_plr_dmg_357", "0", FCVAR_REPLICATED );
-ConVar	sk_npc_dmg_largeround	( "sk_npc_dmg_357", "0", FCVAR_REPLICATED );
-ConVar	sk_max_largeround		( "sk_max_357", "9999", FCVAR_REPLICATED );
+ConVar	sk_plr_dmg_smg1_grenade	( "sk_plr_dmg_smg1_grenade","0", FCVAR_REPLICATED);
+ConVar	sk_npc_dmg_smg1_grenade	( "sk_npc_dmg_smg1_grenade","0", FCVAR_REPLICATED);
+ConVar	sk_max_smg1_grenade		( "sk_max_smg1_grenade","0", FCVAR_REPLICATED );
 
-ConVar	sk_plr_dmg_buckshot		( "sk_plr_dmg_buckshot", "0", FCVAR_REPLICATED );	
-ConVar	sk_npc_dmg_buckshot		( "sk_npc_dmg_buckshot", "0", FCVAR_REPLICATED );
-ConVar	sk_max_buckshot			( "sk_max_buckshot", "9999", FCVAR_REPLICATED );
-ConVar	sk_plr_num_shotgun_pellets( "sk_plr_num_shotgun_pellets", "7", FCVAR_REPLICATED );
+ConVar	sk_plr_dmg_buckshot		( "sk_plr_dmg_buckshot","0", FCVAR_REPLICATED);	
+ConVar	sk_npc_dmg_buckshot		( "sk_npc_dmg_buckshot","0", FCVAR_REPLICATED);
+ConVar	sk_max_buckshot			( "sk_max_buckshot","0", FCVAR_REPLICATED);
+ConVar	sk_plr_num_shotgun_pellets( "sk_plr_num_shotgun_pellets","7", FCVAR_REPLICATED);
 
-ConVar	sk_plr_dmg_grenade		( "sk_plr_dmg_grenade", "0", FCVAR_REPLICATED );
-ConVar	sk_npc_dmg_grenade		( "sk_npc_dmg_grenade", "0", FCVAR_REPLICATED );
-ConVar	sk_max_grenade			( "sk_max_grenade", "9999", FCVAR_REPLICATED );
+ConVar	sk_plr_dmg_grenade		( "sk_plr_dmg_grenade","0", FCVAR_REPLICATED);
+ConVar	sk_npc_dmg_grenade		( "sk_npc_dmg_grenade","0", FCVAR_REPLICATED);
+ConVar	sk_max_grenade			( "sk_max_grenade","0", FCVAR_REPLICATED);
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
@@ -56,11 +57,11 @@ CAmmoDef *GetAmmoDef()
 	{
 		bInitted = true;
 		
-		def.AddAmmoType( "Pistol",			DMG_BULLET,					TRACER_LINE_AND_WHIZ,	"sk_plr_dmg_smallround",		"sk_npc_dmg_smallround",		"sk_max_smallround",			BULLET_IMPULSE(200, 1225), 0 );
-		def.AddAmmoType( "SMG1",			DMG_BULLET,					TRACER_LINE_AND_WHIZ,	"sk_plr_dmg_mediumround",		"sk_npc_dmg_mediumround",		"sk_max_mediumround",			BULLET_IMPULSE(200, 1225), 0 );
-		def.AddAmmoType( "357",				DMG_BULLET,					TRACER_LINE_AND_WHIZ,	"sk_plr_dmg_largeround",		"sk_npc_dmg_largeround",		"sk_max_largeround",			BULLET_IMPULSE(800, 5000), 0 );
-		def.AddAmmoType( "Buckshot",		DMG_BULLET | DMG_BUCKSHOT,	TRACER_LINE,			"sk_plr_dmg_buckshot",			"sk_npc_dmg_buckshot",			"sk_max_buckshot",				BULLET_IMPULSE(400, 1200), 0 );
-		def.AddAmmoType( "Grenade",			DMG_BURN,					TRACER_NONE,			"sk_plr_dmg_grenade",			"sk_npc_dmg_grenade",			"sk_max_grenade",				0, 0 );
+		def.AddAmmoType("AR2",				DMG_BULLET,					TRACER_LINE_AND_WHIZ,	"sk_plr_dmg_ar2",			"sk_npc_dmg_ar2",			"sk_max_ar2",			BULLET_IMPULSE(200, 1225), 0 );
+		def.AddAmmoType("SMG1",				DMG_BULLET,					TRACER_LINE_AND_WHIZ,	"sk_plr_dmg_smg1",			"sk_npc_dmg_smg1",			"sk_max_smg1",			BULLET_IMPULSE(200, 1225), 0 );
+		def.AddAmmoType("SMG1_Grenade",		DMG_BURN,					TRACER_NONE,			"sk_plr_dmg_smg1_grenade",	"sk_npc_dmg_smg1_grenade",	"sk_max_smg1_grenade",	0, 0 );
+		def.AddAmmoType("Buckshot",			DMG_BULLET | DMG_BUCKSHOT,	TRACER_LINE,			"sk_plr_dmg_buckshot",		"sk_npc_dmg_buckshot",		"sk_max_buckshot",		BULLET_IMPULSE(400, 1200), 0 );
+		def.AddAmmoType("Grenade",			DMG_BURN,					TRACER_NONE,			"sk_plr_dmg_grenade",		"sk_npc_dmg_grenade",		"sk_max_grenade",		0, 0);
 	}
 
 	return &def;

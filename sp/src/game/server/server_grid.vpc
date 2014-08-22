@@ -56,7 +56,6 @@ $Project "Server (Grid)"
 			$File	"hl2\npc_vortigaunt_episodic.cpp"
 			$File	"hl2\npc_vortigaunt_episodic.h"
             $File   "hl2\weapon_ar2.cpp"
-            $File   "hl2\weapon_pistol.cpp"
             $File   "hl2\weapon_shotgun.cpp"
             $File   "hl2\weapon_smg1.cpp"
 		}
