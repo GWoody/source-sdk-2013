@@ -12,6 +12,7 @@
 
 #include "base_grid_player.h"
 #include "grid_gesture_detector.h"
+#include "grid_player_inventory.h"
 #include "holodeck/holo_hand.h"
 
 //-----------------------------------------------------------------------------
@@ -22,6 +23,8 @@ public:
 	DECLARE_CLASS( CGridPlayer, CBaseGridPlayer );
 	DECLARE_DATADESC();
 	DECLARE_SERVERCLASS();
+
+	CGridPlayer();
 
 	static CGridPlayer *CreatePlayer( const char *className, edict_t *ed )
 	{
@@ -45,6 +48,7 @@ public:
 
 	// Accessors.
 	CHoloHand *		GetHandEntity() const				{ return m_hHand.Get(); }
+	grid::CInventory &	GetInventory()					{ return _inventory; }
 
 private:
 	// UserCmd processing.
@@ -56,6 +60,9 @@ private:
 	CNetworkHandle( CHoloHand, m_hHand );				// The hand entity which is used to interact with the environment.
 
 	grid::CGestureDetector	_gestureDetector;
+	grid::CInventory	_inventory;
+
+	bool			_weaponWasOut;
 };
 
 #endif // __GRID_PLAYER_H__

@@ -34,6 +34,8 @@ public:
 	// Frame processing.
 	void			ProcessFrame( const holo::CFrame &frame );
 
+	void			SetInvisible( bool invisible );
+
 	void			DebugStartTouch();
 	void			DebugEndTouch();
 

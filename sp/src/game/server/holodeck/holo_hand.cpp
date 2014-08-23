@@ -113,6 +113,20 @@ void CHoloHand::ProcessFrame( const CFrame &frame )
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
+void CHoloHand::SetInvisible( bool invisible )
+{
+	if( invisible )
+	{
+		AddEffects( EF_NODRAW );
+	}
+	else
+	{
+		RemoveEffects( EF_NODRAW );
+	}
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 void CHoloHand::DebugStartTouch()
 {
 	SetRenderColor( 0, 0, 255 );
@@ -129,6 +143,11 @@ void CHoloHand::DebugEndTouch()
 //-----------------------------------------------------------------------------
 void CHoloHand::RenderDebugHand()
 {
+	if( GetEffects() & EF_NODRAW )
+	{
+		return;
+	}
+
 	const Vector handBounds( 0.25f, 0.25f, 0.25f );
 	const Vector fingerBounds( 0.05f, 0.05f, 0.05f );
 	const Vector &palmPosition = _transformedFrame.GetHand().GetPosition();

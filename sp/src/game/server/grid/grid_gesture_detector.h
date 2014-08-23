@@ -89,7 +89,6 @@ namespace grid
 	public:
 						CGunGesture()			{ _state = EState::NONE; }
 
-		bool			IsValid() const			{ return _state == EState::NONE; }
 		bool			IsIdle() const			{ return _state == EState::IDLE; }
 		bool			HoldingTrigger() const	{ return _state == EState::TRIGGER; }
 

@@ -1,0 +1,42 @@
+"grid_weapon_357.txt"
+{
+	"bullet"
+	{
+		"count"			"10"
+		"damage"		"40"
+	}
+	
+	"shoot"
+	{
+		"semiauto"		"1"
+		"ejectshell"	"1"
+		"muzzleparticle"	"FIXME"
+	}
+
+	"model"
+	{
+		"weapon"		"models/weapons/w_357.mdl"
+		"angle"			"0 180 270"
+		
+		"shell"			"models/weapons/shell.mdl"
+	}
+	
+	"hud"
+	{
+		"font"			"WeaponIcons"
+		"character"		"e"
+	}
+	
+	"sound"
+	{
+		"shoot"			"Weapon_357.Single"
+		"empty"			"Weapon_Pistol.Empty"
+	}
+	
+	"haptic"
+	{
+		"power"			"0"
+		"freq"			"0"
+		"duration"		"0"
+	}
+}

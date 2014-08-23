@@ -9,6 +9,7 @@
 
 #include "cbase.h"
 #include "grid_player.h"
+#include "grid_base_weapon.h"
 
 using namespace holo;
 using namespace grid;
@@ -34,6 +35,12 @@ END_SEND_TABLE()
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
+CGridPlayer::CGridPlayer() : _inventory( this )
+{
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 void CGridPlayer::Spawn()
 {
 	SetModel( "models/player.mdl" );
@@ -44,6 +51,8 @@ void CGridPlayer::Spawn()
 	pHand->Spawn();
 	pHand->SetOwnerEntity( this );
 	m_hHand.Set( pHand );
+
+	_weaponWasOut = false;
 
 	// Enable all gestures.
 	_gestureDetector.SetGestureEnabled( grid::EGesture::PICKUP, true );
@@ -157,10 +166,24 @@ void CGridPlayer::HandlePickupGesture()
 //-----------------------------------------------------------------------------
 void CGridPlayer::HandleGunGesture()
 {
+	CGridBaseWeapon *weapon = GetInventory().GetWeapon();
+	if( !weapon )
+	{
+		return;
+	}
+
 	CGunGesture gun = _gestureDetector.DetectGunGesture();
 	if( gun.IsActive() )
 	{
-		
+		weapon->TakeOut();
+		m_hHand->SetInvisible( true );
+		_weaponWasOut = true;
+	}
+	else if( _weaponWasOut )
+	{
+		weapon->PutAway();
+		m_hHand->SetInvisible( false );
+		_weaponWasOut = false;
 	}
 }
 
@@ -170,6 +193,14 @@ void CGridPlayer::HandleGunGesture()
 void CGridPlayer::PreThink()
 {
 	BaseClass::PreThink();
+
+	if( CGridBaseWeapon *weapon = _inventory.GetWeapon() )
+	{
+		const Vector &pointerDir = m_hHand->GetFrame().GetHand().GetFingerByType( holo::EFinger::FINGER_POINTER ).GetDirection();
+		weapon->SetDirection( pointerDir );
+		weapon->SetAbsOrigin( m_hHand->GetAbsOrigin() );
+		weapon->ItemPreFrame();
+	}
 }
 
 //-----------------------------------------------------------------------------

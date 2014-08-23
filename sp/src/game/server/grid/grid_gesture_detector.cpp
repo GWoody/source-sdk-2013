@@ -46,7 +46,7 @@ void CPickupGesture::Detect( const holo::CFrame &frame )
 	}
 	else
 	{
-		_clenchState = EState::NONE;
+		SetInactive();
 	}
 
 	_lastRadius = curRadius;
@@ -58,7 +58,7 @@ void CGunGesture::Detect( const holo::CFrame &frame )
 {
 	if( !DetectClosedFingers( frame ) )
 	{
-		_state = EState::NONE;
+		SetInactive();
 	}
 	else if( DetectGangsta( frame ) )
 	{
