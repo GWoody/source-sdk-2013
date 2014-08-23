@@ -10,6 +10,7 @@
 #include "cbase.h"
 #include "grid_weapon_info.h"
 #include "filesystem.h"
+#include "ammodef.h"
 
 using namespace grid;
 
@@ -17,7 +18,7 @@ using namespace grid;
 //-----------------------------------------------------------------------------
 CBulletInfo::CBulletInfo()
 {
-	_count = _damage = 0;
+	_count = _ammotype = _maxDistance = _damage = 0;
 }
 
 //-----------------------------------------------------------------------------
@@ -25,7 +26,9 @@ CBulletInfo::CBulletInfo()
 void CBulletInfo::Parse( KeyValues *kv )
 {
 	_count = kv->GetInt( "count" );
-	_damage = kv->GetInt( "damage" );
+	_maxDistance = kv->GetInt( "maxdistance", 8192 );
+	_damage = kv->GetInt( "damage", 0 );
+	_ammotype = GetAmmoDef()->Index( kv->GetString( "ammotype", "Default" ) );
 }
 
 //-----------------------------------------------------------------------------

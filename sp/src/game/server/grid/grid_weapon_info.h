@@ -35,10 +35,14 @@ namespace grid
 		// Accessors.
 		int				GetCount() const				{ return _count; }
 		int				GetDamage() const				{ return _damage; }
+		int				GetAmmoType() const				{ return _ammotype; }
+		int				GetMaxDistance() const			{ return _maxDistance; }
 
 	private:
 		int				_count;
 		int				_damage;
+		int				_ammotype;
+		int				_maxDistance;
 	};
 
 	//-------------------------------------------------------------------------

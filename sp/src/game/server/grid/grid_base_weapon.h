@@ -50,8 +50,8 @@ protected:
 	void			PlayEmptySound();
 
 	virtual void	ShootSingleBullet();
-
 	virtual void	DoMuzzleFlash();
+	virtual void	PerformImpactTrace();
 	virtual void	MakeTracer( const Vector &start, const Vector &end );
 
 private:

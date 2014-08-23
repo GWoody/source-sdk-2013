@@ -9,7 +9,7 @@
 	"shoot"
 	{
 		"semiauto"		"1"
-		"rate"			"0"
+		"rate"			"0.25"
 	}
 	
 	"effect"

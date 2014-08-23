@@ -179,6 +179,7 @@ void CGridBaseWeapon::ShootSingleBullet()
 	}
 
 	DoMuzzleFlash();
+	PerformImpactTrace();
 	PlayShootSound();	
 
 	_remainingShots--;
@@ -202,6 +203,35 @@ void CGridBaseWeapon::DoMuzzleFlash()
 
 		DispatchParticleEffect( particle, origin, angles );
 	}
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void CGridBaseWeapon::PerformImpactTrace()
+{
+	int attachment = _info.GetEffect().GetMuzzleAttachment();
+	if( attachment == -1 )
+	{
+		Warning( "CGridBaseWeapon::PerformImpactTrace - missing muzzle attachment!!!\n" );
+		return;
+	}
+
+	// Start from the weapon muzzle position.
+	Vector start;
+	QAngle angles;
+	GetAttachment( attachment, start, angles );
+
+	const CBulletInfo &bullet = _info.GetBullet();
+	FireBulletsInfo_t info;
+
+	info.m_flDamage = bullet.GetDamage();
+	info.m_flDistance = bullet.GetMaxDistance();
+	info.m_iAmmoType = bullet.GetAmmoType();
+	info.m_vecDirShooting = _direction;
+	info.m_vecSrc = start;
+	info.m_pAdditionalIgnoreEnt = GetOwnerEntity();
+
+	FireBullets( info );
 }
 
 //-----------------------------------------------------------------------------
