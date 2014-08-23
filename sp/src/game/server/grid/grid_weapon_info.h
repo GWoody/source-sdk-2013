@@ -51,14 +51,29 @@ namespace grid
 
 		// Accessors.
 		bool			IsSemiAuto() const				{ return _semiauto; }
-		bool			DoesEjectShells() const			{ return _ejectShell; }
 		float			GetRate() const					{ return _rate; }
 
 	private:
 		bool			_semiauto;
-		bool			_ejectShell;
 		float			_rate;
+	};
+
+	//-------------------------------------------------------------------------
+	//-------------------------------------------------------------------------
+	class CEffectInfo : public CBlock
+	{
+	public:
+						CEffectInfo();
+		virtual void	Parse( KeyValues *kv );
+
+		bool			DoesEjectShells() const			{ return _ejectShell; }
+		const char *	GetMuzzleParticleName() const	{ return STRING( _muzzleparticle ); }
+		int				GetMuzzleAttachment() const		{ return _muzzleattachment; }
+
+	private:
+		bool			_ejectShell;
 		string_t		_muzzleparticle;
+		int				_muzzleattachment;
 	};
 
 	//-------------------------------------------------------------------------
@@ -144,6 +159,7 @@ namespace grid
 
 		CBulletInfo &	GetBullet()						{ return _bullet; }
 		CShootInfo &	GetShoot()						{ return _shoot; }
+		CEffectInfo &	GetEffect()						{ return _effect; }
 		CModelInfo &	GetModel()						{ return _model; }
 		CHudInfo &		GetHud()						{ return _hud; }
 		CSoundInfo &	GetSound()						{ return _sound; }
@@ -152,6 +168,7 @@ namespace grid
 	private:
 		CBulletInfo		_bullet;
 		CShootInfo		_shoot;
+		CEffectInfo		_effect;
 		CModelInfo		_model;
 		CHudInfo		_hud;
 		CSoundInfo		_sound;

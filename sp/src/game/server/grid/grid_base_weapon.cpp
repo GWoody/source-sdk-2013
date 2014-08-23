@@ -10,6 +10,7 @@
 #include "cbase.h"
 #include "grid_player.h"
 #include "grid_base_weapon.h"
+#include "particle_parse.h"
 
 using namespace grid;
 
@@ -40,6 +41,11 @@ void CGridBaseWeapon::Precache()
 
 	PrecacheScriptSound( _info.GetSound().GetEmpty() );
 	PrecacheScriptSound( _info.GetSound().GetFire() );
+
+	if( const char *particle = _info.GetEffect().GetMuzzleParticleName() )
+	{
+		PrecacheParticleSystem( particle );
+	}
 }
 
 //-----------------------------------------------------------------------------
@@ -121,6 +127,11 @@ void CGridBaseWeapon::PutAway()
 //-----------------------------------------------------------------------------
 void CGridBaseWeapon::SetTriggerState( bool pressed )
 {
+	if( pressed != _triggerHeld )
+	{
+		_firedSinceTrigger = false;
+	}
+
 	_triggerHeld = pressed;
 }
 
@@ -167,7 +178,8 @@ void CGridBaseWeapon::ShootSingleBullet()
 		return;
 	}
 
-	PlayShootSound();
+	DoMuzzleFlash();
+	PlayShootSound();	
 
 	_remainingShots--;
 }
@@ -176,7 +188,20 @@ void CGridBaseWeapon::ShootSingleBullet()
 //-----------------------------------------------------------------------------
 void CGridBaseWeapon::DoMuzzleFlash()
 {
+	const CEffectInfo &effect = _info.GetEffect();
 
+	const char *particle = effect.GetMuzzleParticleName();
+	int attachment = effect.GetMuzzleAttachment();
+	if( particle && attachment != -1 )
+	{
+		Vector origin;
+		QAngle angles;
+		GetAttachment( attachment, origin, angles );
+
+		angles = GetAbsAngles() - QAngle( 180, 0, 0 );
+
+		DispatchParticleEffect( particle, origin, angles );
+	}
 }
 
 //-----------------------------------------------------------------------------
@@ -191,21 +216,28 @@ void CGridBaseWeapon::MakeTracer( const Vector &start, const Vector &end )
 //-----------------------------------------------------------------------------
 void CGridBaseWeapon::Shoot()
 {
-	const CShootInfo &fire = _info.GetShoot();
-
-	if( !_remainingShots || fire.IsSemiAuto() )
+	const CShootInfo &shoot = _info.GetShoot();
+	if( _firedSinceTrigger && shoot.IsSemiAuto() )
 	{
-		ShootSingleBullet();
-		_triggerHeld = false;
+		// Wait for the trigger to be released in semi auto mode.
 		return;
 	}
 
-	while( _nextFireTime < gpGlobals->curtime )
+	if( _nextFireTime <= gpGlobals->curtime )
 	{
-		ShootSingleBullet();
+		if( !_remainingShots )
+		{
+			PlayEmptySound();
+		}
+		else
+		{
+			ShootSingleBullet();
+		}
 
-		_nextFireTime += fire.GetRate();
+		_nextFireTime = gpGlobals->curtime + shoot.GetRate();
 	}
+
+	_firedSinceTrigger = true;
 }
 
 //-----------------------------------------------------------------------------

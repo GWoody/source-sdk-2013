@@ -175,12 +175,20 @@ void CGridPlayer::HandleGunGesture()
 	CGunGesture gun = _gestureDetector.DetectGunGesture();
 	if( gun.IsActive() )
 	{
-		weapon->TakeOut();
-		m_hHand->SetInvisible( true );
+		if( !_weaponWasOut )
+		{
+			// The gun gesture was first made this frame. Show the gun in place of the hand.
+			weapon->TakeOut();
+			m_hHand->SetInvisible( true );
+		}
+
+		weapon->SetTriggerState( gun.HoldingTrigger() );
+
 		_weaponWasOut = true;
 	}
 	else if( _weaponWasOut )
 	{
+		// All gun gestures have been stopped. Return the hand to the normal state.
 		weapon->PutAway();
 		m_hHand->SetInvisible( false );
 		_weaponWasOut = false;

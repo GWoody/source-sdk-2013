@@ -33,8 +33,6 @@ void CBulletInfo::Parse( KeyValues *kv )
 CShootInfo::CShootInfo()
 {
 	_semiauto = false;
-	_ejectShell = false;
-	_muzzleparticle = NULL_STRING;
 	_rate = 0.1f;
 }
 
@@ -43,9 +41,25 @@ CShootInfo::CShootInfo()
 void CShootInfo::Parse( KeyValues *kv )
 {
 	_semiauto = kv->GetBool( "semiauto" );
+	_rate = kv->GetFloat( "rate" );
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+CEffectInfo::CEffectInfo()
+{
+	_ejectShell = false;
+	_muzzleparticle = NULL_STRING;
+	_muzzleattachment = -1;
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void CEffectInfo::Parse( KeyValues *kv )
+{
 	_ejectShell = kv->GetBool( "ejectshell" );
 	_muzzleparticle = AllocPooledString( kv->GetString( "muzzleparticle" ) );
-	_rate = kv->GetFloat( "rate" );
+	_muzzleattachment = kv->GetInt( "muzzleattachment", -1 );
 }
 
 //-----------------------------------------------------------------------------
@@ -140,6 +154,10 @@ void CWeaponInfo::Parse( const char *scriptpath )
 		else if( !Q_stricmp( sub->GetName(), "shoot" ) )
 		{
 			_shoot.Parse( sub );
+		}
+		else if( !Q_stricmp( sub->GetName(), "effect" ) )
+		{
+			_effect.Parse( sub );
 		}
 		else if( !Q_stricmp( sub->GetName(), "model" ) )
 		{

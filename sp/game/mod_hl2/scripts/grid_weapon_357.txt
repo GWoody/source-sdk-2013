@@ -9,16 +9,20 @@
 	"shoot"
 	{
 		"semiauto"		"1"
-		"ejectshell"	"1"
-		"muzzleparticle"	"FIXME"
+		"rate"			"0"
+	}
+	
+	"effect"
+	{
+		"ejectshell"	"0"
+		"muzzleattachment"	"1"
+		"muzzleparticle"	"weapon_muzzle_flash_assaultrifle"
 	}
 
 	"model"
 	{
 		"weapon"		"models/weapons/w_357.mdl"
 		"angle"			"0 180 270"
-		
-		"shell"			"models/weapons/shell.mdl"
 	}
 	
 	"hud"

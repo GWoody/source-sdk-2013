@@ -68,6 +68,7 @@ private:
 	int				_remainingShots;
 	float			_nextFireTime;
 	Vector			_direction;
+	bool			_firedSinceTrigger;		// Have we fired a trigger since the last time the trigger was pulled?
 };
 
 #endif // __GRID_BASE_WEAPON_H__
