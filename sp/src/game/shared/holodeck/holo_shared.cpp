@@ -465,6 +465,21 @@ void CHand::Transform( float yaw, const Vector &translation )
 	}
 }
 
+float CHand::FindThetaBetweenFingers( EFinger f1, EFinger f2 ) const
+{
+	const holo::CFinger &finger1 = GetFingerByType( f1 );
+	const holo::CFinger &finger2 = GetFingerByType( f2 );
+
+	const Vector &f1dir = finger1.GetDirection();
+	const Vector &f2dir = finger2.GetDirection();
+
+	float dot = f1dir.Dot( f2dir );
+	float mag = f1dir.Length() * f2dir.Length();
+	float theta = acos( dot / mag );
+
+	return RAD2DEG( theta );
+}
+
 inline const CFinger *CHand::GetFingerById( int id ) const
 {
 	for( int i = 0; i < FINGER_COUNT; i++ )

@@ -77,13 +77,30 @@ namespace grid
 	//-------------------------------------------------------------------------
 	class CGunGesture : public CBaseGesture
 	{
-	public:
 		enum EState
 		{
 			NONE,		// No gun gesture is recognized.
 			IDLE,		// Player has made a right angle with their pointer and thumb.
 			TRIGGER,	// Player has their finger and thumb pointing in (roughly) the same direction.
 		};
+
+		friend class CGestureDetector;
+
+	public:
+						CGunGesture()			{ _state = EState::NONE; }
+
+		bool			IsValid() const			{ return _state == EState::NONE; }
+		bool			IsIdle() const			{ return _state == EState::IDLE; }
+		bool			HoldingTrigger() const	{ return _state == EState::TRIGGER; }
+
+	private:
+		virtual void	Detect( const holo::CFrame &frame );
+
+		bool			DetectClosedFingers( const holo::CFrame &frame );
+		bool			DetectGangsta( const holo::CFrame &frame );
+		bool			DetectTrigger( const holo::CFrame &frame );
+
+		EState			_state;
 	};
 
 	//-------------------------------------------------------------------------
@@ -100,6 +117,7 @@ namespace grid
 		bool			IsGestureEnabled( EGesture gesture )					{ return _gestureStatus[gesture]; }
 
 		CPickupGesture	DetectPickupGesture();
+		CGunGesture		DetectGunGesture();
 
 	private:
 		bool			_gestureStatus[EGesture::COUNT];

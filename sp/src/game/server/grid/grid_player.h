@@ -50,7 +50,8 @@ private:
 	// UserCmd processing.
 	holo::CFrame	AccumulateHoloFrame( CUserCmd *cmds, int numcmds, int totalcmds, int dropped_packets, bool paused );
 	void			ProcessFrame( const holo::CFrame &frame );
-	void			HandlePickup();
+	void			HandlePickupGesture();
+	void			HandleGunGesture();
 
 	CNetworkHandle( CHoloHand, m_hHand );				// The hand entity which is used to interact with the environment.
 

@@ -152,6 +152,7 @@ namespace holo
 		inline const CFinger &	GetFingerByType( EFinger f ) const	{ return _fingers[f]; }
 
 		// Computed accessors.
+		float			FindThetaBetweenFingers( EFinger f1, EFinger f2 ) const;
 		inline const CFinger *	GetFingerById( int id ) const;
 		inline const CFinger &	GetClosestFingerTo( EFinger to, EFinger f ) const;
 

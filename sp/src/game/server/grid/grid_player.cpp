@@ -131,12 +131,13 @@ void CGridPlayer::ProcessFrame( const holo::CFrame &frame )
 {
 	_gestureDetector.SetFrame( frame );
 
-	HandlePickup();
+	HandlePickupGesture();
+	HandleGunGesture();
 }
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void CGridPlayer::HandlePickup()
+void CGridPlayer::HandlePickupGesture()
 {
 	CPickupGesture pickup = _gestureDetector.DetectPickupGesture();
 	if( pickup.IsActive() )
@@ -149,6 +150,17 @@ void CGridPlayer::HandlePickup()
 		{
 			SetAttemptObjectPickup( false );
 		}
+	}
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void CGridPlayer::HandleGunGesture()
+{
+	CGunGesture gun = _gestureDetector.DetectGunGesture();
+	if( gun.IsActive() )
+	{
+		
 	}
 }
 
