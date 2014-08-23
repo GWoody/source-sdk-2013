@@ -32,10 +32,14 @@ public:
 	virtual int		ObjectCaps();
 
 	// Player interaction.
-	virtual void	Drop( const Vector &pos );
+	virtual void	SwapWith( CGridBaseWeapon *weapon );
+	virtual void	Drop( const Vector &target );
 	virtual void	Pickup( CGridPlayer *player );
 	virtual void	TakeOut();
 	virtual void	PutAway();
+
+	// Accessors.
+	int				GetBulletCount() const					{ return _remainingShots; }
 
 	// Shooting.
 	virtual void	SetTriggerState( bool pressed );

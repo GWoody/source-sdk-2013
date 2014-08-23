@@ -83,6 +83,7 @@ $Project "Server (Grid)"
 			$File	"grid/grid_player_inventory.cpp"
             $File	"grid/grid_player_inventory.h"
 			$File	"grid/grid_weapon_357.cpp"
+			$File	"grid/grid_weapon_ar2.cpp"
 			$File	"grid/grid_weapon_info.cpp"
             $File	"grid/grid_weapon_info.h"
             

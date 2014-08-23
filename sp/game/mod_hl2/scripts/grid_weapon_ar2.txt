@@ -2,16 +2,16 @@
 {
 	"bullet"
 	{
-		"count"			"10"
-		"ammotype"		"357"
+		"count"			"30"
+		"ammotype"		"AR2"
 		"maxdistance"	"8192"
-		"damage"		"40"
+		"damage"		"10"
 	}
 	
 	"shoot"
 	{
-		"semiauto"		"1"
-		"rate"			"0.25"
+		"semiauto"		"0"
+		"rate"			"0.1"
 	}
 	
 	"effect"
@@ -23,20 +23,20 @@
 
 	"model"
 	{
-		"weapon"		"models/weapons/w_357.mdl"
-		"angle"			"0 180 270"
+		"weapon"		"models/weapons/w_irifle.mdl"
+		"angle"			"0 180 0"
 	}
 	
 	"hud"
 	{
 		"font"			"WeaponIcons"
-		"character"		"e"
+		"character"		"l"
 	}
 	
 	"sound"
 	{
-		"shoot"			"Weapon_357.Single"
-		"empty"			"Weapon_Pistol.Empty"
+		"shoot"			"Weapon_AR2.Single"
+		"empty"			"Weapon_IRifle.Empty"
 	}
 	
 	"haptic"

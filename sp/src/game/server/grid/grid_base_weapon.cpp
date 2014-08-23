@@ -56,7 +56,7 @@ void CGridBaseWeapon::Spawn()
 
 	SetModel( _info.GetModel().GetWeapon() );
 	SetSolid( SOLID_BBOX );
-	SetCollisionGroup( COLLISION_GROUP_WEAPON );
+	SetCollisionGroup( COLLISION_GROUP_DEBRIS );
 	SetBlocksLOS( false );
 
 	// Make the object physically simulated.
@@ -88,25 +88,54 @@ int CGridBaseWeapon::ObjectCaps()
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void CGridBaseWeapon::Drop( const Vector &pos )
+void CGridBaseWeapon::SwapWith( CGridBaseWeapon *weapon )
 {
 	SetMoveType( MOVETYPE_VPHYSICS );
 	SetOwnerEntity( NULL );
-	SetGroundEntity( NULL );
-
-	SetGravity( 1.0f );
 	RemoveEffects( EF_NODRAW );
 
-	SetAbsOrigin( pos );
+	SetAbsOrigin( weapon->GetAbsOrigin() );
 }
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 void CGridBaseWeapon::Pickup( CGridPlayer *player )
 {
+	SetMoveType( MOVETYPE_NONE );
 	SetAbsVelocity( vec3_origin );
 	SetOwnerEntity( player );
 	AddEffects( EF_NODRAW );
+	VPhysicsDestroyObject();
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+Vector VecCheckToss ( CBaseEntity *pEdict, Vector vecSpot1, Vector vecSpot2, float flHeightMaxRatio, float flGravityAdj, bool bRandomize, Vector *vecMins = NULL, Vector *vecMaxs = NULL );
+void CGridBaseWeapon::Drop( const Vector &target )
+{
+	CGridPlayer *player = dynamic_cast<CGridPlayer *>( GetOwnerEntity() );
+	Assert( player );
+
+	VPhysicsInitNormal( GetSolid(), GetSolidFlags(), false );
+
+	SetMoveType( MOVETYPE_VPHYSICS );
+	SetOwnerEntity( NULL );
+	SetAbsVelocity( player->EyeDirection2D() * 1000.0f );
+	RemoveEffects( EF_NODRAW );
+
+	// Launch the weapon in the direction the player is looking.
+	Vector throwDir = target - GetAbsOrigin();
+	throwDir *= 3.5f;
+	IPhysicsObject *pObj = VPhysicsGetObject();
+	if ( pObj != NULL )
+	{
+		AngularImpulse	angImp( 200, 200, 200 );
+		pObj->AddVelocity( &throwDir, &angImp );
+	}
+	else
+	{
+		SetAbsVelocity( throwDir );
+	}
 }
 
 //-----------------------------------------------------------------------------

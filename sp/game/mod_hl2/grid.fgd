@@ -13,10 +13,71 @@
 @BaseClass color(0 0 200) base(Targetname, Angles) = GridWeapon []
 
 @PointClass base(GridWeapon) studio("models/weapons/w_357.mdl") = grid_weapon_357 : "357" []
+@PointClass base(GridWeapon) studio("models/weapons/w_irifle.mdl") = grid_weapon_ar2 : "AR2" []
 
 //=============================================================================
 // OLD HL2 STUFF
 //=============================================================================
+
+@BaseClass base(BaseNPC) = TalkNPC
+[
+	UseSentence(string) : "Use Sentence"
+	UnUseSentence(string) : "Un-Use Sentence"
+
+	DontUseSpeechSemaphore(choices) : "Don't Use Speech Semaphore" : 0 : "Friendly NPCs are not allowed to speak if another friendly NPC is speaking. In some cases we don't want speaking NPCs to prevent other NPCs from speaking (for instance, if there is a friendly NPC speaking for a long time on a monitor). To make this NPC not prevent other NPCs from talking, make it not grab the semaphore when it speaks." =
+	[
+		0 : "No (Use speech semaphore)"
+		1 : "Yes (Don't use speech semaphore)"
+	]
+
+	input SpeakResponseConcept(string) : "Speak the specified response concept."
+]
+
+@BaseClass base(BaseNPC) = PlayerCompanion
+[
+	input OutsideTransition(void) : "Use this input to teleport the NPC to a hintnode with the Player Squad Transition Point hint type."
+	input EnableAlwaysTransition(void) : "Enable the 'always transition' behavior"
+	input DisableAlwaysTransition(void) : "Disable the 'always transition' behavior"
+	
+	input EnableSpeakWhileScripting(void) : "Allow this NPC to speak responses while in a scripted sequence or while StartScripting is active."
+	input DisableSpeakWhileScripting(void) : "Cancels this NPC's ability to speak responses while in a scripted sequence or while StartScripting is active if it was previously enabled by EnableSpeakWhileScripting."
+	
+	AlwaysTransition(choices) : "Always transition" : "No" : "If yes, this NPC will always teleport to a Player Squad Transition Point if they're not within the trigger_transition volume." =
+	[
+		0 : "No"
+		1 : "Yes"
+	]
+
+	DontPickupWeapons(choices) : "Prevent picking up weapons?" : "No" : "If yes, this NPC will NOT be allowed to pick up weapons they find on the ground." =
+	[
+		0 : "No"
+		1 : "Yes"	
+	]
+
+	GameEndAlly(choices) : "Is this a vital ally?" : "No" : "If yes, this NPC will cause the game to end if killed." =
+	[
+		0 : "No"
+		1 : "Yes"	
+	]
+
+	input MakeGameEndAlly(void) : "Make this NPC a game end ally."
+	input MakeRegularAlly(void) : "Make this NPC a regular ally."
+
+	input EnableWeaponPickup(void) : "Enable Weapon Pickup"
+	input DisableWeaponPickup(void) : "Disable Weapon Pickup"
+
+	input GiveWeapon(string) : "Gives the NPC a weapon of the specified entity name."
+	
+	input SetReadinessPanic(void) : "Set readiness to panic state (Special)"
+	input SetReadinessLow(void) : "Set readiness to calmest state (Bored)"
+	input SetReadinessMedium(void) : "Set readiness to moderate (Alert)"
+	input SetReadinessHigh(void) : "Set readiness to highest. (Combat imminent)"
+	input LockReadiness(float) : "Lock readiness at current setting for x seconds -1 = forever, 0 = unlock now"
+	
+	input ClearAllOutputs(void) : "Obliterate every output that this NPC has."
+
+	output OnWeaponPickup(void) : "Fires when this NPC picks a weapon off the ground or a gun rack."
+]
 
 @NPCClass base(Parentname, BaseNPC) iconsprite("editor/bullseye.vmt") color(255 0 0) = npc_bullseye : "Bullseye"
 [
@@ -158,6 +219,58 @@
 	output OnStationOrder(void) : "Fires when ordered to a location by player"
 	output OnPlayerUse(void) : "Fires when a player +USEs the citizen"
 	output OnNavFailBlocked(void) : "Fires when this Citizen's movement fails because he/she is blocked."
+]
+
+@BaseClass base(BaseNPC ) = RappelNPC
+[
+	waitingtorappel(choices) : "Waiting to Rappel?" : "No" : "If yes, this NPC spawns suspended in air and awaits a BeginRappel input. It will then spawn a zipline and slide down. When it hits the ground, NPC will cut away the line and try to move forward a few feet to make room for the next NPC. The NPC will not attempt to clear its landing space if it cannot do so by taking a few steps forward" =
+	[
+		0 : "No"
+		1 : "Yes"
+	]
+
+	// Inputs
+	input BeginRappel(void) : "BeginRappel"
+
+	// Outputs
+	output OnRappelTouchdown(void) : "Fires when done rappeling"
+]
+
+@BaseClass base(BaseNPC, RappelNPC) = BaseCombine
+[
+	additionalequipment(choices) : "Weapons" : "weapon_smg1" =
+	[
+		"weapon_ar2" : "AR2"
+		"weapon_shotgun" : "Shotgun"
+		"weapon_smg1" : "SMG1"
+		"weapon_stunstick" : "Stun Stick"
+		"0" : "Nothing"
+	]
+
+	spawnflags(Flags) = 
+	[
+		65536 :  "Start LookOff" : 0
+		131072	: "Don't drop grenades" : 0
+		262144  : "Don't drop ar2 alt fire (elite only) " : 0
+	]
+
+	NumGrenades(choices) : "Number of Grenades" : "5" =
+	[
+		"0" : "None"
+		"1" : "1"
+		"2" : "2"
+		"3" : "3"
+		"4" : "4"
+		"5" : "5"
+		"999999" : "Unlimited"
+	]
+
+	// Inputs
+	input LookOn(void) : "Look normally"	
+	input LookOff(void) : "Don't look for myself, use other squad member's eyes"
+	input StartPatrolling(void) : "Patrol whenever I'm idle or alert."
+	input StopPatrolling(void) : "Stop patrolling when I'm idle or alert."
+	input ThrowGrenadeAtTarget(target_destination) : "Throw a grenade at the specified target."
 ]
 
 @NPCClass base(BaseCombine) studio("models/Combine_Soldier.mdl") = npc_combine_s : "Combine Soldier"
