@@ -76,15 +76,18 @@ void CGridBaseWeapon::Spawn()
 {
 	Precache();
 
+	BaseClass::Spawn();
+
 	SetModel( _info.GetModel().GetWorldModel() );
 	SetSolid( SOLID_BBOX );
 	SetCollisionGroup( COLLISION_GROUP_DEBRIS );
 	SetBlocksLOS( false );
 
 	// Make the object physically simulated.
-	VPhysicsInitNormal( GetSolid(), GetSolidFlags(), false );
+	VPhysicsInitNormal( GetSolid(), GetSolidFlags() | FSOLID_TRIGGER, false );
 
-	BaseClass::Spawn();
+	// Bloat the box for player pickup
+	CollisionProp()->UseTriggerBounds( true, 36 );
 
 	CreateAmmoScreen();
 }
