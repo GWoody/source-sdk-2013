@@ -1,8 +1,8 @@
 /*
 ===============================================================================
 
-	grid_weapon_ar2.cpp
-	Defines the AR2 weapon.
+	grid_weapon_smg1.cpp
+	Defines the SMG1 weapon.
 
 ===============================================================================
 */
@@ -12,22 +12,22 @@
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-class CGridWeaponAR2 : public CGridBaseWeapon
+class CGridWeaponSMG1 : public CGridBaseWeapon
 {
 public:
-	DECLARE_CLASS( CGridWeaponAR2, CGridBaseWeapon );
+	DECLARE_CLASS( CGridWeaponSMG1, CGridBaseWeapon );
 	DECLARE_SERVERCLASS();
 
-	CGridWeaponAR2();
+	CGridWeaponSMG1();
 };
 
-IMPLEMENT_SERVERCLASS_ST( CGridWeaponAR2, DT_GridWeaponAR2 )
+IMPLEMENT_SERVERCLASS_ST( CGridWeaponSMG1, DT_GridWeaponSMG1 )
 END_SEND_TABLE()
 
-LINK_ENTITY_TO_CLASS( grid_weapon_ar2, CGridWeaponAR2 );
+LINK_ENTITY_TO_CLASS( grid_weapon_smg1, CGridWeaponSMG1 );
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-CGridWeaponAR2::CGridWeaponAR2() : CGridBaseWeapon( "scripts\\grid_weapon_ar2.txt" )
+CGridWeaponSMG1::CGridWeaponSMG1() : CGridBaseWeapon( "scripts\\grid_weapon_smg1.txt" )
 {
 }

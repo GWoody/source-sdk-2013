@@ -14,6 +14,7 @@
 
 @PointClass base(GridWeapon) studio("models/weapons/w_357.mdl") = grid_weapon_357 : "357" []
 @PointClass base(GridWeapon) studio("models/weapons/w_irifle.mdl") = grid_weapon_ar2 : "AR2" []
+@PointClass base(GridWeapon) studio("models/weapons/w_smg1.mdl") = grid_weapon_smg1 : "SMG1" []
 
 //=============================================================================
 // OLD HL2 STUFF

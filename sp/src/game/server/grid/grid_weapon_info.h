@@ -70,14 +70,16 @@ namespace grid
 						CEffectInfo();
 		virtual void	Parse( KeyValues *kv );
 
-		bool			DoesEjectShells() const			{ return _ejectShell; }
+		int				GetShellType() const			{ return _shellType; }
+		const char *	GetShellAttachment() const		{ return STRING( _shellattachment ); }
 		const char *	GetMuzzleParticleName() const	{ return STRING( _muzzleparticle ); }
-		int				GetMuzzleAttachment() const		{ return _muzzleattachment; }
+		const char *	GetMuzzleAttachment() const		{ return STRING( _muzzleattachment ); }
 
 	private:
-		bool			_ejectShell;
+		int				_shellType;
+		string_t		_shellattachment;
 		string_t		_muzzleparticle;
-		int				_muzzleattachment;
+		string_t		_muzzleattachment;
 	};
 
 	//-------------------------------------------------------------------------
@@ -110,10 +112,12 @@ namespace grid
 		// Accessors.
 		const char *	GetFont() const					{ return STRING( _font ); }
 		char			GetCharacter() const			{ return _character; }
+		const char *	GetAmmoAttachment() const		{ return STRING( _ammoattachment ); }
 
 	private:
 		string_t		_font;
 		char			_character;
+		string_t		_ammoattachment;
 	};
 
 	//-------------------------------------------------------------------------

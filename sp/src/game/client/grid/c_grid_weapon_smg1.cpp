@@ -1,33 +1,29 @@
 /*
 ===============================================================================
 
-	grid_weapon_ar2.cpp
-	Defines the AR2 weapon.
+	c_grid_weapon_smg1.cpp
+	Client side implementation of the SMG1.
 
 ===============================================================================
 */
 
 #include "cbase.h"
-#include "grid_base_weapon.h"
+#include "c_grid_base_weapon.h"
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-class CGridWeaponAR2 : public CGridBaseWeapon
+class C_GridWeaponSMG1 : public C_GridBaseWeapon
 {
 public:
-	DECLARE_CLASS( CGridWeaponAR2, CGridBaseWeapon );
-	DECLARE_SERVERCLASS();
-
-	CGridWeaponAR2();
+	DECLARE_CLASS( C_GridWeaponSMG1, C_GridBaseWeapon );
+	DECLARE_CLIENTCLASS();
 };
 
-IMPLEMENT_SERVERCLASS_ST( CGridWeaponAR2, DT_GridWeaponAR2 )
-END_SEND_TABLE()
-
-LINK_ENTITY_TO_CLASS( grid_weapon_ar2, CGridWeaponAR2 );
-
 //-----------------------------------------------------------------------------
+// Networking.
 //-----------------------------------------------------------------------------
-CGridWeaponAR2::CGridWeaponAR2() : CGridBaseWeapon( "scripts\\grid_weapon_ar2.txt" )
-{
-}
+IMPLEMENT_CLIENTCLASS_DT( C_GridWeaponSMG1, DT_GridWeaponSMG1, CGridWeaponSMG1 )
+
+END_RECV_TABLE()
+
+LINK_ENTITY_TO_CLASS( grid_weapon_smg1, C_GridWeaponSMG1 );

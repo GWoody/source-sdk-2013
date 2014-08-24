@@ -51,18 +51,18 @@ void CShootInfo::Parse( KeyValues *kv )
 //-----------------------------------------------------------------------------
 CEffectInfo::CEffectInfo()
 {
-	_ejectShell = false;
-	_muzzleparticle = NULL_STRING;
-	_muzzleattachment = -1;
+	_shellType = -1;
+	_shellattachment = _muzzleattachment = _muzzleparticle = NULL_STRING;
 }
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 void CEffectInfo::Parse( KeyValues *kv )
 {
-	_ejectShell = kv->GetBool( "ejectshell" );
+	_shellType = kv->GetInt( "shelltype" );
+	_shellattachment = AllocPooledString( kv->GetString( "shellattachment" ) );
 	_muzzleparticle = AllocPooledString( kv->GetString( "muzzleparticle" ) );
-	_muzzleattachment = kv->GetInt( "muzzleattachment", -1 );
+	_muzzleattachment = AllocPooledString( kv->GetString( "muzzleattachment" ) );
 }
 
 //-----------------------------------------------------------------------------
@@ -95,6 +95,7 @@ void CHudInfo::Parse( KeyValues *kv )
 {
 	_font = AllocPooledString( kv->GetString( "font" ) );
 	_character = kv->GetString( "character", "a" )[0];
+	_ammoattachment = AllocPooledString( kv->GetString( "ammoattachment" ) );
 }
 
 //-----------------------------------------------------------------------------

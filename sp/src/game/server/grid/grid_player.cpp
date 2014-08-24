@@ -29,7 +29,8 @@ END_DATADESC()
 // Networking table.
 IMPLEMENT_SERVERCLASS_ST( CGridPlayer, DT_GridPlayer )
 
-	SendPropEHandle	( SENDINFO(m_hHand) ),
+	SendPropEHandle( SENDINFO( m_hHand ) ),
+	SendPropEHandle( SENDINFO( _activeWeapon ) ),
 
 END_SEND_TABLE()
 
@@ -179,6 +180,7 @@ void CGridPlayer::HandleGunGesture()
 		{
 			// The gun gesture was first made this frame. Show the gun in place of the hand.
 			weapon->TakeOut();
+			_activeWeapon = weapon;
 			m_hHand->SetInvisible( true );
 		}
 
@@ -190,6 +192,7 @@ void CGridPlayer::HandleGunGesture()
 	{
 		// All gun gestures have been stopped. Return the hand to the normal state.
 		weapon->PutAway();
+		_activeWeapon = NULL;
 		m_hHand->SetInvisible( false );
 		_weaponWasOut = false;
 	}

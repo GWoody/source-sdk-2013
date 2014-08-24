@@ -1,9 +1,9 @@
-"grid_weapon_ar2.txt"
+"grid_weapon_smg1.txt"
 {
 	"bullet"
 	{
-		"count"			"9999"
-		"ammotype"		"AR2"
+		"count"			"50"
+		"ammotype"		"SMG1"
 		"maxdistance"	"8192"
 		"damage"		"10"
 	}
@@ -16,14 +16,16 @@
 	
 	"effect"
 	{
+		"shelltype"			"0"
+		"shellattachment"	"1"
 		"muzzleattachment"	"muzzle"
 		"muzzleparticle"	"weapon_muzzle_flash_assaultrifle"
 	}
 
 	"model"
 	{
-		"weapon"		"models/weapons/w_irifle.mdl"
-		"angle"			"0 180 0"
+		"weapon"		"models/weapons/w_smg1.mdl"
+		"angle"			"0 0 0"
 	}
 	
 	"hud"
@@ -35,8 +37,8 @@
 	
 	"sound"
 	{
-		"shoot"			"Weapon_AR2.Single"
-		"empty"			"Weapon_IRifle.Empty"
+		"shoot"			"Weapon_SMG1.Single"
+		"empty"			"Weapon_SMG1.Empty"
 	}
 	
 	"haptic"

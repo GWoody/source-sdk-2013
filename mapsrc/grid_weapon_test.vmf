@@ -2,7 +2,7 @@ versioninfo
 {
 	"editorversion" "400"
 	"editorbuild" "6412"
-	"mapversion" "42"
+	"mapversion" "45"
 	"formatversion" "100"
 	"prefab" "0"
 }
@@ -20,7 +20,7 @@ viewsettings
 world
 {
 	"id" "1"
-	"mapversion" "42"
+	"mapversion" "45"
 	"classname" "worldspawn"
 	"detailmaterial" "detail/detailsprites"
 	"detailvbsp" "detail.vbsp"
@@ -804,8 +804,8 @@ entity
 entity
 {
 	"id" "234"
-	"classname" "grid_weapon_357"
-	"angles" "0 90 0"
+	"classname" "grid_weapon_smg1"
+	"angles" "0 270 90"
 	"origin" "256 256 64"
 	editor
 	{
@@ -833,7 +833,7 @@ entity
 {
 	"id" "251"
 	"classname" "grid_weapon_ar2"
-	"angles" "0 90 0"
+	"angles" "0 270 0"
 	"origin" "256 64 63.8886"
 	editor
 	{

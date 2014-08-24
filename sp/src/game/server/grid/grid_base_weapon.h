@@ -12,6 +12,7 @@
 
 #include "baseanimating.h"
 #include "grid_weapon_info.h"
+#include "vguiscreen.h"
 
 class CGridPlayer;
 
@@ -21,6 +22,8 @@ class CGridBaseWeapon : public CBaseAnimating
 {
 public:
 	DECLARE_CLASS( CGridBaseWeapon, CBaseAnimating );
+	DECLARE_SERVERCLASS();
+	DECLARE_DATADESC();
 
 					CGridBaseWeapon( const char *script );
 	virtual			~CGridBaseWeapon();
@@ -53,13 +56,17 @@ protected:
 	void			PlayShootSound();
 	void			PlayEmptySound();
 
+	// Shooting.
 	virtual void	ShootSingleBullet();
 	virtual void	DoMuzzleFlash();
 	virtual void	PerformImpactTrace();
-	virtual void	MakeTracer( const Vector &start, const Vector &end );
+	virtual void	EjectShell();
 
 private:
 	void			Shoot();
+
+	// Screen.
+	void			CreateAmmoScreen();
 
 	// Weapon updates.
 	void			CommitAngle();
@@ -68,11 +75,13 @@ private:
 	grid::CWeaponInfo	_info;
 
 	// State information.
-	bool			_triggerHeld;
-	int				_remainingShots;
+	CNetworkVar( bool, _triggerHeld );
+	CNetworkVar( int, _remainingShots );
 	float			_nextFireTime;
 	Vector			_direction;
 	bool			_firedSinceTrigger;		// Have we fired a trigger since the last time the trigger was pulled?
+
+	CHandle<CVGuiScreen>	_ammoScreen;
 };
 
 #endif // __GRID_BASE_WEAPON_H__

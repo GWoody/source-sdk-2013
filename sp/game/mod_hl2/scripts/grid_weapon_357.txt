@@ -16,8 +16,7 @@
 	
 	"effect"
 	{
-		"ejectshell"	"0"
-		"muzzleattachment"	"1"
+		"muzzleattachment"	"muzzle"
 		"muzzleparticle"	"weapon_muzzle_flash_assaultrifle"
 	}
 
@@ -31,6 +30,7 @@
 	{
 		"font"			"WeaponIcons"
 		"character"		"e"
+		"ammoattachment"	"ammo"
 	}
 	
 	"sound"

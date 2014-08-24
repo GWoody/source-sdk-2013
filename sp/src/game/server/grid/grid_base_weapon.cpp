@@ -11,8 +11,29 @@
 #include "grid_player.h"
 #include "grid_base_weapon.h"
 #include "particle_parse.h"
+#include "te_effect_dispatch.h"
 
 using namespace grid;
+
+//-----------------------------------------------------------------------------
+// Source Networking.
+//-----------------------------------------------------------------------------
+BEGIN_DATADESC( CGridBaseWeapon )
+
+	DEFINE_FIELD( _triggerHeld, FIELD_BOOLEAN ),
+	DEFINE_FIELD( _remainingShots, FIELD_INTEGER ),
+	DEFINE_FIELD( _nextFireTime, FIELD_FLOAT ),
+	DEFINE_FIELD( _direction, FIELD_VECTOR ),
+	DEFINE_FIELD( _firedSinceTrigger, FIELD_BOOLEAN ),
+
+END_DATADESC()
+
+IMPLEMENT_SERVERCLASS_ST( CGridBaseWeapon, DT_GridBaseWeapon )
+
+	SendPropBool( SENDINFO( _triggerHeld ) ),
+	SendPropInt( SENDINFO( _remainingShots ) ),
+
+END_SEND_TABLE()
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
@@ -24,6 +45,7 @@ CGridBaseWeapon::CGridBaseWeapon( const char *script )
 	_remainingShots = _info.GetBullet().GetCount();
 	_triggerHeld = false;
 	_nextFireTime = 0.0f;
+	_ammoScreen.Set( NULL );
 }
 
 //-----------------------------------------------------------------------------
@@ -63,6 +85,8 @@ void CGridBaseWeapon::Spawn()
 	VPhysicsInitNormal( GetSolid(), GetSolidFlags(), false );
 
 	BaseClass::Spawn();
+
+	CreateAmmoScreen();
 }
 
 //-----------------------------------------------------------------------------
@@ -211,6 +235,7 @@ void CGridBaseWeapon::ShootSingleBullet()
 	DoMuzzleFlash();
 	PerformImpactTrace();
 	PlayShootSound();	
+	EjectShell();
 
 	_remainingShots--;
 }
@@ -222,7 +247,8 @@ void CGridBaseWeapon::DoMuzzleFlash()
 	const CEffectInfo &effect = _info.GetEffect();
 
 	const char *particle = effect.GetMuzzleParticleName();
-	int attachment = effect.GetMuzzleAttachment();
+	const char *attachmentname = effect.GetMuzzleAttachment();
+	int attachment = LookupAttachment( attachmentname );
 	if( particle && attachment != -1 )
 	{
 		Vector origin;
@@ -239,7 +265,8 @@ void CGridBaseWeapon::DoMuzzleFlash()
 //-----------------------------------------------------------------------------
 void CGridBaseWeapon::PerformImpactTrace()
 {
-	int attachment = _info.GetEffect().GetMuzzleAttachment();
+	const char *attachmentname = _info.GetEffect().GetMuzzleAttachment();
+	int attachment = LookupAttachment( attachmentname );
 	if( attachment == -1 )
 	{
 		Warning( "CGridBaseWeapon::PerformImpactTrace - missing muzzle attachment!!!\n" );
@@ -266,10 +293,28 @@ void CGridBaseWeapon::PerformImpactTrace()
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void CGridBaseWeapon::MakeTracer( const Vector &start, const Vector &end )
+void CGridBaseWeapon::EjectShell()
 {
-	// Temp.
-	debugoverlay->AddLineOverlay( start, end, 240, 230, 180, false, gpGlobals->frametime );
+	const char *attachmentname = _info.GetEffect().GetShellAttachment();
+	int attachment = LookupAttachment( attachmentname );
+	if( attachment == -1 )
+	{
+		return;
+	}
+
+	// Get the direction and origin of the shell effect.
+	Vector origin;
+	QAngle angles;
+	GetAttachment( attachment, origin, angles );
+
+	int type = _info.GetEffect().GetShellType();
+	type = clamp( type, 0, 2 );
+	const char *typenames[] = { "ShellEject", "RifleShellEject", "ShotgunShellEject" };
+
+	CEffectData data;
+	data.m_vOrigin = origin;
+	data.m_vAngles = angles;
+	DispatchEffect( typenames[type], data );
 }
 
 //-----------------------------------------------------------------------------
@@ -302,13 +347,34 @@ void CGridBaseWeapon::Shoot()
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
+void CGridBaseWeapon::CreateAmmoScreen()
+{
+	int attachment = LookupAttachment( _info.GetHud( ).GetAmmoAttachment() );
+	if( attachment != -1 )
+	{
+		CVGuiScreen *screen = CreateVGuiScreen( "vgui_screen", "grid_ammo_screen", this, this, attachment );
+
+		screen->SetActualSize( 2, 2 );
+		screen->SetActive( true );
+		screen->MakeVisibleOnlyToTeammates( false );
+		screen->SetAttachedToViewModel( false );
+
+		_ammoScreen.Set( screen );
+	}
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 void CGridBaseWeapon::CommitAngle()
 {
 	QAngle angles;
 	VectorAngles( _direction, angles );
 
 	angles += _info.GetModel().GetAngle();
-	angles.x = -angles.x;
+
+	// HL2 CONTENT HACK: Some weapons face different directions.
+	// Weapons facing towards the player need their pitch rotation inverted.
+	angles.x = angles.x * Sign( cos( _info.GetModel().GetAngle().y ) );
 
 	SetAbsAngles( angles );
 }

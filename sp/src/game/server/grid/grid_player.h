@@ -58,6 +58,7 @@ private:
 	void			HandleGunGesture();
 
 	CNetworkHandle( CHoloHand, m_hHand );				// The hand entity which is used to interact with the environment.
+	CNetworkHandle( CGridBaseWeapon, _activeWeapon );
 
 	grid::CGestureDetector	_gestureDetector;
 	grid::CInventory	_inventory;
