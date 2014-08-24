@@ -60,13 +60,13 @@ void CGunGesture::Detect( const holo::CFrame &frame )
 	{
 		SetInactive();
 	}
-	else if( DetectGangsta( frame ) )
-	{
-		_state = EState::IDLE;
-	}
 	else if( DetectTrigger( frame ) )
 	{
 		_state = EState::TRIGGER;
+	}
+	else if( DetectGangsta( frame ) )
+	{
+		_state = EState::IDLE;
 	}
 }
 
@@ -132,7 +132,7 @@ bool CGunGesture::DetectTrigger( const holo::CFrame &frame )
 
 	// We want the thumb tip to be relatively close to the pointer tip.
 	const Vector &diff = pointerBase.GetNextJoint() - thumb.GetTipPosition();
-	if( diff.Length() > ( pointer.GetLength() * 1.25f ) )
+	if( diff.Length() > ( pointer.GetLength() ) )
 	{
 		return false;	
 	}

@@ -92,13 +92,13 @@ namespace grid
 
 		// Accessors.
 		const QAngle &	GetAngle() const				{ return _angle; }
-		const char *	GetWeapon() const				{ return STRING( _weapon ); }
-		const char *	GetShell() const				{ return STRING( _shell ); }
+		const char *	GetPlayerModel() const			{ return STRING( _playermodel ); }
+		const char *	GetWorldModel() const			{ return STRING( _worldmodel ); }
 
 	private:
 		QAngle			_angle;
-		string_t		_weapon;
-		string_t		_shell;
+		string_t		_playermodel;
+		string_t		_worldmodel;
 	};
 
 	//-------------------------------------------------------------------------

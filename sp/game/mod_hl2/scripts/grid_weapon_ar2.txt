@@ -22,7 +22,8 @@
 
 	"model"
 	{
-		"weapon"		"models/weapons/w_irifle.mdl"
+		"player"		"models/weapons/p_irifle.mdl"
+		"world"			"models/weapons/w_irifle.mdl"
 		"angle"			"0 180 0"
 	}
 	

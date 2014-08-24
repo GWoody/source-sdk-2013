@@ -22,7 +22,8 @@
 
 	"model"
 	{
-		"weapon"		"models/weapons/w_357.mdl"
+		"player"		"models/weapons/p_357.mdl"
+		"world"			"models/weapons/w_357.mdl"
 		"angle"			"0 180 270"
 	}
 	

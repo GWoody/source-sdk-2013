@@ -58,8 +58,8 @@ CGridBaseWeapon::~CGridBaseWeapon()
 //-----------------------------------------------------------------------------
 void CGridBaseWeapon::Precache()
 {
-	PrecacheModel( _info.GetModel().GetWeapon() );
-	PrecacheModel( _info.GetModel().GetShell() );
+	PrecacheModel( _info.GetModel().GetWorldModel() );
+	PrecacheModel( _info.GetModel().GetPlayerModel() );
 
 	PrecacheScriptSound( _info.GetSound().GetEmpty() );
 	PrecacheScriptSound( _info.GetSound().GetFire() );
@@ -76,7 +76,7 @@ void CGridBaseWeapon::Spawn()
 {
 	Precache();
 
-	SetModel( _info.GetModel().GetWeapon() );
+	SetModel( _info.GetModel().GetWorldModel() );
 	SetSolid( SOLID_BBOX );
 	SetCollisionGroup( COLLISION_GROUP_DEBRIS );
 	SetBlocksLOS( false );
@@ -112,6 +112,13 @@ int CGridBaseWeapon::ObjectCaps()
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
+void CGridBaseWeapon::SetModel( const char *model )
+{
+	BaseClass::SetModel( model );
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 void CGridBaseWeapon::SwapWith( CGridBaseWeapon *weapon )
 {
 	SetMoveType( MOVETYPE_VPHYSICS );
@@ -125,31 +132,33 @@ void CGridBaseWeapon::SwapWith( CGridBaseWeapon *weapon )
 //-----------------------------------------------------------------------------
 void CGridBaseWeapon::Pickup( CGridPlayer *player )
 {
+	SetModel( _info.GetModel().GetPlayerModel() );
 	SetMoveType( MOVETYPE_NONE );
 	SetAbsVelocity( vec3_origin );
 	SetOwnerEntity( player );
 	AddEffects( EF_NODRAW );
 	VPhysicsDestroyObject();
+
+	CreateAmmoScreen();
 }
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-Vector VecCheckToss ( CBaseEntity *pEdict, Vector vecSpot1, Vector vecSpot2, float flHeightMaxRatio, float flGravityAdj, bool bRandomize, Vector *vecMins = NULL, Vector *vecMaxs = NULL );
 void CGridBaseWeapon::Drop( const Vector &target )
 {
 	CGridPlayer *player = dynamic_cast<CGridPlayer *>( GetOwnerEntity() );
 	Assert( player );
 
+	SetModel( _info.GetModel().GetWorldModel() );
+
 	VPhysicsInitNormal( GetSolid(), GetSolidFlags(), false );
 
 	SetMoveType( MOVETYPE_VPHYSICS );
 	SetOwnerEntity( NULL );
-	SetAbsVelocity( player->EyeDirection2D() * 1000.0f );
 	RemoveEffects( EF_NODRAW );
 
 	// Launch the weapon in the direction the player is looking.
-	Vector throwDir = target - GetAbsOrigin();
-	throwDir *= 3.5f;
+	Vector throwDir = player->EyeDirection2D() * 350.0f;
 	IPhysicsObject *pObj = VPhysicsGetObject();
 	if ( pObj != NULL )
 	{
@@ -160,6 +169,9 @@ void CGridBaseWeapon::Drop( const Vector &target )
 	{
 		SetAbsVelocity( throwDir );
 	}
+
+	// TODO: destroy ammo screen.
+	// TODO: LASER SIGHT
 }
 
 //-----------------------------------------------------------------------------
@@ -295,6 +307,12 @@ void CGridBaseWeapon::PerformImpactTrace()
 //-----------------------------------------------------------------------------
 void CGridBaseWeapon::EjectShell()
 {
+	int type = _info.GetEffect().GetShellType();
+	if( type == -1 )
+	{
+		return;
+	}
+
 	const char *attachmentname = _info.GetEffect().GetShellAttachment();
 	int attachment = LookupAttachment( attachmentname );
 	if( attachment == -1 )
@@ -307,7 +325,6 @@ void CGridBaseWeapon::EjectShell()
 	QAngle angles;
 	GetAttachment( attachment, origin, angles );
 
-	int type = _info.GetEffect().GetShellType();
 	type = clamp( type, 0, 2 );
 	const char *typenames[] = { "ShellEject", "RifleShellEject", "ShotgunShellEject" };
 

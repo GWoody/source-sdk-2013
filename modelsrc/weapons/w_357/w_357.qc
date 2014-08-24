@@ -6,7 +6,7 @@ World model pistol
 ==============================================================================
 */
 
-$modelname weapons/W_357.mdl
+$modelname weapons/p_357.mdl
 $cdmaterials models\weapons\w_357
 
 // whole body

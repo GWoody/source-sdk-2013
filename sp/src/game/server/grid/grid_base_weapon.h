@@ -33,6 +33,7 @@ public:
 	virtual void	Spawn();
 	virtual void	Use( CBaseEntity *activator, CBaseEntity *caller, USE_TYPE useType, float value );
 	virtual int		ObjectCaps();
+	virtual void	SetModel( const char *model );
 
 	// Player interaction.
 	virtual void	SwapWith( CGridBaseWeapon *weapon );

@@ -44,7 +44,7 @@ CShootInfo::CShootInfo()
 void CShootInfo::Parse( KeyValues *kv )
 {
 	_semiauto = kv->GetBool( "semiauto" );
-	_rate = kv->GetFloat( "rate" );
+	_rate = kv->GetFloat( "rate", 0.1f );
 }
 
 //-----------------------------------------------------------------------------
@@ -59,7 +59,7 @@ CEffectInfo::CEffectInfo()
 //-----------------------------------------------------------------------------
 void CEffectInfo::Parse( KeyValues *kv )
 {
-	_shellType = kv->GetInt( "shelltype" );
+	_shellType = kv->GetInt( "shelltype", -1 );
 	_shellattachment = AllocPooledString( kv->GetString( "shellattachment" ) );
 	_muzzleparticle = AllocPooledString( kv->GetString( "muzzleparticle" ) );
 	_muzzleattachment = AllocPooledString( kv->GetString( "muzzleattachment" ) );
@@ -69,7 +69,7 @@ void CEffectInfo::Parse( KeyValues *kv )
 //-----------------------------------------------------------------------------
 CModelInfo::CModelInfo()
 {
-	_weapon = _shell = NULL_STRING;
+	_playermodel = _worldmodel = NULL_STRING;
 }
 
 //-----------------------------------------------------------------------------
@@ -77,8 +77,8 @@ CModelInfo::CModelInfo()
 void CModelInfo::Parse( KeyValues *kv )
 {
 	UTIL_StringToVector( _angle.Base(), kv->GetString( "angle" ) );
-	_weapon = AllocPooledString( kv->GetString( "weapon" ) );
-	_shell = AllocPooledString( kv->GetString( "shell" ) );
+	_playermodel = AllocPooledString( kv->GetString( "player" ) );
+	_worldmodel = AllocPooledString( kv->GetString( "world" ) );
 }
 
 //-----------------------------------------------------------------------------

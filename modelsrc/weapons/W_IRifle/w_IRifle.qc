@@ -6,7 +6,7 @@ w_shotgun
 ==============================================================================
 */
 
-$modelname weapons/w_IRifle.mdl
+$modelname weapons/p_IRifle.mdl
 
 $cdmaterials models/weapons/w_Irifle
 

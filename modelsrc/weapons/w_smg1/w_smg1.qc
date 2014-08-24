@@ -7,7 +7,7 @@ Sub machinegun
 */
 
 
-$modelname weapons/w_smg1.mdl
+$modelname weapons/p_smg1.mdl
 
 $cdmaterials models/weapons/w_smg1
 

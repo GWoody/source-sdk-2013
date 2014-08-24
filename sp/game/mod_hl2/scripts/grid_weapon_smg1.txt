@@ -24,7 +24,8 @@
 
 	"model"
 	{
-		"weapon"		"models/weapons/w_smg1.mdl"
+		"player"		"models/weapons/p_smg1.mdl"
+		"world"			"models/weapons/w_smg1.mdl"
 		"angle"			"0 0 0"
 	}
 	
