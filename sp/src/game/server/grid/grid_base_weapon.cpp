@@ -149,6 +149,7 @@ void CGridBaseWeapon::TakeOut()
 //-----------------------------------------------------------------------------
 void CGridBaseWeapon::PutAway()
 {
+	SetTriggerState( false );
 	AddEffects( EF_NODRAW );
 }
 

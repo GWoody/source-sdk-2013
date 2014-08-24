@@ -2,7 +2,7 @@
 {
 	"bullet"
 	{
-		"count"			"30"
+		"count"			"9999"
 		"ammotype"		"AR2"
 		"maxdistance"	"8192"
 		"damage"		"10"
