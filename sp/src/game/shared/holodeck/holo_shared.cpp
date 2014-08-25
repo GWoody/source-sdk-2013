@@ -291,6 +291,36 @@ void CBone::Transform( float yaw, const Vector &translation )
 	_prevJoint += translation;
 }
 
+CBone CBone::operator+( const CBone &other ) const
+{
+	CBone b;
+
+	b._nextJoint = _nextJoint + other._nextJoint;
+	b._prevJoint = _prevJoint + other._prevJoint;
+
+	return b;
+}
+
+CBone CBone::operator/( float scale ) const
+{
+	CBone b;
+
+	b._nextJoint = _nextJoint / scale;
+	b._prevJoint = _prevJoint / scale;
+
+	return b;
+}
+
+CBone CBone::operator*( float scale ) const
+{
+	CBone b;
+
+	b._nextJoint = _nextJoint * scale;
+	b._prevJoint = _prevJoint * scale;
+
+	return b;
+}
+
 //=============================================================================
 // CFinger implementation.
 //=============================================================================
@@ -370,6 +400,63 @@ void CFinger::Transform( float yaw, const Vector &translation )
 	{
 		_bones[i].Transform( yaw, translation );
 	}
+}
+
+CFinger CFinger::operator+( const CFinger &other ) const
+{
+	CFinger f;
+
+	f._id = _id;
+	f._direction = _direction + other._direction;
+	f._tipPosition = _tipPosition + other._tipPosition;
+	f._tipVelocity = _tipVelocity + other._tipVelocity;
+	f._width = _width + other._width;
+	f._length = _length + other._length;
+
+	for( int i = 0; i < EBone::BONE_COUNT; i++ )
+	{
+		f._bones[i] = _bones[i] + other._bones[i];
+	}
+
+	return f;
+}
+
+CFinger CFinger::operator/( float scale ) const
+{
+	CFinger f;
+
+	f._id = _id;
+	f._direction = _direction / scale;
+	f._tipPosition = _tipPosition / scale;
+	f._tipVelocity = _tipVelocity / scale;
+	f._width = _width / scale;
+	f._length = _length / scale;
+
+	for( int i = 0; i < EBone::BONE_COUNT; i++ )
+	{
+		f._bones[i] = _bones[i] / scale;
+	}
+
+	return f;
+}
+
+CFinger CFinger::operator*( float scale ) const
+{
+	CFinger f;
+
+	f._id = _id;
+	f._direction = _direction * scale;
+	f._tipPosition = _tipPosition * scale;
+	f._tipVelocity = _tipVelocity * scale;
+	f._width = _width * scale;
+	f._length = _length * scale;
+
+	for( int i = 0; i < EBone::BONE_COUNT; i++ )
+	{
+		f._bones[i] = _bones[i] * scale;
+	}
+
+	return f;
 }
 
 //=============================================================================
@@ -517,6 +604,66 @@ inline const CFinger &CHand::GetClosestFingerTo( EFinger to, EFinger f ) const
 	return _fingers[closest];
 }
 
+CHand CHand::operator+( const CHand &other ) const
+{
+	CHand h;
+
+	h._id = _id;
+	h._confidence = _confidence + other._confidence;
+	h._pinchStrength = _pinchStrength + other._pinchStrength;
+	h._direction = _direction + other._direction;
+	h._normal = _normal + other._normal;
+	h._position = _position + other._position;
+	h._velocity = _velocity + other._velocity;
+
+	for( int i = 0; i < EFinger::FINGER_COUNT; i++ )
+	{
+		h._fingers[i] = _fingers[i] + other._fingers[i];
+	}
+
+	return h;
+}
+
+CHand CHand::operator/( float scale ) const
+{
+	CHand h;
+
+	h._id = _id;
+	h._confidence = _confidence / scale;
+	h._pinchStrength = _pinchStrength / scale;
+	h._direction = _direction / scale;
+	h._normal = _normal / scale;
+	h._position = _position / scale;
+	h._velocity = _velocity / scale;
+
+	for( int i = 0; i < EFinger::FINGER_COUNT; i++ )
+	{
+		h._fingers[i] = _fingers[i] / scale;
+	}
+
+	return h;
+}
+
+CHand CHand::operator*( float scale ) const
+{
+	CHand h;
+
+	h._id = _id;
+	h._confidence = _confidence * scale;
+	h._pinchStrength = _pinchStrength * scale;
+	h._direction = _direction * scale;
+	h._normal = _normal * scale;
+	h._position = _position * scale;
+	h._velocity = _velocity * scale;
+
+	for( int i = 0; i < EFinger::FINGER_COUNT; i++ )
+	{
+		h._fingers[i] = _fingers[i] * scale;
+	}
+
+	return h;
+}
+
 //=============================================================================
 // CCircleGesture implementation.
 //=============================================================================
@@ -587,6 +734,43 @@ void CCircleGesture::Transform( float yaw, const Vector &translation )
 	_center += translation;
 }
 
+CCircleGesture CCircleGesture::operator+( const CCircleGesture &other ) const
+{
+	CCircleGesture g;
+
+	g._handId = _handId;
+	g._fingerId = _fingerId;
+	g._radius = _radius + other._radius;
+	g._duration = max( _duration, other._duration );
+	g._center = _center + other._center;
+	g._normal = _normal + other._normal;
+	g._clockwise = _clockwise;
+
+	return g;
+}
+
+CCircleGesture CCircleGesture::operator/( float scale ) const
+{
+	CCircleGesture g;
+
+	g._radius = _radius / scale;
+	g._center = _center / scale;
+	g._normal = _normal / scale;
+
+	return g;
+}
+
+CCircleGesture CCircleGesture::operator*( float scale ) const
+{
+	CCircleGesture g;
+
+	g._radius = _radius * scale;
+	g._center = _center * scale;
+	g._normal = _normal * scale;
+
+	return g;
+}
+
 //=============================================================================
 // CSwipeGesture implementation.
 //=============================================================================
@@ -643,6 +827,43 @@ void CSwipeGesture::Transform( float yaw, const Vector &translation )
 	// Apply translations.
 	_curPosition += translation;
 	_startPosition += translation;
+}
+
+CSwipeGesture CSwipeGesture::operator+( const CSwipeGesture &other ) const
+{
+	CSwipeGesture g;
+
+	g._handId = _handId;
+	g._speed = _speed + other._speed;
+	g._direction = _direction + other._direction;
+	g._curPosition = _curPosition + other._curPosition;
+	g._startPosition = _startPosition + other._startPosition;
+
+	return g;
+}
+
+CSwipeGesture CSwipeGesture::operator/( float scale ) const
+{
+	CSwipeGesture g;
+
+	g._speed = _speed / scale;
+	g._direction = _direction / scale;
+	g._curPosition = _curPosition / scale;
+	g._startPosition = _startPosition / scale;
+
+	return g;
+}
+
+CSwipeGesture CSwipeGesture::operator*( float scale ) const
+{
+	CSwipeGesture g;
+
+	g._speed = _speed * scale;
+	g._direction = _direction * scale;
+	g._curPosition = _curPosition * scale;
+	g._startPosition = _startPosition * scale;
+
+	return g;
 }
 
 //=============================================================================
@@ -712,6 +933,38 @@ void CTapGesture::Transform( float yaw, const Vector &translation )
 	_position += translation;
 }
 
+CTapGesture CTapGesture::operator+( const CTapGesture &other ) const
+{
+	CTapGesture g;
+
+	g._handId = _handId;
+	g._fingerId = _fingerId;
+	g._direction = _direction + other._direction;
+	g._position = _position + other._position;
+
+	return g;
+}
+
+CTapGesture CTapGesture::operator/( float scale ) const
+{
+	CTapGesture g;
+
+	g._direction = _direction / scale;
+	g._position = _position / scale;
+
+	return g;
+}
+
+CTapGesture CTapGesture::operator*( float scale ) const
+{
+	CTapGesture g;
+
+	g._direction = _direction * scale;
+	g._position = _position * scale;
+
+	return g;
+}
+
 //=============================================================================
 // CBallGesture implementation.
 //=============================================================================
@@ -760,6 +1013,40 @@ void CBallGesture::Transform( float yaw, const Vector &translation )
 
 	// Apply translations.
 	_center += translation;
+}
+
+CBallGesture CBallGesture::operator+( const CBallGesture &other ) const
+{
+	CBallGesture g;
+
+	g._handId = _handId;
+	g._radius = _radius + other._radius;
+	g._grabStrength = _grabStrength + other._grabStrength;
+	g._center = _center + other._center;
+
+	return g;
+}
+
+CBallGesture CBallGesture::operator/( float scale ) const
+{
+	CBallGesture g;
+
+	g._radius = _radius / scale;
+	g._grabStrength = _grabStrength / scale;
+	g._center = _center / scale;
+
+	return g;
+}
+
+CBallGesture CBallGesture::operator*( float scale ) const
+{
+	CBallGesture g;
+
+	g._radius = _radius * scale;
+	g._grabStrength = _grabStrength * scale;
+	g._center = _center * scale;
+
+	return g;
 }
 
 //=============================================================================
@@ -910,4 +1197,63 @@ inline const CHand *CFrame::GetHandById( int id ) const
 {
 	// In case we ever want the support multiple hands.
 	return _hand.GetId() == id ? &_hand : NULL;
+}
+
+CFrame CFrame::operator+( const CFrame &other ) const
+{
+	CFrame f;
+
+	f._hand = _hand + other._hand;
+	f._ball = _ball + other._ball;
+
+	f._circle = AddGesture( other, _circle, other._circle, EGesture::GESTURE_CIRCLE );
+	f._swipe = AddGesture( other, _swipe, other._swipe, EGesture::GESTURE_SWIPE );
+	f._tap = AddGesture( other, _tap, other._tap, EGesture::GESTURE_TAP );
+
+	return f;
+}
+
+CFrame CFrame::operator/( float scale ) const
+{
+	CFrame f;
+
+	f._hand = _hand / scale;
+	f._ball = _ball / scale;
+	f._circle = _circle / scale;
+	f._swipe = _swipe / scale;
+	f._tap = _tap / scale;
+
+	return f;
+}
+
+CFrame CFrame::operator*( float scale ) const
+{
+	CFrame f;
+
+	f._hand = _hand * scale;
+	f._ball = _ball * scale;
+	f._circle = _circle * scale;
+	f._swipe = _swipe * scale;
+	f._tap = _tap * scale;
+
+	return f;
+}
+
+template<class T> 
+T CFrame::AddGesture( const CFrame &other, const T &g1, const T &g2, EGesture g ) const
+{
+	if( IsGestureActive( g ) && other.IsGestureActive( g ) )
+	{
+		return g1 + g2;
+	}
+	else if( IsGestureActive( g ) && !other.IsGestureActive( g ) )
+	{
+		return g1;
+	}
+	else if( !IsGestureActive( g ) && other.IsGestureActive( g ) )
+	{
+		return g2;
+	}
+	
+	return T();
 }
