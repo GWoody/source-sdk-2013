@@ -14,6 +14,7 @@
 
 #include "baseentity.h"
 #include "holodeck/holo_shared.h"
+#include "holo_frame_filter.h"
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
@@ -48,6 +49,8 @@ private:
 
 	holo::CFrame	_transformedFrame, _untransformedFrame;
 	int				_activeGestures;
+
+	holo::CFrameFilter _filter;
 
 	Vector			_lastOriginDelta;
 };

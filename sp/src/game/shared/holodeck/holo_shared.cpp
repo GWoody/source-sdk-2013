@@ -1201,6 +1201,20 @@ inline const CHand *CFrame::GetHandById( int id ) const
 
 CFrame CFrame::operator+( const CFrame &other ) const
 {
+	if( IsValid() && !other.IsValid() )
+	{
+		return *this; 
+	}
+	else if( !IsValid() && other.IsValid() )
+	{
+		return other;
+	}
+	else if( !IsValid() && !other.IsValid() )
+	{
+		return CFrame();
+	}
+
+	// Both frames are valid. Add them!
 	CFrame f;
 
 	f._hand = _hand + other._hand;
@@ -1209,6 +1223,9 @@ CFrame CFrame::operator+( const CFrame &other ) const
 	f._circle = AddGesture( other, _circle, other._circle, EGesture::GESTURE_CIRCLE );
 	f._swipe = AddGesture( other, _swipe, other._swipe, EGesture::GESTURE_SWIPE );
 	f._tap = AddGesture( other, _tap, other._tap, EGesture::GESTURE_TAP );
+
+	f._valid = true;
+	f._gestureBits = _gestureBits | other._gestureBits;
 
 	return f;
 }

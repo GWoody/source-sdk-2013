@@ -88,15 +88,20 @@ void CHoloHand::ProcessFrame( const CFrame &frame )
 	CBasePlayer *owner = dynamic_cast<CBasePlayer *>( GetOwnerEntity() );
 	Assert( owner );
 
+	const CFrame *source;
 	if( !frame.IsValid() )
 	{
 		// Use last frames data.
-		_transformedFrame = _untransformedFrame;
+		source = &_untransformedFrame;
 	}
 	else
 	{
-		_untransformedFrame = _transformedFrame = frame;
+		source = &frame;
+		_untransformedFrame = frame;
 	}
+
+	// Apply filtering to the source frame.
+	_transformedFrame = _filter.FilterFrame( *source );
 
 	// Move the hands into the correct position (relative to the player).
 	_transformedFrame.ToEntitySpace( owner, GetOriginOffset() );
