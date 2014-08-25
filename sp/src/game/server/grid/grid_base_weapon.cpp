@@ -88,8 +88,6 @@ void CGridBaseWeapon::Spawn()
 
 	// Bloat the box for player pickup
 	CollisionProp()->UseTriggerBounds( true, 36 );
-
-	CreateAmmoScreen();
 }
 
 //-----------------------------------------------------------------------------
@@ -380,6 +378,17 @@ void CGridBaseWeapon::CreateAmmoScreen()
 		screen->SetAttachedToViewModel( false );
 
 		_ammoScreen.Set( screen );
+	}
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void CGridBaseWeapon::DestroyAmmoScreen()
+{
+	if( _ammoScreen.Get() )
+	{
+		DestroyVGuiScreen( _ammoScreen.Get() );
+		_ammoScreen.Set( NULL );
 	}
 }
 

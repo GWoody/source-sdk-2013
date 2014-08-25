@@ -68,6 +68,7 @@ private:
 
 	// Screen.
 	void			CreateAmmoScreen();
+	void			DestroyAmmoScreen();
 
 	// Weapon updates.
 	void			CommitAngle();
