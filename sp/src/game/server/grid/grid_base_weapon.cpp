@@ -46,6 +46,7 @@ CGridBaseWeapon::CGridBaseWeapon( const char *script )
 	_triggerHeld = false;
 	_nextFireTime = 0.0f;
 	_ammoScreen.Set( NULL );
+	_isOut = false;
 }
 
 //-----------------------------------------------------------------------------
@@ -186,6 +187,7 @@ void CGridBaseWeapon::TakeOut()
 
 	CreateSpriteEntity();
 	CreateAmmoScreen();
+	_isOut = true;
 }
 
 //-----------------------------------------------------------------------------
@@ -195,6 +197,7 @@ void CGridBaseWeapon::PutAway()
 	SetTriggerState( false );
 	AddEffects( EF_NODRAW );
 	DestroySpriteEntity();
+	_isOut = false;
 }
 
 //-----------------------------------------------------------------------------

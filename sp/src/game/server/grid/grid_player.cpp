@@ -207,10 +207,13 @@ void CGridPlayer::PreThink()
 
 	if( CGridBaseWeapon *weapon = _inventory.GetWeapon() )
 	{
-		const Vector &pointerDir = m_hHand->GetFrame().GetHand().GetFingerByType( holo::EFinger::FINGER_POINTER ).GetDirection();
-		weapon->SetDirection( pointerDir );
-		weapon->SetAbsOrigin( m_hHand->GetAbsOrigin() );
-		weapon->ItemPreFrame();
+		if( weapon->IsOut() )
+		{
+			const Vector &pointerDir = m_hHand->GetFrame().GetHand().GetFingerByType( holo::EFinger::FINGER_POINTER ).GetDirection();
+			weapon->SetDirection( pointerDir );
+			weapon->SetAbsOrigin( m_hHand->GetAbsOrigin() );
+			weapon->ItemPreFrame();
+		}
 	}
 }
 
