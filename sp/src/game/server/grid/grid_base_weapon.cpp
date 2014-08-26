@@ -60,6 +60,7 @@ void CGridBaseWeapon::Precache()
 {
 	PrecacheModel( _info.GetModel().GetWorldModel() );
 	PrecacheModel( _info.GetModel().GetPlayerModel() );
+	PrecacheModel( "sprites/redglow1.vmt" );
 
 	PrecacheScriptSound( _info.GetSound().GetEmpty() );
 	PrecacheScriptSound( _info.GetSound().GetFire() );
@@ -140,7 +141,7 @@ void CGridBaseWeapon::Pickup( CGridPlayer *player )
 	AddEffects( EF_NODRAW );
 	VPhysicsDestroyObject();
 
-	CreateAmmoScreen();
+	
 }
 
 //-----------------------------------------------------------------------------
@@ -157,6 +158,9 @@ void CGridBaseWeapon::Drop( const Vector &target )
 	SetMoveType( MOVETYPE_VPHYSICS );
 	SetOwnerEntity( NULL );
 	RemoveEffects( EF_NODRAW );
+
+	DestroySpriteEntity();
+	DestroyAmmoScreen();
 
 	// Launch the weapon in the direction the player is looking.
 	Vector throwDir = player->EyeDirection2D() * 350.0f;
@@ -179,6 +183,9 @@ void CGridBaseWeapon::Drop( const Vector &target )
 void CGridBaseWeapon::TakeOut()
 {
 	RemoveEffects( EF_NODRAW );
+
+	CreateSpriteEntity();
+	CreateAmmoScreen();
 }
 
 //-----------------------------------------------------------------------------
@@ -187,6 +194,7 @@ void CGridBaseWeapon::PutAway()
 {
 	SetTriggerState( false );
 	AddEffects( EF_NODRAW );
+	DestroySpriteEntity();
 }
 
 //-----------------------------------------------------------------------------
@@ -212,6 +220,7 @@ void CGridBaseWeapon::SetDirection( const Vector &dir )
 //-----------------------------------------------------------------------------
 void CGridBaseWeapon::ItemPreFrame()
 {
+	UpdateSpriteEntity();
 	CommitAngle();
 
 	if( _triggerHeld )
@@ -390,6 +399,54 @@ void CGridBaseWeapon::DestroyAmmoScreen()
 		_ammoScreen.Set( NULL );
 	}
 }
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void CGridBaseWeapon::CreateSpriteEntity()
+{
+	CSprite * laserSprite = CSprite::SpriteCreate("sprites/redglow1.vmt", Vector(0, 304, 64), false);
+	_laser.Set(laserSprite);
+	laserSprite->SetScale(0.25, 0);
+	laserSprite->m_nRenderMode = kRenderWorldGlow;
+
+}
+
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void CGridBaseWeapon::UpdateSpriteEntity()
+{
+	trace_t t;
+
+	if (!_laser)
+	{
+		return;
+	}
+	
+	CGridPlayer * player = dynamic_cast<CGridPlayer*>(GetOwnerEntity());
+
+	const holo::CFinger &pointer = player->GetHandEntity()->GetFrame().GetHand().GetFingerByType(holo::EFinger::FINGER_POINTER);
+
+	Vector endPoint = GetAbsOrigin() + (pointer.GetDirection() * 1024);
+
+	UTIL_TraceLine(GetAbsOrigin(), endPoint, MASK_SOLID, this, COLLISION_GROUP_NONE, &t);
+
+	_laser->SetAbsOrigin(t.endpos);
+	
+
+	
+}
+
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void CGridBaseWeapon::DestroySpriteEntity()
+{
+	_laser->Remove();
+	_laser.Set(NULL);
+}
+
+
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------

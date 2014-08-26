@@ -13,6 +13,7 @@
 #include "baseanimating.h"
 #include "grid_weapon_info.h"
 #include "vguiscreen.h"
+#include "Sprite.h"
 
 class CGridPlayer;
 
@@ -70,6 +71,11 @@ private:
 	void			CreateAmmoScreen();
 	void			DestroyAmmoScreen();
 
+	//Laser
+	void			CreateSpriteEntity();
+	void			DestroySpriteEntity();
+	void			UpdateSpriteEntity();
+
 	// Weapon updates.
 	void			CommitAngle();
 
@@ -82,6 +88,7 @@ private:
 	float			_nextFireTime;
 	Vector			_direction;
 	bool			_firedSinceTrigger;		// Have we fired a trigger since the last time the trigger was pulled?
+	CHandle<CSprite>	_laser;
 
 	CHandle<CVGuiScreen>	_ammoScreen;
 };
