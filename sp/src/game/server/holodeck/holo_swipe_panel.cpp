@@ -104,6 +104,12 @@ void CHoloSwipePanel::Spawn()
 	// Convert the activation angle into a direction vector.
 	AngleVectors( _swipeAngle, &_swipeDirection );
 	_swipeDirection.NormalizeInPlace();
+
+	if( _locked )
+	{
+		RemoveEntityGlow();
+		RemoveAnimation();
+	}
 }
 
 //-----------------------------------------------------------------------------
@@ -202,6 +208,8 @@ float CHoloSwipePanel::ActivationDirectionDelta( const Vector &v )
 void CHoloSwipePanel::InputLock( inputdata_t &inputdata )
 {
 	_locked = true;
+	RemoveEntityGlow();
+	RemoveAnimation();
 }
 
 //-----------------------------------------------------------------------------
@@ -209,4 +217,6 @@ void CHoloSwipePanel::InputLock( inputdata_t &inputdata )
 void CHoloSwipePanel::InputUnlock( inputdata_t &inputdata )
 {
 	_locked = false;
+	InitEntityGlow();
+	InitAnimation();
 }
