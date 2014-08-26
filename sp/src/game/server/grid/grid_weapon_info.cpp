@@ -52,7 +52,10 @@ void CShootInfo::Parse( KeyValues *kv )
 CEffectInfo::CEffectInfo()
 {
 	_shellType = -1;
-	_shellattachment = _muzzleattachment = _muzzleparticle = NULL_STRING;
+	_shellattachment = _muzzleattachment = _muzzleparticle = _laserPath = NULL_STRING;
+	_laserScale = 0.25;
+	_laserActive = true;
+	
 }
 
 //-----------------------------------------------------------------------------
@@ -63,6 +66,9 @@ void CEffectInfo::Parse( KeyValues *kv )
 	_shellattachment = AllocPooledString( kv->GetString( "shellattachment" ) );
 	_muzzleparticle = AllocPooledString( kv->GetString( "muzzleparticle" ) );
 	_muzzleattachment = AllocPooledString( kv->GetString( "muzzleattachment" ) );
+	_laserPath = AllocPooledString(kv->GetString("path", "sprites/redglow1.vmt"));
+	_laserActive = kv->GetBool("active", true);
+	_laserScale = kv->GetFloat("scale", 0.25);
 }
 
 //-----------------------------------------------------------------------------

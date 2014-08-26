@@ -74,12 +74,18 @@ namespace grid
 		const char *	GetShellAttachment() const		{ return STRING( _shellattachment ); }
 		const char *	GetMuzzleParticleName() const	{ return STRING( _muzzleparticle ); }
 		const char *	GetMuzzleAttachment() const		{ return STRING( _muzzleattachment ); }
+		const char *	GetLaserPath()const				{ return STRING(_laserPath ); }
+		bool			GetLaserActive()const			{ return BOOL(_laserActive); }
+		float			GetLaserScale()const			{ return _laserScale; }
 
 	private:
 		int				_shellType;
 		string_t		_shellattachment;
 		string_t		_muzzleparticle;
 		string_t		_muzzleattachment;
+		string_t		_laserPath;
+		bool			_laserActive;
+		float			_laserScale;
 	};
 
 	//-------------------------------------------------------------------------

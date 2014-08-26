@@ -176,7 +176,6 @@ void CGridBaseWeapon::Drop( const Vector &target )
 	}
 
 	// TODO: destroy ammo screen.
-	// TODO: LASER SIGHT
 }
 
 //-----------------------------------------------------------------------------
@@ -405,11 +404,14 @@ void CGridBaseWeapon::DestroyAmmoScreen()
 //-----------------------------------------------------------------------------
 void CGridBaseWeapon::CreateSpriteEntity()
 {
-	CSprite * laserSprite = CSprite::SpriteCreate("sprites/redglow1.vmt", Vector(0, 304, 64), false);
+	if (!_info.GetEffect().GetLaserActive())
+	{
+		return;
+	}
+	CSprite * laserSprite = CSprite::SpriteCreate(_info.GetEffect().GetLaserPath(), vec3_origin, false);
 	_laser.Set(laserSprite);
-	laserSprite->SetScale(0.25, 0);
+	laserSprite->SetScale(_info.GetEffect().GetLaserScale(), 0);
 	laserSprite->m_nRenderMode = kRenderWorldGlow;
-
 }
 
 
@@ -419,7 +421,7 @@ void CGridBaseWeapon::UpdateSpriteEntity()
 {
 	trace_t t;
 
-	if (!_laser)
+	if (!_info.GetEffect().GetLaserActive())
 	{
 		return;
 	}
@@ -433,9 +435,6 @@ void CGridBaseWeapon::UpdateSpriteEntity()
 	UTIL_TraceLine(GetAbsOrigin(), endPoint, MASK_SOLID, this, COLLISION_GROUP_NONE, &t);
 
 	_laser->SetAbsOrigin(t.endpos);
-	
-
-	
 }
 
 
@@ -443,6 +442,10 @@ void CGridBaseWeapon::UpdateSpriteEntity()
 //-----------------------------------------------------------------------------
 void CGridBaseWeapon::DestroySpriteEntity()
 {
+	if (!_info.GetEffect().GetLaserActive())
+	{
+		return;
+	}
 	_laser->Remove();
 	_laser.Set(NULL);
 }

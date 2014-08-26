@@ -18,6 +18,9 @@
 	{
 		"muzzleattachment"	"muzzle"
 		"muzzleparticle"	"weapon_muzzle_flash_assaultrifle"
+		"path"				"sprites/redglow1.vmt"
+		"active"			"1"
+		"scale"				"1"			
 	}
 
 	"model"
