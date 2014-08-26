@@ -171,7 +171,6 @@ void CGridBaseWeapon::Drop( const Vector &target )
 		SetAbsVelocity( throwDir );
 	}
 
-	// TODO: destroy ammo screen.
 	// TODO: LASER SIGHT
 }
 

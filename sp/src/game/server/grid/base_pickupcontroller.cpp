@@ -18,6 +18,7 @@
 // ConVars
 //-----------------------------------------------------------------------------
 ConVar player_throwforce( "player_throwforce", "100" );
+ConVar physcannon_tracelength( "physcannon_tracelength", "250" );
 
 LINK_ENTITY_TO_CLASS( player_pickup, CPlayerPickupController );
 
