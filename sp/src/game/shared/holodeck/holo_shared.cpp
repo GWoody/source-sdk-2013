@@ -753,6 +753,10 @@ CCircleGesture CCircleGesture::operator/( float scale ) const
 {
 	CCircleGesture g;
 
+	g._handId = _handId;
+	g._fingerId = _fingerId;
+	g._duration = _duration;
+	g._clockwise = _clockwise;
 	g._radius = _radius / scale;
 	g._center = _center / scale;
 	g._normal = _normal / scale;
@@ -764,6 +768,10 @@ CCircleGesture CCircleGesture::operator*( float scale ) const
 {
 	CCircleGesture g;
 
+	g._handId = _handId;
+	g._fingerId = _fingerId;
+	g._duration = _duration;
+	g._clockwise = _clockwise;
 	g._radius = _radius * scale;
 	g._center = _center * scale;
 	g._normal = _normal * scale;
@@ -846,6 +854,7 @@ CSwipeGesture CSwipeGesture::operator/( float scale ) const
 {
 	CSwipeGesture g;
 
+	g._handId = _handId;
 	g._speed = _speed / scale;
 	g._direction = _direction / scale;
 	g._curPosition = _curPosition / scale;
@@ -858,6 +867,7 @@ CSwipeGesture CSwipeGesture::operator*( float scale ) const
 {
 	CSwipeGesture g;
 
+	g._handId = _handId;
 	g._speed = _speed * scale;
 	g._direction = _direction * scale;
 	g._curPosition = _curPosition * scale;
@@ -949,6 +959,8 @@ CTapGesture CTapGesture::operator/( float scale ) const
 {
 	CTapGesture g;
 
+	g._handId = _handId;
+	g._fingerId = _fingerId;
 	g._direction = _direction / scale;
 	g._position = _position / scale;
 
@@ -959,6 +971,8 @@ CTapGesture CTapGesture::operator*( float scale ) const
 {
 	CTapGesture g;
 
+	g._handId = _handId;
+	g._fingerId = _fingerId;
 	g._direction = _direction * scale;
 	g._position = _position * scale;
 
@@ -1031,6 +1045,7 @@ CBallGesture CBallGesture::operator/( float scale ) const
 {
 	CBallGesture g;
 
+	g._handId = _handId;
 	g._radius = _radius / scale;
 	g._grabStrength = _grabStrength / scale;
 	g._center = _center / scale;
@@ -1042,6 +1057,7 @@ CBallGesture CBallGesture::operator*( float scale ) const
 {
 	CBallGesture g;
 
+	g._handId = _handId;
 	g._radius = _radius * scale;
 	g._grabStrength = _grabStrength * scale;
 	g._center = _center * scale;
@@ -1234,6 +1250,8 @@ CFrame CFrame::operator/( float scale ) const
 {
 	CFrame f;
 
+	f._valid = _valid;
+	f._gestureBits = _gestureBits;
 	f._hand = _hand / scale;
 	f._ball = _ball / scale;
 	f._circle = _circle / scale;
@@ -1247,6 +1265,8 @@ CFrame CFrame::operator*( float scale ) const
 {
 	CFrame f;
 
+	f._valid = _valid;
+	f._gestureBits = _gestureBits;
 	f._hand = _hand * scale;
 	f._ball = _ball * scale;
 	f._circle = _circle * scale;

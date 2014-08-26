@@ -186,7 +186,8 @@ void C_BaseExplosionEffect::Create( const Vector &position, float force, float s
 #ifdef HOLODECK
 	DispatchParticleEffect( "grenade_explosion_01", position, vec3_angle );
 	CreateDynamicLight();
-#else
+#endif
+
 	if ( scale != 0 )
 	{
 		// UNDONE: Make core size parametric to scale or remove scale?
@@ -196,7 +197,6 @@ void C_BaseExplosionEffect::Create( const Vector &position, float force, float s
 	CreateDebris();
 	//FIXME: CreateDynamicLight();
 	CreateMisc();
-#endif
 }
 
 //-----------------------------------------------------------------------------

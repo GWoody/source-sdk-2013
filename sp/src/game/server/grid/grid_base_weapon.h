@@ -45,6 +45,7 @@ public:
 
 	// Accessors.
 	int				GetBulletCount() const					{ return _remainingShots; }
+	bool			IsOut() const							{ return _isOut; }
 
 	// Shooting.
 	virtual void	SetTriggerState( bool pressed );
@@ -89,6 +90,7 @@ private:
 	Vector			_direction;
 	bool			_firedSinceTrigger;		// Have we fired a trigger since the last time the trigger was pulled?
 	CHandle<CSprite>	_laser;
+	bool			_isOut;
 
 	CHandle<CVGuiScreen>	_ammoScreen;
 };
