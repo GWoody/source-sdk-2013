@@ -123,6 +123,12 @@ void CHoloCirclePanel::Spawn()
 
 	SetThink( &CHoloCirclePanel::RotateThink );
 	SetNextThink( gpGlobals->curtime + gpGlobals->frametime );
+
+	if( _locked )
+	{
+		RemoveEntityGlow();
+		RemoveAnimation();
+	}
 }
 
 //-----------------------------------------------------------------------------
@@ -207,6 +213,8 @@ void CHoloCirclePanel::InputSetUseTime( inputdata_t &inputdata )
 void CHoloCirclePanel::InputLock( inputdata_t &inputdata )
 {
 	_locked = true;
+	RemoveEntityGlow();
+	RemoveAnimation();
 }
 
 //-----------------------------------------------------------------------------
@@ -214,6 +222,8 @@ void CHoloCirclePanel::InputLock( inputdata_t &inputdata )
 void CHoloCirclePanel::InputUnlock( inputdata_t &inputdata )
 {
 	_locked = false;
+	InitEntityGlow();
+	InitAnimation();
 }
 
 //-----------------------------------------------------------------------------
