@@ -691,6 +691,8 @@ void CCircleGesture::FromLeap( const Leap::CircleGesture &c )
 	_normal = LeapToSourceVector( c.normal() );
 	_duration = c.durationSeconds();
 
+	_normal.NormalizeInPlace();
+
 	// According to the Leap SDK:
 	// If you draw the circle clockwise, the normal vector points in the same general direction as the pointable object drawing the circle.
 	// If you draw the circle counterclockwise, the normal points back toward the pointable.
@@ -804,6 +806,8 @@ void CSwipeGesture::FromLeap( const Leap::SwipeGesture &s )
 	_direction = LeapToSourceVector( s.direction() );
 	_curPosition = LeapToSourceVector( s.position(), true );
 	_startPosition = LeapToSourceVector( s.startPosition(), true );
+
+	_direction.NormalizeInPlace();
 }
 #endif
 
@@ -904,6 +908,8 @@ void CTapGesture::FromLeap( const Leap::KeyTapGesture &k )
 	_fingerId = k.pointable().id();
 	_direction = LeapToSourceVector( k.direction() );
 	_position = LeapToSourceVector( k.position(), true );
+
+	_direction.NormalizeInPlace();
 }
 
 void CTapGesture::FromLeap( const Leap::ScreenTapGesture &s )
@@ -914,6 +920,8 @@ void CTapGesture::FromLeap( const Leap::ScreenTapGesture &s )
 	_fingerId = s.pointable().id();
 	_direction = LeapToSourceVector( s.direction() );
 	_position = LeapToSourceVector( s.position(), true );
+
+	_direction.NormalizeInPlace();
 }
 #endif
 
@@ -1193,9 +1201,21 @@ void CFrame::ToEntitySpace( CBaseCombatCharacter *entity, const Vector &delta )
 
 	_hand.Transform( yaw, translation );
 	_ball.Transform( yaw, translation );
-	_circle.Transform( yaw, translation );
-	_swipe.Transform( yaw, translation );
-	_tap.Transform( yaw, translation );
+
+	if( IsGestureActive( EGesture::GESTURE_CIRCLE ) )
+	{
+		_circle.Transform( yaw, translation );
+	}
+
+	if( IsGestureActive( EGesture::GESTURE_SWIPE ) )
+	{
+		_swipe.Transform( yaw, translation );
+	}
+
+	if( IsGestureActive( EGesture::GESTURE_TAP ) )
+	{
+		_tap.Transform( yaw, translation );
+	}
 }
 #endif
 

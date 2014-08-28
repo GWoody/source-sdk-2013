@@ -468,7 +468,8 @@ void CGridBaseWeapon::CommitAngle()
 
 	// HL2 CONTENT HACK: Some weapons face different directions.
 	// Weapons facing towards the player need their pitch rotation inverted.
-	angles.x = angles.x * Sign( cos( _info.GetModel().GetAngle().y ) );
+	float rad = DEG2RAD( _info.GetModel().GetAngle().y );
+	angles.x = angles.x * Sign( cos( rad ) );
 
 	SetAbsAngles( angles );
 }
