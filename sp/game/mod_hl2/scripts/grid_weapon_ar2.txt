@@ -1,0 +1,49 @@
+"grid_weapon_ar2.txt"
+{
+	"bullet"
+	{
+		"count"			"9999"
+		"ammotype"		"AR2"
+		"maxdistance"	"8192"
+		"damage"		"10"
+	}
+	
+	"shoot"
+	{
+		"semiauto"		"0"
+		"rate"			"0.1"
+	}
+	
+	"effect"
+	{
+		"muzzleattachment"	"muzzle"
+		"muzzleparticle"	"weapon_muzzle_flash_assaultrifle"
+	}
+
+	"model"
+	{
+		"player"		"models/weapons/p_irifle.mdl"
+		"world"			"models/weapons/w_irifle.mdl"
+		"angle"			"0 180 0"
+	}
+	
+	"hud"
+	{
+		"font"			"WeaponIcons"
+		"character"		"l"
+		"ammoattachment"	"ammo"
+	}
+	
+	"sound"
+	{
+		"shoot"			"Weapon_AR2.Single"
+		"empty"			"Weapon_IRifle.Empty"
+	}
+	
+	"haptic"
+	{
+		"power"			"0"
+		"freq"			"0"
+		"duration"		"0"
+	}
+}

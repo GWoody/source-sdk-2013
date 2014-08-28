@@ -361,7 +361,11 @@ void CWeaponSMG1::SecondaryAttack( void )
 	pGrenade->SetLocalAngularVelocity( RandomAngle( -400, 400 ) );
 	pGrenade->SetMoveType( MOVETYPE_FLYGRAVITY, MOVECOLLIDE_FLY_BOUNCE ); 
 	pGrenade->SetThrower( GetOwner() );
+#ifdef GRID_DLL
+	pGrenade->SetDamage( 50 );
+#else
 	pGrenade->SetDamage( sk_plr_dmg_smg1_grenade.GetFloat() );
+#endif
 
 	SendWeaponAnim( ACT_VM_SECONDARYATTACK );
 

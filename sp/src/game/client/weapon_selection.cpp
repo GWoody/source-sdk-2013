@@ -25,6 +25,7 @@ ConVar hud_fastswitch( "hud_fastswitch", "0", FCVAR_ARCHIVE | FCVAR_ARCHIVE_XBOX
 //-----------------------------------------------------------------------------
 // Purpose: Weapon Selection commands
 //-----------------------------------------------------------------------------
+#ifndef GRID_CLIENT_DLL
 DECLARE_HUD_COMMAND_NAME(CBaseHudWeaponSelection, Slot1, "CHudWeaponSelection");
 DECLARE_HUD_COMMAND_NAME(CBaseHudWeaponSelection, Slot2, "CHudWeaponSelection");
 DECLARE_HUD_COMMAND_NAME(CBaseHudWeaponSelection, Slot3, "CHudWeaponSelection");
@@ -56,6 +57,7 @@ HOOK_COMMAND( cancelselect, Close );
 HOOK_COMMAND( invnext, NextWeapon );
 HOOK_COMMAND( invprev, PrevWeapon );
 HOOK_COMMAND( lastinv, LastWeapon );
+#endif
 
 // instance info
 CBaseHudWeaponSelection *CBaseHudWeaponSelection::s_pInstance = NULL;

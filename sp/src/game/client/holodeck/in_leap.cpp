@@ -107,10 +107,6 @@ CLeapMotion::~CLeapMotion()
 void CLeapMotion::CreateMove( CUserCmd *cmd )
 {
 	cmd->holo_frame = BuildFinalFrame();
-	if( cmd->holo_frame.IsValid() )
-	{
-		HandleWeapons( cmd );
-	}
 }
 
 //----------------------------------------------------------------------------
@@ -144,28 +140,6 @@ CFrame CLeapMotion::BuildFinalFrame()
 	}
 
 	return finalFrame;
-}
-
-//----------------------------------------------------------------------------
-//----------------------------------------------------------------------------
-void CLeapMotion::HandleWeapons( CUserCmd *cmd )
-{
-	const float GRAB_STRENGTH = 0.8f;
-	static float lastRadius = 0.0f;
-
-	float curRadius = cmd->holo_frame.GetBallGesture().GetGrabStrength();
-	if( curRadius >= GRAB_STRENGTH && lastRadius < GRAB_STRENGTH )
-	{
-		// The user has started clenching their hand this frame.
-		cmd->buttons |= IN_USE;
-	}
-	else if( curRadius < GRAB_STRENGTH && lastRadius >= GRAB_STRENGTH )
-	{
-		// The user has unclenched their hand this frame.
-		cmd->buttons |= IN_ATTACK;
-	}
-
-	lastRadius = curRadius;
 }
 
 //----------------------------------------------------------------------------

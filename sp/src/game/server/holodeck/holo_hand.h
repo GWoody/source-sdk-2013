@@ -14,6 +14,7 @@
 
 #include "baseentity.h"
 #include "holodeck/holo_shared.h"
+#include "holo_frame_filter.h"
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
@@ -34,6 +35,8 @@ public:
 	// Frame processing.
 	void			ProcessFrame( const holo::CFrame &frame );
 
+	void			SetInvisible( bool invisible );
+
 	void			DebugStartTouch();
 	void			DebugEndTouch();
 
@@ -42,8 +45,14 @@ private:
 
 	Vector			GetOriginOffset() const;
 
-	holo::CFrame	_curFrame;
+	void			ExtrapolateFrame();
+
+	holo::CFrame	_transformedFrame, _untransformedFrame;
 	int				_activeGestures;
+
+	holo::CFrameFilter _filter;
+
+	Vector			_lastOriginDelta;
 };
 
 #endif // __HOLO_HAND_H__

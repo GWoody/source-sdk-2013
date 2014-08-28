@@ -363,8 +363,9 @@ bool CNPC_Combine::CreateBehaviors()
 	AddBehavior( &m_AssaultBehavior );
 	AddBehavior( &m_StandoffBehavior );
 	AddBehavior( &m_FollowBehavior );
+#ifndef GRID_DLL
 	AddBehavior( &m_FuncTankBehavior );
-
+#endif
 	return BaseClass::CreateBehaviors();
 }
 
@@ -1238,6 +1239,7 @@ void CNPC_Combine::Event_Killed( const CTakeDamageInfo &info )
 					pObj->AddVelocity( &vel, &angImp );
 				}
 
+#ifndef GRID_DLL
 				// In the Citadel we need to dissolve this
 				if ( PlayerHasMegaPhysCannon() )
 				{
@@ -1245,6 +1247,7 @@ void CNPC_Combine::Event_Killed( const CTakeDamageInfo &info )
 
 					pWeapon->Dissolve( NULL, gpGlobals->curtime, false, ENTITY_DISSOLVE_NORMAL );
 				}
+#endif
 			}
 		}
 	}
@@ -1738,12 +1741,13 @@ int CNPC_Combine::SelectSchedule( void )
 		// If we're hit by bugbait, thrash around
 		if ( HasCondition( COND_COMBINE_HIT_BY_BUGBAIT ) )
 		{
+#ifndef GRID_DLL
 			// Don't do this if we're mounting a func_tank
 			if ( m_FuncTankBehavior.IsMounted() == true )
 			{
 				m_FuncTankBehavior.Dismount();
 			}
-
+#endif
 			ClearCondition( COND_COMBINE_HIT_BY_BUGBAIT );
 			return SCHED_COMBINE_BUGBAIT_DISTRACTION;
 		}
@@ -1900,7 +1904,11 @@ int CNPC_Combine::SelectFailSchedule( int failedSchedule, int failedTask, AI_Tas
 //-----------------------------------------------------------------------------
 bool CNPC_Combine::ShouldChargePlayer()
 {
+#ifndef GRID_DLL
 	return GetEnemy() && GetEnemy()->IsPlayer() && PlayerHasMegaPhysCannon() && !IsLimitingHintGroups();
+#else
+	return GetEnemy() && GetEnemy()->IsPlayer() && !IsLimitingHintGroups();
+#endif
 }
 
 
@@ -3205,6 +3213,7 @@ bool CNPC_Combine::ActiveWeaponIsFullyLoaded()
 //-----------------------------------------------------------------------------
 bool CNPC_Combine::HandleInteraction(int interactionType, void *data, CBaseCombatCharacter *sourceEnt)
 {
+#ifndef GRID_DLL
 	if ( interactionType == g_interactionTurretStillStanding )
 	{
 		// A turret that I've kicked recently is still standing 5 seconds later. 
@@ -3219,6 +3228,7 @@ bool CNPC_Combine::HandleInteraction(int interactionType, void *data, CBaseComba
 		}
 		return true;
 	}
+#endif
 
 	return BaseClass::HandleInteraction( interactionType, data, sourceEnt );
 }

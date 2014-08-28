@@ -57,7 +57,6 @@ public:
 private:
 	// Frame processing.
 	holo::CFrame	BuildFinalFrame();
-	void			HandleWeapons( CUserCmd *cmd );
 
 					CLeapMotion();
 					~CLeapMotion();

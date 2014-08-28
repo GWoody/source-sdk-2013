@@ -53,10 +53,7 @@ private:
 	static CDirectInput *	_instance;
 
 	// Server side convars.
-	const ConVarRef	hl2_walkspeed, hl2_normspeed, hl2_sprintspeed;
-
-	// Joystick specific stuff
-
+	const ConVarRef	cl_forwardspeed;
 };
 
 #endif // __IN_DINPUT_H__

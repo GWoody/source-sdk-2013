@@ -39,4 +39,13 @@
 		"acceptsinput"  0
 		"resfile"	"scripts/screens/slideshow_display_screen.res"
 	}
+	
+	"grid_ammo_screen"
+	{
+		"type"			"grid_ammo_screen"
+		"pixelswide"	32
+		"pixelshigh"	32
+		"acceptsinput"  0
+		"resfile"		"scripts/screens/grid_ammo_screen.res"
+	}
 }

@@ -70,10 +70,6 @@
 #include "vote_controller.h"
 #include "ai_speech.h"
 
-#ifdef HOLODECK
-#include "holodeck/holo_hand.h"
-#endif
-
 #if defined USES_ECON_ITEMS
 #include "econ_wearable.h"
 #endif
@@ -110,7 +106,12 @@ static ConVar physicsshadowupdate_render( "physicsshadowupdate_render", "0" );
 bool IsInCommentaryMode( void );
 bool IsListeningToCommentary( void );
 
-#if !defined( CSTRIKE_DLL )
+#ifdef GRID_DLL
+ConVar cl_sidespeed( "cl_sidespeed", "150", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar cl_upspeed( "cl_upspeed", "320", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar cl_forwardspeed( "cl_forwardspeed", "150", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar cl_backspeed( "cl_backspeed", "150", FCVAR_REPLICATED | FCVAR_CHEAT );
+#elif !defined( CSTRIKE_DLL )
 ConVar cl_sidespeed( "cl_sidespeed", "450", FCVAR_REPLICATED | FCVAR_CHEAT );
 ConVar cl_upspeed( "cl_upspeed", "320", FCVAR_REPLICATED | FCVAR_CHEAT );
 ConVar cl_forwardspeed( "cl_forwardspeed", "450", FCVAR_REPLICATED | FCVAR_CHEAT );
@@ -455,11 +456,6 @@ BEGIN_DATADESC( CBasePlayer )
 	DEFINE_FIELD( m_vecPreviouslyPredictedOrigin, FIELD_POSITION_VECTOR ), 
 
 	DEFINE_FIELD( m_nNumCrateHudHints, FIELD_INTEGER ),
-
-#ifdef HOLODECK
-	DEFINE_FIELD( m_hHand, FIELD_EHANDLE ),
-#endif
-
 
 	// DEFINE_FIELD( m_nBodyPitchPoseParam, FIELD_INTEGER ),
 	// DEFINE_ARRAY( m_StepSoundCache, StepSoundCache_t,  2  ),
@@ -3429,11 +3425,6 @@ void CBasePlayer::ProcessUsercmds( CUserCmd *cmds, int numcmds, int totalcmds,
 	CCommandContext *ctx = AllocCommandContext();
 	Assert( ctx );
 
-#ifdef HOLODECK
-	holo::CFrame finalHoloFrame;
-	finalHoloFrame.SetValid( false );
-#endif
-
 	int i;
 	for ( i = totalcmds - 1; i >= 0; i-- )
 	{
@@ -3445,37 +3436,12 @@ void CBasePlayer::ProcessUsercmds( CUserCmd *cmds, int numcmds, int totalcmds,
 			pCmd->MakeInert();
 		}
 
-#ifdef HOLODECK
-		// Take the newest version of all frame attributes.
-		const holo::CFrame &curframe = pCmd->holo_frame;
-		if( curframe.IsGestureActive( holo::EGesture::GESTURE_CIRCLE ) )
-		{
-			finalHoloFrame.SetCircleGesture( curframe.GetCircleGesture() );
-		}
-		if( curframe.IsGestureActive( holo::EGesture::GESTURE_SWIPE ) )
-		{
-			finalHoloFrame.SetSwipeGesture( curframe.GetSwipeGesture() );
-		}
-		if( curframe.IsGestureActive( holo::EGesture::GESTURE_TAP ) )
-		{
-			finalHoloFrame.SetTapGesture( curframe.GetTapGesture() );
-		}
-
-		finalHoloFrame.SetBallGesture( curframe.GetBallGesture() );
-		finalHoloFrame.SetHand( curframe.GetHand() );
-		finalHoloFrame.SetValid( true );
-#endif
-
 		ctx->cmds.AddToTail( *pCmd );
 	}
 	ctx->numcmds			= numcmds;
 	ctx->totalcmds			= totalcmds,
 	ctx->dropped_packets	= dropped_packets;
 	ctx->paused				= paused;
-
-#ifdef HOLODECK
-	m_hHand->ProcessFrame( finalHoloFrame );
-#endif
 		
 	// If the server is paused, zero out motion,buttons,view changes
 	if ( ctx->paused )
@@ -5075,14 +5041,6 @@ void CBasePlayer::Spawn( void )
 	UpdateLastKnownArea();
 
 	m_weaponFiredTimer.Invalidate();
-
-#ifdef HOLODECK
-	CHoloHand *pHand = dynamic_cast<CHoloHand *>( CreateEntityByName( "holo_hand" ) );
-	Assert( pHand );
-	pHand->Spawn();
-	pHand->SetOwnerEntity( this );
-	m_hHand.Set( pHand );
-#endif
 }
 
 void CBasePlayer::Activate( void )
@@ -6822,6 +6780,7 @@ void CBasePlayer::UpdateClientData( void )
 		world->SetDisplayTitle( false );
 	}
 
+#ifndef GRID_DLL
 	if (m_ArmorValue != m_iClientBattery)
 	{
 		m_iClientBattery = m_ArmorValue;
@@ -6834,6 +6793,7 @@ void CBasePlayer::UpdateClientData( void )
 			MessageEnd();
 		}
 	}
+#endif
 
 #if 0 // BYE BYE!!
 	// Update Flashlight
@@ -8045,10 +8005,6 @@ void SendProxy_CropFlagsToPlayerFlagBitsLength( const SendProp *pProp, const voi
 
 		// Data that only gets sent to the local player.
 		SendPropDataTable( "localdata", 0, &REFERENCE_SEND_TABLE(DT_LocalPlayerExclusive), SendProxy_SendLocalDataTable ),
-
-#ifdef HOLODECK
-		SendPropEHandle	( SENDINFO(m_hHand) ),
-#endif
 
 	END_SEND_TABLE()
 

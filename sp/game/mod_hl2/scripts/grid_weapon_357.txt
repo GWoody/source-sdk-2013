@@ -1,0 +1,52 @@
+"grid_weapon_357.txt"
+{
+	"bullet"
+	{
+		"count"			"10"
+		"ammotype"		"357"
+		"maxdistance"	"8192"
+		"damage"		"40"
+	}
+	
+	"shoot"
+	{
+		"semiauto"		"1"
+		"rate"			"0.25"
+	}
+	
+	"effect"
+	{
+		"muzzleattachment"	"muzzle"
+		"muzzleparticle"	"weapon_muzzle_flash_assaultrifle"
+		"path"				"sprites/redglow1.vmt"
+		"active"			"1"
+		"scale"				"1"			
+	}
+
+	"model"
+	{
+		"player"		"models/weapons/p_357.mdl"
+		"world"			"models/weapons/w_357.mdl"
+		"angle"			"0 180 270"
+	}
+	
+	"hud"
+	{
+		"font"			"WeaponIcons"
+		"character"		"e"
+		"ammoattachment"	"ammo"
+	}
+	
+	"sound"
+	{
+		"shoot"			"Weapon_357.Single"
+		"empty"			"Weapon_Pistol.Empty"
+	}
+	
+	"haptic"
+	{
+		"power"			"0"
+		"freq"			"0"
+		"duration"		"0"
+	}
+}

@@ -280,12 +280,14 @@ void CNPC_CombineS::OnListened()
 //-----------------------------------------------------------------------------
 void CNPC_CombineS::Event_Killed( const CTakeDamageInfo &info )
 {
+#ifndef GRID_DLL
 	// Don't bother if we've been told not to, or the player has a megaphyscannon
 	if ( combine_spawn_health.GetBool() == false || PlayerHasMegaPhysCannon() )
 	{
 		BaseClass::Event_Killed( info );
 		return;
 	}
+#endif
 
 	CBasePlayer *pPlayer = ToBasePlayer( info.GetAttacker() );
 
@@ -339,6 +341,7 @@ void CNPC_CombineS::Event_Killed( const CTakeDamageInfo &info )
 			}
 		}
 
+#ifndef GRID_DLL
 		CHalfLife2 *pHL2GameRules = static_cast<CHalfLife2 *>(g_pGameRules);
 
 		// Attempt to drop health
@@ -357,6 +360,7 @@ void CNPC_CombineS::Event_Killed( const CTakeDamageInfo &info )
 				pHL2GameRules->NPC_DroppedGrenade();
 			}
 		}
+#endif
 	}
 
 	BaseClass::Event_Killed( info );

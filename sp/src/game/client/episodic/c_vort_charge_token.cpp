@@ -6,7 +6,9 @@
 
 #include "cbase.h"
 #include "particles_simple.h"
+#ifndef GRID_CLIENT_DLL
 #include "citadel_effects_shared.h"
+#endif
 #include "particles_attractor.h"
 #include "iefx.h"
 #include "dlight.h"

@@ -16,7 +16,6 @@
 
 #include "in_dinput.h"
 #include "in_buttons.h"
-#include "c_basehlplayer.h"
 
 CDirectInput *CDirectInput::_instance;
 
@@ -39,14 +38,10 @@ void free_message( const char *message )
 	LocalFree( (HLOCAL)message );
 }
 
-
-
 //----------------------------------------------------------------------------
 //----------------------------------------------------------------------------
 CDirectInput::CDirectInput() :
-	hl2_walkspeed( "hl2_walkspeed" ),
-	hl2_normspeed( "hl2_normspeed" ),
-	hl2_sprintspeed( "hl2_sprintspeed" )
+	cl_forwardspeed( "cl_forwardspeed" )
 {
 
 }
@@ -230,12 +225,8 @@ void CDirectInput::Shutdown()
 //----------------------------------------------------------------------------
 void CDirectInput::CreateMove( CUserCmd *cmd )
 {
-	// Get the players client side entity singleton.
-	C_BaseHLPlayer *player = dynamic_cast<C_BaseHLPlayer *>( C_BasePlayer::GetLocalPlayer() );
-
 	// The players move speed is stored within a ConVar.
-	const ConVarRef *movespeed = player->IsSprinting() ? &hl2_sprintspeed : &hl2_normspeed;
-	const float maxPlayerVelocity = movespeed->GetFloat();
+	const float maxPlayerVelocity = cl_forwardspeed.GetFloat();
 
 	/** The Polling System **/
 	HRESULT hr;

@@ -328,7 +328,9 @@ private:
 	COutputEvent		m_OnNavFailBlocked;
 
 	//-----------------------------------------------------
+#ifndef GRID_DLL
 	CAI_FuncTankBehavior	m_FuncTankBehavior;
+#endif
 
 	CHandle<CAI_FollowGoal>	m_hSavedFollowGoalEnt;
 

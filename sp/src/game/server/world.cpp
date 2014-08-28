@@ -616,7 +616,9 @@ void CWorld::Precache( void )
 	EventList_Free();
 	RegisterSharedEvents();
 
+#ifndef GRID_DLL
 	InitBodyQue();
+#endif
 // init sentence group playback stuff from sentences.txt.
 // ok to call this multiple times, calls after first are ignored.
 

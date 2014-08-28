@@ -817,13 +817,6 @@ void CBasePlayer::SetStepSoundTime( stepsoundtimes_t iStepSoundTime, bool bWalki
 
 Vector CBasePlayer::Weapon_ShootPosition( )
 {
-#ifdef HOLODECK
-	if ( m_hUseEntity != NULL )
-	{
-		// The player is holding an object.
-		return m_hHand->GetAbsOrigin();
-	}
-#endif
 	return EyePosition();
 }
 
@@ -1076,24 +1069,12 @@ CBaseEntity *CBasePlayer::FindUseEntity()
 {
 #ifdef GAME_DLL
 
-#ifndef HOLODECK
 	Vector forward, up;
 	EyeVectors( &forward, NULL, &up );
 
 	trace_t tr;
 	// Search for objects in a sphere (tests for entities that are not solid, yet still useable)
 	Vector searchCenter = EyePosition();
-#else
-	// Attempt to pick up objects that are occluded by the hand.
-	Vector forward = m_hHand->GetFrame().GetHand().GetPosition() - EyePosition();
-	Vector up( 0, 0, 1 );
-
-	forward.NormalizeInPlace();
-
-	trace_t tr;
-	// Search for objects in a sphere (tests for entities that are not solid, yet still useable)
-	Vector searchCenter = m_hHand->GetAbsOrigin();
-#endif
 
 	// NOTE: Some debris objects are useable too, so hit those as well
 	// A button, etc. can be made out of clip brushes, make sure it's +useable via a traceline, too.

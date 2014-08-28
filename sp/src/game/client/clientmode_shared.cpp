@@ -329,8 +329,10 @@ void ClientModeShared::Init()
 	m_pChatElement = ( CBaseHudChat * )GET_HUDELEMENT( CHudChat );
 	Assert( m_pChatElement );
 
+#ifndef GRID_CLIENT_DLL
 	m_pWeaponSelection = ( CBaseHudWeaponSelection * )GET_HUDELEMENT( CHudWeaponSelection );
 	Assert( m_pWeaponSelection );
+#endif
 
 	KeyValuesAD pConditions( "conditions" );
 	ComputeVguiResConditions( pConditions );
@@ -743,6 +745,7 @@ int ClientModeShared::HandleSpectatorKeyInput( int down, ButtonCode_t keynum, co
 //-----------------------------------------------------------------------------
 int ClientModeShared::HudElementKeyInput( int down, ButtonCode_t keynum, const char *pszCurrentBinding )
 {
+#ifndef GRID_CLIENT_DLL
 	if ( m_pWeaponSelection )
 	{
 		if ( !m_pWeaponSelection->KeyInput( down, keynum, pszCurrentBinding ) )
@@ -750,6 +753,7 @@ int ClientModeShared::HudElementKeyInput( int down, ButtonCode_t keynum, const c
 			return 0;
 		}
 	}
+#endif
 
 #if defined( REPLAY_ENABLED )
 	if ( m_pReplayReminderPanel )

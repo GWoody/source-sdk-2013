@@ -280,7 +280,9 @@ private:
 	CAI_AssaultBehavior			m_AssaultBehavior;
 	CCombineStandoffBehavior	m_StandoffBehavior;
 	CAI_FollowBehavior			m_FollowBehavior;
+#ifndef GRID_DLL
 	CAI_FuncTankBehavior		m_FuncTankBehavior;
+#endif
 	CAI_RappelBehavior			m_RappelBehavior;
 	CAI_ActBusyBehavior			m_ActBusyBehavior;
 

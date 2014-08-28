@@ -114,6 +114,9 @@ public:
 		CRC32_ProcessBuffer( &crc, &random_seed, sizeof( random_seed ) );
 		CRC32_ProcessBuffer( &crc, &mousedx, sizeof( mousedx ) );
 		CRC32_ProcessBuffer( &crc, &mousedy, sizeof( mousedy ) );
+#ifdef HOLODECK
+		CRC32_ProcessBuffer( &crc, &holo_frame, sizeof( holo_frame ) );
+#endif
 		CRC32_Final( &crc );
 
 		return crc;

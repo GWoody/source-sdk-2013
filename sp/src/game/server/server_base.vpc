@@ -78,6 +78,8 @@ $Project
 		$File	"holodeck\base_holo_panel.h"
 		$File	"holodeck\holo_hand.cpp"
 		$File	"holodeck\holo_hand.h"
+		$File	"holodeck\holo_frame_filter.cpp"
+		$File	"holodeck\holo_frame_filter.h"
 		$File	"$SRCDIR\game\shared\holodeck\holo_shared.cpp"
 		$File	"$SRCDIR\game\shared\holodeck\holo_shared.h"
 	}

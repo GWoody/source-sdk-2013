@@ -121,8 +121,17 @@ void CHoloCirclePanel::Spawn()
 	AngleVectors( _circleNormal, &_circleDirection );
 	_circleDirection.NormalizeInPlace();
 
-	SetThink( &CHoloCirclePanel::RotateThink );
-	SetNextThink( gpGlobals->curtime + gpGlobals->frametime );
+	if( _locked )
+	{
+		SetThink( NULL );
+		RemoveEntityGlow();
+		RemoveAnimation();
+	}
+	else
+	{
+		SetThink( &CHoloCirclePanel::RotateThink );
+		SetNextThink( gpGlobals->curtime + gpGlobals->frametime );
+	}
 }
 
 //-----------------------------------------------------------------------------
@@ -207,6 +216,10 @@ void CHoloCirclePanel::InputSetUseTime( inputdata_t &inputdata )
 void CHoloCirclePanel::InputLock( inputdata_t &inputdata )
 {
 	_locked = true;
+	RemoveEntityGlow();
+	RemoveAnimation();
+
+	SetThink( NULL );
 }
 
 //-----------------------------------------------------------------------------
@@ -214,6 +227,11 @@ void CHoloCirclePanel::InputLock( inputdata_t &inputdata )
 void CHoloCirclePanel::InputUnlock( inputdata_t &inputdata )
 {
 	_locked = false;
+	InitEntityGlow();
+	InitAnimation();
+
+	SetThink( &CHoloCirclePanel::RotateThink );
+	SetNextThink( gpGlobals->curtime + gpGlobals->frametime );
 }
 
 //-----------------------------------------------------------------------------

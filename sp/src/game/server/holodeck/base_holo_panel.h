@@ -57,15 +57,15 @@ public:
 	virtual SPanelSprite	GetPanelSprite() const = 0;
 
 protected:
-	CNetworkHandle( CSpriteOriented, _animation );
-
-private:
 	void			InitEntityGlow();
 	void			RemoveEntityGlow();
 
 	void			InitAnimation();
 	void			RemoveAnimation();
 
+	CNetworkHandle( CSpriteOriented, _animation );
+
+private:
 	// Save state.
 	EHANDLE			_glowTarget;
 

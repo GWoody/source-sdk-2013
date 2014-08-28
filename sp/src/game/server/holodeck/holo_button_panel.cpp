@@ -111,6 +111,12 @@ void CHoloButtonPanel::Spawn()
 	// Convert the activation angle into a direction vector.
 	AngleVectors( _activationAngle, &_activationDirection );
 	_activationDirection.NormalizeInPlace();
+
+	if( _locked )
+	{
+		RemoveEntityGlow();
+		RemoveAnimation();
+	}
 }
 
 //-----------------------------------------------------------------------------
@@ -226,6 +232,8 @@ float CHoloButtonPanel::ActivationDirectionDelta( const Vector &v )
 void CHoloButtonPanel::InputLock( inputdata_t &inputdata )
 {
 	_locked = true;
+	RemoveEntityGlow();
+	RemoveAnimation();
 }
 
 //-----------------------------------------------------------------------------
@@ -233,4 +241,6 @@ void CHoloButtonPanel::InputLock( inputdata_t &inputdata )
 void CHoloButtonPanel::InputUnlock( inputdata_t &inputdata )
 {
 	_locked = false;
+	InitEntityGlow();
+	InitAnimation();
 }

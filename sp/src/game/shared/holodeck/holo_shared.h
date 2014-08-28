@@ -67,8 +67,9 @@ namespace holo
 //=============================================================================
 	//-------------------------------------------------------------------------
 	//-------------------------------------------------------------------------
-	struct CBone
+	class CBone
 	{
+	public:
 						CBone();
 #ifdef CLIENT_DLL
 						CBone( const Leap::Bone &b );
@@ -86,6 +87,11 @@ namespace holo
 		inline Vector	GetDirection() const						{ return ( _nextJoint - _prevJoint ).Normalized(); }
 		inline Vector	GetCenter() const							{ return ( _nextJoint + _prevJoint ) / 2; }
 
+		// Filtering helpers.
+		CBone			operator+( const CBone &other ) const;
+		CBone			operator/( float scale ) const;
+		CBone			operator*( float scale ) const;
+
 	private:
 		Vector			_nextJoint;
 		Vector			_prevJoint;
@@ -93,8 +99,9 @@ namespace holo
 
 	//-------------------------------------------------------------------------
 	//-------------------------------------------------------------------------
-	struct CFinger
+	class CFinger
 	{
+	public:
 						CFinger();
 #ifdef CLIENT_DLL
 						CFinger( const Leap::Finger &f );
@@ -115,6 +122,11 @@ namespace holo
 		inline float	GetLength() const							{ return _length; }
 		inline const CBone &	GetBone( EBone bone ) const			{ return _bones[bone]; }
 
+		// Filtering helpers.
+		CFinger			operator+( const CFinger &other ) const;
+		CFinger			operator/( float scale ) const;
+		CFinger			operator*( float scale ) const;
+
 	private:
 		int				_id;
 		Vector			_direction;
@@ -126,8 +138,9 @@ namespace holo
 
 	//-------------------------------------------------------------------------
 	//-------------------------------------------------------------------------
-	struct CHand
+	class CHand
 	{
+	public:
 						CHand();
 #ifdef CLIENT_DLL
 						CHand( const Leap::Hand &h );
@@ -152,8 +165,14 @@ namespace holo
 		inline const CFinger &	GetFingerByType( EFinger f ) const	{ return _fingers[f]; }
 
 		// Computed accessors.
+		float			FindThetaBetweenFingers( EFinger f1, EFinger f2 ) const;
 		inline const CFinger *	GetFingerById( int id ) const;
 		inline const CFinger &	GetClosestFingerTo( EFinger to, EFinger f ) const;
+
+		// Filtering helpers.
+		CHand			operator+( const CHand &other ) const;
+		CHand			operator/( float scale ) const;
+		CHand			operator*( float scale ) const;
 
 	private:
 		int				_id;
@@ -166,8 +185,9 @@ namespace holo
 
 	//-------------------------------------------------------------------------
 	//-------------------------------------------------------------------------
-	struct CCircleGesture
+	class CCircleGesture
 	{
+	public:
 						CCircleGesture();
 #ifdef CLIENT_DLL
 						CCircleGesture( const Leap::CircleGesture &c );
@@ -188,6 +208,11 @@ namespace holo
 		inline const Vector &	GetNormal() const					{ return _normal; }
 		inline bool		IsClockwise() const							{ return _clockwise; }
 
+		// Filtering helpers.
+		CCircleGesture	operator+( const CCircleGesture &other ) const;
+		CCircleGesture	operator/( float scale ) const;
+		CCircleGesture	operator*( float scale ) const;
+
 	private:
 		int				_handId, _fingerId;
 		float			_radius, _duration;
@@ -197,8 +222,9 @@ namespace holo
 
 	//-------------------------------------------------------------------------
 	//-------------------------------------------------------------------------
-	struct CSwipeGesture
+	class CSwipeGesture
 	{
+	public:
 						CSwipeGesture();
 #ifdef CLIENT_DLL
 						CSwipeGesture( const Leap::SwipeGesture &s );
@@ -217,6 +243,11 @@ namespace holo
 		inline const Vector &	GetCurrentPosition() const			{ return _curPosition; }
 		inline const Vector &	GetStartPosition() const			{ return _startPosition; }
 
+		// Filtering helpers.
+		CSwipeGesture	operator+( const CSwipeGesture &other ) const;
+		CSwipeGesture	operator/( float scale ) const;
+		CSwipeGesture	operator*( float scale ) const;
+
 	private:
 		int				_handId;
 		float			_speed;
@@ -225,8 +256,9 @@ namespace holo
 
 	//-------------------------------------------------------------------------
 	//-------------------------------------------------------------------------
-	struct CTapGesture
+	class CTapGesture
 	{
+	public:
 						CTapGesture();
 #ifdef CLIENT_DLL
 						CTapGesture( const Leap::KeyTapGesture &k );
@@ -246,6 +278,11 @@ namespace holo
 		inline const Vector &	GetDirection() const				{ return _direction; }
 		inline const Vector &	GetPosition() const					{ return _position; }
 
+		// Filtering helpers.
+		CTapGesture		operator+( const CTapGesture &other ) const;
+		CTapGesture		operator/( float scale ) const;
+		CTapGesture		operator*( float scale ) const;
+
 	private:
 		int				_handId, _fingerId;
 		Vector			_direction, _position;
@@ -253,8 +290,9 @@ namespace holo
 
 	//-------------------------------------------------------------------------
 	//-------------------------------------------------------------------------
-	struct CBallGesture
+	class CBallGesture
 	{
+	public:
 						CBallGesture();
 #ifdef CLIENT_DLL
 						CBallGesture( const Leap::Hand &h );
@@ -272,6 +310,11 @@ namespace holo
 		inline float	GetGrabStrength() const						{ return _grabStrength; }
 		inline Vector	GetCenter() const							{ return _center; }
 
+		// Filtering helpers.
+		CBallGesture	operator+( const CBallGesture &other ) const;
+		CBallGesture	operator/( float scale ) const;
+		CBallGesture	operator*( float scale ) const;
+
 	private:
 		int				_handId;
 		float			_radius, _grabStrength;
@@ -280,8 +323,9 @@ namespace holo
 
 	//-------------------------------------------------------------------------
 	//-------------------------------------------------------------------------
-	struct CFrame
+	class CFrame
 	{
+	public:
 						CFrame();
 #ifdef CLIENT_DLL
 						CFrame( const Leap::Frame &f );
@@ -316,7 +360,15 @@ namespace holo
 		inline void		SetSwipeGesture( const CSwipeGesture &g )	{ _swipe = g;	SetGestureActive( GESTURE_SWIPE ); }
 		inline void		SetTapGesture( const CTapGesture &g )		{ _tap = g;		SetGestureActive( GESTURE_TAP ); }
 
+		// Filtering helpers.
+		CFrame			operator+( const CFrame &other ) const;
+		CFrame			operator/( float scale ) const;
+		CFrame			operator*( float scale ) const;
+
 	private:
+		template<class T> 
+		T				AddGesture( const CFrame &other, const T &g1, const T &g2, EGesture g ) const;
+
 		// Frame data.
 		CHand			_hand;
 		CBallGesture	_ball;

@@ -24,10 +24,6 @@
 #include "econ_item_view.h"
 #endif
 
-#ifdef HOLODECK
-#include "holodeck/holo_hand.h"
-#endif
-
 // For queuing and processing usercmds
 class CCommandContext
 {
@@ -252,14 +248,6 @@ public:
 	
 	CBasePlayer();
 	~CBasePlayer();
-
-#ifdef HOLODECK
-private:
-	CNetworkHandle( CHoloHand, m_hHand );				// The hand entity which is used to interact with the environment.
-
-public:
-	CHoloHand *				GetHandEntity() const		{ return m_hHand.Get(); }
-#endif
 
 	// IPlayerInfo passthrough (because we can't do multiple inheritance)
 	IPlayerInfo *GetPlayerInfo() { return &m_PlayerInfo; }
