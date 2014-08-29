@@ -1,16 +1,15 @@
 /*
 ===============================================================================
 
-	holo_hand.cpp
+	holo_base_hand.cpp
 		Implements the hand entity.
 		The hand entity mirrors the client side Leap Motion hand state.
-		It is used to test holodeck triggers.
 
 ===============================================================================
 */
 
 #include "cbase.h"
-#include "holo_hand.h"
+#include "holo_base_hand.h"
 
 #include <sstream>
 
@@ -31,18 +30,14 @@ static ConVar holo_render_debug_hand( "holo_render_debug_hand", "1", NULL, holo_
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-LINK_ENTITY_TO_CLASS( holo_hand, CHoloHand );
-
-//-----------------------------------------------------------------------------
-//-----------------------------------------------------------------------------
-CHoloHand::CHoloHand()
+CBaseHoloHand::CBaseHoloHand()
 {
 	_activeGestures = 0;
 }
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void CHoloHand::Spawn()
+void CBaseHoloHand::Spawn()
 {
 	BaseClass::Spawn();
 
@@ -61,14 +56,14 @@ void CHoloHand::Spawn()
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void CHoloHand::Precache()
+void CBaseHoloHand::Precache()
 {
 	BaseClass::Precache();
 }
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-bool CHoloHand::CreateVPhysics()
+bool CBaseHoloHand::CreateVPhysics()
 {
 	VPhysicsInitShadow( false, false );
 	return true;
@@ -76,14 +71,14 @@ bool CHoloHand::CreateVPhysics()
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-const CFrame &CHoloHand::GetFrame() const
+const CFrame &CBaseHoloHand::GetFrame() const
 {
 	return _transformedFrame;
 }
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void CHoloHand::ProcessFrame( const CFrame &frame )
+void CBaseHoloHand::ProcessFrame( const CFrame &frame )
 {
 	CBasePlayer *owner = dynamic_cast<CBasePlayer *>( GetOwnerEntity() );
 	Assert( owner );
@@ -118,7 +113,7 @@ void CHoloHand::ProcessFrame( const CFrame &frame )
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void CHoloHand::SetInvisible( bool invisible )
+void CBaseHoloHand::SetInvisible( bool invisible )
 {
 	if( invisible )
 	{
@@ -132,21 +127,21 @@ void CHoloHand::SetInvisible( bool invisible )
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void CHoloHand::DebugStartTouch()
+void CBaseHoloHand::DebugStartTouch()
 {
 	SetRenderColor( 0, 0, 255 );
 }
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void CHoloHand::DebugEndTouch()
+void CBaseHoloHand::DebugEndTouch()
 {
 	SetRenderColor( 0, 255, 0 );
 }
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void CHoloHand::RenderDebugHand()
+void CBaseHoloHand::RenderDebugHand()
 {
 	if( GetEffects() & EF_NODRAW )
 	{
@@ -219,7 +214,7 @@ void CHoloHand::RenderDebugHand()
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-Vector CHoloHand::GetOriginOffset() const
+Vector CBaseHoloHand::GetOriginOffset() const
 {
 #if 0
 	CBasePlayer *owner = dynamic_cast<CBasePlayer *>( GetOwnerEntity() );

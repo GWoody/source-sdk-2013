@@ -1,16 +1,15 @@
 /*
 ===============================================================================
 
-	holo_hand.h
+	holo_base_hand.h
 		Implements the hand entity.
 		The hand entity mirrors the client side Leap Motion hand state.
-		It is used to test holodeck triggers.
 
 ===============================================================================
 */
 
-#ifndef __HOLO_HAND_H__
-#define __HOLO_HAND_H__
+#ifndef __HOLO_BASE_HAND_H__
+#define __HOLO_BASE_HAND_H__
 
 #include "baseentity.h"
 #include "holodeck/holo_shared.h"
@@ -18,11 +17,11 @@
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-class CHoloHand : public CBaseEntity
+class CBaseHoloHand : public CBaseEntity
 {
 public:
-	DECLARE_CLASS( CHoloHand, CBaseEntity );
-					CHoloHand();
+	DECLARE_CLASS( CBaseHoloHand, CBaseEntity );
+					CBaseHoloHand();
 
 	// CBaseEntity overrides.
 	virtual void	Spawn();
@@ -55,4 +54,4 @@ private:
 	Vector			_lastOriginDelta;
 };
 
-#endif // __HOLO_HAND_H__
+#endif // __HOLO_BASE_HAND_H__
