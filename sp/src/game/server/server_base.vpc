@@ -76,6 +76,8 @@ $Project
 		$File	"holodeck\holo_swipe_panel.cpp"
 		$File	"holodeck\base_holo_panel.cpp"
 		$File	"holodeck\base_holo_panel.h"
+		$File	"holodeck\holo_base_hand.cpp"
+		$File	"holodeck\holo_base_hand.h"
 		$File	"holodeck\holo_hand.cpp"
 		$File	"holodeck\holo_hand.h"
 		$File	"holodeck\holo_frame_filter.cpp"
