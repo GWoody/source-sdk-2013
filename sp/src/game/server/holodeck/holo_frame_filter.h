@@ -29,6 +29,7 @@ namespace holo
 
 		// Filtering methods.
 		holo::CFrame	StandardAverage();
+		holo::CFrame	AgedAverage();
 
 		CUtlVector<holo::CFrame> _history;
 	};

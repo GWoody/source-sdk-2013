@@ -15,6 +15,7 @@ using namespace holo;
 enum EFilterMethod
 {
 	AVERAGE,
+	AGED_AVERAGE,
 
 	COUNT
 };
@@ -24,10 +25,13 @@ enum EFilterMethod
 //-----------------------------------------------------------------------------
 static const char *holo_filter_method_help_string = "Filtering methods:\n\
 0 - average of `holo_filter_history` frames,\n\
+1 - average weighted towards the current frame,\n\
 ";
 static ConVar holo_filter_method( "holo_filter_method", "0", FCVAR_ARCHIVE, holo_filter_method_help_string );
 
 static ConVar holo_filter_history( "holo_filter_history", "10", FCVAR_ARCHIVE, "Number of frames to use in the filtering operation." );
+static ConVar holo_filter_min_speed( "holo_filter_min_speed", "0", FCVAR_ARCHIVE, "Minimum speed the hand must be moving for averaging to be applied." );
+static ConVar holo_filter_apply_confidence( "holo_filter_apply_confidence", "1", FCVAR_ARCHIVE, "Sets whether frame confidence values are used in the filter calculation." );
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
@@ -39,6 +43,12 @@ CFrameFilter::CFrameFilter()
 //-----------------------------------------------------------------------------
 CFrame CFrameFilter::FilterFrame( const CFrame &frame )
 {
+	if( frame.GetHand().GetVelocity().Length() < holo_filter_min_speed.GetFloat() )
+	{
+		// Hand is moving too slowly for filtering to be applied.
+		return frame;
+	}
+
 	if( frame.IsValid() )
 	{
 		AddToHistory( frame );
@@ -48,6 +58,9 @@ CFrame CFrameFilter::FilterFrame( const CFrame &frame )
 	{
 		case EFilterMethod::AVERAGE:
 			return StandardAverage();
+
+		case EFilterMethod::AGED_AVERAGE:
+			return AgedAverage();
 	}
 
 	return StandardAverage();
@@ -74,12 +87,62 @@ CFrame CFrameFilter::StandardAverage()
 		return CFrame();
 	}
 
-	CFrame f = _history[0];
-	for( int i = 1; i < _history.Count(); i++ )
+	CFrame sum = _history[0];
+
+	if( holo_filter_apply_confidence.GetBool() )
 	{
-		f = f + _history[i];
+		const float MAX_HISTORY = holo_filter_history.GetFloat();
+		float totalWeight = 1.0f;	// First frame has a weight of 1.
+
+		for( int i = 1; i < _history.Count(); i++ )
+		{
+			float currentWeight = 1.0f - ( i / MAX_HISTORY );
+			totalWeight += currentWeight;
+
+			sum = sum + ( _history[i] * currentWeight );
+		}
+
+		sum = sum / totalWeight;
+	}
+	else
+	{
+		for( int i = 1; i < _history.Count(); i++ )
+		{
+			sum = sum + _history[i];
+		}
+
+		sum = sum / _history.Count();
+	}	
+
+	return sum;
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+CFrame CFrameFilter::AgedAverage()
+{
+	if( !_history.Count() )
+	{
+		return CFrame();
 	}
 
-	f = f / _history.Count();
-	return f;
+	const float MAX_HISTORY = holo_filter_history.GetFloat();
+
+	CFrame sum = _history[0];
+	float totalWeight = 1.0f;	// First frame has a weight of 1.
+
+	bool useconfidence = holo_filter_apply_confidence.GetBool();
+	totalWeight *= useconfidence ? _history[0].GetHand().GetConfidence() : 1.0f;
+
+	for( int i = 1; i < _history.Count(); i++ )
+	{
+		float currentWeight = 1.0f - ( i / MAX_HISTORY );
+		currentWeight *= useconfidence ? _history[i].GetHand().GetConfidence() : 1.0f;
+		totalWeight += currentWeight;
+
+		sum = sum + ( _history[i] * currentWeight );
+	}
+
+	sum = sum / totalWeight;
+	return sum;
 }

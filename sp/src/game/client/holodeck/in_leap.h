@@ -38,6 +38,16 @@ private:
 	CThreadMutex	_mutex;
 };
 
+//----------------------------------------------------------------------------
+//----------------------------------------------------------------------------
+class CLeapMotionListener : public Leap::Listener
+{
+public:
+					CLeapMotionListener();
+
+	virtual void	onConnect( const Leap::Controller &controller );
+	virtual void	onFrame( const Leap::Controller &controller );
+};
 
 //----------------------------------------------------------------------------
 //----------------------------------------------------------------------------
@@ -62,25 +72,10 @@ private:
 					~CLeapMotion();
 
 	Leap::Controller	_controller;
-	CLeapMotionListener *	_pListener;
+	CLeapMotionListener _listener;
 	SFrameQueue *	_queue;
 
 	static CLeapMotion *	_instance;
 };
-
-//----------------------------------------------------------------------------
-//----------------------------------------------------------------------------
-class CLeapMotionListener : public Leap::Listener
-{
-public:
-					CLeapMotionListener( CLeapMotion *pLeap );
-
-	virtual void	onConnect( const Leap::Controller &controller );
-	virtual void	onFrame( const Leap::Controller &controller );
-
-private:
-	CLeapMotion *	_pLeap;
-};
-
 
 #endif // __IN_LEAP_H__

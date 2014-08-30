@@ -218,7 +218,7 @@ void CGridBaseWeapon::SetTriggerState( bool pressed )
 //-----------------------------------------------------------------------------
 void CGridBaseWeapon::SetDirection( const Vector &dir )
 {
-	_direction = dir;
+	_direction = dir.Normalized();
 }
 
 //-----------------------------------------------------------------------------
@@ -430,13 +430,8 @@ void CGridBaseWeapon::UpdateSpriteEntity()
 	{
 		return;
 	}
-	
-	CGridPlayer * player = dynamic_cast<CGridPlayer*>(GetOwnerEntity());
 
-	const holo::CFinger &pointer = player->GetHandEntity()->GetFrame().GetHand().GetFingerByType(holo::EFinger::FINGER_POINTER);
-
-	Vector endPoint = GetAbsOrigin() + (pointer.GetDirection() * 1024);
-
+	Vector endPoint = GetAbsOrigin() + (_direction * 1024);
 	UTIL_TraceLine(GetAbsOrigin(), endPoint, MASK_SOLID, this, COLLISION_GROUP_NONE, &t);
 
 	_laser->SetAbsOrigin(t.endpos);

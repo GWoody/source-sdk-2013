@@ -163,7 +163,7 @@ void CHoloHand::RenderDebugHand()
 	//debugoverlay->AddBoxOverlay( palmPosition, -handBounds, handBounds, vec3_angle, m_clrRender.GetR(), m_clrRender.GetG(), m_clrRender.GetB(), 127, duration );
 
 	// Draw all fingers.
-	for( int i = 0; i < FINGER_COUNT; i++ )
+	for( int i = 0; i < EFinger::FINGER_COUNT; i++ )
 	{
 		const CFinger &finger = _transformedFrame.GetHand().GetFingerByType( (EFinger)i );
 		for( int j = 0; j < EBone::BONE_COUNT; j++ )
@@ -208,7 +208,7 @@ void CHoloHand::RenderDebugHand()
 	if( holo_render_debug_hand.GetInt() == 6 )
 	{
 		// Draw finger directions.
-		for( int i = 0; i < FINGER_COUNT; i++ )
+		for( int i = 0; i < EFinger::FINGER_COUNT; i++ )
 		{
 			const Vector &tipPosition = _transformedFrame.GetHand().GetFingerByType( (EFinger)i ).GetTipPosition();
 			const Vector &direction = _transformedFrame.GetHand().GetFingerByType( (EFinger)i ).GetDirection();

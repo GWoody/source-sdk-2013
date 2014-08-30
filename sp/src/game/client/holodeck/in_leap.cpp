@@ -87,8 +87,7 @@ CLeapMotion::CLeapMotion()
 {
 	_queue = new SFrameQueue;
 
-	_pListener = new CLeapMotionListener( this );
-	_controller.addListener( *_pListener );
+	_controller.addListener( _listener );
 }
 
 //----------------------------------------------------------------------------
@@ -96,8 +95,7 @@ CLeapMotion::CLeapMotion()
 //----------------------------------------------------------------------------
 CLeapMotion::~CLeapMotion()
 {
-	_controller.removeListener( *_pListener );
-	delete _pListener;
+	_controller.removeListener( _listener );
 
 	delete _queue;
 }
@@ -144,9 +142,8 @@ CFrame CLeapMotion::BuildFinalFrame()
 
 //----------------------------------------------------------------------------
 //----------------------------------------------------------------------------
-CLeapMotionListener::CLeapMotionListener(CLeapMotion *pLeap)
+CLeapMotionListener::CLeapMotionListener()
 {
-
 }
 
 //----------------------------------------------------------------------------
