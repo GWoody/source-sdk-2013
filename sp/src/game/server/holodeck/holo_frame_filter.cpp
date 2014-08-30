@@ -87,16 +87,17 @@ CFrame CFrameFilter::StandardAverage()
 		return CFrame();
 	}
 
-	CFrame sum = _history[0];
+	CFrame sum;
 
 	if( holo_filter_apply_confidence.GetBool() )
 	{
 		const float MAX_HISTORY = holo_filter_history.GetFloat();
-		float totalWeight = 1.0f;	// First frame has a weight of 1.
+		float totalWeight = 0.0f;
 
-		for( int i = 1; i < _history.Count(); i++ )
+		for( int i = 0; i < _history.Count(); i++ )
 		{
-			float currentWeight = 1.0f - ( i / MAX_HISTORY );
+			// Older frames are stored at the beginning.
+			float currentWeight = ( i + 1 ) / MAX_HISTORY;
 			totalWeight += currentWeight;
 
 			sum = sum + ( _history[i] * currentWeight );
@@ -128,15 +129,15 @@ CFrame CFrameFilter::AgedAverage()
 
 	const float MAX_HISTORY = holo_filter_history.GetFloat();
 
-	CFrame sum = _history[0];
-	float totalWeight = 1.0f;	// First frame has a weight of 1.
+	CFrame sum;
+	float totalWeight = 0.0f;
 
 	bool useconfidence = holo_filter_apply_confidence.GetBool();
-	totalWeight *= useconfidence ? _history[0].GetHand().GetConfidence() : 1.0f;
 
-	for( int i = 1; i < _history.Count(); i++ )
+	for( int i = 0; i < _history.Count(); i++ )
 	{
-		float currentWeight = 1.0f - ( i / MAX_HISTORY );
+		// Older frames are stored at the beginning.
+		float currentWeight = ( i + 1 ) / MAX_HISTORY;
 		currentWeight *= useconfidence ? _history[i].GetHand().GetConfidence() : 1.0f;
 		totalWeight += currentWeight;
 

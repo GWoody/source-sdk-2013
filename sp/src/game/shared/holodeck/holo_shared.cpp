@@ -672,6 +672,7 @@ CCircleGesture::CCircleGesture()
 	_handId = _fingerId = INVALID_INDEX;
 	_radius = _duration = 0.0f;
 	_center = _normal = vec3_origin;
+	_clockwise = false;
 }
 
 #ifdef CLIENT_DLL
