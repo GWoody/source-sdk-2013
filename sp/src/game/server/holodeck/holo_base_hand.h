@@ -44,10 +44,7 @@ private:
 
 	Vector			GetOriginOffset() const;
 
-	void			ExtrapolateFrame();
-
 	holo::CFrame	_transformedFrame, _untransformedFrame;
-	int				_activeGestures;
 
 	holo::CFrameFilter _filter;
 

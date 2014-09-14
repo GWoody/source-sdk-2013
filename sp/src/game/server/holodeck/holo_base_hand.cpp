@@ -11,9 +11,6 @@
 #include "cbase.h"
 #include "holo_base_hand.h"
 
-#include <sstream>
-
-using namespace std;
 using namespace holo;
 
 static const char *holo_render_debug_hand_options = "Rendering options:\n\
@@ -32,7 +29,6 @@ static ConVar holo_render_debug_hand( "holo_render_debug_hand", "1", NULL, holo_
 //-----------------------------------------------------------------------------
 CBaseHoloHand::CBaseHoloHand()
 {
-	_activeGestures = 0;
 }
 
 //-----------------------------------------------------------------------------
