@@ -83,7 +83,10 @@ bool SFrameQueue::IsEmpty()
 //----------------------------------------------------------------------------
 // Contains the code to create a new Listener and attach it to a controller.
 //----------------------------------------------------------------------------
-CLeapMotion::CLeapMotion()
+CLeapMotion::CLeapMotion() :
+	_init(),
+	_controller(),
+	_listener()
 {
 	_queue = new SFrameQueue;
 
@@ -149,12 +152,12 @@ CLeapMotionListener::CLeapMotionListener()
 //----------------------------------------------------------------------------
 // Contains the code to enable gesture usage in the application.
 //----------------------------------------------------------------------------
-void CLeapMotionListener::onConnect( const Leap::Controller &controller )
+void CLeapMotionListener::onConnect( const GiantLeap::Controller &controller )
 {
-	controller.enableGesture( Leap::Gesture::TYPE_CIRCLE );
-	controller.enableGesture( Leap::Gesture::TYPE_KEY_TAP );
-	controller.enableGesture( Leap::Gesture::TYPE_SCREEN_TAP );
-	controller.enableGesture( Leap::Gesture::TYPE_SWIPE );
+	controller.enableGesture( GiantLeap::Gesture::TYPE_CIRCLE );
+	controller.enableGesture( GiantLeap::Gesture::TYPE_KEY_TAP );
+	controller.enableGesture( GiantLeap::Gesture::TYPE_SCREEN_TAP );
+	controller.enableGesture( GiantLeap::Gesture::TYPE_SWIPE );
 
 	Warning( "Leap Motion connected!\n" );
 }
@@ -163,9 +166,9 @@ void CLeapMotionListener::onConnect( const Leap::Controller &controller )
 // Contains the code necessary to gather frame data and pass gesture information 
 // into the proper utility functions. It is called repeatedly on each new Frame.
 //----------------------------------------------------------------------------
-void CLeapMotionListener::onFrame( const Leap::Controller &controller )
+void CLeapMotionListener::onFrame( const GiantLeap::Controller &controller )
 {
-	const Leap::Frame &frame = controller.frame();
+	const GiantLeap::Frame &frame = controller.frame();
 	CFrame newFrame( frame );
 
 	// Add the constructed frame to the queue.

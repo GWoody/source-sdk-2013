@@ -51,7 +51,7 @@ $Configuration
 
 	$Compiler
 	{
-		$AdditionalIncludeDirectories	".\;$BASE;$SRCDIR\vgui2\include;$SRCDIR\vgui2\controls;$SRCDIR\game\shared;.\game_controls;$SRCDIR\thirdparty\sixensesdk\include;$SRCDIR\..\..\..\LeapSDK\include"
+		$AdditionalIncludeDirectories	".\;$BASE;$SRCDIR\vgui2\include;$SRCDIR\vgui2\controls;$SRCDIR\game\shared;.\game_controls;$SRCDIR\thirdparty\sixensesdk\include;$SRCDIR\..\..\..\giant-leap\Common;$SRCDIR\..\..\..\LeapSDK\include"
 		$PreprocessorDefinitions		"$BASE;NO_STRING_T;CLIENT_DLL;VECTOR;VERSION_SAFE_STEAM_API_INTERFACES;PROTECTED_THINGS_ENABLE;strncpy=use_Q_strncpy_instead;_snprintf=use_Q_snprintf_instead" 
 		$PreprocessorDefinitions		"$BASE;ENABLE_CHROMEHTMLWINDOW;fopen=dont_use_fopen" [$WIN32]
 		$PreprocessorDefinitions		"$BASE;ENABLE_CHROMEHTMLWINDOW;" [$OSXALL]
@@ -81,8 +81,10 @@ $Project
 	{
 		$Folder "Leap SDK"
 		{
+			$File	"$SRCDIR\..\..\..\giant-leap\Common\GiantLeap.h"
+			$Lib	"$SRCDIR\..\..\..\giant-leap\Build\GiantLeap"
 			$File	"$SRCDIR\..\..\..\LeapSDK\include\Leap.h"
-			$Lib	"$SRCDIR\..\..\..\LeapSDK\lib\x86\Leap"
+			$Lib	"$SRCDIR\..\..\..\LeapSDK\lib\x86\Leap"			
 		}
 		
 		$Folder "DirectX SDK"

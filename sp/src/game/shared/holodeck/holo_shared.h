@@ -14,7 +14,7 @@
 
 #ifdef CLIENT_DLL
 	// Required for custom structure constructors.
-	#include <Leap.h>
+	#include <GiantLeap.h>
 #endif
 
 namespace holo
@@ -72,8 +72,8 @@ namespace holo
 	public:
 						CBone();
 #ifdef CLIENT_DLL
-						CBone( const Leap::Bone &b );
-		void			FromLeap( const Leap::Bone &b );
+						CBone( const GiantLeap::Bone &b );
+		void			FromLeap( const GiantLeap::Bone &b );
 #endif
 
 		void			ToBitBuffer( bf_write *buf ) const;
@@ -104,8 +104,8 @@ namespace holo
 	public:
 						CFinger();
 #ifdef CLIENT_DLL
-						CFinger( const Leap::Finger &f );
-		void			FromLeap( const Leap::Finger &f );
+						CFinger( const GiantLeap::Finger &f );
+		void			FromLeap( const GiantLeap::Finger &f );
 #endif
 
 		void			ToBitBuffer( bf_write *buf ) const;
@@ -143,9 +143,9 @@ namespace holo
 	public:
 						CHand();
 #ifdef CLIENT_DLL
-						CHand( const Leap::Hand &h );
-		void			FromLeap( const Leap::Hand &h );
-		void			BuildFingers( const Leap::Hand &h );
+						CHand( const GiantLeap::Hand &h );
+		void			FromLeap( const GiantLeap::Hand &h );
+		void			BuildFingers( const GiantLeap::Hand &h );
 #endif
 
 		void			ToBitBuffer( bf_write *buf ) const;
@@ -190,8 +190,8 @@ namespace holo
 	public:
 						CCircleGesture();
 #ifdef CLIENT_DLL
-						CCircleGesture( const Leap::CircleGesture &c );
-		void			FromLeap( const Leap::CircleGesture &c );
+						CCircleGesture( const GiantLeap::CircleGesture &c );
+		void			FromLeap( const GiantLeap::CircleGesture &c );
 #endif
 
 		void			ToBitBuffer( bf_write *buf ) const;
@@ -227,8 +227,8 @@ namespace holo
 	public:
 						CSwipeGesture();
 #ifdef CLIENT_DLL
-						CSwipeGesture( const Leap::SwipeGesture &s );
-		void			FromLeap( const Leap::SwipeGesture &s );
+						CSwipeGesture( const GiantLeap::SwipeGesture &s );
+		void			FromLeap( const GiantLeap::SwipeGesture &s );
 #endif
 
 		void			ToBitBuffer( bf_write *buf ) const;
@@ -261,10 +261,10 @@ namespace holo
 	public:
 						CTapGesture();
 #ifdef CLIENT_DLL
-						CTapGesture( const Leap::KeyTapGesture &k );
-						CTapGesture( const Leap::ScreenTapGesture &s );
-		void			FromLeap( const Leap::KeyTapGesture &k );
-		void			FromLeap( const Leap::ScreenTapGesture &s );
+						CTapGesture( const GiantLeap::KeyTapGesture &k );
+						CTapGesture( const GiantLeap::ScreenTapGesture &s );
+		void			FromLeap( const GiantLeap::KeyTapGesture &k );
+		void			FromLeap( const GiantLeap::ScreenTapGesture &s );
 #endif
 
 		void			ToBitBuffer( bf_write *buf ) const;
@@ -295,8 +295,8 @@ namespace holo
 	public:
 						CBallGesture();
 #ifdef CLIENT_DLL
-						CBallGesture( const Leap::Hand &h );
-		void			FromLeap( const Leap::Hand &h );
+						CBallGesture( const GiantLeap::Hand &h );
+		void			FromLeap( const GiantLeap::Hand &h );
 #endif
 
 		void			ToBitBuffer( bf_write *buf ) const;
@@ -328,8 +328,8 @@ namespace holo
 	public:
 						CFrame();
 #ifdef CLIENT_DLL
-						CFrame( const Leap::Frame &f );
-		void			FromLeap( const Leap::Frame &f );
+						CFrame( const GiantLeap::Frame &f );
+		void			FromLeap( const GiantLeap::Frame &f );
 #endif
 
 		void			ToBitBuffer( bf_write *buf ) const;

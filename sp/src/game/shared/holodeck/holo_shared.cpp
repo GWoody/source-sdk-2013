@@ -19,12 +19,12 @@ static ConVar holo_arm_length( "holo_arm_length", "650", FCVAR_ARCHIVE, "Users a
 // Leap -> Source conversion.
 //===============================================================================
 #ifdef CLIENT_DLL
-	Vector			LeapToSourceVector( const Leap::Vector &v, bool transform = false );
-	EFinger			LeapToSourceFingerCode( const Leap::Finger::Type &finger );
-	EBone			LeapToSourceBoneCode( const Leap::Bone::Type &bone );
+	Vector			LeapToSourceVector( const GiantLeap::Vector &v, bool transform = false );
+	EFinger			LeapToSourceFingerCode( const GiantLeap::Finger::Type &finger );
+	EBone			LeapToSourceBoneCode( const GiantLeap::Bone::Type &bone );
 	float			LeapToSourceDistance( float distance );
 
-	Leap::Bone::Type	SourceToLeapBoneCode( EBone bone );
+	GiantLeap::Bone::Type	SourceToLeapBoneCode( EBone bone );
 #endif
 
 //-----------------------------------------------------------------------------
@@ -135,15 +135,15 @@ const char *EGlobalsToString( EGlobals global )
 // Set `transform` to `true` when dealing with position vectors, `false` for
 // other vectors (normal, velocity, direction, etc).
 //----------------------------------------------------------------------------
-Vector LeapToSourceVector( const Leap::Vector &v, bool transform /*= false*/ )
+Vector LeapToSourceVector( const GiantLeap::Vector &v, bool transform /*= false*/ )
 {
-	Leap::Vector transformed = v;
+	GiantLeap::Vector transformed = v;
 	Vector ov;
 
 	if( transform )
 	{
 		// Set the origin of the Leap space to be 20cm above, and 50cm behind the device.
-		transformed += Leap::Vector( 0, -200, -holo_arm_length.GetInt() );
+		transformed += GiantLeap::Vector( 0, -200, -holo_arm_length.GetInt() );
 	}
 
 	// Source uses	{ forward, left, up }.
@@ -167,23 +167,23 @@ float LeapToSourceDistance( float distance )
 	return distance * scaleFactor;
 }
 
-EFinger LeapToSourceFingerCode( const Leap::Finger::Type &finger )
+EFinger LeapToSourceFingerCode( const GiantLeap::Finger::Type &finger )
 {
 	switch( finger )
 	{
-		case Leap::Finger::TYPE_THUMB:
+		case GiantLeap::Finger::TYPE_THUMB:
 			return EFinger::FINGER_THUMB;
 
-		case Leap::Finger::TYPE_INDEX:
+		case GiantLeap::Finger::TYPE_INDEX:
 			return EFinger::FINGER_POINTER;
 
-		case Leap::Finger::TYPE_MIDDLE:
+		case GiantLeap::Finger::TYPE_MIDDLE:
 			return EFinger::FINGER_MIDDLE;
 
-		case Leap::Finger::TYPE_RING:
+		case GiantLeap::Finger::TYPE_RING:
 			return EFinger::FINGER_RING;
 
-		case Leap::Finger::TYPE_PINKY:
+		case GiantLeap::Finger::TYPE_PINKY:
 			return EFinger::FINGER_PINKY;
 
 		default:
@@ -194,20 +194,20 @@ EFinger LeapToSourceFingerCode( const Leap::Finger::Type &finger )
 	return EFinger::FINGER_COUNT;
 }
 
-EBone LeapToSourceBoneCode( const Leap::Bone::Type &bone )
+EBone LeapToSourceBoneCode( const GiantLeap::Bone::Type &bone )
 {
 	switch( bone )
 	{
-		case Leap::Bone::TYPE_METACARPAL:
+		case GiantLeap::Bone::TYPE_METACARPAL:
 			return EBone::BONE_METACARPAL;
 
-		case Leap::Bone::TYPE_PROXIMAL:
+		case GiantLeap::Bone::TYPE_PROXIMAL:
 			return EBone::BONE_PROXIMAL;
 
-		case Leap::Bone::TYPE_INTERMEDIATE:
+		case GiantLeap::Bone::TYPE_INTERMEDIATE:
 			return EBone::BONE_INTERMEDIATE;
 
-		case Leap::Bone::TYPE_DISTAL:
+		case GiantLeap::Bone::TYPE_DISTAL:
 			return EBone::BONE_DISTAL;
 
 		default:
@@ -218,28 +218,28 @@ EBone LeapToSourceBoneCode( const Leap::Bone::Type &bone )
 	return EBone::BONE_COUNT;
 }
 
-Leap::Bone::Type SourceToLeapBoneCode( EBone bone )
+GiantLeap::Bone::Type SourceToLeapBoneCode( EBone bone )
 {
 	switch( bone )
 	{
 		case EBone::BONE_METACARPAL:
-			return Leap::Bone::TYPE_METACARPAL;
+			return GiantLeap::Bone::TYPE_METACARPAL;
 
 		case EBone::BONE_PROXIMAL:
-			return  Leap::Bone::TYPE_PROXIMAL;
+			return  GiantLeap::Bone::TYPE_PROXIMAL;
 
 		case EBone::BONE_INTERMEDIATE:
-			return Leap::Bone::TYPE_INTERMEDIATE;
+			return GiantLeap::Bone::TYPE_INTERMEDIATE;
 
 		case EBone::BONE_DISTAL:
-			return Leap::Bone::TYPE_DISTAL;
+			return GiantLeap::Bone::TYPE_DISTAL;
 
 		default:
 			break;
 	}
 
 	Assert( 0 );
-	return Leap::Bone::TYPE_METACARPAL;
+	return GiantLeap::Bone::TYPE_METACARPAL;
 }
 
 #endif
@@ -255,12 +255,12 @@ CBone::CBone()
 
 #ifdef CLIENT_DLL
 
-CBone::CBone(const Leap::Bone &b)
+CBone::CBone(const GiantLeap::Bone &b)
 {
 	FromLeap( b );
 }
 
-void CBone::FromLeap(const Leap::Bone &b)
+void CBone::FromLeap(const GiantLeap::Bone &b)
 {
 	_nextJoint = LeapToSourceVector( b.nextJoint(), true );
 	_prevJoint = LeapToSourceVector( b.prevJoint(), true );
@@ -332,12 +332,12 @@ CFinger::CFinger()
 }
 
 #ifdef CLIENT_DLL
-CFinger::CFinger( const Leap::Finger &f )
+CFinger::CFinger( const GiantLeap::Finger &f )
 {
 	FromLeap( f );
 }
 
-void CFinger::FromLeap( const Leap::Finger &f )
+void CFinger::FromLeap( const GiantLeap::Finger &f )
 {
 	_id = f.id();
 	_direction = LeapToSourceVector( f.direction() );
@@ -350,7 +350,7 @@ void CFinger::FromLeap( const Leap::Finger &f )
 
 	for( int i = 0; i < EBone::BONE_COUNT; i++ )
 	{
-		Leap::Bone::Type leapBone = SourceToLeapBoneCode( (EBone)i );
+		GiantLeap::Bone::Type leapBone = SourceToLeapBoneCode( (EBone)i );
 		_bones[i].FromLeap( f.bone( leapBone ) );
 	}
 }
@@ -470,12 +470,12 @@ CHand::CHand()
 }
 
 #ifdef CLIENT_DLL
-CHand::CHand( const Leap::Hand &h )
+CHand::CHand( const GiantLeap::Hand &h )
 {
 	FromLeap( h );
 }
 
-void CHand::FromLeap( const Leap::Hand &h )
+void CHand::FromLeap( const GiantLeap::Hand &h )
 {
 	BuildFingers( h );
 
@@ -491,10 +491,10 @@ void CHand::FromLeap( const Leap::Hand &h )
 	_direction.NormalizeInPlace();
 }
 
-void CHand::BuildFingers( const Leap::Hand &h )
+void CHand::BuildFingers( const GiantLeap::Hand &h )
 {
-	const Leap::FingerList &fingerlist = h.fingers();
-	for each( const Leap::Finger &f in fingerlist )
+	const GiantLeap::FingerList &fingerlist = h.fingers();
+	for each( const GiantLeap::Finger &f in fingerlist )
 	{
 		EFinger idx = LeapToSourceFingerCode( f.type() );
 		_fingers[idx].FromLeap( f );
@@ -676,14 +676,14 @@ CCircleGesture::CCircleGesture()
 }
 
 #ifdef CLIENT_DLL
-CCircleGesture::CCircleGesture( const Leap::CircleGesture &c )
+CCircleGesture::CCircleGesture( const GiantLeap::CircleGesture &c )
 {
 	FromLeap( c );
 }
 
-void CCircleGesture::FromLeap( const Leap::CircleGesture &c )
+void CCircleGesture::FromLeap( const GiantLeap::CircleGesture &c )
 {
-	const Leap::HandList &hands = c.hands();
+	const GiantLeap::HandList &hands = c.hands();
 
 	_handId = hands[0].id();
 	_fingerId = c.pointable().id();
@@ -700,7 +700,7 @@ void CCircleGesture::FromLeap( const Leap::CircleGesture &c )
 	//
 	// Therefore if the angle to the normal (from the pointable) is less than 90 degrees (PI/2 radians) the directions are roughly the same,
 	// which means the circle is clockwise.
-	const Leap::Vector &pointableDir = c.pointable().direction();
+	const GiantLeap::Vector &pointableDir = c.pointable().direction();
 	_clockwise = pointableDir.angleTo( c.normal() ) <= ( M_PI / 2 );
 }
 #endif
@@ -793,14 +793,14 @@ CSwipeGesture::CSwipeGesture()
 }
 
 #ifdef CLIENT_DLL
-CSwipeGesture::CSwipeGesture( const Leap::SwipeGesture &s )
+CSwipeGesture::CSwipeGesture( const GiantLeap::SwipeGesture &s )
 {
 	FromLeap( s );
 }
 
-void CSwipeGesture::FromLeap( const Leap::SwipeGesture &s )
+void CSwipeGesture::FromLeap( const GiantLeap::SwipeGesture &s )
 {
-	const Leap::HandList &hands = s.hands();
+	const GiantLeap::HandList &hands = s.hands();
 
 	_handId = hands[0].id();
 	_speed = s.speed();
@@ -891,19 +891,19 @@ CTapGesture::CTapGesture()
 }
 
 #ifdef CLIENT_DLL
-CTapGesture::CTapGesture( const Leap::KeyTapGesture &k )
+CTapGesture::CTapGesture( const GiantLeap::KeyTapGesture &k )
 {
 	FromLeap( k );
 }
 
-CTapGesture::CTapGesture( const Leap::ScreenTapGesture &s )
+CTapGesture::CTapGesture( const GiantLeap::ScreenTapGesture &s )
 {
 	FromLeap( s );
 }
 
-void CTapGesture::FromLeap( const Leap::KeyTapGesture &k )
+void CTapGesture::FromLeap( const GiantLeap::KeyTapGesture &k )
 {
-	const Leap::HandList &hands = k.hands();
+	const GiantLeap::HandList &hands = k.hands();
 
 	_handId = hands[0].id();
 	_fingerId = k.pointable().id();
@@ -913,9 +913,9 @@ void CTapGesture::FromLeap( const Leap::KeyTapGesture &k )
 	_direction.NormalizeInPlace();
 }
 
-void CTapGesture::FromLeap( const Leap::ScreenTapGesture &s )
+void CTapGesture::FromLeap( const GiantLeap::ScreenTapGesture &s )
 {
-	const Leap::HandList &hands = s.hands();
+	const GiantLeap::HandList &hands = s.hands();
 
 	_handId = hands[0].id();
 	_fingerId = s.pointable().id();
@@ -999,12 +999,12 @@ CBallGesture::CBallGesture()
 }
 
 #ifdef CLIENT_DLL
-CBallGesture::CBallGesture( const Leap::Hand &h )
+CBallGesture::CBallGesture( const GiantLeap::Hand &h )
 {
 	FromLeap( h );
 }
 
-void CBallGesture::FromLeap( const Leap::Hand &h )
+void CBallGesture::FromLeap( const GiantLeap::Hand &h )
 {
 	_handId = h.id();
 	_radius = LeapToSourceDistance( h.sphereRadius() );
@@ -1084,42 +1084,42 @@ CFrame::CFrame()
 }
 
 #ifdef CLIENT_DLL
-CFrame::CFrame( const Leap::Frame &f )
+CFrame::CFrame( const GiantLeap::Frame &f )
 {
 	FromLeap( f );
 }
 
-void CFrame::FromLeap( const Leap::Frame &f )
+void CFrame::FromLeap( const GiantLeap::Frame &f )
 {
-	const Leap::GestureList &gestures = f.gestures();
-	const Leap::GestureList::const_iterator &end = gestures.end();
-	const Leap::HandList &hands = f.hands();
+	const GiantLeap::GestureList &gestures = f.gestures();
+	const GiantLeap::HandList &hands = f.hands();
 
 	_gestureBits = 0;
 
-	for (Leap::GestureList::const_iterator it = gestures.begin(); it != end; it++)
+	for( int i = 0; i < gestures.count(); i++ )
 	{
-		const Leap::Gesture &gesture = *it;
+		const GiantLeap::Gesture &gesture = gestures[i];
 		string data;
-		if ( gesture.type() == Leap::Gesture::TYPE_CIRCLE )
+
+		if ( gesture.type() == GiantLeap::Gesture::TYPE_CIRCLE )
 		{
 			_circle = CCircleGesture( gesture );
 			SetGestureActive( EGesture::GESTURE_CIRCLE );
 		}
-		else if ( gesture.type() == Leap::Gesture::TYPE_SWIPE )
+		else if ( gesture.type() == GiantLeap::Gesture::TYPE_SWIPE )
 		{
 			_swipe = CSwipeGesture( gesture );
 			SetGestureActive( EGesture::GESTURE_SWIPE );
 		}
-		else if ( gesture.type() == Leap::Gesture::TYPE_KEY_TAP )
+		else if ( gesture.type() == GiantLeap::Gesture::TYPE_KEY_TAP )
 		{
-			Leap::KeyTapGesture tap( gesture );
+			GiantLeap::KeyTapGesture tap( gesture );
 			_tap = CTapGesture( tap );
 			SetGestureActive( EGesture::GESTURE_TAP );
 		}
-		else if (gesture.type() == Leap::Gesture::TYPE_SCREEN_TAP )
+		else if (gesture.type() == GiantLeap::Gesture::TYPE_SCREEN_TAP )
 		{
-			Leap::ScreenTapGesture tap( gesture );
+			GiantLeap::ScreenTapGesture tap( gesture );
 			_tap = CTapGesture( tap );
 			SetGestureActive( EGesture::GESTURE_TAP );
 		}
