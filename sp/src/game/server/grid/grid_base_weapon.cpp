@@ -141,16 +141,16 @@ void CGridBaseWeapon::Pickup( CGridPlayer *player )
 	SetOwnerEntity( player );
 	AddEffects( EF_NODRAW );
 	VPhysicsDestroyObject();
-
-	
 }
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void CGridBaseWeapon::Drop( const Vector &target )
+void CGridBaseWeapon::Drop()
 {
 	CGridPlayer *player = dynamic_cast<CGridPlayer *>( GetOwnerEntity() );
 	Assert( player );
+
+	SetAbsOrigin( player->GetHandEntity()->GetAbsOrigin() );
 
 	SetModel( _info.GetModel().GetWorldModel() );
 

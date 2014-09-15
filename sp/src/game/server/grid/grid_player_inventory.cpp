@@ -29,7 +29,7 @@ void CInventory::SwapWeapons( CGridBaseWeapon *weapon )
 {
 	if( _weapon )
 	{
-		_weapon->Drop( weapon->GetAbsOrigin() );
+		_weapon->Drop();
 	}
 
 	_weapon = weapon;
