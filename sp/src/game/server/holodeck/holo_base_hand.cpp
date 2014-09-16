@@ -161,7 +161,7 @@ void CBaseHoloHand::RenderDebugHand()
 	for( int i = 0; i < FINGER_COUNT; i++ )
 	{
 		const CFinger &finger = _transformedFrame.GetHand().GetFingerByType( (EFinger)i );
-		for( int j = 0; j < EBone::BONE_COUNT; j++ )
+		for( int j = 1; j < EBone::BONE_COUNT; j++ )
 		{
 			const CBone &bone = finger.GetBone( (EBone)j );
 			
@@ -169,6 +169,12 @@ void CBaseHoloHand::RenderDebugHand()
 			debugoverlay->AddBoxOverlay( bone.GetNextJoint(), -fingerBounds, fingerBounds, vec3_angle, r, m_clrRender.GetG(), m_clrRender.GetB(), 127, duration );
 		}
 	}
+
+	DrawHandOutline( r, duration );
+
+	// Draw arm.
+	const CArm &arm = _transformedFrame.GetHand().GetArm();
+	debugoverlay->AddLineOverlay( arm.GetWristPosition(), arm.GetElbowPosition(), r, m_clrRender.GetG(), m_clrRender.GetB(), false, duration );
 
 	if( holo_render_debug_hand.GetInt() == 2 )
 	{
@@ -210,6 +216,44 @@ void CBaseHoloHand::RenderDebugHand()
 			debugoverlay->AddLineOverlayAlpha( tipPosition, tipPosition + direction, 255, 0, 0, 127, false, duration );
 		}
 	}
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void CBaseHoloHand::DrawHandOutline( byte r, float duration )
+{
+	const CFinger &thumb = _transformedFrame.GetHand().GetFingerByType( EFinger::FINGER_THUMB );
+	const CFinger &pointer = _transformedFrame.GetHand().GetFingerByType( EFinger::FINGER_POINTER );
+	const CFinger &middle = _transformedFrame.GetHand().GetFingerByType( EFinger::FINGER_MIDDLE );
+	const CFinger &ring = _transformedFrame.GetHand().GetFingerByType( EFinger::FINGER_RING );
+	const CFinger &pinky = _transformedFrame.GetHand().GetFingerByType( EFinger::FINGER_PINKY );
+
+	const CBone thumbBone = thumb.GetBone( EBone::BONE_METACARPAL );
+	const CBone pointerBone = pointer.GetBone( EBone::BONE_METACARPAL );
+	const CBone middleBone = middle.GetBone( EBone::BONE_METACARPAL );
+	const CBone ringBone = ring.GetBone( EBone::BONE_METACARPAL );
+	const CBone pinkyBone = pinky.GetBone( EBone::BONE_METACARPAL );
+
+	const CArm &arm = _transformedFrame.GetHand().GetArm();
+
+	// Web the fingers.
+	debugoverlay->AddLineOverlay( thumbBone.GetNextJoint(), pointerBone.GetNextJoint(), r, m_clrRender.GetG(), m_clrRender.GetB(), false, duration );
+	debugoverlay->AddLineOverlay( pointerBone.GetNextJoint(), middleBone.GetNextJoint(), r, m_clrRender.GetG(), m_clrRender.GetB(), false, duration );
+	debugoverlay->AddLineOverlay( middleBone.GetNextJoint(), ringBone.GetNextJoint(), r, m_clrRender.GetG(), m_clrRender.GetB(), false, duration );
+	debugoverlay->AddLineOverlay( ringBone.GetNextJoint(), pinkyBone.GetNextJoint(), r, m_clrRender.GetG(), m_clrRender.GetB(), false, duration );
+
+	// Link thumb and pinky to bone.
+	debugoverlay->AddLineOverlay( arm.GetWristPosition(), pinkyBone.GetNextJoint(), r, m_clrRender.GetG(), m_clrRender.GetB(), false, duration );
+	debugoverlay->AddLineOverlay( arm.GetWristPosition(), thumbBone.GetNextJoint(), r, m_clrRender.GetG(), m_clrRender.GetB(), false, duration );
+
+	// Draw joints.
+	const Vector fingerBounds( 0.05f, 0.05f, 0.05f );
+	debugoverlay->AddBoxOverlay( thumbBone.GetNextJoint(), -fingerBounds, fingerBounds, vec3_angle, r, m_clrRender.GetG(), m_clrRender.GetB(), 127, duration );
+	debugoverlay->AddBoxOverlay( pointerBone.GetNextJoint(), -fingerBounds, fingerBounds, vec3_angle, r, m_clrRender.GetG(), m_clrRender.GetB(), 127, duration );
+	debugoverlay->AddBoxOverlay( middleBone.GetNextJoint(), -fingerBounds, fingerBounds, vec3_angle, r, m_clrRender.GetG(), m_clrRender.GetB(), 127, duration );
+	debugoverlay->AddBoxOverlay( middleBone.GetNextJoint(), -fingerBounds, fingerBounds, vec3_angle, r, m_clrRender.GetG(), m_clrRender.GetB(), 127, duration );
+	debugoverlay->AddBoxOverlay( ringBone.GetNextJoint(), -fingerBounds, fingerBounds, vec3_angle, r, m_clrRender.GetG(), m_clrRender.GetB(), 127, duration );
+	debugoverlay->AddBoxOverlay( arm.GetWristPosition(), -fingerBounds, fingerBounds, vec3_angle, r, m_clrRender.GetG(), m_clrRender.GetB(), 127, duration );
 }
 
 //-----------------------------------------------------------------------------

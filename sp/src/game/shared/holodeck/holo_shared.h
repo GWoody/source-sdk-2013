@@ -67,6 +67,36 @@ namespace holo
 //=============================================================================
 	//-------------------------------------------------------------------------
 	//-------------------------------------------------------------------------
+	class CArm
+	{
+	public:
+						CArm();
+#ifdef CLIENT_DLL
+						CArm( const GiantLeap::Arm &b );
+		void			FromLeap( const GiantLeap::Arm &b );
+#endif
+
+		void			ToBitBuffer( bf_write *buf ) const;
+		void			FromBitBuffer( bf_read *buf );
+
+		void			Transform( float yaw, const Vector &translation );
+
+		inline const Vector &	GetWristPosition() const			{ return _wristPosition; }
+		inline const Vector &	GetElbowPosition() const			{ return _elbowPosition; }
+		inline Vector	GetDirection() const						{ return ( _wristPosition - _elbowPosition ).Normalized(); }
+
+		// Filtering helpers.
+		CArm			operator+( const CArm &other ) const;
+		CArm			operator/( float scale ) const;
+		CArm			operator*( float scale ) const;
+
+	private:
+		Vector			_wristPosition;
+		Vector			_elbowPosition;
+	};
+
+	//-------------------------------------------------------------------------
+	//-------------------------------------------------------------------------
 	class CBone
 	{
 	public:
@@ -163,6 +193,7 @@ namespace holo
 		inline const Vector &	GetPosition() const					{ return _position; }
 		inline const Vector &	GetVelocity() const					{ return _velocity; }
 		inline const CFinger &	GetFingerByType( EFinger f ) const	{ return _fingers[f]; }
+		inline const CArm &		GetArm() const						{ return _arm; }
 
 		// Computed accessors.
 		float			FindThetaBetweenFingers( EFinger f1, EFinger f2 ) const;
@@ -181,6 +212,7 @@ namespace holo
 		Vector			_position;
 		Vector			_velocity;
 		CFinger			_fingers[EFinger::FINGER_COUNT];
+		CArm			_arm;
 	};
 
 	//-------------------------------------------------------------------------

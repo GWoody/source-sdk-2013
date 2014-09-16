@@ -244,6 +244,82 @@ GiantLeap::Bone::Type SourceToLeapBoneCode( EBone bone )
 
 #endif
 
+//=============================================================================
+// CArm implementation.
+//=============================================================================
+CArm::CArm()
+{
+	_wristPosition = _elbowPosition = vec3_origin;
+}
+
+#ifdef CLIENT_DLL
+
+CArm::CArm( const GiantLeap::Arm &a )
+{
+	FromLeap( a );
+}
+
+void CArm::FromLeap( const GiantLeap::Arm &a )
+{
+	_wristPosition = LeapToSourceVector( a.wristPosition(), true );
+	_elbowPosition = LeapToSourceVector( a.elbowPosition(), true );
+}
+
+#endif
+
+void CArm::ToBitBuffer( bf_write *buf ) const
+{
+	buf->WriteBitVec3Coord( _wristPosition );
+	buf->WriteBitVec3Coord( _elbowPosition );
+}
+
+void CArm::FromBitBuffer( bf_read *buf )
+{
+	buf->ReadBitVec3Coord( _wristPosition );
+	buf->ReadBitVec3Coord( _elbowPosition );
+}
+
+void CArm::Transform( float yaw, const Vector &translation )
+{
+	// Apply rotations.
+	VectorYawRotate( _wristPosition, yaw, _wristPosition );
+	VectorYawRotate( _elbowPosition, yaw, _elbowPosition );
+
+	// Apply translations.
+	_wristPosition += translation;
+	_elbowPosition += translation;
+}
+
+CArm CArm::operator+( const CArm &other ) const
+{
+	CArm a;
+
+	a._wristPosition = _wristPosition + other._wristPosition;
+	a._elbowPosition = _elbowPosition + other._elbowPosition;
+
+	return a;
+}
+
+CArm CArm::operator/( float scale ) const
+{
+	CArm a;
+
+	a._wristPosition = _wristPosition / scale;
+	a._elbowPosition = _elbowPosition / scale;
+
+	return a;
+}
+
+CArm CArm::operator*( float scale ) const
+{
+	CArm a;
+
+	a._wristPosition = _wristPosition * scale;
+	a._elbowPosition = _elbowPosition * scale;
+
+	return a;
+}
+
 
 //=============================================================================
 // CBone implementation.
@@ -489,6 +565,8 @@ void CHand::FromLeap( const GiantLeap::Hand &h )
 
 	_normal.NormalizeInPlace();
 	_direction.NormalizeInPlace();
+
+	_arm.FromLeap( h.arm() );
 }
 
 void CHand::BuildFingers( const GiantLeap::Hand &h )
@@ -516,6 +594,8 @@ void CHand::ToBitBuffer( bf_write *buf ) const
 	{
 		_fingers[i].ToBitBuffer( buf );
 	}
+
+	_arm.ToBitBuffer( buf );
 }
 
 void CHand::FromBitBuffer( bf_read *buf )
@@ -532,6 +612,8 @@ void CHand::FromBitBuffer( bf_read *buf )
 	{
 		_fingers[i].FromBitBuffer( buf );
 	}
+
+	_arm.FromBitBuffer( buf );
 }
 
 void CHand::Transform( float yaw, const Vector &translation )
@@ -550,6 +632,8 @@ void CHand::Transform( float yaw, const Vector &translation )
 	{
 		_fingers[i].Transform( yaw, translation );
 	}
+
+	_arm.Transform( yaw, translation );
 }
 
 float CHand::FindThetaBetweenFingers( EFinger f1, EFinger f2 ) const
@@ -621,6 +705,8 @@ CHand CHand::operator+( const CHand &other ) const
 		h._fingers[i] = _fingers[i] + other._fingers[i];
 	}
 
+	h._arm = _arm + other._arm;
+
 	return h;
 }
 
@@ -641,6 +727,8 @@ CHand CHand::operator/( float scale ) const
 		h._fingers[i] = _fingers[i] / scale;
 	}
 
+	h._arm = _arm / scale;
+
 	return h;
 }
 
@@ -660,6 +748,8 @@ CHand CHand::operator*( float scale ) const
 	{
 		h._fingers[i] = _fingers[i] * scale;
 	}
+
+	h._arm = _arm * scale;
 
 	return h;
 }
