@@ -83,7 +83,8 @@ namespace holo
 
 		inline const Vector &	GetWristPosition() const			{ return _wristPosition; }
 		inline const Vector &	GetElbowPosition() const			{ return _elbowPosition; }
-		inline Vector	GetDirection() const						{ return ( _wristPosition - _elbowPosition ).Normalized(); }
+		inline Vector	GetDirection() const						{ return ( _elbowPosition - _wristPosition ).Normalized(); }
+		inline float	GetLength() const							{ return fabs( ( _elbowPosition - _wristPosition ).Length() ); }
 
 		// Filtering helpers.
 		CArm			operator+( const CArm &other ) const;

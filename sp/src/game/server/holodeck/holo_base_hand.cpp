@@ -242,9 +242,10 @@ void CBaseHoloHand::DrawHandOutline( byte r, float duration )
 	debugoverlay->AddLineOverlay( middleBone.GetNextJoint(), ringBone.GetNextJoint(), r, m_clrRender.GetG(), m_clrRender.GetB(), false, duration );
 	debugoverlay->AddLineOverlay( ringBone.GetNextJoint(), pinkyBone.GetNextJoint(), r, m_clrRender.GetG(), m_clrRender.GetB(), false, duration );
 
-	// Link thumb and pinky to bone.
+	// Link thumb and pinky to the arm.
 	debugoverlay->AddLineOverlay( arm.GetWristPosition(), pinkyBone.GetNextJoint(), r, m_clrRender.GetG(), m_clrRender.GetB(), false, duration );
 	debugoverlay->AddLineOverlay( arm.GetWristPosition(), thumbBone.GetNextJoint(), r, m_clrRender.GetG(), m_clrRender.GetB(), false, duration );
+	debugoverlay->AddLineOverlay( thumbBone.GetNextJoint() + arm.GetDirection() * arm.GetLength(), thumbBone.GetNextJoint(), r, m_clrRender.GetG(), m_clrRender.GetB(), false, duration );
 
 	// Draw joints.
 	const Vector fingerBounds( 0.05f, 0.05f, 0.05f );
