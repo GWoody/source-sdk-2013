@@ -24,6 +24,7 @@ static const char *holo_render_debug_hand_options = "Rendering options:\n\
 4 - palm direction + normal.\n\
 5 - velocity vector.\n\
 6 - finger direction vectors.\n\
+7 - highlight finger tips.\n\
 ";
 
 static ConVar holo_render_debug_hand( "holo_render_debug_hand", "1", NULL, holo_render_debug_hand_options );
@@ -148,14 +149,13 @@ void CBaseHoloHand::RenderDebugHand()
 		return;
 	}
 
-	const Vector handBounds( 0.25f, 0.25f, 0.25f );
 	const Vector fingerBounds( 0.05f, 0.05f, 0.05f );
 	const Vector &palmPosition = _transformedFrame.GetHand().GetPosition();
 	const float duration = 1.0f / 15.0f;
 	const int r = ( 1.0f - _transformedFrame.GetHand().GetConfidence() ) * 255.0f;
 
 	// Draw the palm box.
-	//debugoverlay->AddBoxOverlay( palmPosition, -handBounds, handBounds, vec3_angle, m_clrRender.GetR(), m_clrRender.GetG(), m_clrRender.GetB(), 127, duration );
+	debugoverlay->AddBoxOverlay( palmPosition, -fingerBounds, fingerBounds, vec3_angle, m_clrRender.GetR(), m_clrRender.GetG(), m_clrRender.GetB(), 127, duration );
 
 	// Draw all fingers.
 	for( int i = 0; i < FINGER_COUNT; i++ )
@@ -171,7 +171,7 @@ void CBaseHoloHand::RenderDebugHand()
 	}
 
 	DrawHandOutline( r, duration );
-
+	
 	// Draw arm.
 	const CArm &arm = _transformedFrame.GetHand().GetArm();
 	debugoverlay->AddLineOverlay( arm.GetWristPosition(), arm.GetElbowPosition(), r, m_clrRender.GetG(), m_clrRender.GetB(), false, duration );
@@ -214,6 +214,16 @@ void CBaseHoloHand::RenderDebugHand()
 			const Vector &tipPosition = _transformedFrame.GetHand().GetFingerByType( (EFinger)i ).GetTipPosition();
 			const Vector &direction = _transformedFrame.GetHand().GetFingerByType( (EFinger)i ).GetDirection();
 			debugoverlay->AddLineOverlayAlpha( tipPosition, tipPosition + direction, 255, 0, 0, 127, false, duration );
+		}
+	}
+
+	if( holo_render_debug_hand.GetInt() == 7 )
+	{
+		// Draw finger tips.
+		for( int i = 0; i < FINGER_COUNT; i++ )
+		{
+			const Vector &tipPosition = _transformedFrame.GetHand().GetFingerByType( (EFinger)i ).GetTipPosition();
+			debugoverlay->AddBoxOverlay( tipPosition, -fingerBounds * 2, fingerBounds * 2, vec3_angle, 255, 0, 0, 255, duration );
 		}
 	}
 }

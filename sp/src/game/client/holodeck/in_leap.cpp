@@ -11,6 +11,7 @@
 #include "in_leap.h"
 #include "in_buttons.h"
 #include "holodeck/holo_shared.h"
+#include "con_nprint.h"
 
 using namespace std;
 using namespace holo;
@@ -88,6 +89,8 @@ CLeapMotion::CLeapMotion() :
 	_controller(),
 	_listener()
 {
+	_init.SetOut( &Warning );
+
 	_queue = new SFrameQueue;
 
 	_controller.addListener( _listener );

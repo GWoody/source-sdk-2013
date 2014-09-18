@@ -127,12 +127,12 @@ bool CGunGesture::DetectGangsta( const holo::CFrame &frame )
 bool CGunGesture::DetectTrigger( const holo::CFrame &frame )
 {
 	const holo::CFinger &pointer = frame.GetHand().GetFingerByType( holo::EFinger::FINGER_POINTER );
-	const holo::CBone &pointerBase = pointer.GetBone( holo::EBone::BONE_INTERMEDIATE );
+	const Vector &pointerTip = pointer.GetTipPosition();
 	const holo::CFinger &thumb = frame.GetHand().GetFingerByType( holo::EFinger::FINGER_THUMB );
 
 	// We want the thumb tip to be relatively close to the pointer tip.
-	const Vector &diff = pointerBase.GetNextJoint() - thumb.GetTipPosition();
-	if( diff.Length() > ( pointer.GetLength() ) )
+	const Vector &diff = pointerTip - thumb.GetTipPosition();
+	if( diff.Length() > ( pointer.GetLength() * 1.25f ) )
 	{
 		return false;	
 	}
