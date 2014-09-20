@@ -142,7 +142,10 @@ void CPlayerPickupController::Use( CBaseEntity *pActivator, CBaseEntity *pCaller
 			// HOLODECK: Base launch direction is now the (eye->hand) vector.
 			CGridPlayer *gridplayer = dynamic_cast<CGridPlayer *>( m_pPlayer );
 			Assert( gridplayer );
-			const holo::CHand &hand = gridplayer->GetHandEntity()->GetFrame().GetHand();
+			CHoloHand *handEntity = gridplayer->GetHandHoldingObject( pAttached );
+			Assert( handEntity );
+
+			const holo::CHand &hand = handEntity->GetHoloHand();
 			vecLaunch = hand.GetPosition() - m_pPlayer->EyePosition();
 			vecLaunch.NormalizeInPlace();
 

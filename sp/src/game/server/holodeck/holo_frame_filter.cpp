@@ -30,7 +30,6 @@ static const char *holo_filter_method_help_string = "Filtering methods:\n\
 static ConVar holo_filter_method( "holo_filter_method", "0", FCVAR_ARCHIVE, holo_filter_method_help_string );
 
 static ConVar holo_filter_history( "holo_filter_history", "10", FCVAR_ARCHIVE, "Number of frames to use in the filtering operation." );
-static ConVar holo_filter_min_speed( "holo_filter_min_speed", "0", FCVAR_ARCHIVE, "Minimum speed the hand must be moving for averaging to be applied." );
 static ConVar holo_filter_apply_confidence( "holo_filter_apply_confidence", "1", FCVAR_ARCHIVE, "Sets whether frame confidence values are used in the filter calculation." );
 
 //-----------------------------------------------------------------------------
@@ -43,12 +42,6 @@ CFrameFilter::CFrameFilter()
 //-----------------------------------------------------------------------------
 CFrame CFrameFilter::FilterFrame( const CFrame &frame )
 {
-	if( frame.GetHand().GetVelocity().Length() < holo_filter_min_speed.GetFloat() )
-	{
-		// Hand is moving too slowly for filtering to be applied.
-		return frame;
-	}
-
 	if( frame.IsValid() )
 	{
 		AddToHistory( frame );
@@ -138,7 +131,9 @@ CFrame CFrameFilter::AgedAverage()
 	{
 		// Older frames are stored at the beginning.
 		float currentWeight = ( i + 1 ) / MAX_HISTORY;
-		currentWeight *= useconfidence ? _history[i].GetHand().GetConfidence() : 1.0f;
+		float confidence = _history[i].GetHand( EHand::LEFT ).GetConfidence() + _history[i].GetHand( EHand::RIGHT ).GetConfidence();
+
+		currentWeight *= useconfidence ? confidence : 1.0f;
 		totalWeight += currentWeight;
 
 		sum = sum + ( _history[i] * currentWeight );

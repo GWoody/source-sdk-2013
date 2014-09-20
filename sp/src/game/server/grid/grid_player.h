@@ -47,7 +47,8 @@ public:
 	virtual void	PostThink();
 
 	// Accessors.
-	CHoloHand *		GetHandEntity() const				{ return m_hHand.Get(); }
+	CHoloHand *		GetHandHoldingObject( CBaseEntity *object );
+	CHoloHand *		GetHandEntity( holo::EHand hand ) const	{ return (CHoloHand *)m_hHand[hand].Get(); }
 	grid::CInventory &	GetInventory()					{ return _inventory; }
 
 private:
@@ -57,13 +58,14 @@ private:
 	void			HandlePickupGesture();
 	void			HandleGunGesture();
 
-	CNetworkHandle( CHoloHand, m_hHand );				// The hand entity which is used to interact with the environment.
+	CNetworkArray( EHANDLE, m_hHand, holo::EHand::HAND_COUNT );				// The hand entity which is used to interact with the environment.
 	CNetworkHandle( CGridBaseWeapon, _activeWeapon );
 
 	grid::CGestureDetector	_gestureDetector;
 	grid::CInventory	_inventory;
 
 	bool			_weaponWasOut;
+	int				_weaponHandIdx;
 };
 
 #endif // __GRID_PLAYER_H__

@@ -85,6 +85,7 @@ bool SFrameQueue::IsEmpty()
 //----------------------------------------------------------------------------
 CLeapMotion::CLeapMotion()
 {
+	Warning("################## %d\n", sizeof(CFrame) );
 	_queue = new SFrameQueue;
 
 	_controller.addListener( _listener );
@@ -133,8 +134,8 @@ CFrame CLeapMotion::BuildFinalFrame()
 			finalFrame.SetTapGesture( curframe.GetTapGesture() );
 		}
 
-		finalFrame.SetBallGesture( curframe.GetBallGesture() );
-		finalFrame.SetHand( curframe.GetHand() );
+		finalFrame.SetHand( curframe.GetHand( EHand::LEFT ), EHand::LEFT );
+		finalFrame.SetHand( curframe.GetHand( EHand::RIGHT ), EHand::RIGHT );
 	}
 
 	return finalFrame;
