@@ -90,15 +90,27 @@ $Project
 			$Lib	"$SRCDIR\thirdparty\dxsdk\lib\x86\dxguid"
 		}
 		
+		$Folder "PSMoveAPI"
+		{
+			$File	"$SRCDIR\..\..\..\psmoveapi\include\psmove.h"
+			$File	"$SRCDIR\..\..\..\psmoveapi\include\psmove_config.h"
+			$File	"$SRCDIR\..\..\..\psmoveapi\include\psmove_fusion.h"
+			$File	"$SRCDIR\..\..\..\psmoveapi\include\psmove_tracker.h"
+			$Lib	"$SRCDIR\..\..\..\psmoveapi\lib\libpsmoveapi"
+			$Lib	"$SRCDIR\..\..\..\psmoveapi\lib\libpsmoveapi_tracker"
+		}
+		
 		$File	"holodeck\c_base_holo_panel.cpp"
 		$File	"holodeck\c_base_holo_panel.h"
 		$File	"holodeck\c_holo_button_panel.cpp"
 		$File	"holodeck\c_holo_circle_panel.cpp"
 		$File	"holodeck\c_holo_swipe_panel.cpp"
-		$File	"holodeck\in_leap.cpp"
-		$File	"holodeck\in_leap.h"
 		$File	"holodeck\in_dinput.cpp"
 		$File	"holodeck\in_dinput.h"
+		$File	"holodeck\in_leap.cpp"
+		$File	"holodeck\in_leap.h"
+		$File	"holodeck\in_move.cpp"
+		$File	"holodeck\in_move.h"
 		$File	"$SRCDIR\game\shared\holodeck\holo_shared.cpp"
 		$File	"$SRCDIR\game\shared\holodeck\holo_shared.h"
 	}

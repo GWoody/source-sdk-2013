@@ -34,8 +34,9 @@
 #include "sourcevr/isourcevirtualreality.h"
 
 #ifdef HOLODECK
-#include "holodeck/in_leap.h"
 #include "holodeck/in_dinput.h"
+#include "holodeck/in_leap.h"
+#include "holodeck/in_move.h"
 #endif
 
 // NVNT Include
@@ -1693,6 +1694,7 @@ void CInput::Init_All (void)
 
 #ifdef HOLODECK
 	CLeapMotion::Create();
+	CPlaystationMove::Create();
 
 	if( CDirectInput::Enabled() )
 	{
@@ -1720,6 +1722,7 @@ void CInput::Shutdown_All(void)
 
 #ifdef HOLODECK
 	CLeapMotion::Destroy();
+	CPlaystationMove::Destroy();
 
 	if( CDirectInput::Enabled() )
 	{
