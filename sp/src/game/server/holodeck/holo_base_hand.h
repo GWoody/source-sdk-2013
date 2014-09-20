@@ -28,8 +28,13 @@ public:
 	virtual void	Precache();
 	virtual	bool	CreateVPhysics();
 
+	// Mutators.
+	void			SetType( holo::EHand type )		{ _type = type; }
+
 	// Accessors.
 	const holo::CFrame &	GetFrame() const;
+	const holo::CHand &	GetHoloHand() const;
+	const holo::EHand	GetType() const;
 
 	// Frame processing.
 	void			ProcessFrame( const holo::CFrame &frame );
@@ -47,6 +52,7 @@ private:
 	holo::CFrame	_transformedFrame, _untransformedFrame;
 
 	holo::CFrameFilter _filter;
+	holo::EHand		_type;
 
 	Vector			_lastOriginDelta;
 };

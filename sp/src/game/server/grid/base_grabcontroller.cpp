@@ -639,9 +639,12 @@ bool CGrabController::UpdateObject( CBasePlayer *pPlayer, float flError )
 	CGridPlayer *gridPlayer = dynamic_cast<CGridPlayer *>( pPlayer );
 	Assert( gridPlayer );
 
-	const holo::CFrame &frame = gridPlayer->GetHandEntity()->GetFrame();
-	QAngle playerAngles = frame.GetHand().GetAngles();
-	Vector forward = frame.GetHand().GetPosition() - pPlayer->EyePosition();
+	CHoloHand *handEntity = gridPlayer->GetHandHoldingObject( pEntity );
+	Assert( handEntity );
+	const holo::CHand &frameHand = handEntity->GetHoloHand();
+
+	QAngle playerAngles = frameHand.GetAngles();
+	Vector forward = frameHand.GetPosition() - pPlayer->EyePosition();
 
 	forward.NormalizeInPlace();
 	

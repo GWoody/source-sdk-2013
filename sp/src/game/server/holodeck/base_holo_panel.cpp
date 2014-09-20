@@ -77,14 +77,22 @@ bool CBaseHoloPanel::PassesTriggerFilters( CBaseEntity *pOther )
 	CGridPlayer *pPlayer = dynamic_cast<CGridPlayer *>( UTIL_GetLocalPlayer() );
 	Assert( pPlayer );
 
-	CBaseEntity *pHand = pPlayer->GetHandEntity();
-	if( !pHand )
+	for( int i = 0; i < holo::EHand::HAND_COUNT; i++ )
 	{
-		return false;
+		CBaseEntity *pHand = pPlayer->GetHandEntity( (holo::EHand)i );
+		if( !pHand )
+		{
+			return false;
+		}
+
+		// Only allow the hand to interact with Holodeck triggers.
+		if( pHand->entindex() == pOther->entindex() )
+		{
+			return true;
+		}
 	}
 
-	// Only allow the hand to interact with Holodeck triggers.
-	return pHand->entindex() == pOther->entindex();
+	return false;
 }
 
 //-----------------------------------------------------------------------------

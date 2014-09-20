@@ -56,6 +56,14 @@ namespace holo
 	};
 	const char *EBoneToString( EBone bone );
 
+	enum EHand
+	{
+		LEFT,
+		RIGHT,
+
+		HAND_COUNT
+	};
+
 	enum EGlobals
 	{
 		INVALID_INDEX = -1
@@ -138,6 +146,39 @@ namespace holo
 
 	//-------------------------------------------------------------------------
 	//-------------------------------------------------------------------------
+	class CBallGesture
+	{
+	public:
+						CBallGesture();
+#ifdef CLIENT_DLL
+						CBallGesture( const Leap::Hand &h );
+		void			FromLeap( const Leap::Hand &h );
+#endif
+
+		void			ToBitBuffer( bf_write *buf ) const;
+		void			FromBitBuffer( bf_read *buf );
+
+		void			Transform( float yaw, const Vector &translation );
+
+		// Accessors.
+		inline int		GetHandId() const							{ return _handId; }
+		inline float	GetRadius() const							{ return _radius; }
+		inline float	GetGrabStrength() const						{ return _grabStrength; }
+		inline Vector	GetCenter() const							{ return _center; }
+
+		// Filtering helpers.
+		CBallGesture	operator+( const CBallGesture &other ) const;
+		CBallGesture	operator/( float scale ) const;
+		CBallGesture	operator*( float scale ) const;
+
+	private:
+		int				_handId;
+		float			_radius, _grabStrength;
+		Vector			_center;
+	};
+
+	//-------------------------------------------------------------------------
+	//-------------------------------------------------------------------------
 	class CHand
 	{
 	public:
@@ -163,6 +204,7 @@ namespace holo
 		inline const Vector &	GetPosition() const					{ return _position; }
 		inline const Vector &	GetVelocity() const					{ return _velocity; }
 		inline const CFinger &	GetFingerByType( EFinger f ) const	{ return _fingers[f]; }
+		inline const CBallGesture &	GetBallGesture() const			{ return _ball; }
 
 		// Computed accessors.
 		float			FindThetaBetweenFingers( EFinger f1, EFinger f2 ) const;
@@ -181,6 +223,7 @@ namespace holo
 		Vector			_position;
 		Vector			_velocity;
 		CFinger			_fingers[EFinger::FINGER_COUNT];
+		CBallGesture	_ball;
 	};
 
 	//-------------------------------------------------------------------------
@@ -290,39 +333,6 @@ namespace holo
 
 	//-------------------------------------------------------------------------
 	//-------------------------------------------------------------------------
-	class CBallGesture
-	{
-	public:
-						CBallGesture();
-#ifdef CLIENT_DLL
-						CBallGesture( const Leap::Hand &h );
-		void			FromLeap( const Leap::Hand &h );
-#endif
-
-		void			ToBitBuffer( bf_write *buf ) const;
-		void			FromBitBuffer( bf_read *buf );
-
-		void			Transform( float yaw, const Vector &translation );
-
-		// Accessors.
-		inline int		GetHandId() const							{ return _handId; }
-		inline float	GetRadius() const							{ return _radius; }
-		inline float	GetGrabStrength() const						{ return _grabStrength; }
-		inline Vector	GetCenter() const							{ return _center; }
-
-		// Filtering helpers.
-		CBallGesture	operator+( const CBallGesture &other ) const;
-		CBallGesture	operator/( float scale ) const;
-		CBallGesture	operator*( float scale ) const;
-
-	private:
-		int				_handId;
-		float			_radius, _grabStrength;
-		Vector			_center;
-	};
-
-	//-------------------------------------------------------------------------
-	//-------------------------------------------------------------------------
 	class CFrame
 	{
 	public:
@@ -346,16 +356,14 @@ namespace holo
 		void			SetGestureActive( EGesture gesture )		{ _gestureBits |= ( 1 << gesture ); }
 
 		// Frame data accessors.
-		inline const CHand &	GetHand() const						{ return _hand; }
+		inline const CHand &	GetHand( EHand hand ) const			{ return _hand[hand]; }
 		inline const CHand *	GetHandById( int id ) const;
-		inline const CBallGesture &	GetBallGesture() const			{ return _ball; }
 		inline const CCircleGesture &	GetCircleGesture() const	{ return _circle; }
 		inline const CSwipeGesture &	GetSwipeGesture() const		{ return _swipe; }
 		inline const CTapGesture &	GetTapGesture() const			{ return _tap; }
 
 		// Frame data mutators.
-		inline void		SetHand( const CHand &h )					{ _hand = h; }
-		inline void		SetBallGesture( const CBallGesture &g )		{ _ball = g; }
+		inline void		SetHand( const CHand &h, EHand hand )		{ _hand[hand] = h; }
 		inline void		SetCircleGesture( const CCircleGesture &g )	{ _circle = g;	SetGestureActive( GESTURE_CIRCLE ); }
 		inline void		SetSwipeGesture( const CSwipeGesture &g )	{ _swipe = g;	SetGestureActive( GESTURE_SWIPE ); }
 		inline void		SetTapGesture( const CTapGesture &g )		{ _tap = g;		SetGestureActive( GESTURE_TAP ); }
@@ -370,8 +378,7 @@ namespace holo
 		T				AddGesture( const CFrame &other, const T &g1, const T &g2, EGesture g ) const;
 
 		// Frame data.
-		CHand			_hand;
-		CBallGesture	_ball;
+		CHand			_hand[HAND_COUNT];
 		CCircleGesture	_circle;
 		CSwipeGesture	_swipe;
 		CTapGesture		_tap;
