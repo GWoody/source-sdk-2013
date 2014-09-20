@@ -150,7 +150,7 @@ void CWeaponInfo::Parse( const char *scriptpath )
 	KeyValues *kv = new KeyValues( "weapon" );
 	if( !kv->LoadFromFile( g_pFullFileSystem, scriptpath ) )
 	{
-		Warning( "CWeaponInfo::Parse failed to open script \"%s\"\n", scriptpath );
+		ConColorMsg( COLOR_YELLOW, __FUNCTION__" failed to open script \"%s\"\n", scriptpath );
 		return;
 	}
 

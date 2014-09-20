@@ -100,7 +100,7 @@ void CBaseHoloPanel::InitEntityGlow()
 		if( !_glowTarget )
 		{
 			// The entity name doesn't exist.
-			Warning( "HOLODECK: Gesture panel references invalid glow entity \"%s\"\n", STRING( _glowTargetName ) );
+			ConColorMsg( COLOR_YELLOW, __FUNCTION__": Gesture panel references invalid glow entity \"%s\"\n", STRING( _glowTargetName ) );
 		}
 		else
 		{
@@ -108,7 +108,7 @@ void CBaseHoloPanel::InitEntityGlow()
 			CBaseAnimating *target = dynamic_cast<CBaseAnimating *>( _glowTarget.Get() );
 			if( !target )
 			{
-				Warning( "HOLODECK: Gesture panel references non studio model glow entity \"%s\"\n", STRING( _glowTargetName ) );
+				ConColorMsg( COLOR_YELLOW, __FUNCTION__": Gesture panel references non studio model glow entity \"%s\"\n", STRING( _glowTargetName ) );
 			}
 			else
 			{
@@ -162,12 +162,12 @@ void CBaseHoloPanel::InitAnimation()
 			else
 			{
 				ent->Remove();
-				Warning( "CBaseHoloPanel::InitAnimation - Created entity was not of type CSpriteOriented!\n" );
+				ConColorMsg( COLOR_YELLOW, __FUNCTION__": Created entity was not of type CSpriteOriented!\n" );
 			}
 		}
 		else
 		{
-			Warning( "CBaseHoloPanel::InitAnimation - Failed to create animated sprite!\n" );
+			ConColorMsg( COLOR_YELLOW, __FUNCTION__": Failed to create animated sprite!\n" );
 		}
 	}
 }

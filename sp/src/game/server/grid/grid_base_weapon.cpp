@@ -295,7 +295,7 @@ void CGridBaseWeapon::PerformImpactTrace()
 	int attachment = LookupAttachment( attachmentname );
 	if( attachment == -1 )
 	{
-		Warning( "CGridBaseWeapon::PerformImpactTrace - missing muzzle attachment!!!\n" );
+		ConColorMsg( COLOR_YELLOW, __FUNCTION__": missing muzzle attachment!!!\n" );
 		return;
 	}
 

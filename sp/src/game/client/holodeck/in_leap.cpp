@@ -156,7 +156,7 @@ void CLeapMotionListener::onConnect( const Leap::Controller &controller )
 	controller.enableGesture( Leap::Gesture::TYPE_SCREEN_TAP );
 	controller.enableGesture( Leap::Gesture::TYPE_SWIPE );
 
-	Warning( "Leap Motion connected!\n" );
+	ConColorMsg( COLOR_GREEN, "Leap Motion connected!\n" );
 }
 
 //----------------------------------------------------------------------------

@@ -79,7 +79,7 @@ bool CDirectInput::CreateDirectInput()
 	{
 		const char *message;
 		format_message( hr, &message );
-			Warning( "HOLODECK: DirectInput8Create failed (%s)\n", message );
+			ConColorMsg( COLOR_YELLOW, __FUNCTION__": DirectInput8Create failed (%s)\n", message );
 		free_message( message );
 		return false;
 	}
@@ -89,12 +89,10 @@ bool CDirectInput::CreateDirectInput()
 	{
 		const char *message;
 		format_message( hr, &message );
-			Warning( "HOLODECK: gDirectInput->Initialize failed (%s)\n", message );
+			ConColorMsg( COLOR_YELLOW, __FUNCTION__": gDirectInput->Initialize failed (%s)\n", message );
 		free_message( message );
 		return false;
 	}
-
-	Warning("HOLODECK: CreateDirectInput has been created. Moving on...\n");
 
 	return true;
 }
@@ -138,14 +136,14 @@ BOOL CALLBACK  EnumObjectsCallback( const DIDEVICEOBJECTINSTANCE* pdidoi, VOID* 
 //----------------------------------------------------------------------------
 BOOL CALLBACK enumerate_devices(const DIDEVICEINSTANCE *device, LPVOID pvRef )
 {
-	Warning( "HOLODECK: Attempting connection to %s\n", device->tszProductName );
+	ConColorMsg( COLOR_GREEN, "Connecting to %s\n", device->tszProductName );
 
 	HRESULT deviceCreated;
 	deviceCreated = gDirectInput->CreateDevice( device->guidInstance, &gJoystick, NULL );
 	if( FAILED (deviceCreated) ){
+		ConColorMsg( COLOR_YELLOW, __FUNCTION__": Connection failed!\n");
 		return DIENUM_CONTINUE;
 	} else {
-		Warning("HOLODECK: Device created successfully.\n");
 		return DIENUM_STOP; // stop enumming
 	}
 }
@@ -172,35 +170,28 @@ void CDirectInput::FindJoysticks()
 			HRESULT hr = gJoystick->GetDeviceInfo( &di );
 			if( hr == DI_OK )
 			{
-				Warning( "HOLODECK: Found joystick \"%s\"\n", di.tszProductName );
-				if( SUCCEEDED(gJoystick->SetDataFormat( &c_dfDIJoystick2 )))
-					Warning("HOLODECK: Data format set successfully...\n");
-				else
-					Warning("HOLODECK: Failed to set data format!\n");
+				if( FAILED(gJoystick->SetDataFormat( &c_dfDIJoystick2 ) ) )
+					ConColorMsg( COLOR_YELLOW, __FUNCTION__": Failed to set data format!\n");
 
-				if( SUCCEEDED(gJoystick->SetCooperativeLevel( GetActiveWindow(), DISCL_EXCLUSIVE | DISCL_FOREGROUND )))
-					Warning("HOLODECK: Co-op level set successfully!\n");
-				else
-					Warning("HOLODECK: Failed to set cooperative level\n");
+				if( FAILED(gJoystick->SetCooperativeLevel( GetActiveWindow(), DISCL_EXCLUSIVE | DISCL_FOREGROUND ) ) )
+					ConColorMsg( COLOR_YELLOW, __FUNCTION__": Failed to set cooperative level\n");
 
 				//HWND hDlg = ( HWND )pContext;
 
 				HRESULT h2;
 				h2 = gJoystick->EnumObjects(EnumObjectsCallback, NULL, DIDFT_ALL);
-
-
 			}
 			else
 			{
 				const char *message;
 				format_message( hr, &message );
-					Warning( "HOLODECK: gJoystick->GetDeviceInfo failed (%s)\n", message );
+					ConColorMsg( COLOR_YELLOW, __FUNCTION__": gJoystick->GetDeviceInfo failed (%s)\n", message );
 				free_message( message );
 			}
 		}
 		else
 		{
-			Warning( "HOLODECK: Failed to find joystick\n" );
+			ConColorMsg( COLOR_YELLOW, __FUNCTION__": Failed to find joystick\n" );
 		}
 	}
 }
