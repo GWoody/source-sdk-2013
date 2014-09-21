@@ -75,7 +75,7 @@ namespace grid
 		const char *	GetMuzzleParticleName() const	{ return STRING( _muzzleparticle ); }
 		const char *	GetMuzzleAttachment() const		{ return STRING( _muzzleattachment ); }
 		const char *	GetLaserPath()const				{ return STRING(_laserPath ); }
-		bool			GetLaserActive()const			{ return BOOL(_laserActive); }
+		bool			GetLaserActive()const			{ return _laserActive; }
 		float			GetLaserScale()const			{ return _laserScale; }
 
 	private:

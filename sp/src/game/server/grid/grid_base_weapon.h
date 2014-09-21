@@ -37,8 +37,7 @@ public:
 	virtual void	SetModel( const char *model );
 
 	// Player interaction.
-	virtual void	SwapWith( CGridBaseWeapon *weapon );
-	virtual void	Drop( const Vector &target );
+	virtual void	Drop();
 	virtual void	Pickup( CGridPlayer *player );
 	virtual void	TakeOut();
 	virtual void	PutAway();

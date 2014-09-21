@@ -122,17 +122,6 @@ void CGridBaseWeapon::SetModel( const char *model )
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void CGridBaseWeapon::SwapWith( CGridBaseWeapon *weapon )
-{
-	SetMoveType( MOVETYPE_VPHYSICS );
-	SetOwnerEntity( NULL );
-	RemoveEffects( EF_NODRAW );
-
-	SetAbsOrigin( weapon->GetAbsOrigin() );
-}
-
-//-----------------------------------------------------------------------------
-//-----------------------------------------------------------------------------
 void CGridBaseWeapon::Pickup( CGridPlayer *player )
 {
 	SetModel( _info.GetModel().GetPlayerModel() );
@@ -147,7 +136,7 @@ void CGridBaseWeapon::Pickup( CGridPlayer *player )
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void CGridBaseWeapon::Drop( const Vector &target )
+void CGridBaseWeapon::Drop()
 {
 	CGridPlayer *player = dynamic_cast<CGridPlayer *>( GetOwnerEntity() );
 	Assert( player );
