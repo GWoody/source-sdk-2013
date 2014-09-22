@@ -1293,6 +1293,7 @@ void CInput::CreateMove ( int sequence_number, float input_sample_frametime, boo
 
 #ifdef HOLODECK
 	CLeapMotion::Get().CreateMove( cmd );
+	CPlaystationMove::Get().CreateMove( cmd );
 
 	if( CDirectInput::Enabled() )
 	{

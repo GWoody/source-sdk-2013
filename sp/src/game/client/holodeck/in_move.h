@@ -10,8 +10,8 @@
 #ifndef __IN_MOVE_H__
 #define __IN_MOVE_H__
 
-struct _PSMove;
-typedef _PSMove PSMove;
+typedef struct _PSMove PSMove;
+typedef struct _PSMoveTracker PSMoveTracker;
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
@@ -22,11 +22,19 @@ public:
 	static CPlaystationMove &	Get()		{ return *_instance; }
 	static void		Create()			{ _instance = new CPlaystationMove; }
 	static void		Destroy()			{ delete _instance; }
+
+	void			CreateMove( CUserCmd *cmd );
+
+	void			StartTracker();
 	
 private:
 	CPlaystationMove();
 	~CPlaystationMove();
 	static CPlaystationMove *	_instance;
+
+	PSMove *		_move;
+	PSMoveTracker *	_tracker;
+	bool			_calibrated;
 };
 
 #endif // __IN_MOVE_H__
