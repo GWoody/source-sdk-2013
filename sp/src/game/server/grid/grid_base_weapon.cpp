@@ -374,7 +374,7 @@ void CGridBaseWeapon::CreateAmmoScreen()
 	{
 		CVGuiScreen *screen = CreateVGuiScreen( "vgui_screen", "grid_ammo_screen", this, this, attachment );
 
-		screen->SetActualSize( 2, 2 );
+		screen->SetActualSize( 4, 4 );
 		screen->SetActive( true );
 		screen->MakeVisibleOnlyToTeammates( false );
 		screen->SetAttachedToViewModel( false );

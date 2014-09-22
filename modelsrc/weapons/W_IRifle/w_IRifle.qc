@@ -20,7 +20,7 @@ $attachment "muzzle" "Valvebiped.muzzle" -8.5 0 0 rotate 0 0 -90
 //Shell eject
 $attachment "shell" "Valvebiped.w_shotgun" 1.0 -7.0 3
 
-$attachment "ammo" "Valvebiped.w_shotgun" -1.75 1 20 RIGID rotate 0 -4 0
+$attachment "ammo" "ValveBiped.w_shotgun" -6.80 -6.50 -4.60 rotate -5 -5 -3
 
 $sequence idle1	"Idle" loop fps 30 activity ACT_VM_IDLE 1
 
