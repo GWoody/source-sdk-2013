@@ -25,6 +25,10 @@
 #include "decals.h"
 #include "bone_setup.h"
 
+#ifdef HOLODECK
+#include "holodeck/holo_base_hand.h"
+#endif
+
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
@@ -570,6 +574,22 @@ int CPhysBox::ObjectCaps()
 //-----------------------------------------------------------------------------
 void CPhysBox::Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value )
 {
+#ifdef HOLODECK
+	CBaseHoloHand *hand = dynamic_cast<CBaseHoloHand *>( pActivator );
+	if ( hand )
+	{
+		if ( HasSpawnFlags( SF_PHYSBOX_ENABLE_PICKUP_OUTPUT ) )
+		{
+			m_OnPlayerUse.FireOutput( hand->GetOwnerPlayer(), this );
+		}
+
+		if ( !HasSpawnFlags( SF_PHYSBOX_IGNOREUSE ) )
+		{
+			hand->PickupObject( this );
+		}
+	}
+#endif
+
 	CBasePlayer *pPlayer = ToBasePlayer( pActivator );
 	if ( pPlayer )
 	{
@@ -1274,6 +1294,14 @@ public:
 
 	void Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value )
 	{
+#ifdef HOLODECK
+		CBaseHoloHand *hand = dynamic_cast<CBaseHoloHand *>( pActivator );
+		if ( hand )
+		{
+			hand->PickupObject( this );
+		}
+#endif
+
 		CBasePlayer *pPlayer = ToBasePlayer( pActivator );
 		if ( pPlayer )
 		{

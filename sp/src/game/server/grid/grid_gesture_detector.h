@@ -70,7 +70,7 @@ namespace grid
 		EState			_clenchState;
 
 		// Radius of the ball gesture last frame.
-		static float	_lastRadius;
+		static float	_lastRadius[holo::EHand::HAND_COUNT];
 	};
 
 	//-------------------------------------------------------------------------

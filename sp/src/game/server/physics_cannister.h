@@ -11,6 +11,9 @@
 #endif
 
 #include "player_pickup.h"
+#ifdef HOLODECK
+#include "holodeck/holo_base_hand.h"
+#endif
 
 class CSteamJet;
 
@@ -75,6 +78,14 @@ public:
 	}
 	void Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value )
 	{
+#ifdef HOLODECK
+		CBaseHoloHand *hand = dynamic_cast<CBaseHoloHand *>( pActivator );
+		if ( hand )
+		{
+			hand->PickupObject( this );
+		}
+#endif
+
 		CBasePlayer *pPlayer = ToBasePlayer( pActivator );
 		if ( pPlayer )
 		{

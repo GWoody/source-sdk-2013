@@ -23,7 +23,7 @@ static ConVar grid_gun_trigger_angle( "grid_gun_trigger_angle", "30", FCVAR_ARCH
 //-----------------------------------------------------------------------------
 // Gesture statics.
 //-----------------------------------------------------------------------------
-float CPickupGesture::_lastRadius = 0.0f;
+float CPickupGesture::_lastRadius[holo::EHand::HAND_COUNT] = { 0.0f, 0.0f };
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
@@ -32,11 +32,15 @@ void CPickupGesture::Detect( const holo::CFrame &frame, holo::EHand hand )
 	float grabStrength = grid_pickup_strength.GetFloat();
 	float curRadius = frame.GetHand( hand ).GetBallGesture().GetGrabStrength();
 
-	if( curRadius >= grabStrength && _lastRadius < grabStrength )
+	if( curRadius == 0.0f )
+	{
+		SetInactive();
+	}
+	else if( curRadius >= grabStrength && _lastRadius[hand] < grabStrength )
 	{
 		_clenchState = EState::STARTED;
 	}
-	else if( curRadius < grabStrength && _lastRadius >= grabStrength )
+	else if( curRadius < grabStrength && _lastRadius[hand] >= grabStrength )
 	{
 		_clenchState = EState::FINISHED;
 	}
@@ -44,12 +48,8 @@ void CPickupGesture::Detect( const holo::CFrame &frame, holo::EHand hand )
 	{
 		_clenchState = EState::CLOSED;
 	}
-	else
-	{
-		SetInactive();
-	}
 
-	_lastRadius = curRadius;
+	_lastRadius[hand] = curRadius;
 }
 
 //-----------------------------------------------------------------------------

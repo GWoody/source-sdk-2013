@@ -69,6 +69,19 @@ void CGridPlayer::Spawn()
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
+void CGridPlayer::Event_Killed( const CTakeDamageInfo &info )
+{
+	for( int i = 0; i < EHand::HAND_COUNT; i++ )
+	{
+		CBaseHoloHand *hand = (CBaseHoloHand *)m_hHand.Get( i ).Get();
+		hand->ClearUseEntity();
+	}
+
+	BaseClass::Event_Killed( info );
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 Vector CGridPlayer::Weapon_ShootPosition()
 {
 	if( _weaponHandIdx == -1 )
@@ -170,13 +183,14 @@ void CGridPlayer::HandlePickupGesture()
 		CPickupGesture pickup = _gestureDetector.DetectPickupGesture( (EHand)i );
 		if( pickup.IsActive() )
 		{
+			CHoloHand *hand = (CHoloHand *)m_hHand[i].Get();
 			if( pickup.HasClenchStarted() )
 			{
-				SetAttemptObjectPickup( true );
+				hand->AttemptObjectPickup();
 			}
 			else if( pickup.HasClenchFinished() )
 			{
-				SetAttemptObjectPickup( false );
+				hand->AttemptObjectDrop();
 			}
 		}
 	}

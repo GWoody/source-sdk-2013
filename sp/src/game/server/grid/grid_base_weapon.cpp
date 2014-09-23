@@ -96,14 +96,19 @@ void CGridBaseWeapon::Spawn()
 //-----------------------------------------------------------------------------
 void CGridBaseWeapon::Use( CBaseEntity *activator, CBaseEntity *caller, USE_TYPE useType, float value )
 {
-	CGridPlayer *player = dynamic_cast<CGridPlayer *>( activator );
+	CBaseHoloHand *hand = dynamic_cast<CBaseHoloHand *>( activator );
+	if( !hand )
+	{
+		return;
+	}
+
+	CGridPlayer *player = dynamic_cast<CGridPlayer *>( hand->GetOwnerEntity() );
 	if( !player )
 	{
 		return;
 	}
 
 	player->GetInventory().SwapWeapons( this );
-	player->SetAttemptObjectPickup( false );
 }
 
 //-----------------------------------------------------------------------------

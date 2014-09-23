@@ -34,6 +34,7 @@ public:
 
 	// CBasePlayer overrides.
 	virtual void	Spawn();
+	virtual void	Event_Killed( const CTakeDamageInfo &info );
 
 	// Weapon overrides.
 	virtual Vector	Weapon_ShootPosition();

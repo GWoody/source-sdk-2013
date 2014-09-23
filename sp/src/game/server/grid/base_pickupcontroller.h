@@ -12,6 +12,8 @@
 
 #include "base_grabcontroller.h"
 
+class CBaseHoloHand;
+
 //-----------------------------------------------------------------------------
 // Player pickup controller
 //-----------------------------------------------------------------------------
@@ -20,7 +22,7 @@ class CPlayerPickupController : public CBaseEntity
 	DECLARE_DATADESC();
 	DECLARE_CLASS( CPlayerPickupController, CBaseEntity );
 public:
-	void Init( CBasePlayer *pPlayer, CBaseEntity *pObject );
+	void Init( CBaseHoloHand *pPlayer, CBaseEntity *pObject );
 	void Shutdown( bool bThrown = false );
 	bool OnControls( CBaseEntity *pControls ) { return true; }
 	void Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value );
@@ -36,7 +38,7 @@ public:
 
 private:
 	CGrabController		m_grabController;
-	CBasePlayer			*m_pPlayer;
+	CBaseHoloHand		*m_pHand;
 };
 
 
