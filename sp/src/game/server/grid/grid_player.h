@@ -48,7 +48,6 @@ public:
 	virtual void	PostThink();
 
 	// Accessors.
-	CHoloHand *		GetHandHoldingObject( CBaseEntity *object );
 	CHoloHand *		GetHandEntity( holo::EHand hand ) const	{ return (CHoloHand *)m_hHand[hand].Get(); }
 	grid::CInventory &	GetInventory()					{ return _inventory; }
 

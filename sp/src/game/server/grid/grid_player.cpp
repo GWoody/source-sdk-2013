@@ -264,15 +264,3 @@ void CGridPlayer::PostThink()
 {
 	BaseClass::PostThink();
 }
-
-//-----------------------------------------------------------------------------
-//-----------------------------------------------------------------------------
-CHoloHand *CGridPlayer::GetHandHoldingObject( CBaseEntity *object )
-{
-	for( int i = 0; i < EHand::HAND_COUNT; i++ )
-	{
-//		CHoloHand *hand = (CHoloHand *)m_hHand.Get( i ).Get();
-	}
-
-	return NULL;
-}
