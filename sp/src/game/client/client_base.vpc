@@ -51,7 +51,7 @@ $Configuration
 
 	$Compiler
 	{
-		$AdditionalIncludeDirectories	".\;$BASE;$SRCDIR\vgui2\include;$SRCDIR\vgui2\controls;$SRCDIR\game\shared;.\game_controls;$SRCDIR\thirdparty\sixensesdk\include;$SRCDIR\..\..\..\LeapSDK\include;$SRCDIR\..\..\..\psmoveapi\include;$SRCDIR\..\..\..\TENSLib\include"
+		$AdditionalIncludeDirectories	".\;$BASE;$SRCDIR\vgui2\include;$SRCDIR\vgui2\controls;$SRCDIR\game\shared;.\game_controls;$SRCDIR\thirdparty\sixensesdk\include;$SRCDIR\..\..\..\LeapSDK\include;$SRCDIR\..\..\..\TENSLib\include"
 		$PreprocessorDefinitions		"$BASE;NO_STRING_T;CLIENT_DLL;VECTOR;VERSION_SAFE_STEAM_API_INTERFACES;PROTECTED_THINGS_ENABLE;strncpy=use_Q_strncpy_instead;_snprintf=use_Q_snprintf_instead" 
 		$PreprocessorDefinitions		"$BASE;ENABLE_CHROMEHTMLWINDOW;fopen=dont_use_fopen" [$WIN32]
 		$PreprocessorDefinitions		"$BASE;ENABLE_CHROMEHTMLWINDOW;" [$OSXALL]
@@ -90,16 +90,6 @@ $Project
 			$Lib	"$SRCDIR\thirdparty\dxsdk\lib\x86\dxguid"
 		}
 		
-		$Folder "PSMoveAPI"
-		{
-			$File	"$SRCDIR\..\..\..\psmoveapi\include\psmove.h"
-			$File	"$SRCDIR\..\..\..\psmoveapi\include\psmove_config.h"
-			$File	"$SRCDIR\..\..\..\psmoveapi\include\psmove_fusion.h"
-			$File	"$SRCDIR\..\..\..\psmoveapi\include\psmove_tracker.h"
-			$Lib	"$SRCDIR\..\..\..\psmoveapi\lib\libpsmoveapi"
-			$Lib	"$SRCDIR\..\..\..\psmoveapi\lib\libpsmoveapi_tracker"
-		}
-		
 		$File	"holodeck\c_base_holo_panel.cpp"
 		$File	"holodeck\c_base_holo_panel.h"
 		$File	"holodeck\c_holo_button_panel.cpp"
@@ -109,8 +99,6 @@ $Project
 		$File	"holodeck\in_dinput.h"
 		$File	"holodeck\in_leap.cpp"
 		$File	"holodeck\in_leap.h"
-		$File	"holodeck\in_move.cpp"
-		$File	"holodeck\in_move.h"
 		$File	"$SRCDIR\game\shared\holodeck\holo_shared.cpp"
 		$File	"$SRCDIR\game\shared\holodeck\holo_shared.h"
 	}
