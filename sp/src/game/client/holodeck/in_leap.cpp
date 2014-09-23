@@ -85,6 +85,7 @@ bool SFrameQueue::IsEmpty()
 //----------------------------------------------------------------------------
 CLeapMotion::CLeapMotion()
 {
+	Warning("################## %d\n", sizeof(CFrame) );
 	_queue = new SFrameQueue;
 
 	_controller.addListener( _listener );
