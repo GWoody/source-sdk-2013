@@ -20,17 +20,14 @@ public:
 	CRazerHydra();
 	~CRazerHydra();
 
-	// Singleton methods.
-	static CRazerHydra &	Get()			{ return *(CRazerHydra *)&IRazerHydra::Get(); }
-
 	// Calibration methods.
-	void			MarkHome();
+	void			MarkHome( const sixenseControllerData &data );
 
 	// Source methods.
 	virtual void	CreateMove( CUserCmd *cmd );
 
 protected:
-	Vector			HydraToSourceVector( float *v );
+	Vector			HydraToSourceVector( const float *v );
 	float			HydraToSourceDistance( float distance );
 
 private:
@@ -38,13 +35,6 @@ private:
 
 	Vector			_home;
 };
-
-//----------------------------------------------------------------------------
-//----------------------------------------------------------------------------
-CON_COMMAND( holo_set_hydra_home, "Marks the current Hydra controller position as the home position." )
-{
-	CRazerHydra::Get().MarkHome();
-}
 
 //----------------------------------------------------------------------------
 //----------------------------------------------------------------------------
@@ -82,27 +72,8 @@ CRazerHydra::~CRazerHydra()
 
 //----------------------------------------------------------------------------
 //----------------------------------------------------------------------------
-void CRazerHydra::MarkHome()
+void CRazerHydra::MarkHome( const sixenseControllerData &data )
 {
-	if( !_initialized || !sixenseIsBaseConnected( 0 ) )
-	{
-		ConColorMsg( COLOR_YELLOW, "Hydra module isn't initialized!\n" );
-		return;
-	}
-
-	sixenseControllerData data;
-	if( sixenseGetNewestData( 0, &data ) == SIXENSE_FAILURE )
-	{
-		ConColorMsg( COLOR_YELLOW, "Failed to retrive data from Hydra controller 0!\n" );
-		return;
-	}
-
-	if( !data.enabled )
-	{
-		ConColorMsg( COLOR_YELLOW, "Hydra controller 0 is not enabled!\n" );
-		return;
-	}
-
 	_home = HydraToSourceVector( data.pos );
 }
 
@@ -126,6 +97,11 @@ void CRazerHydra::CreateMove( CUserCmd *cmd )
 		return;
 	}
 
+	if( data.buttons )
+	{
+		MarkHome( data );
+	}
+
 	Vector curPos = HydraToSourceVector( data.pos );
 
 	cmd->viewoffset = curPos - _home;
@@ -133,7 +109,7 @@ void CRazerHydra::CreateMove( CUserCmd *cmd )
 
 //----------------------------------------------------------------------------
 //----------------------------------------------------------------------------
-Vector CRazerHydra::HydraToSourceVector( float *v )
+Vector CRazerHydra::HydraToSourceVector( const float *v )
 {
 	// Source uses	{ forward, left, up }.
 	// Hydra uses	{ right, up, back }.
