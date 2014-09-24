@@ -36,6 +36,7 @@
 #ifdef HOLODECK
 #include "holodeck/in_dinput.h"
 #include "holodeck/in_leap.h"
+#include "holodeck/in_hydra.h"
 #endif
 
 // NVNT Include
@@ -1292,6 +1293,7 @@ void CInput::CreateMove ( int sequence_number, float input_sample_frametime, boo
 
 #ifdef HOLODECK
 	CLeapMotion::Get().CreateMove( cmd );
+	IRazerHydra::Get().CreateMove( cmd );
 
 	if( CDirectInput::Enabled() )
 	{
@@ -1693,6 +1695,7 @@ void CInput::Init_All (void)
 
 #ifdef HOLODECK
 	CLeapMotion::Create();
+	IRazerHydra::Create();
 
 	if( CDirectInput::Enabled() )
 	{
@@ -1720,6 +1723,7 @@ void CInput::Shutdown_All(void)
 
 #ifdef HOLODECK
 	CLeapMotion::Destroy();
+	IRazerHydra::Destroy();
 
 	if( CDirectInput::Enabled() )
 	{

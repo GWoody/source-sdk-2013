@@ -31,6 +31,7 @@ IMPLEMENT_SERVERCLASS_ST( CGridPlayer, DT_GridPlayer )
 
 	SendPropEHandle( SENDINFO( m_hHand ) ),
 	SendPropEHandle( SENDINFO( _activeWeapon ) ),
+	SendPropVector( SENDINFO( _viewoffset ) ),
 
 END_SEND_TABLE()
 
@@ -38,6 +39,7 @@ END_SEND_TABLE()
 //-----------------------------------------------------------------------------
 CGridPlayer::CGridPlayer() : _inventory( this )
 {
+	_viewoffset.GetForModify().Init( 0, 0, 0 );
 }
 
 //-----------------------------------------------------------------------------
@@ -89,6 +91,10 @@ void CGridPlayer::ProcessUsercmds( CUserCmd *cmds, int numcmds, int totalcmds, i
 	{
 		ProcessFrame( finalHoloFrame );
 	}
+
+	const Vector eyeOffset = GetFlags() & FL_DUCKING ? VEC_DUCK_VIEW_SCALED( this ) : VEC_VIEW_SCALED( this );
+	_viewoffset = cmds[totalcmds-1].viewoffset;
+	SetViewOffset( eyeOffset + _viewoffset );
 
 	BaseClass::ProcessUsercmds( cmds, numcmds, totalcmds, dropped_packets, paused );
 }

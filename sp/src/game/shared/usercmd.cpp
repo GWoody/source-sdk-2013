@@ -190,6 +190,7 @@ void WriteUsercmd( bf_write *buf, const CUserCmd *to, const CUserCmd *from )
 
 #ifdef HOLODECK
 	to->holo_frame.ToBitBuffer( buf );
+	buf->WriteBitVec3Coord( to->viewoffset );
 #endif
 }
 
@@ -310,5 +311,6 @@ void ReadUsercmd( bf_read *buf, CUserCmd *move, CUserCmd *from )
 
 #ifdef HOLODECK
 	move->holo_frame.FromBitBuffer( buf );
+	buf->ReadBitVec3Coord( move->viewoffset );
 #endif
 }

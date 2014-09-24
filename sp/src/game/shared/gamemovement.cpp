@@ -15,6 +15,13 @@
 #include "coordsize.h"
 #include "rumble_shared.h"
 
+#ifdef GRID_DLL
+#include "grid/grid_player.h"
+#elif defined GRID_CLIENT_DLL
+#include "grid/c_grid_player.h"
+#define CGridPlayer C_GridPlayer
+#endif
+
 #if defined(HL2_DLL) || defined(HL2_CLIENT_DLL)
 	#include "hl_movedata.h"
 #endif
@@ -4529,7 +4536,12 @@ void CGameMovement::Duck( void )
 	// his view height is at the standing height.
 	else if ( !IsDead() && !player->IsObserver() && !player->IsInAVehicle() )
 	{
+#ifdef HOLODECK
+		CGridPlayer *gridPlayer = (CGridPlayer *)player;
+		if ( ( player->m_Local.m_flDuckJumpTime == 0.0f ) && ( fabs(player->GetViewOffset().z - GetPlayerViewOffset( false ).z) > fabs(gridPlayer->GetHeadOffset().z) + 0.1 ) )
+#else
 		if ( ( player->m_Local.m_flDuckJumpTime == 0.0f ) && ( fabs(player->GetViewOffset().z - GetPlayerViewOffset( false ).z) > 0.1 ) )
+#endif
 		{
 			// we should rarely ever get here, so assert so a coder knows when it happens
 			Assert(0);

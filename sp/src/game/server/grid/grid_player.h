@@ -49,6 +49,7 @@ public:
 	// Accessors.
 	CHoloHand *		GetHandEntity() const				{ return m_hHand.Get(); }
 	grid::CInventory &	GetInventory()					{ return _inventory; }
+	Vector			GetHeadOffset() const				{ return _viewoffset; }
 
 private:
 	// UserCmd processing.
@@ -64,6 +65,7 @@ private:
 	grid::CInventory	_inventory;
 
 	bool			_weaponWasOut;
+	CNetworkVar( Vector, _viewoffset );
 };
 
 #endif // __GRID_PLAYER_H__

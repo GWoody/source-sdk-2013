@@ -116,6 +116,7 @@ public:
 		CRC32_ProcessBuffer( &crc, &mousedy, sizeof( mousedy ) );
 #ifdef HOLODECK
 		CRC32_ProcessBuffer( &crc, &holo_frame, sizeof( holo_frame ) );
+		CRC32_ProcessBuffer( &crc, &viewoffset, sizeof( viewoffset ) );
 #endif
 		CRC32_Final( &crc );
 
@@ -171,6 +172,7 @@ public:
 
 #ifdef HOLODECK
 	holo::CFrame holo_frame;
+	Vector	viewoffset;
 #endif
 };
 

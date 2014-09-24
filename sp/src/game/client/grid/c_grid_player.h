@@ -21,11 +21,15 @@ public:
 	DECLARE_CLASS( C_GridPlayer, C_BasePlayer );
 	DECLARE_CLIENTCLASS();
 
+	C_GridPlayer();
+
 	C_GridBaseWeapon *	GetActiveWeapon()				{ return dynamic_cast<C_GridBaseWeapon *>( _activeWeapon.Get() ); }
-	
+	Vector			GetHeadOffset()						{ return _viewoffset; }
+
 private:
 	EHANDLE			m_hHand;
 	EHANDLE			_activeWeapon;
+	Vector			_viewoffset;
 };
 
 #endif // __C_GRID_PLAYER_H__
