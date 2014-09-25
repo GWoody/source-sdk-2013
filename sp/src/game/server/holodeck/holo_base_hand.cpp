@@ -64,6 +64,8 @@ void CBaseHoloHand::Spawn()
 	SetCollisionBounds( -bounds, bounds );
 
 	SetRenderColor( 0, 255, 0 );
+
+	SetNextThink( gpGlobals->curtime + 0.01f ); 
 }
 
 //-----------------------------------------------------------------------------
@@ -79,6 +81,20 @@ bool CBaseHoloHand::CreateVPhysics()
 {
 	VPhysicsInitShadow( false, false );
 	return true;
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void CBaseHoloHand::Think()
+{
+	if( _heldEntity )
+	{
+		_heldEntity->Use( this, this, USE_SET, 2 );
+	}
+
+	BaseClass::Think();
+
+	SetNextThink( gpGlobals->curtime + 0.01f ); 
 }
 
 //-----------------------------------------------------------------------------

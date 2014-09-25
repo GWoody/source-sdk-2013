@@ -669,7 +669,7 @@ bool CGrabController::UpdateObject( CBaseHoloHand *pHand, float flError )
 	// Add the prop's distance offset
 	distance += m_flDistanceOffset;
 
-	Vector start = pPlayer->Weapon_ShootPosition();
+	Vector start = pHand->GetAbsOrigin();
 	Vector end = start + ( forward * distance );
 
 	trace_t	tr;

@@ -27,6 +27,7 @@ public:
 	virtual void	Spawn();
 	virtual void	Precache();
 	virtual	bool	CreateVPhysics();
+	virtual void	Think();
 
 	// Mutators.
 	void			SetType( holo::EHand type )		{ _type = type; }

@@ -86,6 +86,7 @@ Vector CGridPlayer::Weapon_ShootPosition()
 {
 	if( _weaponHandIdx == -1 )
 	{
+		Warning( "Calling "__FUNCTION__" without holding a weapon!\n" );
 		return Vector();
 	}
 
