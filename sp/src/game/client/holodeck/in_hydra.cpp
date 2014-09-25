@@ -53,14 +53,14 @@ CRazerHydra::CRazerHydra()
 
 	if( sixenseInit() == SIXENSE_FAILURE )
 	{
-		ConColorMsg( COLOR_YELLOW, "Failed to initialize Razer Hydra!\n" );
+		ConColorMsg( COLOR_YELLOW, "Failed to initialize SixenseSDK!\n" );
 		_initialized = false;
 		return;
 	}
 
 	sixenseSetFilterEnabled( 1 );
 
-	ConColorMsg( COLOR_GREEN, "Initialized Razer Hydra." );
+	ConColorMsg( COLOR_GREEN, "Initialized SixenseSDK.\n" );
 }
 
 //----------------------------------------------------------------------------

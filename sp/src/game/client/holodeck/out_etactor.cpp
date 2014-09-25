@@ -168,8 +168,6 @@ void CETactor::Connect()
 	_thread.Quit();
 	_thread.Join();
 
-	ConColorMsg( COLOR_GREEN, "Connecting to ETactor ID %d\n", holo_target_etactor.GetInt() );
-
 	// Ready the device connection.
 	if( !tens_init( "com3" ) )
 	{
@@ -190,7 +188,7 @@ void CETactor::Connect()
 	Sleep( TENS_TIMEOUT_MS );
 
 	_thread.Start();
-	ConColorMsg( COLOR_GREEN, "ETactor initialized.\n" );
+	ConColorMsg( COLOR_GREEN, "Connected to ETactor ID %d\n", holo_target_etactor.GetInt() );
 }
 
 //----------------------------------------------------------------------------
