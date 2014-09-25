@@ -27,6 +27,8 @@ public:
 	virtual void	SetEnabled( bool enabled ) = 0;
 	virtual void	SetTarget( unsigned char target ) = 0;
 	
+	virtual void	Connect() = 0;
+
 protected:
 	IETactor() {}
 
