@@ -20,7 +20,7 @@
 
 //----------------------------------------------------------------------------
 //----------------------------------------------------------------------------
-static const int TENS_TIMEOUT_MS = 20;
+static const int TENS_TIMEOUT_MS = 25;
 static ConVar holo_target_etactor( "holo_target_etactor", "1", FCVAR_HIDDEN | FCVAR_ARCHIVE );
 
 //----------------------------------------------------------------------------
@@ -29,14 +29,19 @@ static ConVar holo_target_etactor( "holo_target_etactor", "1", FCVAR_HIDDEN | FC
 class CETactorThread : public CThread
 {
 public:
+	CETactorThread()
+	{
+		_power = _frequency = 0;
+		_enabled = 0;
+		_target = holo_target_etactor.GetInt();
+	}
+
 	virtual int Run()
 	{
 		_quit = false;
 
 		while( !_quit )
 		{
-			// We set target to 0 when we commit a new target.
-			// Therefore, if another thread is modifying the target it will be non zero.
 			if( _target && _targetMutex.TryLock() )
 			{
 				tens_settarget( _target );
@@ -45,9 +50,11 @@ public:
 				Sleep( TENS_TIMEOUT_MS );
 			}
 
-			if( _enabledMutex.TryLock() )
+			if( _enabled && _enabledMutex.TryLock() )
 			{
-				tens_enable( TRUE, TRUE );
+				bool enabled = _enabled > 0 ? true : false;
+				tens_enable( enabled, enabled );
+				_enabled = 0;
 				_enabledMutex.Unlock();
 				Sleep( TENS_TIMEOUT_MS );
 			}
@@ -72,7 +79,7 @@ public:
 
 	void			SetPower( unsigned char power )		{ _powerMutex.Lock(); _power = power; _powerMutex.Unlock(); }
 	void			SetFrequency( unsigned char freq )	{ _freqMutex.Lock(); _frequency = freq; _freqMutex.Unlock(); }
-	void			SetEnabled( bool enabled )			{ _enabledMutex.Lock(); _enabled = enabled; _enabledMutex.Unlock(); }
+	void			SetEnabled( bool enabled )			{ _enabledMutex.Lock(); _enabled = enabled ? 1 : -1; _enabledMutex.Unlock(); }
 	void			SetTarget( unsigned char target )	{ _targetMutex.Lock(); _target = target; _targetMutex.Unlock(); }
 	void			Quit()		{ _quit = true; }
 
@@ -80,7 +87,7 @@ private:
 	// ETactor state.
 	volatile unsigned char	_power;
 	volatile unsigned char	_frequency;
-	volatile bool	_enabled;
+	volatile int	_enabled;
 	volatile unsigned char	_target;
 
 	volatile bool	_quit;

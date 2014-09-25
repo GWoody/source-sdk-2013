@@ -1,24 +1,28 @@
 /*
 ===============================================================================
 
-	c_grid_haptics.h
-	Defines the client side Grid haptic class.
+	c_holo_haptics.h
+	Defines the client side Holodeck haptic class.
 
 ===============================================================================
 */
 
-#ifndef __C_GRID_HAPTICS_H__
-#define __C_GRID_HAPTICS_H__
+#ifndef __C_HOLO_HAPTICS_H__
+#define __C_HOLO_HAPTICS_H__
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-class C_GridHaptics
+class C_HoloHaptics
 {
 public:
-	DECLARE_CLASS_NOBASE( C_GridHaptics );
+	DECLARE_CLASS_NOBASE( C_HoloHaptics );
 	DECLARE_EMBEDDED_NETWORKVAR();
 
-	C_GridHaptics();
+	C_HoloHaptics();
+
+	int				GetPower() const		{ return _power; }
+	int				GetFrequency() const	{ return _frequency; }
+	bool			IsEnabled() const		{ return _enabled; }
 
 private:
 	int				_power;
@@ -26,6 +30,6 @@ private:
 	bool			_enabled;
 };
 
-EXTERN_RECV_TABLE( DT_GridHaptics );
+EXTERN_RECV_TABLE( DT_HoloHaptics );
 
-#endif // __C_GRID_HAPTICS_H__
+#endif // __C_HOLO_HAPTICS_H__
