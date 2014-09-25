@@ -51,7 +51,7 @@ $Configuration
 
 	$Compiler
 	{
-		$AdditionalIncludeDirectories	".\;$BASE;$SRCDIR\vgui2\include;$SRCDIR\vgui2\controls;$SRCDIR\game\shared;.\game_controls;$SRCDIR\thirdparty\sixensesdk\include;$SRCDIR\..\..\..\LeapSDK\include;$SRCDIR\..\..\..\TENSLib\include;$SRCDIR\..\..\..\SixenseSDK\include"
+		$AdditionalIncludeDirectories	".\;$BASE;$SRCDIR\vgui2\include;$SRCDIR\vgui2\controls;$SRCDIR\game\shared;.\game_controls;$SRCDIR\thirdparty\sixensesdk\include;$SRCDIR\..\..\..\LeapSDK\include;$SRCDIR\..\..\..\TENSLib;$SRCDIR\..\..\..\SixenseSDK\include"
 		$PreprocessorDefinitions		"$BASE;NO_STRING_T;CLIENT_DLL;VECTOR;VERSION_SAFE_STEAM_API_INTERFACES;PROTECTED_THINGS_ENABLE;strncpy=use_Q_strncpy_instead;_snprintf=use_Q_snprintf_instead" 
 		$PreprocessorDefinitions		"$BASE;ENABLE_CHROMEHTMLWINDOW;fopen=dont_use_fopen" [$WIN32]
 		$PreprocessorDefinitions		"$BASE;ENABLE_CHROMEHTMLWINDOW;" [$OSXALL]
@@ -97,6 +97,22 @@ $Project
 			$Lib	"$SRCDIR\..\..\..\SixenseSDK\lib\win32\release_dll\sixense_utils"
 		}
 		
+		$Folder "ETactor"
+		{
+			$File	"$SRCDIR\..\..\..\TENSLib\tenslib.c"
+			{
+				$Configuration
+				{
+					$Compiler
+					{
+						$Create/UsePrecompiledHeader	"Not Using Precompiled Headers"
+					}
+				}
+			}
+		
+			$File	"$SRCDIR\..\..\..\TENSLib\tenslib.h"
+		}
+		
 		$File	"holodeck\c_base_holo_panel.cpp"
 		$File	"holodeck\c_base_holo_panel.h"
 		$File	"holodeck\c_holo_button_panel.cpp"
@@ -108,6 +124,8 @@ $Project
 		$File	"holodeck\in_hydra.h"
 		$File	"holodeck\in_leap.cpp"
 		$File	"holodeck\in_leap.h"
+		$File	"holodeck\out_etactor.cpp"
+		$File	"holodeck\out_etactor.h"
 		$File	"$SRCDIR\game\shared\holodeck\holo_shared.cpp"
 		$File	"$SRCDIR\game\shared\holodeck\holo_shared.h"
 	}
