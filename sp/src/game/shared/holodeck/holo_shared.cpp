@@ -480,6 +480,7 @@ void CHand::FromLeap( const Leap::Hand &h )
 	BuildFingers( h );
 
 	_id = h.id();
+	_ball.FromLeap( h );
 	_confidence = h.confidence();
 	_pinchStrength = h.pinchStrength();
 	_velocity = LeapToSourceVector( h.palmVelocity() );
@@ -516,6 +517,8 @@ void CHand::ToBitBuffer( bf_write *buf ) const
 	{
 		_fingers[i].ToBitBuffer( buf );
 	}
+
+	_ball.ToBitBuffer( buf );
 }
 
 void CHand::FromBitBuffer( bf_read *buf )
@@ -532,10 +535,14 @@ void CHand::FromBitBuffer( bf_read *buf )
 	{
 		_fingers[i].FromBitBuffer( buf );
 	}
+
+	_ball.FromBitBuffer( buf );
 }
 
 void CHand::Transform( float yaw, const Vector &translation )
 {
+	_ball.Transform( yaw, translation );
+
 	// Apply rotations.
 	VectorYawRotate( _position, yaw, _position );
 	VectorYawRotate( _normal, yaw, _normal );
@@ -615,6 +622,7 @@ CHand CHand::operator+( const CHand &other ) const
 	h._normal = _normal + other._normal;
 	h._position = _position + other._position;
 	h._velocity = _velocity + other._velocity;
+	h._ball = _ball + other._ball;
 
 	for( int i = 0; i < EFinger::FINGER_COUNT; i++ )
 	{
@@ -635,6 +643,7 @@ CHand CHand::operator/( float scale ) const
 	h._normal = _normal / scale;
 	h._position = _position / scale;
 	h._velocity = _velocity / scale;
+	h._ball = _ball / scale;
 
 	for( int i = 0; i < EFinger::FINGER_COUNT; i++ )
 	{
@@ -655,6 +664,7 @@ CHand CHand::operator*( float scale ) const
 	h._normal = _normal * scale;
 	h._position = _position * scale;
 	h._velocity = _velocity * scale;
+	h._ball = _ball * scale;
 
 	for( int i = 0; i < EFinger::FINGER_COUNT; i++ )
 	{
@@ -713,7 +723,7 @@ void CCircleGesture::ToBitBuffer( bf_write *buf ) const
 	buf->WriteFloat( _duration );
 	buf->WriteBitVec3Coord( _center );
 	buf->WriteBitVec3Normal( _normal );
-	buf->WriteVarInt32( _clockwise );
+	buf->WriteChar( _clockwise );
 }
 
 void CCircleGesture::FromBitBuffer( bf_read *buf )
@@ -724,7 +734,7 @@ void CCircleGesture::FromBitBuffer( bf_read *buf )
 	_duration = buf->ReadFloat();
 	buf->ReadBitVec3Coord( _center );
 	buf->ReadBitVec3Normal( _normal );
-	_clockwise = buf->ReadVarInt32() != 0 ? true : false;
+	_clockwise = buf->ReadChar() != 0 ? true : false;
 }
 
 void CCircleGesture::Transform( float yaw, const Vector &translation )
@@ -1125,10 +1135,25 @@ void CFrame::FromLeap( const Leap::Frame &f )
 		}
 	}
 
-	if (!hands.isEmpty())
+	bool wroteLeft = false;
+	bool wroteRight = false;
+	for( int i = 0; i < hands.count(); i++ )
 	{
-		_hand = CHand( hands[0] );
-		_ball = CBallGesture( hands[0] );
+		if( hands[i].isLeft() )
+		{
+			_hand[EHand::LEFT].FromLeap( hands[i] );
+			wroteLeft = true;
+		}
+		else if( hands[i].isRight() )
+		{
+			_hand[EHand::RIGHT].FromLeap( hands[i] );
+			wroteRight = true;
+		}
+
+		if( wroteLeft && wroteRight )
+		{
+			break;
+		}
 	}
 }
 #endif
@@ -1141,8 +1166,8 @@ void CFrame::ToBitBuffer( bf_write *buf ) const
 		return;
 	}
 
-	_hand.ToBitBuffer( buf );
-	_ball.ToBitBuffer( buf );
+	_hand[EHand::LEFT].ToBitBuffer( buf );
+	_hand[EHand::RIGHT].ToBitBuffer( buf );
 	buf->WriteVarInt32( _gestureBits );
 
 	if( IsGestureActive( GESTURE_CIRCLE ) )
@@ -1169,8 +1194,8 @@ void CFrame::FromBitBuffer( bf_read *buf )
 		return;
 	}
 
-	_hand.FromBitBuffer( buf );
-	_ball.FromBitBuffer( buf );
+	_hand[EHand::LEFT].FromBitBuffer( buf );
+	_hand[EHand::RIGHT].FromBitBuffer( buf );
 	_gestureBits = buf->ReadVarInt32();
 
 	if( IsGestureActive( GESTURE_CIRCLE ) )
@@ -1200,8 +1225,8 @@ void CFrame::ToEntitySpace( CBaseCombatCharacter *entity, const Vector &delta )
 	Vector translation = entity->GetAbsOrigin() + delta;
 	const float yaw = ownerAngles.y;
 
-	_hand.Transform( yaw, translation );
-	_ball.Transform( yaw, translation );
+	_hand[EHand::LEFT].Transform( yaw, translation );
+	_hand[EHand::RIGHT].Transform( yaw, translation );
 
 	if( IsGestureActive( EGesture::GESTURE_CIRCLE ) )
 	{
@@ -1222,7 +1247,7 @@ void CFrame::ToEntitySpace( CBaseCombatCharacter *entity, const Vector &delta )
 
 bool CFrame::IsValid() const
 {
-	if( _hand.GetPosition().IsZero() )
+	if( _hand[EHand::LEFT].GetPosition().IsZero() && _hand[EHand::RIGHT].GetPosition().IsZero() )
 	{
 		return false;
 	}
@@ -1232,8 +1257,17 @@ bool CFrame::IsValid() const
 
 inline const CHand *CFrame::GetHandById( int id ) const
 {
-	// In case we ever want the support multiple hands.
-	return _hand.GetId() == id ? &_hand : NULL;
+	if( _hand[EHand::LEFT].GetId() == id )
+	{
+		return &_hand[EHand::LEFT];
+	}
+
+	if( _hand[EHand::RIGHT].GetId() == id )
+	{
+		return &_hand[EHand::RIGHT];
+	}
+
+	return NULL;
 }
 
 CFrame CFrame::operator+( const CFrame &other ) const
@@ -1254,8 +1288,8 @@ CFrame CFrame::operator+( const CFrame &other ) const
 	// Both frames are valid. Add them!
 	CFrame f;
 
-	f._hand = _hand + other._hand;
-	f._ball = _ball + other._ball;
+	f._hand[EHand::LEFT] = _hand[EHand::LEFT] + other._hand[EHand::LEFT];
+	f._hand[EHand::RIGHT] = _hand[EHand::RIGHT] + other._hand[EHand::RIGHT];
 
 	f._circle = AddGesture( other, _circle, other._circle, EGesture::GESTURE_CIRCLE );
 	f._swipe = AddGesture( other, _swipe, other._swipe, EGesture::GESTURE_SWIPE );
@@ -1273,8 +1307,8 @@ CFrame CFrame::operator/( float scale ) const
 
 	f._valid = _valid;
 	f._gestureBits = _gestureBits;
-	f._hand = _hand / scale;
-	f._ball = _ball / scale;
+	f._hand[EHand::LEFT] = _hand[EHand::LEFT] / scale;
+	f._hand[EHand::RIGHT] = _hand[EHand::RIGHT] / scale;
 	f._circle = _circle / scale;
 	f._swipe = _swipe / scale;
 	f._tap = _tap / scale;
@@ -1288,8 +1322,8 @@ CFrame CFrame::operator*( float scale ) const
 
 	f._valid = _valid;
 	f._gestureBits = _gestureBits;
-	f._hand = _hand * scale;
-	f._ball = _ball * scale;
+	f._hand[EHand::LEFT] = _hand[EHand::LEFT] * scale;
+	f._hand[EHand::RIGHT] = _hand[EHand::RIGHT] * scale;
 	f._circle = _circle * scale;
 	f._swipe = _swipe * scale;
 	f._tap = _tap * scale;

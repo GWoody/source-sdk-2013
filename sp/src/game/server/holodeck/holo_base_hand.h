@@ -27,9 +27,28 @@ public:
 	virtual void	Spawn();
 	virtual void	Precache();
 	virtual	bool	CreateVPhysics();
+	virtual void	Think();
+
+	// Mutators.
+	void			SetType( holo::EHand type )		{ _type = type; }
 
 	// Accessors.
 	const holo::CFrame &	GetFrame() const;
+	const holo::CHand &	GetHoloHand() const;
+	const holo::EHand	GetType() const				{ return _type; }
+	CBasePlayer *	GetOwnerPlayer() const			{ return (CBasePlayer *)GetOwnerEntity(); }
+
+	// Held object.
+	void			SetUseEntity( CBaseEntity *entity );
+	CBaseEntity *	GetUseEntity();
+	bool			ClearUseEntity();
+
+	// Object interaction.
+	void			PickupObject( CBaseEntity *pObject, bool bLimitMassAndSize = true );
+	bool			IsHoldingEntity( CBaseEntity *pEnt );
+	float			GetHeldObjectMass( IPhysicsObject *pHeldObject );
+	void			AttemptObjectPickup();
+	void			AttemptObjectDrop();
 
 	// Frame processing.
 	void			ProcessFrame( const holo::CFrame &frame );
@@ -40,15 +59,22 @@ public:
 	void			DebugEndTouch();
 
 private:
-	void			RenderDebugHand();
+	CBaseEntity *	FindUseEntity();
+	bool			CanPickupObject( CBaseEntity *pObject, float massLimit, float sizeLimit );
+	float			IntervalDistance( float x, float x0, float x1 );
 
+	void			RenderDebugHand();
 	Vector			GetOriginOffset() const;
 
 	holo::CFrame	_transformedFrame, _untransformedFrame;
 
 	holo::CFrameFilter _filter;
+	holo::EHand		_type;
 
 	Vector			_lastOriginDelta;
+
+	// Object interaction.
+	EHANDLE			_heldEntity;
 };
 
 #endif // __HOLO_BASE_HAND_H__

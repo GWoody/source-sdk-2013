@@ -10,6 +10,8 @@
 #ifndef __GRID_GRABCONTROLLER_H__
 #define __GRID_GRABCONTROLLER_H__
 
+class CBaseHoloHand;
+
 //-----------------------------------------------------------------------------
 // Derive from `hlshadowcontrol_params_t` so we can add save/load data to it
 //-----------------------------------------------------------------------------
@@ -28,11 +30,11 @@ public:
 
 	CGrabController( void );
 	~CGrabController( void );
-	void AttachEntity( CBasePlayer *pPlayer, CBaseEntity *pEntity, IPhysicsObject *pPhys, bool bIsMegaPhysCannon, const Vector &vGrabPosition, bool bUseGrabPosition );
+	void AttachEntity( CBaseHoloHand *pHand, CBaseEntity *pEntity, IPhysicsObject *pPhys, bool bIsMegaPhysCannon, const Vector &vGrabPosition, bool bUseGrabPosition );
 	void DetachEntity( bool bClearVelocity );
 	void OnRestore();
 
-	bool UpdateObject( CBasePlayer *pPlayer, float flError );
+	bool UpdateObject( CBaseHoloHand *pHand, float flError );
 
 	void SetTargetPosition( const Vector &target, const QAngle &targetOrientation );
 	float ComputeError();
@@ -86,7 +88,7 @@ private:
 	bool			m_bAllowObjectOverhead; // Can the player hold this object directly overhead? (Default is NO)
 
 	// NVNT player controlling this grab controller
-	CBasePlayer*	m_pControllingPlayer;
+	CBaseHoloHand*	m_pControllingHand;
 
 	friend class CWeaponPhysCannon;
 };

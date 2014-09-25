@@ -32,7 +32,7 @@ BEGIN_DATADESC( CPlayerPickupController )
 	// Physptrs can't be inside embedded classes
 	DEFINE_PHYSPTR( m_grabController.m_controller ),
 
-	DEFINE_FIELD( m_pPlayer,		FIELD_CLASSPTR ),
+	DEFINE_FIELD( m_pHand,		FIELD_CLASSPTR ),
 	
 END_DATADESC()
 
@@ -41,18 +41,8 @@ END_DATADESC()
 // Input  : *pPlayer - 
 //			*pObject - 
 //-----------------------------------------------------------------------------
-void CPlayerPickupController::Init( CBasePlayer *pPlayer, CBaseEntity *pObject )
+void CPlayerPickupController::Init( CBaseHoloHand *pHand, CBaseEntity *pObject )
 {
-	// Holster player's weapon
-	if ( pPlayer->GetActiveWeapon() )
-	{
-		if ( !pPlayer->GetActiveWeapon()->CanHolster() || !pPlayer->GetActiveWeapon()->Holster() )
-		{
-			Shutdown();
-			return;
-		}
-	}
-
 	// If the target is debris, convert it to non-debris
 	if ( pObject->GetCollisionGroup() == COLLISION_GROUP_DEBRIS )
 	{
@@ -61,18 +51,17 @@ void CPlayerPickupController::Init( CBasePlayer *pPlayer, CBaseEntity *pObject )
 	}
 
 	// done so I'll go across level transitions with the player
-	SetParent( pPlayer );
+	SetParent( pHand );
 	m_grabController.SetIgnorePitch( true );
 	m_grabController.SetAngleAlignment( DOT_30DEGREE );
-	m_pPlayer = pPlayer;
+	m_pHand = pHand;
 	IPhysicsObject *pPhysics = pObject->VPhysicsGetObject();
 	
-	Pickup_OnPhysGunPickup( pObject, m_pPlayer, PICKED_UP_BY_PLAYER );
+	Pickup_OnPhysGunPickup( pObject, pHand->GetOwnerPlayer(), PICKED_UP_BY_PLAYER );
 	
-	m_grabController.AttachEntity( pPlayer, pObject, pPhysics, false, vec3_origin, false );
+	m_grabController.AttachEntity( pHand, pObject, pPhysics, false, vec3_origin, false );
 	
-	m_pPlayer->m_Local.m_iHideHUD |= HIDEHUD_WEAPONSELECTION;
-	m_pPlayer->SetUseEntity( this );
+	pHand->SetUseEntity( this );
 }
 
 
@@ -93,24 +82,12 @@ void CPlayerPickupController::Shutdown( bool bThrown )
 	m_grabController.DetachEntity( bClearVelocity );
 	if ( pObject != NULL )
 	{
-		Pickup_OnPhysGunDrop( pObject, m_pPlayer, bThrown ? THROWN_BY_PLAYER : DROPPED_BY_PLAYER );
+		Pickup_OnPhysGunDrop( pObject, m_pHand->GetOwnerPlayer(), bThrown ? THROWN_BY_PLAYER : DROPPED_BY_PLAYER );
 	}
 
-	if ( m_pPlayer )
+	if ( m_pHand )
 	{
-		m_pPlayer->SetUseEntity( NULL );
-		if ( m_pPlayer->GetActiveWeapon() )
-		{
-			if ( !m_pPlayer->GetActiveWeapon()->Deploy() )
-			{
-				// We tried to restore the player's weapon, but we couldn't.
-				// This usually happens when they're holding an empty weapon that doesn't
-				// autoswitch away when out of ammo. Switch to next best weapon.
-				m_pPlayer->SwitchToNextBestWeapon( NULL );
-			}
-		}
-
-		m_pPlayer->m_Local.m_iHideHUD &= ~HIDEHUD_WEAPONSELECTION;
+		m_pHand->SetUseEntity( NULL );
 	}
 
 	Remove();
@@ -120,7 +97,7 @@ void CPlayerPickupController::Shutdown( bool bThrown )
 //-----------------------------------------------------------------------------
 void CPlayerPickupController::Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value )
 {
-	if ( ToBasePlayer(pActivator) == m_pPlayer )
+	if ( pActivator == m_pHand )
 	{
 		CBaseEntity *pAttached = m_grabController.GetAttached();
 
@@ -140,10 +117,9 @@ void CPlayerPickupController::Use( CBaseEntity *pActivator, CBaseEntity *pCaller
 			Vector vecLaunch;
 			
 			// HOLODECK: Base launch direction is now the (eye->hand) vector.
-			CGridPlayer *gridplayer = dynamic_cast<CGridPlayer *>( m_pPlayer );
+			CGridPlayer *gridplayer = dynamic_cast<CGridPlayer *>( m_pHand->GetOwnerPlayer() );
 			Assert( gridplayer );
-			const holo::CHand &hand = gridplayer->GetHandEntity()->GetFrame().GetHand();
-			vecLaunch = hand.GetPosition() - m_pPlayer->EyePosition();
+			vecLaunch = m_pHand->GetAbsOrigin() - gridplayer->EyePosition();
 			vecLaunch.NormalizeInPlace();
 
 			// JAY: Scale this with mass because some small objects really go flying
@@ -152,7 +128,7 @@ void CPlayerPickupController::Use( CBaseEntity *pActivator, CBaseEntity *pCaller
 			vecLaunch *= player_throwforce.GetFloat() * massFactor;
 
 			// HOLODECK: made the launch velocity affected by the hand velocity.
-			Vector handVelocity = hand.GetVelocity();
+			Vector handVelocity = m_pHand->GetHoloHand().GetVelocity();
 			
 			// Ensure the sign of `vecLaunch` is preserved.
 			handVelocity.x = fabs( handVelocity.x );
@@ -179,7 +155,7 @@ void CPlayerPickupController::Use( CBaseEntity *pActivator, CBaseEntity *pCaller
 		if ( useType == USE_SET )
 		{
 			// update position
-			m_grabController.UpdateObject( m_pPlayer, 12 );
+			m_grabController.UpdateObject( m_pHand, 12 );
 		}
 	}
 }

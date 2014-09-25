@@ -27,7 +27,7 @@ void PlayerPickupObject( CBasePlayer *pPlayer, CBaseEntity *pObject )
 	if ( !pController )
 		return;
 
-	pController->Init( pPlayer, pObject );
+//	pController->Init( pPlayer, pObject );
 }
 
 //-----------------------------------------------------------------------------

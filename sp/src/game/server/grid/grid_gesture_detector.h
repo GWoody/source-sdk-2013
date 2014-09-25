@@ -34,7 +34,7 @@ namespace grid
 		void			SetInactive()			{ _active = false; }
 
 	private:
-		virtual void	Detect( const holo::CFrame &frame ) = 0;
+		virtual void	Detect( const holo::CFrame &frame, holo::EHand hand ) = 0;
 
 		bool			_active;
 	};
@@ -65,12 +65,12 @@ namespace grid
 		bool			HasClenchFinished()		{ return _clenchState == EState::FINISHED; }
 
 	private:
-		virtual void	Detect( const holo::CFrame &frame );
+		virtual void	Detect( const holo::CFrame &frame, holo::EHand hand );
 
 		EState			_clenchState;
 
 		// Radius of the ball gesture last frame.
-		static float	_lastRadius;
+		static float	_lastRadius[holo::EHand::HAND_COUNT];
 	};
 
 	//-------------------------------------------------------------------------
@@ -93,11 +93,11 @@ namespace grid
 		bool			HoldingTrigger() const	{ return _state == EState::TRIGGER; }
 
 	private:
-		virtual void	Detect( const holo::CFrame &frame );
+		virtual void	Detect( const holo::CFrame &frame, holo::EHand hand );
 
-		bool			DetectClosedFingers( const holo::CFrame &frame );
-		bool			DetectGangsta( const holo::CFrame &frame );
-		bool			DetectTrigger( const holo::CFrame &frame );
+		bool			DetectClosedFingers( const holo::CFrame &frame, holo::EHand hand );
+		bool			DetectGangsta( const holo::CFrame &frame, holo::EHand hand );
+		bool			DetectTrigger( const holo::CFrame &frame, holo::EHand hand );
 
 		EState			_state;
 	};
@@ -115,8 +115,8 @@ namespace grid
 		void			SetGestureEnabled( EGesture gesture, bool enabled )		{ _gestureStatus[gesture] = enabled; }
 		bool			IsGestureEnabled( EGesture gesture )					{ return _gestureStatus[gesture]; }
 
-		CPickupGesture	DetectPickupGesture();
-		CGunGesture		DetectGunGesture();
+		CPickupGesture	DetectPickupGesture( holo::EHand hand );
+		CGunGesture		DetectGunGesture( holo::EHand hand );
 
 	private:
 		bool			_gestureStatus[EGesture::COUNT];

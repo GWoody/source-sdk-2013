@@ -40,6 +40,7 @@ END_SEND_TABLE()
 CGridPlayer::CGridPlayer() : _inventory( this )
 {
 	_viewoffset.GetForModify().Init( 0, 0, 0 );
+	_weaponHandIdx = -1;
 }
 
 //-----------------------------------------------------------------------------
@@ -49,11 +50,15 @@ void CGridPlayer::Spawn()
 	SetModel( "models/player.mdl" );
 
 	// Create the hand entity.
-	CHoloHand *pHand = dynamic_cast<CHoloHand *>( CreateEntityByName( "holo_hand" ) );
-	Assert( pHand );
-	pHand->Spawn();
-	pHand->SetOwnerEntity( this );
-	m_hHand.Set( pHand );
+	for( int i = 0; i < EHand::HAND_COUNT; i++ )
+	{
+		CHoloHand *pHand = dynamic_cast<CHoloHand *>( CreateEntityByName( "holo_hand" ) );
+		Assert( pHand );
+		pHand->Spawn();
+		pHand->SetOwnerEntity( this ); 
+		pHand->SetType( (EHand)i );
+		m_hHand.Set( i, pHand );
+	}
 
 	_weaponWasOut = false;
 
@@ -66,9 +71,28 @@ void CGridPlayer::Spawn()
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
+void CGridPlayer::Event_Killed( const CTakeDamageInfo &info )
+{
+	for( int i = 0; i < EHand::HAND_COUNT; i++ )
+	{
+		CBaseHoloHand *hand = (CBaseHoloHand *)m_hHand.Get( i ).Get();
+		hand->ClearUseEntity();
+	}
+
+	BaseClass::Event_Killed( info );
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 Vector CGridPlayer::Weapon_ShootPosition()
 {
-	return m_hHand->GetAbsOrigin();
+	if( _weaponHandIdx == -1 )
+	{
+		Warning( "Calling "__FUNCTION__" without holding a weapon!\n" );
+		return Vector();
+	}
+
+	return m_hHand[_weaponHandIdx]->GetAbsOrigin();
 }
 
 //-----------------------------------------------------------------------------
@@ -86,7 +110,12 @@ void CGridPlayer::ProcessUsercmds( CUserCmd *cmds, int numcmds, int totalcmds, i
 {
 	CFrame finalHoloFrame = AccumulateHoloFrame( cmds, numcmds, totalcmds, dropped_packets, paused );
 	
-	m_hHand->ProcessFrame( finalHoloFrame );
+	for( int i = 0; i < EHand::HAND_COUNT; i++ )
+	{
+		CHoloHand *hand = (CHoloHand *)m_hHand[i].Get();
+		hand->ProcessFrame( finalHoloFrame );
+	}
+
 	if( finalHoloFrame.IsValid() )
 	{
 		ProcessFrame( finalHoloFrame );
@@ -132,8 +161,9 @@ CFrame CGridPlayer::AccumulateHoloFrame( CUserCmd *cmds, int numcmds, int totalc
 			finalHoloFrame.SetTapGesture( curframe.GetTapGesture() );
 		}
 
-		finalHoloFrame.SetBallGesture( curframe.GetBallGesture() );
-		finalHoloFrame.SetHand( curframe.GetHand() );
+		finalHoloFrame.SetHand( curframe.GetHand( EHand::LEFT ), EHand::LEFT );
+		finalHoloFrame.SetHand( curframe.GetHand( EHand::RIGHT ), EHand::RIGHT );
+
 		finalHoloFrame.SetValid( true );
 	}
 
@@ -155,16 +185,20 @@ void CGridPlayer::ProcessFrame( const holo::CFrame &frame )
 //-----------------------------------------------------------------------------
 void CGridPlayer::HandlePickupGesture()
 {
-	CPickupGesture pickup = _gestureDetector.DetectPickupGesture();
-	if( pickup.IsActive() )
+	for( int i = 0; i < EHand::HAND_COUNT; i++ )
 	{
-		if( pickup.HasClenchStarted() )
+		CPickupGesture pickup = _gestureDetector.DetectPickupGesture( (EHand)i );
+		if( pickup.IsActive() )
 		{
-			SetAttemptObjectPickup( true );
-		}
-		else if( pickup.HasClenchFinished() )
-		{
-			SetAttemptObjectPickup( false );
+			CHoloHand *hand = (CHoloHand *)m_hHand[i].Get();
+			if( pickup.HasClenchStarted() )
+			{
+				hand->AttemptObjectPickup();
+			}
+			else if( pickup.HasClenchFinished() )
+			{
+				hand->AttemptObjectDrop();
+			}
 		}
 	}
 }
@@ -179,28 +213,38 @@ void CGridPlayer::HandleGunGesture()
 		return;
 	}
 
-	CGunGesture gun = _gestureDetector.DetectGunGesture();
-	if( gun.IsActive() )
+	for( int i = 0; i < EHand::HAND_COUNT; i++ )
 	{
-		if( !_weaponWasOut )
+		CGunGesture gun = _gestureDetector.DetectGunGesture( (EHand)i );
+		CHoloHand *hand = (CHoloHand *)m_hHand[i].Get();
+		if( gun.IsActive() )
 		{
-			// The gun gesture was first made this frame. Show the gun in place of the hand.
-			weapon->TakeOut();
-			_activeWeapon = weapon;
-			m_hHand->SetInvisible( true );
+			if( !_weaponWasOut )
+			{
+				// The gun gesture was first made this frame. Show the gun in place of the hand.
+				_activeWeapon = weapon;
+				_weaponHandIdx = i;
+				_activeWeapon->TakeOut();
+				hand->SetInvisible( true );
+			}
+
+			weapon->SetTriggerState( gun.HoldingTrigger() );
+
+			_weaponWasOut = true;
+			_weaponHandIdx = i;
+			break;
 		}
+		else if( i == _weaponHandIdx && _weaponWasOut && !gun.IsActive() )
+		{
+			// All gun gestures have been stopped. Return the hand to the normal state.
+			weapon->PutAway();
+			hand->SetInvisible( false );
 
-		weapon->SetTriggerState( gun.HoldingTrigger() );
-
-		_weaponWasOut = true;
-	}
-	else if( _weaponWasOut )
-	{
-		// All gun gestures have been stopped. Return the hand to the normal state.
-		weapon->PutAway();
-		_activeWeapon = NULL;
-		m_hHand->SetInvisible( false );
-		_weaponWasOut = false;
+			_activeWeapon = NULL;
+			_weaponWasOut = false;
+			_weaponHandIdx = -1;
+			break;
+		}
 	}
 }
 
@@ -215,9 +259,10 @@ void CGridPlayer::PreThink()
 	{
 		if( weapon->IsOut() )
 		{
-			const Vector &pointerDir = m_hHand->GetFrame().GetHand().GetFingerByType( holo::EFinger::FINGER_POINTER ).GetDirection();
+			CHoloHand *hand = (CHoloHand *)m_hHand[_weaponHandIdx].Get();
+			const Vector &pointerDir = hand->GetHoloHand().GetFingerByType( holo::EFinger::FINGER_POINTER ).GetDirection();
 			weapon->SetDirection( pointerDir );
-			weapon->SetAbsOrigin( m_hHand->GetAbsOrigin() );
+			weapon->SetAbsOrigin( hand->GetAbsOrigin() );
 			weapon->ItemPreFrame();
 		}
 	}

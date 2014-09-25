@@ -15,6 +15,7 @@
 #include "vphysics/friction.h"
 #include "grid_gamerules.h"
 #include "grid_player.h"
+#include "holodeck/holo_hand.h"
 
 //-----------------------------------------------------------------------------
 // ConVars
@@ -90,7 +91,7 @@ CGrabController::CGrabController( void )
 	m_bHasPreferredCarryAngles = false;
 	m_flDistanceOffset = 0;
 	// NVNT constructing m_pControllingPlayer to NULL
-	m_pControllingPlayer = NULL;
+	m_pControllingHand = NULL;
 }
 
 //-----------------------------------------------------------------------------
@@ -351,8 +352,10 @@ QAngle CGrabController::AlignAngles( const QAngle &angles, float cosineAlignAngl
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void CGrabController::AttachEntity( CBasePlayer *pPlayer, CBaseEntity *pEntity, IPhysicsObject *pPhys, bool bIsMegaPhysCannon, const Vector &vGrabPosition, bool bUseGrabPosition )
+void CGrabController::AttachEntity( CBaseHoloHand *hand, CBaseEntity *pEntity, IPhysicsObject *pPhys, bool bIsMegaPhysCannon, const Vector &vGrabPosition, bool bUseGrabPosition )
 {
+	CBasePlayer *pPlayer = hand->GetOwnerPlayer();
+
 	// play the impact sound of the object hitting the player
 	// used as feedback to let the player know he picked up the object
 	int hitMaterial = pPhys->GetMaterialIndex();
@@ -411,7 +414,7 @@ void CGrabController::AttachEntity( CBasePlayer *pPlayer, CBaseEntity *pEntity, 
 	}
 
 	// NVNT setting m_pControllingPlayer to the player attached
-	m_pControllingPlayer = pPlayer;
+	m_pControllingHand = hand;
 	
 	// Give extra mass to the phys object we're actually picking up
 	pPhys->SetMass( REDUCED_CARRY_MASS );
@@ -621,10 +624,10 @@ bool CGrabController::IsObjectAllowedOverhead( CBaseEntity *pEntity )
 // player can reach down 2ft below his feet (otherwise he'll hold the object above the bottom)
 #define PLAYER_REACH_DOWN_DISTANCE	24
 
-bool CGrabController::UpdateObject( CBasePlayer *pPlayer, float flError )
+bool CGrabController::UpdateObject( CBaseHoloHand *pHand, float flError )
 {
  	CBaseEntity *pEntity = GetAttached();
-	if ( !pEntity || ComputeError() > flError || pPlayer->GetGroundEntity() == pEntity || !pEntity->VPhysicsGetObject() )
+	if ( !pEntity || ComputeError() > flError || pHand->GetOwnerPlayer()->GetGroundEntity() == pEntity || !pEntity->VPhysicsGetObject() )
 	{
 		return false;
 	}
@@ -636,12 +639,11 @@ bool CGrabController::UpdateObject( CBasePlayer *pPlayer, float flError )
 		return false;
 	}
 
-	CGridPlayer *gridPlayer = dynamic_cast<CGridPlayer *>( pPlayer );
-	Assert( gridPlayer );
+	CBasePlayer *pPlayer = pHand->GetOwnerPlayer();
+	const holo::CHand &frameHand = pHand->GetHoloHand();
 
-	const holo::CFrame &frame = gridPlayer->GetHandEntity()->GetFrame();
-	QAngle playerAngles = frame.GetHand().GetAngles();
-	Vector forward = frame.GetHand().GetPosition() - pPlayer->EyePosition();
+	QAngle playerAngles = frameHand.GetAngles();
+	Vector forward = frameHand.GetPosition() - pPlayer->EyePosition();
 
 	forward.NormalizeInPlace();
 	
@@ -667,7 +669,7 @@ bool CGrabController::UpdateObject( CBasePlayer *pPlayer, float flError )
 	// Add the prop's distance offset
 	distance += m_flDistanceOffset;
 
-	Vector start = pPlayer->Weapon_ShootPosition();
+	Vector start = pHand->GetAbsOrigin();
 	Vector end = start + ( forward * distance );
 
 	trace_t	tr;

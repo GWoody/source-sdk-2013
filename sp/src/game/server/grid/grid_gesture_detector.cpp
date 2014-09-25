@@ -23,20 +23,24 @@ static ConVar grid_gun_trigger_angle( "grid_gun_trigger_angle", "30", FCVAR_ARCH
 //-----------------------------------------------------------------------------
 // Gesture statics.
 //-----------------------------------------------------------------------------
-float CPickupGesture::_lastRadius = 0.0f;
+float CPickupGesture::_lastRadius[holo::EHand::HAND_COUNT] = { 0.0f, 0.0f };
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void CPickupGesture::Detect( const holo::CFrame &frame )
+void CPickupGesture::Detect( const holo::CFrame &frame, holo::EHand hand )
 {
 	float grabStrength = grid_pickup_strength.GetFloat();
-	float curRadius = frame.GetBallGesture().GetGrabStrength();
+	float curRadius = frame.GetHand( hand ).GetBallGesture().GetGrabStrength();
 
-	if( curRadius >= grabStrength && _lastRadius < grabStrength )
+	if( curRadius == 0.0f )
+	{
+		SetInactive();
+	}
+	else if( curRadius >= grabStrength && _lastRadius[hand] < grabStrength )
 	{
 		_clenchState = EState::STARTED;
 	}
-	else if( curRadius < grabStrength && _lastRadius >= grabStrength )
+	else if( curRadius < grabStrength && _lastRadius[hand] >= grabStrength )
 	{
 		_clenchState = EState::FINISHED;
 	}
@@ -44,27 +48,23 @@ void CPickupGesture::Detect( const holo::CFrame &frame )
 	{
 		_clenchState = EState::CLOSED;
 	}
-	else
-	{
-		SetInactive();
-	}
 
-	_lastRadius = curRadius;
+	_lastRadius[hand] = curRadius;
 }
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void CGunGesture::Detect( const holo::CFrame &frame )
+void CGunGesture::Detect( const holo::CFrame &frame, holo::EHand hand )
 {
-	if( !DetectClosedFingers( frame ) )
+	if( !DetectClosedFingers( frame, hand ) )
 	{
 		SetInactive();
 	}
-	else if( DetectTrigger( frame ) )
+	else if( DetectTrigger( frame, hand ) )
 	{
 		_state = EState::TRIGGER;
 	}
-	else if( DetectGangsta( frame ) )
+	else if( DetectGangsta( frame, hand ) )
 	{
 		_state = EState::IDLE;
 	}
@@ -73,31 +73,33 @@ void CGunGesture::Detect( const holo::CFrame &frame )
 //-----------------------------------------------------------------------------
 // Ensure the middle, ring and pinky fingers are all pointing the same direction.
 //-----------------------------------------------------------------------------
-bool CGunGesture::DetectClosedFingers( const holo::CFrame &frame )
+bool CGunGesture::DetectClosedFingers( const holo::CFrame &frame, holo::EHand hand )
 {
 	float tol = grid_gun_direction_tolerance.GetFloat();
 	float theta;
 
+	const holo::CHand &holohand = frame.GetHand( hand );
+
 	// Occasionally the middle finger gets "stuck" to the pointer and will copy its direction.
-	theta = frame.GetHand().FindThetaBetweenFingers( holo::EFinger::FINGER_POINTER, holo::EFinger::FINGER_MIDDLE );
+	theta = holohand.FindThetaBetweenFingers( holo::EFinger::FINGER_POINTER, holo::EFinger::FINGER_MIDDLE );
 	if( theta > tol )
 	{
 		// The middle finger is not stuck. Ensure the ring and middle fingers are pointing in roughly the same direction.
-		theta = frame.GetHand().FindThetaBetweenFingers( holo::EFinger::FINGER_RING, holo::EFinger::FINGER_MIDDLE );
+		theta = holohand.FindThetaBetweenFingers( holo::EFinger::FINGER_RING, holo::EFinger::FINGER_MIDDLE );
 		if( theta > tol )
 		{
 			return false;
 		}
 	}
 
-	theta = frame.GetHand().FindThetaBetweenFingers( holo::EFinger::FINGER_RING, holo::EFinger::FINGER_PINKY );
+	theta = holohand.FindThetaBetweenFingers( holo::EFinger::FINGER_RING, holo::EFinger::FINGER_PINKY );
 	if( theta > tol )
 	{
 		return false;
 	}
 
 	// Check if the fingers are pointing the opposite direction to the pointer.
-	theta = frame.GetHand().FindThetaBetweenFingers( holo::EFinger::FINGER_POINTER, holo::EFinger::FINGER_RING );
+	theta = holohand.FindThetaBetweenFingers( holo::EFinger::FINGER_POINTER, holo::EFinger::FINGER_RING );
 	if( theta < 90.0f )
 	{
 		return false;
@@ -108,9 +110,9 @@ bool CGunGesture::DetectClosedFingers( const holo::CFrame &frame )
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-bool CGunGesture::DetectGangsta( const holo::CFrame &frame )
+bool CGunGesture::DetectGangsta( const holo::CFrame &frame, holo::EHand hand )
 {
-	float theta = frame.GetHand().FindThetaBetweenFingers( holo::EFinger::FINGER_POINTER, holo::EFinger::FINGER_THUMB );
+	float theta = frame.GetHand(hand).FindThetaBetweenFingers( holo::EFinger::FINGER_POINTER, holo::EFinger::FINGER_THUMB );
 	float baseAngle = grid_gun_idle_l_angle.GetFloat();
 	float tol = grid_gun_direction_tolerance.GetFloat();
 
@@ -124,11 +126,12 @@ bool CGunGesture::DetectGangsta( const holo::CFrame &frame )
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-bool CGunGesture::DetectTrigger( const holo::CFrame &frame )
+bool CGunGesture::DetectTrigger( const holo::CFrame &frame, holo::EHand hand )
 {
-	const holo::CFinger &pointer = frame.GetHand().GetFingerByType( holo::EFinger::FINGER_POINTER );
+	const holo::CHand &holohand = frame.GetHand( hand );
+	const holo::CFinger &pointer = holohand.GetFingerByType( holo::EFinger::FINGER_POINTER );
 	const holo::CBone &pointerBase = pointer.GetBone( holo::EBone::BONE_INTERMEDIATE );
-	const holo::CFinger &thumb = frame.GetHand().GetFingerByType( holo::EFinger::FINGER_THUMB );
+	const holo::CFinger &thumb = holohand.GetFingerByType( holo::EFinger::FINGER_THUMB );
 
 	// We want the thumb tip to be relatively close to the pointer tip.
 	const Vector &diff = pointerBase.GetNextJoint() - thumb.GetTipPosition();
@@ -152,7 +155,7 @@ CGestureDetector::CGestureDetector()
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-CPickupGesture CGestureDetector::DetectPickupGesture()
+CPickupGesture CGestureDetector::DetectPickupGesture( holo::EHand hand )
 {
 	CPickupGesture pickup;
 
@@ -163,13 +166,13 @@ CPickupGesture CGestureDetector::DetectPickupGesture()
 		return pickup;
 	}
 
-	pickup.Detect( _frame );
+	pickup.Detect( _frame, hand );
 	return pickup;
 }
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-CGunGesture CGestureDetector::DetectGunGesture()
+CGunGesture CGestureDetector::DetectGunGesture( holo::EHand hand )
 {
 	CGunGesture gun;
 
@@ -180,6 +183,6 @@ CGunGesture CGestureDetector::DetectGunGesture()
 		return gun;
 	}
 
-	gun.Detect( _frame );
+	gun.Detect( _frame, hand );
 	return gun;
 }

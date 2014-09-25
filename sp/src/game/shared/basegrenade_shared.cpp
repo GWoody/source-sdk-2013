@@ -16,6 +16,10 @@
 #include "entitylist.h"
 #include "gamestats.h"
 
+#ifdef HOLODECK
+#include "holodeck/holo_base_hand.h"
+#endif
+
 #endif
 
 // memdbgon must be the last include file in a .cpp file!!!
@@ -244,6 +248,18 @@ void CBaseGrenade::Event_Killed( const CTakeDamageInfo &info )
 //-----------------------------------------------------------------------------
 void CBaseGrenade::Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value )
 {
+#ifdef HOLODECK
+	if ( useType == USE_TOGGLE )
+	{
+		CBaseHoloHand *pHand = dynamic_cast<CBaseHoloHand *>( pActivator );
+		if ( pHand )
+		{
+			pHand->PickupObject( this );
+			return;
+		}
+	}
+#endif
+
 	// Support player pickup
 	if ( useType == USE_TOGGLE )
 	{

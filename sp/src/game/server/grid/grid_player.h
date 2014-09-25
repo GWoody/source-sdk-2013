@@ -34,6 +34,7 @@ public:
 
 	// CBasePlayer overrides.
 	virtual void	Spawn();
+	virtual void	Event_Killed( const CTakeDamageInfo &info );
 
 	// Weapon overrides.
 	virtual Vector	Weapon_ShootPosition();
@@ -47,7 +48,7 @@ public:
 	virtual void	PostThink();
 
 	// Accessors.
-	CHoloHand *		GetHandEntity() const				{ return m_hHand.Get(); }
+	CHoloHand *		GetHandEntity( holo::EHand hand ) const	{ return (CHoloHand *)m_hHand[hand].Get(); }
 	grid::CInventory &	GetInventory()					{ return _inventory; }
 	Vector			GetHeadOffset() const				{ return _viewoffset; }
 
@@ -58,7 +59,7 @@ private:
 	void			HandlePickupGesture();
 	void			HandleGunGesture();
 
-	CNetworkHandle( CHoloHand, m_hHand );				// The hand entity which is used to interact with the environment.
+	CNetworkArray( EHANDLE, m_hHand, holo::EHand::HAND_COUNT );				// The hand entity which is used to interact with the environment.
 	CNetworkHandle( CGridBaseWeapon, _activeWeapon );
 
 	grid::CGestureDetector	_gestureDetector;
@@ -66,6 +67,7 @@ private:
 
 	bool			_weaponWasOut;
 	CNetworkVar( Vector, _viewoffset );
+	int				_weaponHandIdx;
 };
 
 #endif // __GRID_PLAYER_H__
