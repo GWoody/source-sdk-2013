@@ -78,26 +78,28 @@ bool CGunGesture::DetectClosedFingers( const holo::CFrame &frame, holo::EHand ha
 	float tol = grid_gun_direction_tolerance.GetFloat();
 	float theta;
 
+	const holo::CHand &holohand = frame.GetHand( hand );
+
 	// Occasionally the middle finger gets "stuck" to the pointer and will copy its direction.
-	theta = frame.GetHand(hand).FindThetaBetweenFingers( holo::EFinger::FINGER_POINTER, holo::EFinger::FINGER_MIDDLE );
+	theta = holohand.FindThetaBetweenFingers( holo::EFinger::FINGER_POINTER, holo::EFinger::FINGER_MIDDLE );
 	if( theta > tol )
 	{
 		// The middle finger is not stuck. Ensure the ring and middle fingers are pointing in roughly the same direction.
-		theta = frame.GetHand(hand).FindThetaBetweenFingers( holo::EFinger::FINGER_RING, holo::EFinger::FINGER_MIDDLE );
+		theta = holohand.FindThetaBetweenFingers( holo::EFinger::FINGER_RING, holo::EFinger::FINGER_MIDDLE );
 		if( theta > tol )
 		{
 			return false;
 		}
 	}
 
-	theta = frame.GetHand(hand).FindThetaBetweenFingers( holo::EFinger::FINGER_RING, holo::EFinger::FINGER_PINKY );
+	theta = holohand.FindThetaBetweenFingers( holo::EFinger::FINGER_RING, holo::EFinger::FINGER_PINKY );
 	if( theta > tol )
 	{
 		return false;
 	}
 
 	// Check if the fingers are pointing the opposite direction to the pointer.
-	theta = frame.GetHand(hand).FindThetaBetweenFingers( holo::EFinger::FINGER_POINTER, holo::EFinger::FINGER_RING );
+	theta = holohand.FindThetaBetweenFingers( holo::EFinger::FINGER_POINTER, holo::EFinger::FINGER_RING );
 	if( theta < 90.0f )
 	{
 		return false;
@@ -126,9 +128,10 @@ bool CGunGesture::DetectGangsta( const holo::CFrame &frame, holo::EHand hand )
 //-----------------------------------------------------------------------------
 bool CGunGesture::DetectTrigger( const holo::CFrame &frame, holo::EHand hand )
 {
-	const holo::CFinger &pointer = frame.GetHand(hand).GetFingerByType( holo::EFinger::FINGER_POINTER );
+	const holo::CHand &holohand = frame.GetHand( hand );
+	const holo::CFinger &pointer = holohand.GetFingerByType( holo::EFinger::FINGER_POINTER );
 	const holo::CBone &pointerBase = pointer.GetBone( holo::EBone::BONE_INTERMEDIATE );
-	const holo::CFinger &thumb = frame.GetHand(hand).GetFingerByType( holo::EFinger::FINGER_THUMB );
+	const holo::CFinger &thumb = holohand.GetFingerByType( holo::EFinger::FINGER_THUMB );
 
 	// We want the thumb tip to be relatively close to the pointer tip.
 	const Vector &diff = pointerBase.GetNextJoint() - thumb.GetTipPosition();

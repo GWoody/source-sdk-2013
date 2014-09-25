@@ -211,13 +211,14 @@ void CGridPlayer::HandleGunGesture()
 	{
 		CGunGesture gun = _gestureDetector.DetectGunGesture( (EHand)i );
 		CHoloHand *hand = (CHoloHand *)m_hHand[i].Get();
-		if( _weaponHandIdx != -1 && gun.IsActive() )
+		if( gun.IsActive() )
 		{
 			if( !_weaponWasOut )
 			{
 				// The gun gesture was first made this frame. Show the gun in place of the hand.
-				weapon->TakeOut();
 				_activeWeapon = weapon;
+				_weaponHandIdx = i;
+				_activeWeapon->TakeOut();
 				hand->SetInvisible( true );
 			}
 
@@ -227,13 +228,16 @@ void CGridPlayer::HandleGunGesture()
 			_weaponHandIdx = i;
 			break;
 		}
-		else if( _weaponWasOut )
+		else if( i == _weaponHandIdx && _weaponWasOut && !gun.IsActive() )
 		{
 			// All gun gestures have been stopped. Return the hand to the normal state.
 			weapon->PutAway();
-			_activeWeapon = NULL;
 			hand->SetInvisible( false );
+
+			_activeWeapon = NULL;
 			_weaponWasOut = false;
+			_weaponHandIdx = -1;
+			break;
 		}
 	}
 }
