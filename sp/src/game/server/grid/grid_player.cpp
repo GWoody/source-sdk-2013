@@ -50,6 +50,22 @@ void CGridPlayer::Spawn()
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
+bool CGridPlayer::IsUseableEntity( CBaseEntity *pEntity, unsigned int requiredCaps )
+{
+	if( pEntity )
+	{
+		// Can't use the weapon we own.
+		if( _inventory.GetWeapon() && pEntity->entindex() == _inventory.GetWeapon()->entindex() )
+		{
+			return false;
+		}
+	}
+
+	return BaseClass::IsUseableEntity( pEntity, requiredCaps );
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 Vector CGridPlayer::Weapon_ShootPosition()
 {
 	if( _weaponHandIdx == -1 )
@@ -124,12 +140,15 @@ void CGridPlayer::PreThink()
 
 	if( CGridBaseWeapon *weapon = _inventory.GetWeapon() )
 	{
-		if( weapon->IsOut() )
+		weapon->SetAbsOrigin( EyePosition() );
+
+		if( weapon->IsOut() && _weaponHandIdx != -1 )
 		{
 			CHoloHand *hand = (CHoloHand *)GetHandEntity( (EHand)_weaponHandIdx );
+			weapon->SetAbsOrigin( hand->GetAbsOrigin() );
+
 			const Vector &pointerDir = hand->GetHoloHand().GetFingerByType( holo::EFinger::FINGER_POINTER ).GetDirection();
 			weapon->SetDirection( pointerDir );
-			weapon->SetAbsOrigin( hand->GetAbsOrigin() );
 			weapon->ItemPreFrame();
 		}
 	}

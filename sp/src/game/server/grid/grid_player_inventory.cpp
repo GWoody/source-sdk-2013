@@ -1,7 +1,7 @@
 /*
 ===============================================================================
 
-	grid_player_inventory.h
+	grid_player_inventory.cpp
 	Implements weapon management.
 
 ===============================================================================
@@ -33,6 +33,6 @@ void CInventory::SwapWeapons( CGridBaseWeapon *weapon )
 	}
 
 	_weapon = weapon;
-	weapon->Pickup( _player );
+	_weapon->Pickup( _player );
 	_player->EmitSound( "Player.PickupWeapon" );
 }

@@ -29,6 +29,7 @@ public:
 	virtual void	Spawn();
 	virtual void	Think();
 	virtual void	Event_Killed( const CTakeDamageInfo &info );
+	virtual bool	IsUseableEntity( CBaseEntity *pEntity, unsigned int requiredCaps );
 
 	virtual void	PlayerUse();
 	virtual float	GetHeldObjectMass( IPhysicsObject *pHeldObject );

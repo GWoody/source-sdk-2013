@@ -35,12 +35,11 @@ public:
 
 	// CBasePlayer overrides.
 	virtual void	Spawn();
+	virtual bool	IsUseableEntity( CBaseEntity *pEntity, unsigned int requiredCaps );
+	virtual void	PreThink();
 
 	// Weapon overrides.
 	virtual Vector	Weapon_ShootPosition();
-
-	// Frame updates.
-	virtual void	PreThink();
 
 	// Accessors.
 	grid::CInventory &	GetInventory()					{ return _inventory; }

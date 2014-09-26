@@ -71,10 +71,9 @@ private:
 	holo::CFrameFilter _filter;
 	holo::EHand		_type;
 
-	Vector			_lastOriginDelta;
-
 	// Object interaction.
 	EHANDLE			_heldEntity;
+	float			_nextPickupTime;
 };
 
 #endif // __HOLO_BASE_HAND_H__

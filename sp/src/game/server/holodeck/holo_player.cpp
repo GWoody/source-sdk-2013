@@ -95,6 +95,31 @@ void CHoloPlayer::Event_Killed( const CTakeDamageInfo &info )
 }
 
 //-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+bool CHoloPlayer::IsUseableEntity( CBaseEntity *pEntity, unsigned int requiredCaps )
+{
+	if( pEntity )
+	{
+		for( int i = 0; i < EHand::HAND_COUNT; i++ )
+		{
+			// Can't use hands or the object the hand is holding.
+			CHoloHand *hand = (CHoloHand *)m_hHand[i].Get();
+			if( pEntity->entindex() == hand->entindex() )
+			{
+				return false;
+			}
+
+			if( hand->GetUseEntity() && pEntity->entindex() == hand->GetUseEntity()->entindex() )
+			{
+				return false;
+			}
+		}
+	}
+
+	return BaseClass::IsUseableEntity( pEntity, requiredCaps );
+}
+
+//-----------------------------------------------------------------------------
 // Called whenever a player collides with a weapon entity.
 //-----------------------------------------------------------------------------
 bool CHoloPlayer::BumpWeapon( CBaseCombatWeapon *pWeapon )
@@ -186,7 +211,7 @@ void CHoloPlayer::HandlePickupGesture( const holo::CFrame &frame )
 		if( pickup.IsActive() )
 		{
 			CHoloHand *hand = (CHoloHand *)m_hHand[i].Get();
-			if( pickup.HasClenchStarted() )
+			if( pickup.IsHandClenched() && !hand->GetUseEntity() )
 			{
 				hand->AttemptObjectPickup();
 			}

@@ -96,7 +96,13 @@ void CGridBaseWeapon::Spawn()
 //-----------------------------------------------------------------------------
 void CGridBaseWeapon::Use( CBaseEntity *activator, CBaseEntity *caller, USE_TYPE useType, float value )
 {
-	CBaseHoloHand *hand = dynamic_cast<CBaseHoloHand *>( activator );
+	if( GetOwnerEntity() )
+	{
+		// This gun is already owned by someone.
+		return;
+	}
+
+	CHoloHand *hand = dynamic_cast<CHoloHand *>( activator );
 	if( !hand )
 	{
 		return;
@@ -115,7 +121,14 @@ void CGridBaseWeapon::Use( CBaseEntity *activator, CBaseEntity *caller, USE_TYPE
 //-----------------------------------------------------------------------------
 int CGridBaseWeapon::ObjectCaps()
 {
-	return BaseClass::ObjectCaps() | FCAP_IMPULSE_USE;
+	int caps = BaseClass::ObjectCaps();
+
+	if( !GetOwnerEntity() )
+	{
+		caps |= FCAP_IMPULSE_USE;
+	}
+
+	return caps;
 }
 
 //-----------------------------------------------------------------------------
@@ -131,12 +144,11 @@ void CGridBaseWeapon::Pickup( CGridPlayer *player )
 {
 	SetModel( _info.GetModel().GetPlayerModel() );
 	SetMoveType( MOVETYPE_NONE );
+	SetSolid( SOLID_NONE );
 	SetAbsVelocity( vec3_origin );
 	SetOwnerEntity( player );
 	AddEffects( EF_NODRAW );
 	VPhysicsDestroyObject();
-
-	
 }
 
 //-----------------------------------------------------------------------------
@@ -147,9 +159,8 @@ void CGridBaseWeapon::Drop()
 	Assert( player );
 
 	SetModel( _info.GetModel().GetWorldModel() );
-
+	SetSolid( SOLID_BBOX );
 	VPhysicsInitNormal( GetSolid(), GetSolidFlags(), false );
-
 	SetMoveType( MOVETYPE_VPHYSICS );
 	SetOwnerEntity( NULL );
 	RemoveEffects( EF_NODRAW );
@@ -191,7 +202,9 @@ void CGridBaseWeapon::PutAway()
 {
 	SetTriggerState( false );
 	AddEffects( EF_NODRAW );
+
 	DestroySpriteEntity();
+	DestroyAmmoScreen();
 
 	_isOut = false;
 }

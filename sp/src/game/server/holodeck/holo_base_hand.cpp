@@ -21,6 +21,7 @@ using namespace holo;
 // ConVars.
 //-----------------------------------------------------------------------------
 extern ConVar sv_debug_player_use;
+static ConVar holo_pickup_cooldown( "holo_pickup_cooldown", "1", FCVAR_ARCHIVE );
 
 //-----------------------------------------------------------------------------
 // External functions.
@@ -45,12 +46,15 @@ static ConVar holo_render_debug_hand( "holo_render_debug_hand", "1", NULL, holo_
 //-----------------------------------------------------------------------------
 CBaseHoloHand::CBaseHoloHand()
 {
+	_nextPickupTime = 0.0f;
 }
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 void CBaseHoloHand::Spawn()
 {
+	_nextPickupTime = 0.0f;
+
 	BaseClass::Spawn();
 
 	// Configure the hand to interact with triggers.
@@ -131,7 +135,6 @@ void CBaseHoloHand::ProcessFrame( const CFrame &frame )
 
 	// Update the position of the hand entity within the world.
 	SetAbsOrigin( _transformedFrame.GetHand(_type).GetPosition() );
-	_lastOriginDelta = GetAbsOrigin() - owner->GetAbsOrigin();
 
 	if( holo_render_debug_hand.GetInt() != 0 )
 	{
@@ -266,8 +269,6 @@ bool CBaseHoloHand::ClearUseEntity()
 {
 	if ( _heldEntity != NULL )
 	{
-		// Stop controlling the train/object
-		// TODO: Send HUD Update
 		_heldEntity->Use( this, this, USE_OFF, 0 );
 		_heldEntity = NULL;
 		return true;
@@ -510,7 +511,7 @@ float CBaseHoloHand::GetHeldObjectMass( IPhysicsObject *pHeldObject )
 //-----------------------------------------------------------------------------
 void CBaseHoloHand::AttemptObjectPickup()
 {
-	if( GetUseEntity() )
+	if( _nextPickupTime > gpGlobals->curtime || GetUseEntity() )
 	{
 		return;
 	}
@@ -520,14 +521,22 @@ void CBaseHoloHand::AttemptObjectPickup()
 	{	
 		int caps = pUseEntity->ObjectCaps();
 		variant_t emptyVariant;
+		bool used = false;
 
 		if ( caps & (FCAP_IMPULSE_USE|FCAP_ONOFF_USE) )
 		{
 			pUseEntity->AcceptInput( "Use", this, this, emptyVariant, USE_TOGGLE );
+			used = true;
 		}
-		else if ( (pUseEntity->ObjectCaps() & FCAP_ONOFF_USE) )
+		else if ( pUseEntity->ObjectCaps() & FCAP_ONOFF_USE )
 		{
 			pUseEntity->AcceptInput( "Use", this, this, emptyVariant, USE_TOGGLE );
+			used = true;
+		}
+
+		if( used )
+		{
+			_nextPickupTime = gpGlobals->curtime + holo_pickup_cooldown.GetFloat();
 		}
 	}
 }
@@ -537,6 +546,7 @@ void CBaseHoloHand::AttemptObjectPickup()
 void CBaseHoloHand::AttemptObjectDrop()
 {
 	ClearUseEntity();
+	_nextPickupTime = gpGlobals->curtime + holo_pickup_cooldown.GetFloat();
 }
 
 //-----------------------------------------------------------------------------
