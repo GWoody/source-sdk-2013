@@ -8,7 +8,7 @@
 */
 
 #include "cbase.h"
-#include "base_holo_panel.h"
+#include "holo_base_panel.h"
 #include "holo_hand.h"
 #include "sprite.h"
 

@@ -22,19 +22,12 @@ LINK_ENTITY_TO_CLASS( player, CGridPlayer );
 
 // Define fields.
 BEGIN_DATADESC( CGridPlayer )
-
-	DEFINE_FIELD( m_hHand, FIELD_EHANDLE ),
-	DEFINE_EMBEDDED( _haptics ),
-
 END_DATADESC()
 
 // Networking table.
 IMPLEMENT_SERVERCLASS_ST( CGridPlayer, DT_GridPlayer )
 
-	SendPropArray3( SENDINFO_ARRAY3(m_hHand), SendPropEHandle( SENDINFO_ARRAY(m_hHand) ) ),
 	SendPropEHandle( SENDINFO( _activeWeapon ) ),
-	SendPropVector( SENDINFO( _viewoffset ) ),
-	SendPropDataTable( SENDINFO_DT(_haptics), &REFERENCE_SEND_TABLE(DT_HoloHaptics), SendProxy_SendLocalDataTable ),
 	
 END_SEND_TABLE()
 
@@ -42,7 +35,6 @@ END_SEND_TABLE()
 //-----------------------------------------------------------------------------
 CGridPlayer::CGridPlayer() : _inventory( this )
 {
-	_viewoffset.GetForModify().Init( 0, 0, 0 );
 	_weaponHandIdx = -1;
 }
 
@@ -50,57 +42,10 @@ CGridPlayer::CGridPlayer() : _inventory( this )
 //-----------------------------------------------------------------------------
 void CGridPlayer::Spawn()
 {
-	SetModel( "models/player.mdl" );
-
-	// Create the hand entity.
-	for( int i = 0; i < EHand::HAND_COUNT; i++ )
-	{
-		CHoloHand *pHand = dynamic_cast<CHoloHand *>( CreateEntityByName( "holo_hand" ) );
-		Assert( pHand );
-		pHand->Spawn();
-		pHand->SetOwnerEntity( this ); 
-		pHand->SetType( (EHand)i );
-		m_hHand.Set( i, pHand );
-	}
-
+	_weaponHandIdx = -1;
 	_weaponWasOut = false;
 
-	// Enable all gestures.
-	_gestureDetector.SetGestureEnabled( grid::EGesture::PICKUP, true );
-	_gestureDetector.SetGestureEnabled( grid::EGesture::GUN, true );
-
 	BaseClass::Spawn();
-
-	SetNextThink( gpGlobals->curtime + 0.01f );
-
-	_haptics.SetEnabled( true );
-}
-
-//-----------------------------------------------------------------------------
-//-----------------------------------------------------------------------------
-void CGridPlayer::Think()
-{
-	_haptics.Update();
-	NetworkStateChanged();
-
-	BaseClass::Think();
-
-	SetNextThink( gpGlobals->curtime + 0.01f );
-}
-
-//-----------------------------------------------------------------------------
-//-----------------------------------------------------------------------------
-void CGridPlayer::Event_Killed( const CTakeDamageInfo &info )
-{
-	_haptics.ClearAllEvents();
-
-	for( int i = 0; i < EHand::HAND_COUNT; i++ )
-	{
-		CBaseHoloHand *hand = (CBaseHoloHand *)m_hHand.Get( i ).Get();
-		hand->ClearUseEntity();
-	}
-
-	BaseClass::Event_Killed( info );
 }
 
 //-----------------------------------------------------------------------------
@@ -113,82 +58,7 @@ Vector CGridPlayer::Weapon_ShootPosition()
 		return Vector();
 	}
 
-	return m_hHand[_weaponHandIdx]->GetAbsOrigin();
-}
-
-//-----------------------------------------------------------------------------
-// Called whenever a player collides with a weapon entity.
-//-----------------------------------------------------------------------------
-bool CGridPlayer::BumpWeapon( CBaseCombatWeapon *pWeapon )
-{
-	// We don't pickup weapons by colliding with them.
-	return false;
-}
-
-//-----------------------------------------------------------------------------
-//-----------------------------------------------------------------------------
-void CGridPlayer::ProcessUsercmds( CUserCmd *cmds, int numcmds, int totalcmds, int dropped_packets, bool paused )
-{
-	CFrame finalHoloFrame = AccumulateHoloFrame( cmds, numcmds, totalcmds, dropped_packets, paused );
-	
-	for( int i = 0; i < EHand::HAND_COUNT; i++ )
-	{
-		CHoloHand *hand = (CHoloHand *)m_hHand[i].Get();
-		hand->ProcessFrame( finalHoloFrame );
-	}
-
-	if( finalHoloFrame.IsValid() )
-	{
-		ProcessFrame( finalHoloFrame );
-	}
-
-	const Vector eyeOffset = GetFlags() & FL_DUCKING ? VEC_DUCK_VIEW_SCALED( this ) : VEC_VIEW_SCALED( this );
-	_viewoffset = cmds[totalcmds-1].viewoffset;
-	SetViewOffset( eyeOffset + _viewoffset );
-
-	BaseClass::ProcessUsercmds( cmds, numcmds, totalcmds, dropped_packets, paused );
-}
-
-//-----------------------------------------------------------------------------
-//-----------------------------------------------------------------------------
-CFrame CGridPlayer::AccumulateHoloFrame( CUserCmd *cmds, int numcmds, int totalcmds, int dropped_packets, bool paused )
-{
-	CFrame finalHoloFrame;
-	finalHoloFrame.SetValid( false );
-
-	for ( int i = totalcmds - 1; i >= 0; i-- )
-	{
-		CUserCmd *pCmd = &cmds[totalcmds - 1 - i];
-
-		// Validate values
-		if ( !IsUserCmdDataValid( pCmd ) )
-		{
-			pCmd->MakeInert();
-			continue;
-		}
-
-		// Take the newest version of all frame attributes.
-		const CFrame &curframe = pCmd->holo_frame;
-		if( curframe.IsGestureActive( holo::EGesture::GESTURE_CIRCLE ) )
-		{
-			finalHoloFrame.SetCircleGesture( curframe.GetCircleGesture() );
-		}
-		if( curframe.IsGestureActive( holo::EGesture::GESTURE_SWIPE ) )
-		{
-			finalHoloFrame.SetSwipeGesture( curframe.GetSwipeGesture() );
-		}
-		if( curframe.IsGestureActive( holo::EGesture::GESTURE_TAP ) )
-		{
-			finalHoloFrame.SetTapGesture( curframe.GetTapGesture() );
-		}
-
-		finalHoloFrame.SetHand( curframe.GetHand( EHand::LEFT ), EHand::LEFT );
-		finalHoloFrame.SetHand( curframe.GetHand( EHand::RIGHT ), EHand::RIGHT );
-
-		finalHoloFrame.SetValid( true );
-	}
-
-	return finalHoloFrame;
+	return GetHandEntity( (EHand)_weaponHandIdx )->GetAbsOrigin();
 }
 
 //-----------------------------------------------------------------------------
@@ -196,37 +66,13 @@ CFrame CGridPlayer::AccumulateHoloFrame( CUserCmd *cmds, int numcmds, int totalc
 //-----------------------------------------------------------------------------
 void CGridPlayer::ProcessFrame( const holo::CFrame &frame )
 {
-	_gestureDetector.SetFrame( frame );
-
-	HandlePickupGesture();
-	HandleGunGesture();
+	HandleGunGesture( frame );
+	BaseClass::ProcessFrame( frame );
 }
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void CGridPlayer::HandlePickupGesture()
-{
-	for( int i = 0; i < EHand::HAND_COUNT; i++ )
-	{
-		CPickupGesture pickup = _gestureDetector.DetectPickupGesture( (EHand)i );
-		if( pickup.IsActive() )
-		{
-			CHoloHand *hand = (CHoloHand *)m_hHand[i].Get();
-			if( pickup.HasClenchStarted() )
-			{
-				hand->AttemptObjectPickup();
-			}
-			else if( pickup.HasClenchFinished() )
-			{
-				hand->AttemptObjectDrop();
-			}
-		}
-	}
-}
-
-//-----------------------------------------------------------------------------
-//-----------------------------------------------------------------------------
-void CGridPlayer::HandleGunGesture()
+void CGridPlayer::HandleGunGesture( const holo::CFrame &frame )
 {
 	CGridBaseWeapon *weapon = GetInventory().GetWeapon();
 	if( !weapon )
@@ -236,8 +82,8 @@ void CGridPlayer::HandleGunGesture()
 
 	for( int i = 0; i < EHand::HAND_COUNT; i++ )
 	{
-		CGunGesture gun = _gestureDetector.DetectGunGesture( (EHand)i );
-		CHoloHand *hand = (CHoloHand *)m_hHand[i].Get();
+		CGunGesture gun(frame, (EHand)i );
+		CHoloHand *hand = (CHoloHand *)GetHandEntity( (EHand)i );
 		if( gun.IsActive() )
 		{
 			if( !_weaponWasOut )
@@ -280,19 +126,11 @@ void CGridPlayer::PreThink()
 	{
 		if( weapon->IsOut() )
 		{
-			CHoloHand *hand = (CHoloHand *)m_hHand[_weaponHandIdx].Get();
+			CHoloHand *hand = (CHoloHand *)GetHandEntity( (EHand)_weaponHandIdx );
 			const Vector &pointerDir = hand->GetHoloHand().GetFingerByType( holo::EFinger::FINGER_POINTER ).GetDirection();
 			weapon->SetDirection( pointerDir );
 			weapon->SetAbsOrigin( hand->GetAbsOrigin() );
 			weapon->ItemPreFrame();
 		}
 	}
-}
-
-//-----------------------------------------------------------------------------
-// Called after the players update function.
-//-----------------------------------------------------------------------------
-void CGridPlayer::PostThink()
-{
-	BaseClass::PostThink();
 }

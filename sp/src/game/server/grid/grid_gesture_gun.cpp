@@ -1,55 +1,45 @@
 /*
 ===============================================================================
 
-	grid_gesture_detector.cpp
-	Detects custom player gestures.
+	grid_gesture_gun.cpp
+	Detects the gun gesture.
 
 ===============================================================================
 */
 
 #include "cbase.h"
 #include "grid_gesture_detector.h"
+#include "holodeck/holo_shared.h"
 
 using namespace grid;
 
 //-----------------------------------------------------------------------------
 // ConVars
 //-----------------------------------------------------------------------------
-static ConVar grid_pickup_strength( "grid_pickup_strength", "0.8", FCVAR_ARCHIVE );
 static ConVar grid_gun_direction_tolerance( "grid_gun_direction_tolerance", "20", FCVAR_ARCHIVE, "Allowed variation in angles when testing the gun gesture." );
 static ConVar grid_gun_idle_l_angle( "grid_gun_idle_l_angle", "50", FCVAR_ARCHIVE, "Base angle between the pointer and thumb required for the gun gesture." );
 static ConVar grid_gun_trigger_angle( "grid_gun_trigger_angle", "30", FCVAR_ARCHIVE, "Upper bound to the gun gesture detecting a trigger press." );
 
 //-----------------------------------------------------------------------------
-// Gesture statics.
 //-----------------------------------------------------------------------------
-float CPickupGesture::_lastRadius[holo::EHand::HAND_COUNT] = { 0.0f, 0.0f };
+CGunGesture::CGunGesture( const holo::CFrame &frame, holo::EHand hand )
+{ 
+	_state = EState::NONE; 
+	Detect( frame, hand );
+}
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void CPickupGesture::Detect( const holo::CFrame &frame, holo::EHand hand )
+bool CGunGesture::IsIdle() const
+{ 
+	return _state == EState::IDLE;
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+bool CGunGesture::HoldingTrigger() const
 {
-	float grabStrength = grid_pickup_strength.GetFloat();
-	float curRadius = frame.GetHand( hand ).GetBallGesture().GetGrabStrength();
-
-	if( curRadius == 0.0f )
-	{
-		SetInactive();
-	}
-	else if( curRadius >= grabStrength && _lastRadius[hand] < grabStrength )
-	{
-		_clenchState = EState::STARTED;
-	}
-	else if( curRadius < grabStrength && _lastRadius[hand] >= grabStrength )
-	{
-		_clenchState = EState::FINISHED;
-	}
-	else if( curRadius > grabStrength )
-	{
-		_clenchState = EState::CLOSED;
-	}
-
-	_lastRadius[hand] = curRadius;
+	return _state == EState::TRIGGER;
 }
 
 //-----------------------------------------------------------------------------
@@ -141,48 +131,4 @@ bool CGunGesture::DetectTrigger( const holo::CFrame &frame, holo::EHand hand )
 	}
 
 	return true;
-}
-
-//-----------------------------------------------------------------------------
-//-----------------------------------------------------------------------------
-CGestureDetector::CGestureDetector()
-{
-	for( int i = 0; i < EGesture::COUNT; i++ )
-	{
-		_gestureStatus[i] = false;
-	}
-}
-
-//-----------------------------------------------------------------------------
-//-----------------------------------------------------------------------------
-CPickupGesture CGestureDetector::DetectPickupGesture( holo::EHand hand )
-{
-	CPickupGesture pickup;
-
-	// Ensure we're allowed to detect this gesture.
-	if( !IsGestureEnabled( EGesture::PICKUP ) )
-	{
-		pickup.SetInactive();
-		return pickup;
-	}
-
-	pickup.Detect( _frame, hand );
-	return pickup;
-}
-
-//-----------------------------------------------------------------------------
-//-----------------------------------------------------------------------------
-CGunGesture CGestureDetector::DetectGunGesture( holo::EHand hand )
-{
-	CGunGesture gun;
-
-	// Ensure we're allowed to detect this gesture.
-	if( !IsGestureEnabled( EGesture::GUN ) )
-	{
-		gun.SetInactive();
-		return gun;
-	}
-
-	gun.Detect( _frame, hand );
-	return gun;
 }

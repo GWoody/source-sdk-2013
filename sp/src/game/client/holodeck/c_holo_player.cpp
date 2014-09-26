@@ -1,29 +1,38 @@
 /*
 ===============================================================================
 
-	c_holo_circle_panel.cpp
-		Implements client side rendering of the `holo_circle_panel` entity.
+	c_holo_player.cpp
+	Client side implementation of the Grid player entity.
 
 ===============================================================================
 */
 
 #include "cbase.h"
-#include "c_holo_base_panel.h"
+#include "c_holo_player.h"
+#include "out_etactor.h"
 
 //-----------------------------------------------------------------------------
+// Network table.
 //-----------------------------------------------------------------------------
-class C_HoloCirclePanel : public C_BaseHoloPanel
-{
-public:
-	DECLARE_CLASS( C_HoloCirclePanel, C_BaseHoloPanel );
-	DECLARE_CLIENTCLASS();
-};
+IMPLEMENT_CLIENTCLASS_DT( C_HoloPlayer, DT_HoloPlayer, CHoloPlayer )
 
-//-----------------------------------------------------------------------------
-//-----------------------------------------------------------------------------
-IMPLEMENT_CLIENTCLASS_DT( C_HoloCirclePanel, DT_HoloCirclePanel, CHoloCirclePanel )
+	RecvPropArray3( RECVINFO_ARRAY( m_hHand ), RecvPropEHandle( RECVINFO(m_hHand[0]) ) ),
+	RecvPropVector( RECVINFO( _viewoffset ) ),
+	RecvPropDataTable( RECVINFO_DT(_haptics), 0, &REFERENCE_RECV_TABLE(DT_HoloHaptics) ),
+
 END_RECV_TABLE()
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-LINK_ENTITY_TO_CLASS( holo_circle_panel, C_HoloCirclePanel );
+C_HoloPlayer::C_HoloPlayer()
+{
+	_viewoffset.Init( 0, 0, 0 );
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void C_HoloPlayer::Simulate()
+{
+	_haptics.Update();
+	BaseClass::Simulate();
+}

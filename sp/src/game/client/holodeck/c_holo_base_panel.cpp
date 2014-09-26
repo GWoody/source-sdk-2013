@@ -8,7 +8,7 @@
 */
 
 #include "cbase.h"
-#include "c_base_holo_panel.h"
+#include "c_holo_base_panel.h"
 
 //-----------------------------------------------------------------------------
 // Specify what this class is receiving from the server.

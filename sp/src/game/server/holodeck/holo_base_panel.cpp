@@ -8,7 +8,7 @@
 */
 
 #include "cbase.h"
-#include "base_holo_panel.h"
+#include "holo_base_panel.h"
 #include "sprite.h"
 #include "grid_player.h"
 
