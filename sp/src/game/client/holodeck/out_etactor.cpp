@@ -28,12 +28,24 @@ static ConVar holo_target_etactor( "holo_target_etactor", "1", FCVAR_HIDDEN | FC
 //----------------------------------------------------------------------------
 class CETactorThread : public CThread
 {
+	template<typename T>
+	struct etactorVar
+	{
+		etactorVar()
+		{
+			val = 0;
+			dirty = true;
+		}
+
+		T			val;
+		bool		dirty;
+		CThreadMutex	mutex;
+	};
+
 public:
 	CETactorThread()
 	{
-		_power = _frequency = 0;
-		_enabled = 0;
-		_target = holo_target_etactor.GetInt();
+		_target.val = holo_target_etactor.GetInt();
 	}
 
 	virtual int Run()
@@ -42,34 +54,35 @@ public:
 
 		while( !_quit )
 		{
-			if( _target && _targetMutex.TryLock() )
+			if( _target.dirty && _target.mutex.TryLock() )
 			{
-				tens_settarget( _target );
-				_target = 0;
-				_targetMutex.Lock();
+					tens_settarget( _target.val );
+					_target.dirty = false;
+				_target.mutex.Unlock();
 				Sleep( TENS_TIMEOUT_MS );
 			}
 
-			if( _enabled && _enabledMutex.TryLock() )
+			if( _enabled.dirty && _enabled.mutex.TryLock() )
 			{
-				bool enabled = _enabled > 0 ? true : false;
-				tens_enable( enabled, enabled );
-				_enabled = 0;
-				_enabledMutex.Unlock();
+					tens_enable( _enabled.val, _enabled.val );
+					_enabled.dirty = false;
+				_enabled.mutex.Unlock();
 				Sleep( TENS_TIMEOUT_MS );
 			}
 
-			if( _powerMutex.TryLock() )
+			if( _power.dirty && _power.mutex.TryLock() )
 			{
-				tens_power( _power );
-				_powerMutex.Unlock();
+					tens_power( _power.val );
+					_power.dirty = false;
+				_power.mutex.Unlock();
 				Sleep( TENS_TIMEOUT_MS );
 			}
 
-			if( _freqMutex.TryLock() )
+			if( _frequency.dirty && _frequency.mutex.TryLock() )
 			{
-				tens_freq( _frequency );
-				_freqMutex.Unlock();
+					tens_freq( _frequency.val );
+					_frequency.dirty = false;
+				_frequency.mutex.Unlock();
 				Sleep( TENS_TIMEOUT_MS );
 			}
 		}
@@ -77,25 +90,34 @@ public:
 		return 0;
 	}
 
-	void			SetPower( unsigned char power )		{ _powerMutex.Lock(); _power = power; _powerMutex.Unlock(); }
-	void			SetFrequency( unsigned char freq )	{ _freqMutex.Lock(); _frequency = freq; _freqMutex.Unlock(); }
-	void			SetEnabled( bool enabled )			{ _enabledMutex.Lock(); _enabled = enabled ? 1 : -1; _enabledMutex.Unlock(); }
-	void			SetTarget( unsigned char target )	{ _targetMutex.Lock(); _target = target; _targetMutex.Unlock(); }
+	void			SetPower( unsigned char power )		{ InternalSet( _power, power ); }
+	void			SetFrequency( unsigned char freq )	{ InternalSet( _frequency, freq ); }
+	void			SetTarget( unsigned char target )	{ InternalSet( _target, target ); }
+	void			SetEnabled(bool enabled)			{ InternalSet( _enabled, enabled ); }
+
 	void			Quit()		{ _quit = true; }
 
 private:
+	template<typename T> void InternalSet( etactorVar<T> &var, T &val )
+	{
+		if( var.val == val )
+		{
+			return;
+		}
+		
+		var.mutex.Lock(); 
+			var.val = val;
+		var.mutex.Unlock();
+		var.dirty = true;
+	}
+
 	// ETactor state.
-	volatile unsigned char	_power;
-	volatile unsigned char	_frequency;
-	volatile int	_enabled;
-	volatile unsigned char	_target;
+	etactorVar<unsigned char>	_power;
+	etactorVar<unsigned char>	_frequency;
+	etactorVar<bool>	_enabled;
+	etactorVar<unsigned char>	_target;
 
 	volatile bool	_quit;
-
-	CThreadMutex	_powerMutex;
-	CThreadMutex	_freqMutex;
-	CThreadMutex	_enabledMutex;
-	CThreadMutex	_targetMutex;
 };
 
 //----------------------------------------------------------------------------

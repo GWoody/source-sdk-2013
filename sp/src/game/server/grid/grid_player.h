@@ -14,6 +14,7 @@
 #include "grid_gesture_detector.h"
 #include "grid_player_inventory.h"
 #include "holodeck/holo_hand.h"
+#include "holodeck/holo_haptics.h"
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
@@ -34,6 +35,7 @@ public:
 
 	// CBasePlayer overrides.
 	virtual void	Spawn();
+	virtual void	Think();
 	virtual void	Event_Killed( const CTakeDamageInfo &info );
 
 	// Weapon overrides.
@@ -51,6 +53,7 @@ public:
 	CHoloHand *		GetHandEntity( holo::EHand hand ) const	{ return (CHoloHand *)m_hHand[hand].Get(); }
 	grid::CInventory &	GetInventory()					{ return _inventory; }
 	Vector			GetHeadOffset() const				{ return _viewoffset; }
+	CHoloHaptics &	GetHaptics()						{ return _haptics; }
 
 private:
 	// UserCmd processing.
@@ -64,6 +67,8 @@ private:
 
 	grid::CGestureDetector	_gestureDetector;
 	grid::CInventory	_inventory;
+
+	CHoloHaptics	_haptics;
 
 	bool			_weaponWasOut;
 	CNetworkVar( Vector, _viewoffset );

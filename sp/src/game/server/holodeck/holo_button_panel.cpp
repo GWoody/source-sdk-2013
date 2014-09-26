@@ -10,6 +10,8 @@
 #include "cbase.h"
 #include "base_holo_panel.h"
 #include "holo_hand.h"
+#include "grid/grid_player.h"
+#include "grid/grid_haptic_events.h"
 
 using namespace holo;
 
@@ -173,7 +175,8 @@ void CHoloButtonPanel::Touch( CBaseEntity *pOther )
 		return;
 	}
 
-	CBasePlayer *pPlayer = UTIL_GetLocalPlayer();
+	CHoloHand *hand = (CHoloHand *)pOther;
+	CGridPlayer *pPlayer = (CGridPlayer *)hand->GetOwnerPlayer();
 
 	//
 	// All conditions are satisfied. Trigger the map event.
@@ -191,8 +194,9 @@ void CHoloButtonPanel::Touch( CBaseEntity *pOther )
 		UTIL_EmitAmbientSound( entindex( ), GetAbsOrigin(), pszSound, _volume, SNDLVL_NORM, SND_NOFLAGS, PITCH_NORM );
 	}
 
-	CHoloHand *pHand = (CHoloHand *)pOther;
-	pHand->DebugStartTouch();
+	hand->DebugStartTouch();
+
+	pPlayer->GetHaptics().PushEvent( new CButtonPressHapticEvent );
 
 	//
 	// We can't fire the button again until the hand has left the trigger.

@@ -10,6 +10,7 @@
 #include "cbase.h"
 #include "grid_player.h"
 #include "grid_base_weapon.h"
+#include "holodeck/holo_haptics.h"
 
 using namespace holo;
 using namespace grid;
@@ -23,16 +24,18 @@ LINK_ENTITY_TO_CLASS( player, CGridPlayer );
 BEGIN_DATADESC( CGridPlayer )
 
 	DEFINE_FIELD( m_hHand, FIELD_EHANDLE ),
+	DEFINE_EMBEDDED( _haptics ),
 
 END_DATADESC()
 
 // Networking table.
 IMPLEMENT_SERVERCLASS_ST( CGridPlayer, DT_GridPlayer )
 
-	SendPropEHandle( SENDINFO( m_hHand ) ),
+	SendPropArray3( SENDINFO_ARRAY3(m_hHand), SendPropEHandle( SENDINFO_ARRAY(m_hHand) ) ),
 	SendPropEHandle( SENDINFO( _activeWeapon ) ),
 	SendPropVector( SENDINFO( _viewoffset ) ),
-
+	SendPropDataTable( SENDINFO_DT(_haptics), &REFERENCE_SEND_TABLE(DT_HoloHaptics), SendProxy_SendLocalDataTable ),
+	
 END_SEND_TABLE()
 
 //-----------------------------------------------------------------------------
@@ -67,12 +70,30 @@ void CGridPlayer::Spawn()
 	_gestureDetector.SetGestureEnabled( grid::EGesture::GUN, true );
 
 	BaseClass::Spawn();
+
+	SetNextThink( gpGlobals->curtime + 0.01f );
+
+	_haptics.SetEnabled( true );
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void CGridPlayer::Think()
+{
+	_haptics.Update();
+	NetworkStateChanged();
+
+	BaseClass::Think();
+
+	SetNextThink( gpGlobals->curtime + 0.01f );
 }
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 void CGridPlayer::Event_Killed( const CTakeDamageInfo &info )
 {
+	_haptics.ClearAllEvents();
+
 	for( int i = 0; i < EHand::HAND_COUNT; i++ )
 	{
 		CBaseHoloHand *hand = (CBaseHoloHand *)m_hHand.Get( i ).Get();

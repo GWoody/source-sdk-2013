@@ -24,6 +24,8 @@ public:
 	int				GetFrequency() const	{ return _frequency; }
 	bool			IsEnabled() const		{ return _enabled; }
 
+	void			Update();
+
 private:
 	int				_power;
 	int				_frequency;

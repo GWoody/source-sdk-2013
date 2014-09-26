@@ -12,6 +12,8 @@
 
 #include "c_baseplayer.h"
 #include "c_grid_base_weapon.h"
+#include "holodeck/c_holo_haptics.h"
+#include "holodeck/holo_shared.h"
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
@@ -23,13 +25,17 @@ public:
 
 	C_GridPlayer();
 
+	// C_BaseEntity overrides.
+	virtual void	Simulate();
+
 	C_GridBaseWeapon *	GetActiveWeapon()				{ return dynamic_cast<C_GridBaseWeapon *>( _activeWeapon.Get() ); }
 	Vector			GetHeadOffset()						{ return _viewoffset; }
 
 private:
-	EHANDLE			m_hHand;
+	EHANDLE			m_hHand[holo::EHand::HAND_COUNT];
 	EHANDLE			_activeWeapon;
 	Vector			_viewoffset;
+	C_HoloHaptics	_haptics;
 };
 
 #endif // __C_GRID_PLAYER_H__

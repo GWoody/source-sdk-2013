@@ -12,6 +12,13 @@
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
+bool HapticEventLessFunc( CHoloHapticEvent * const &a, CHoloHapticEvent * const &b )
+{
+	return a->GetPower() < b->GetPriority();
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 CHoloHapticEvent::CHoloHapticEvent( EPriority priority ) :
 	_priority( priority )
 {
@@ -34,14 +41,25 @@ BEGIN_SEND_TABLE_NOBASE( CHoloHaptics, DT_HoloHaptics )
 END_SEND_TABLE()
 
 BEGIN_SIMPLE_DATADESC( CHoloHaptics )
+	DEFINE_FIELD( _power, FIELD_INTEGER ),
+	DEFINE_FIELD( _frequency, FIELD_INTEGER ),
+	DEFINE_FIELD( _enabled, FIELD_BOOLEAN ),
 END_DATADESC()
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-CHoloHaptics::CHoloHaptics()
+CHoloHaptics::CHoloHaptics() :
+	_events( 0, 0, HapticEventLessFunc )
 {
 	_power = _frequency = 0;
 	_enabled = false;
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void CHoloHaptics::PushEvent( CHoloHapticEvent *event )
+{
+	_events.Insert( event );
 }
 
 //-----------------------------------------------------------------------------
@@ -55,6 +73,7 @@ void CHoloHaptics::Update()
 		if( !event->Update() )
 		{
 			_events.RemoveAt( i );
+			delete event;
 		}
 	}
 
@@ -80,4 +99,12 @@ void CHoloHaptics::Disable()
 	SetPower( 0 );
 	SetFrequency( 0 );
 	SetEnabled( false );
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void CHoloHaptics::ClearAllEvents()
+{
+	_events.RemoveAll();
+	Disable();
 }

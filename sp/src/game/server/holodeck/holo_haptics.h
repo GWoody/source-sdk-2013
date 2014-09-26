@@ -17,6 +17,7 @@ class CHoloHapticEvent
 public:
 	enum EPriority
 	{
+		ENVIRONMENT,
 		USE_PANEL,
 		PICKUP_OBJECT,
 		SHOOT,
@@ -56,8 +57,11 @@ public:
 	CHoloHaptics();
 
 	void			PushEvent( CHoloHapticEvent *event );
-	void			Update();
+
+	void			ClearAllEvents();
 	void			Disable();
+
+	void			Update();
 
 	void			SetPower( unsigned char power )			{ _power = power; }
 	void			SetFrequency( unsigned char freq )		{ _frequency = freq; }
