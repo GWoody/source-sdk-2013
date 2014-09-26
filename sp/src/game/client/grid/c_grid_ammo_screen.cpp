@@ -62,7 +62,7 @@ bool C_GridAmmoScreen::Init( KeyValues *kv, VGuiScreenInitData_t *init )
 //-----------------------------------------------------------------------------
 void C_GridAmmoScreen::OnTick()
 {
-	SetBgColor( Color( 0, 0, 0, 128 ) );
+	SetBgColor( Color( 0, 0, 0, 255 ) );
 
 	BaseClass::OnTick();
 
