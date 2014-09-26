@@ -1,0 +1,24 @@
+// envmaptint_fix
+"UnlitGeneric"
+{
+	"$basetexture"		"holodeck_chamber/wall"
+	"$surfaceprop"		"metal"
+
+	"$envmap" 			"env_cubemap"
+	"$envmaptint" 		"[ .56 .56 .75 ]"
+	"$envmapcontrast" 	"1"
+	"$envmapsaturation" "1"
+
+	"$bumpmap" 			"metal/metalwall072c_normal"
+	"$normalmapalphaenvmapmask" 1
+	
+	"Proxies"
+	{
+		"ToggleTexture"
+		{
+			"toggleTextureVar" 			"$basetexture"
+			"toggleTextureFrameNumVar"	"$frame"
+			"toggleShouldWrap"			"0"
+		}
+	}
+}

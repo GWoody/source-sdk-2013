@@ -89,7 +89,7 @@ void CGridBaseWeapon::Spawn()
 	VPhysicsInitNormal( GetSolid(), GetSolidFlags() | FSOLID_TRIGGER, false );
 
 	// Bloat the box for player pickup
-	CollisionProp()->UseTriggerBounds( true, 36 );
+	CollisionProp()->UseTriggerBounds( true, 48.0f );
 }
 
 //-----------------------------------------------------------------------------
@@ -164,6 +164,7 @@ void CGridBaseWeapon::Drop()
 	SetMoveType( MOVETYPE_VPHYSICS );
 	SetOwnerEntity( NULL );
 	RemoveEffects( EF_NODRAW );
+	CollisionProp()->UseTriggerBounds( true, 48.0f );
 
 	DestroySpriteEntity();
 	DestroyAmmoScreen();
