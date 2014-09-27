@@ -124,6 +124,12 @@
 	endPower(float) : "End Power" : "1"
 	endFreq(float) : "End Frequency" : "1"
 	
+	holdEnd(choices) : "Hold End" : 0 =
+	[
+		0 : "No"
+		1 : "Yes"
+	]
+	
 	//
 	// Inputs.
 	//

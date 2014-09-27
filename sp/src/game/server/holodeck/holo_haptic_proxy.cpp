@@ -21,6 +21,11 @@ public:
 	DECLARE_DATADESC();
 
 	CHoloHapticProxy();
+	
+	virtual void	Spawn();
+	virtual void	Think();
+	virtual bool	KeyValue( const char *szKeyName, const char *szValue );
+	virtual void	Remove();
 
 private:
 	// Hammer inputs.
@@ -33,12 +38,11 @@ private:
 	void			InputSetEndPower( inputdata_t &data );
 	void			InputSetStartFreq( inputdata_t &data );
 	void			InputSetEndFreq( inputdata_t &data );
+	void			InputSwapStartEnd( inputdata_t &data );
+	void			InputEnable( inputdata_t &data );
+	void			InputDisable( inputdata_t &data );
 
-	// Hammer attributes.
-	float			_startPower, _endPower;
-	float			_startFreq, _endFreq;
-	CProxyHapticEvent::ELerp	_lerpType;
-	float			_time;
+	CProxyHapticEvent *	_event;
 };
 
 //-----------------------------------------------------------------------------
@@ -58,14 +62,9 @@ BEGIN_DATADESC( CHoloHapticProxy )
 	DEFINE_INPUTFUNC( FIELD_FLOAT, "SetEndPower", InputSetEndPower ),
 	DEFINE_INPUTFUNC( FIELD_FLOAT, "SetStartFreq", InputSetStartFreq ),
 	DEFINE_INPUTFUNC( FIELD_FLOAT, "SetEndFreq", InputSetEndFreq ),
-
-	// Attributes.
-	DEFINE_KEYFIELD( _startPower, FIELD_FLOAT, "startPower" ),
-	DEFINE_KEYFIELD( _endPower, FIELD_FLOAT, "endPower" ),
-	DEFINE_KEYFIELD( _startFreq, FIELD_FLOAT, "startFreq" ),
-	DEFINE_KEYFIELD( _endFreq, FIELD_FLOAT, "endFreq" ),
-	DEFINE_KEYFIELD( _lerpType, FIELD_INTEGER, "lerpType" ),
-	DEFINE_KEYFIELD( _time, FIELD_FLOAT, "time" ),
+	DEFINE_INPUTFUNC( FIELD_VOID, "SwapStartEnd", InputSwapStartEnd ),
+	DEFINE_INPUTFUNC( FIELD_VOID, "Enable", InputEnable ),
+	DEFINE_INPUTFUNC( FIELD_VOID, "Disable", InputDisable ),
 
 END_DATADESC()
 
@@ -73,15 +72,88 @@ END_DATADESC()
 //-----------------------------------------------------------------------------
 CHoloHapticProxy::CHoloHapticProxy()
 {
-	_startPower = _endPower = 0.0f;
-	_startFreq = _endFreq = 0.0f;
-
-	_lerpType = CProxyHapticEvent::ELerp::LINEAR;
+	_event = new CProxyHapticEvent();
 }
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void CHoloHapticProxy::InputLerp( inputdata_t &data )
+void CHoloHapticProxy::Spawn()
+{
+	BaseClass::Spawn();
+
+	SetNextThink( gpGlobals->curtime + 0.1f );
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void CHoloHapticProxy::Think()
+{
+	CHoloPlayer *player = dynamic_cast<CHoloPlayer *>( UTIL_GetLocalPlayer() );
+	if( !player )
+	{
+		ConColorMsg( COLOR_YELLOW, __FUNCTION__": failed to get pointer to local player!\n" );
+	}
+	else
+	{
+		player->GetHaptics().AddEvent( _event );
+	}
+
+	BaseClass::Think();
+}
+
+//-----------------------------------------------------------------------------
+// We load all data from Hammer directly into the haptic event object.
+//-----------------------------------------------------------------------------
+bool CHoloHapticProxy::KeyValue( const char *szKeyName, const char *szValue )
+{
+	if( FStrEq( szKeyName, "startPower" ) )
+	{
+		float p = clamp( Q_atof( szValue ), 0.0f, 1.0f );
+		_event->SetStartPower( p );
+		return true;
+	}
+	else if( FStrEq( szKeyName, "endPower" ) )
+	{
+		float p = clamp( Q_atof( szValue ), 0.0f, 1.0f );
+		_event->SetEndPower( p );
+		return true;
+	}
+	else if( FStrEq( szKeyName, "startFreq" ) )
+	{
+		float f = clamp( Q_atof( szValue ), 0.0f, 1.0f );
+		_event->SetStartFreq( f );
+		return true;
+	}
+	else if( FStrEq( szKeyName, "endFreq" ) )
+	{
+		float f = clamp( Q_atof( szValue ), 0.0f, 1.0f );
+		_event->SetEndFreq( f );
+		return true;
+	}
+	else if( FStrEq( szKeyName, "lerpType" ) )
+	{
+		CProxyHapticEvent::ELerp l = (CProxyHapticEvent::ELerp)clamp( Q_atoi( szValue ), 0, CProxyHapticEvent::LERP_COUNT - 1 );
+		_event->SetLerpType( l );
+		return true;
+	}
+	else if( FStrEq( szKeyName, "time" ) )
+	{
+		float t = max( 0.0f, Q_atof( szValue ) );
+		_event->SetLerpTime( t );
+		return true;
+	}
+	else if( FStrEq( szKeyName, "holdEnd" ) )
+	{
+		_event->AddFlag( CProxyHapticEvent::EFlagBit::FL_HOLD_OUT_BIT );
+		return true;
+	}
+
+	return BaseClass::KeyValue( szKeyName, szValue );
+}	
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void CHoloHapticProxy::Remove()
 {
 	CHoloPlayer *player = dynamic_cast<CHoloPlayer *>( UTIL_GetLocalPlayer() );
 	if( !player )
@@ -90,62 +162,95 @@ void CHoloHapticProxy::InputLerp( inputdata_t &data )
 		return;
 	}
 
-	CProxyHapticEvent *event = new CProxyHapticEvent( _startPower, _endPower, _startFreq, _endFreq, _time, _lerpType );
-	player->GetHaptics().PushEvent( event );
+	player->GetHaptics().RemoveEvent( _event );
+	delete _event;
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void CHoloHapticProxy::InputLerp( inputdata_t &data )
+{
+	_event->StartLerping();
 }
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 void CHoloHapticProxy::InputSetLinearLerp( inputdata_t &data )
 {
-	_lerpType = CProxyHapticEvent::ELerp::LINEAR;
+	_event->SetLerpType( CProxyHapticEvent::ELerp::LINEAR );
 }
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 void CHoloHapticProxy::InputSetExpLerp( inputdata_t &data )
 {
-	_lerpType = CProxyHapticEvent::ELerp::EXPONENTIAL;
+	_event->SetLerpType( CProxyHapticEvent::ELerp::EXPONENTIAL );
 }
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 void CHoloHapticProxy::InputSetSinLerp( inputdata_t &data )
 {
-	_lerpType = CProxyHapticEvent::ELerp::SIN_CURVE;
+	_event->SetLerpType( CProxyHapticEvent::ELerp::SIN_CURVE );
 }
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 void CHoloHapticProxy::InputSetLerpTime( inputdata_t &data )
 {
-	_time = max( 0.0f, data.value.Float() );
+	float t = max( 0.0f, data.value.Float() );
+	_event->SetLerpTime( t );
 }
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 void CHoloHapticProxy::InputSetStartPower( inputdata_t &data )
 {
-	_startPower = clamp( data.value.Float(), 0.0f, 1.0f );
+	float p = clamp( data.value.Float(), 0.0f, 1.0f );
+	_event->SetStartPower( p );
 }
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 void CHoloHapticProxy::InputSetEndPower( inputdata_t &data )
 {
-	_endPower = clamp( data.value.Float(), 0.0f, 1.0f );
+	float p = clamp( data.value.Float(), 0.0f, 1.0f );
+	_event->SetEndPower( p );
 }
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 void CHoloHapticProxy::InputSetStartFreq( inputdata_t &data )
 {
-	_startFreq = clamp( data.value.Float(), 0.0f, 1.0f );
+	float f = clamp( data.value.Float(), 0.0f, 1.0f );
+	_event->SetStartFreq( f );
 }
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 void CHoloHapticProxy::InputSetEndFreq( inputdata_t &data )
 {
-	_endFreq = clamp( data.value.Float(), 0.0f, 1.0f );
+	float f = clamp( data.value.Float(), 0.0f, 1.0f );
+	_event->SetEndFreq( f );
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void CHoloHapticProxy::InputSwapStartEnd( inputdata_t &data )
+{
+	_event->SwapStartEnd();
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void CHoloHapticProxy::InputEnable( inputdata_t &data )
+{
+	_event->Enable();
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void CHoloHapticProxy::InputDisable( inputdata_t &data )
+{
+	_event->Disable();
 }

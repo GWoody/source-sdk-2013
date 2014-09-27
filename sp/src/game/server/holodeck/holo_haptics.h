@@ -29,6 +29,8 @@ public:
 	CHoloHapticEvent( EPriority priority );
 	virtual ~CHoloHapticEvent();
 
+	void			Clear();
+
 	// Accessors.
 	EPriority		GetPriority() const		{ return _priority; }
 	unsigned char	GetPower() const		{ return _power; }
@@ -56,7 +58,8 @@ public:
 
 	CHoloHaptics();
 
-	void			PushEvent( CHoloHapticEvent *event );
+	void			AddEvent( CHoloHapticEvent *event );
+	void			RemoveEvent( CHoloHapticEvent *event );
 
 	void			ClearAllEvents();
 	void			Disable();

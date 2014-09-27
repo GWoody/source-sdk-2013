@@ -22,14 +22,21 @@ bool HapticEventLessFunc( CHoloHapticEvent * const &a, CHoloHapticEvent * const 
 CHoloHapticEvent::CHoloHapticEvent( EPriority priority ) :
 	_priority( priority )
 {
-	_power = _frequency = 0;
-	_enabled = false;
+	Clear();
 }
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 CHoloHapticEvent::~CHoloHapticEvent()
 {
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void CHoloHapticEvent::Clear()
+{
+	_power = _frequency = 0;
+	_enabled = false;
 }
 
 //-----------------------------------------------------------------------------
@@ -57,9 +64,23 @@ CHoloHaptics::CHoloHaptics() :
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void CHoloHaptics::PushEvent( CHoloHapticEvent *event )
+void CHoloHaptics::AddEvent( CHoloHapticEvent *event )
 {
 	_events.Insert( event );
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void CHoloHaptics::RemoveEvent( CHoloHapticEvent *event )
+{
+	for( int i = 0; i < _events.Count(); i++ )
+	{
+		if( _events.Element(i) == event )
+		{
+			_events.RemoveAt( i );
+			break;
+		}
+	}
 }
 
 //-----------------------------------------------------------------------------

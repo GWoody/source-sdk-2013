@@ -196,7 +196,7 @@ void CHoloButtonPanel::Touch( CBaseEntity *pOther )
 
 	hand->DebugStartTouch();
 
-	pPlayer->GetHaptics().PushEvent( new CButtonPressHapticEvent );
+	pPlayer->GetHaptics().AddEvent( new CButtonPressHapticEvent );
 
 	//
 	// We can't fire the button again until the hand has left the trigger.

@@ -38,23 +38,83 @@ bool CButtonPressHapticEvent::Update()
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-CProxyHapticEvent::CProxyHapticEvent( float startPower, float endPower, float startFreq, float endFreq, float lerpTime, ELerp lerp ) : CHoloHapticEvent( ENVIRONMENT ),
-	_startPower( startPower ), _endPower( endPower ),
-	_startFreq( startFreq ), _endFreq( endFreq ),
-	_time( lerpTime ), _lerp( lerp )
+CProxyHapticEvent::CProxyHapticEvent() : CHoloHapticEvent( ENVIRONMENT )
 {
-	_startTime = gpGlobals->curtime;
+	_startPower = _endPower = 0;
+	_startFreq = _endFreq = 0;
+	_time = 0.0f;
+	_lerp = ELerp::LINEAR;
+
+	_startTime = -1.0f;
+	_flags = 0;
 }
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 bool CProxyHapticEvent::Update()
 {
-	if( _startTime + _time < gpGlobals->curtime )
+	if( _flags & FL_ENABLED_BIT )
 	{
-		return false;
+		// Haptics have been activated, but lerping isn't happening.
+		_enabled = true;
+		_power = 255.0f * _startPower;
+		_frequency = 255.0f * _startFreq;
+	}
+	else if( _startTime < 0.0f )
+	{
+		// Proxy isn't active at all.
+		Clear();
+	}
+	else if( _startTime + _time < gpGlobals->curtime )
+	{
+		// Lerping has complete. Do we finish or hold?
+		if( _flags & FL_HOLD_OUT_BIT )
+		{
+			_enabled = true;
+			_power = 255.0f * _endPower;
+			_frequency = 255.0f * _endFreq;
+		}
+		else
+		{
+			_startTime = -1;
+			Clear();
+		}
+	}
+	else
+	{
+		DoLerp();
 	}
 
+	return true;
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void CProxyHapticEvent::StartLerping()
+{
+	_startTime = gpGlobals->curtime;
+	RemoveFlag( FL_ENABLED_BIT );
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void CProxyHapticEvent::Enable()
+{
+	AddFlag( FL_ENABLED_BIT );
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void CProxyHapticEvent::Disable()
+{
+	RemoveFlag( FL_ENABLED_BIT );
+	_startTime = -1;
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void CProxyHapticEvent::DoLerp()
+{
 	_enabled = true;
 	float percent = ( gpGlobals->curtime - _startTime ) / _time;
 
@@ -72,10 +132,7 @@ bool CProxyHapticEvent::Update()
 			DoCurveLerp( percent, sin );
 			break;
 	}
-
-	return true;
 }
-
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
