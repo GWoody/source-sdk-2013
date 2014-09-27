@@ -22,6 +22,7 @@ public:
 	static void		Create();
 	static void		Destroy()		{ delete _instance; }
 
+	virtual void	SetPowerFrequency( unsigned char power, unsigned char freq ) = 0;
 	virtual void	SetPower( unsigned char power ) = 0;
 	virtual void	SetFrequency( unsigned char freq ) = 0;
 	virtual void	SetEnabled( bool enabled ) = 0;

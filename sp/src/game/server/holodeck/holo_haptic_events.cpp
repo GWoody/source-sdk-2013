@@ -1,14 +1,14 @@
 /*
 ===============================================================================
 
-	grid_haptic_events.cpp
-	Implements all haptic event types for Grid.
+	holo_haptic_events.cpp
+	Implements all haptic event types for Holodeck.
 
 ===============================================================================
 */
 
 #include "cbase.h"
-#include "grid_haptic_events.h"
+#include "holo_haptic_events.h"
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------

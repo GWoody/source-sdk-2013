@@ -20,7 +20,7 @@
 
 //----------------------------------------------------------------------------
 //----------------------------------------------------------------------------
-static const int TENS_TIMEOUT_MS = 25;
+static const int TENS_TIMEOUT_MS = 20;
 static ConVar holo_target_etactor( "holo_target_etactor", "1", FCVAR_HIDDEN | FCVAR_ARCHIVE );
 
 //----------------------------------------------------------------------------
@@ -39,7 +39,6 @@ class CETactorThread : public CThread
 
 		T			val;
 		bool		dirty;
-		CThreadMutex	mutex;
 	};
 
 public:
@@ -54,35 +53,44 @@ public:
 
 		while( !_quit )
 		{
-			if( _target.dirty && _target.mutex.TryLock() )
+			if( _target.dirty )
 			{
-					tens_settarget( _target.val );
-					_target.dirty = false;
-				_target.mutex.Unlock();
+#				pragma omp atomic
+				unsigned char target = _target.val;
+
+				tens_settarget( target );
+
+#				pragma omp atomic
+				_target.dirty = false;
+
 				Sleep( TENS_TIMEOUT_MS );
 			}
 
-			if( _enabled.dirty && _enabled.mutex.TryLock() )
+			if( _enabled.dirty )
 			{
-					tens_enable( _enabled.val, _enabled.val );
-					_enabled.dirty = false;
-				_enabled.mutex.Unlock();
+#				pragma omp atomic
+				bool enabled = _enabled.val;
+
+				tens_enable( enabled, enabled );
+
+#				pragma omp atomic
+				_enabled.dirty = false;
+
 				Sleep( TENS_TIMEOUT_MS );
 			}
 
-			if( _power.dirty && _power.mutex.TryLock() )
+			if( _powfreq.dirty )
 			{
-					tens_power( _power.val );
-					_power.dirty = false;
-				_power.mutex.Unlock();
-				Sleep( TENS_TIMEOUT_MS );
-			}
+#				pragma omp atomic
+				unsigned short powfreq = _powfreq.val;
 
-			if( _frequency.dirty && _frequency.mutex.TryLock() )
-			{
-					tens_freq( _frequency.val );
-					_frequency.dirty = false;
-				_frequency.mutex.Unlock();
+				unsigned char power = ( powfreq >> 8 ) & 0xFF;
+				unsigned char freq = powfreq & 0xFF;
+				tens_control( power, freq );
+
+#				pragma omp atomic
+				_powfreq.dirty = false;
+
 				Sleep( TENS_TIMEOUT_MS );
 			}
 		}
@@ -90,30 +98,48 @@ public:
 		return 0;
 	}
 
-	void			SetPower( unsigned char power )		{ InternalSet( _power, power ); }
-	void			SetFrequency( unsigned char freq )	{ InternalSet( _frequency, freq ); }
-	void			SetTarget( unsigned char target )	{ InternalSet( _target, target ); }
-	void			SetEnabled(bool enabled)			{ InternalSet( _enabled, enabled ); }
+	void SetPowerFrequency( unsigned char power, unsigned char freq )
+	{ 
+		short powfreq = ( power << 8 ) | freq;
+		InternalSet( _powfreq, powfreq ); 
+	}
 
-	void			Quit()		{ _quit = true; }
+	void SetPower( unsigned char power )
+	{
+		short powfreq = ( power << 8 ) | ( _powfreq.val & 0xFF );
+		InternalSet( _powfreq, powfreq ); 
+	}
+
+	void SetFrequency( unsigned char freq )
+	{
+		short powfreq = ( ( _powfreq.val >> 8 ) & 0xFF ) | ( freq );
+		InternalSet( _powfreq, powfreq ); 
+	}
+
+	void SetTarget( unsigned char target )	{ InternalSet( _target, target ); }
+	void SetEnabled(bool enabled)			{ InternalSet( _enabled, enabled ); }
+	void Quit()								{ _quit = true; }
 
 private:
 	template<typename T> void InternalSet( etactorVar<T> &var, T &val )
 	{
-		if( var.val == val )
+#		pragma omp atomic
+		T localVal = var.val;
+
+		if( localVal == val )
 		{
 			return;
 		}
 		
-		var.mutex.Lock(); 
-			var.val = val;
-		var.mutex.Unlock();
+#		pragma omp atomic
+		var.val = val;
+
+#		pragma omp atomic
 		var.dirty = true;
 	}
 
 	// ETactor state.
-	etactorVar<unsigned char>	_power;
-	etactorVar<unsigned char>	_frequency;
+	etactorVar<short>	_powfreq;
 	etactorVar<bool>	_enabled;
 	etactorVar<unsigned char>	_target;
 
@@ -128,6 +154,7 @@ public:
 	CETactor();
 	~CETactor();
 
+	virtual void	SetPowerFrequency( unsigned char power, unsigned char freq );
 	virtual void	SetPower( unsigned char power );
 	virtual void	SetFrequency( unsigned char freq );
 	virtual void	SetEnabled( bool enabled );
@@ -160,6 +187,13 @@ CETactor::~CETactor()
 {
 	_thread.Quit();
 	_thread.Join();
+}
+
+//----------------------------------------------------------------------------
+//----------------------------------------------------------------------------
+void CETactor::SetPowerFrequency( unsigned char power, unsigned char freq )
+{
+	_thread.SetPowerFrequency( power, freq );
 }
 
 //----------------------------------------------------------------------------
@@ -208,6 +242,9 @@ void CETactor::Connect()
 	// Connect to the device.
 	int target = holo_target_etactor.GetInt() >= 1 ? holo_target_etactor.GetInt() : 1;
 	tens_settarget( target );
+	Sleep( TENS_TIMEOUT_MS );
+
+	tens_chargerate( 7 );
 	Sleep( TENS_TIMEOUT_MS );
 
 	// Ready power settings.

@@ -34,7 +34,6 @@ C_HoloHaptics::C_HoloHaptics()
 void C_HoloHaptics::Update()
 {
 	IETactor &tactor = IETactor::Get();
-	tactor.SetPower( _power );
-	tactor.SetFrequency( _frequency );
+	tactor.SetPowerFrequency( _power, _frequency );
 	tactor.SetEnabled( _enabled );
 }

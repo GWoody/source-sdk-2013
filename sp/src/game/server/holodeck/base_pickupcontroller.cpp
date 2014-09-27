@@ -100,6 +100,11 @@ void CPlayerPickupController::Use( CBaseEntity *pActivator, CBaseEntity *pCaller
 	if ( pActivator == m_pHand )
 	{
 		CBaseEntity *pAttached = m_grabController.GetAttached();
+		if( !pAttached )
+		{
+			Shutdown();
+			return;
+		}
 
 		//Adrian: Oops, our object became motion disabled, let go!
 		IPhysicsObject *pPhys = pAttached->VPhysicsGetObject();

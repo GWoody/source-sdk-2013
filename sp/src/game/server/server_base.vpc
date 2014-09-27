@@ -89,6 +89,8 @@ $Project
 		$File	"holodeck\holo_hand.h"
 		$File	"holodeck\holo_haptics.cpp"
 		$File	"holodeck\holo_haptics.h"
+		$File	"holodeck\holo_haptic_events.cpp"
+		$File	"holodeck\holo_haptic_events.h"
 		$File	"holodeck\holo_player.cpp"
         $File	"holodeck\holo_player.h"
 		$File	"holodeck\holo_frame_filter.cpp"
