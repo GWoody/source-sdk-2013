@@ -352,7 +352,7 @@ QAngle CGrabController::AlignAngles( const QAngle &angles, float cosineAlignAngl
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void CGrabController::AttachEntity( CBaseHoloHand *hand, CBaseEntity *pEntity, IPhysicsObject *pPhys, bool bIsMegaPhysCannon, const Vector &vGrabPosition, bool bUseGrabPosition )
+void CGrabController::AttachEntity( CHoloHand *hand, CBaseEntity *pEntity, IPhysicsObject *pPhys, bool bIsMegaPhysCannon, const Vector &vGrabPosition, bool bUseGrabPosition )
 {
 	CBasePlayer *pPlayer = hand->GetOwnerPlayer();
 
@@ -624,7 +624,7 @@ bool CGrabController::IsObjectAllowedOverhead( CBaseEntity *pEntity )
 // player can reach down 2ft below his feet (otherwise he'll hold the object above the bottom)
 #define PLAYER_REACH_DOWN_DISTANCE	24
 
-bool CGrabController::UpdateObject( CBaseHoloHand *pHand, float flError )
+bool CGrabController::UpdateObject( CHoloHand *pHand, float flError )
 {
  	CBaseEntity *pEntity = GetAttached();
 	if ( !pEntity || ComputeError() > flError || pHand->GetOwnerPlayer()->GetGroundEntity() == pEntity || !pEntity->VPhysicsGetObject() )

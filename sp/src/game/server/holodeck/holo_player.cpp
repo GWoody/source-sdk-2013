@@ -25,14 +25,14 @@ extern float PlayerPickupGetHeldObjectMass( CBaseEntity *pPickupControllerEntity
 // Define fields.
 BEGIN_DATADESC( CHoloPlayer )
 
-	DEFINE_FIELD( m_hHand, FIELD_EHANDLE ),
+	DEFINE_FIELD( _hands, FIELD_EHANDLE ),
 
 END_DATADESC()
 
 // Networking table.
 IMPLEMENT_SERVERCLASS_ST( CHoloPlayer, DT_HoloPlayer )
 
-	SendPropArray3( SENDINFO_ARRAY3(m_hHand), SendPropEHandle( SENDINFO_ARRAY(m_hHand) ) ),
+	SendPropArray3( SENDINFO_ARRAY3(_hands), SendPropEHandle( SENDINFO_ARRAY(_hands) ) ),
 	SendPropVector( SENDINFO( _viewoffset ) ),
 	
 END_SEND_TABLE()
@@ -58,7 +58,7 @@ void CHoloPlayer::Spawn()
 		pHand->Spawn();
 		pHand->SetOwnerEntity( this ); 
 		pHand->SetType( (EHand)i );
-		m_hHand.Set( i, pHand );
+		_hands.Set( i, pHand );
 	}
 
 	BaseClass::Spawn();
@@ -80,7 +80,7 @@ void CHoloPlayer::Event_Killed( const CTakeDamageInfo &info )
 {
 	for( int i = 0; i < EHand::HAND_COUNT; i++ )
 	{
-		CBaseHoloHand *hand = (CBaseHoloHand *)m_hHand.Get( i ).Get();
+		CHoloHand *hand = (CHoloHand *)_hands.Get( i ).Get();
 		hand->OwnerKilled();
 	}
 
@@ -96,7 +96,7 @@ bool CHoloPlayer::IsUseableEntity( CBaseEntity *pEntity, unsigned int requiredCa
 		for( int i = 0; i < EHand::HAND_COUNT; i++ )
 		{
 			// Can't use hands or the object the hand is holding.
-			CHoloHand *hand = (CHoloHand *)m_hHand[i].Get();
+			CHoloHand *hand = (CHoloHand *)_hands[i].Get();
 			if( pEntity->entindex() == hand->entindex() )
 			{
 				return false;
@@ -129,7 +129,7 @@ void CHoloPlayer::ProcessUsercmds( CUserCmd *cmds, int numcmds, int totalcmds, i
 	
 	for( int i = 0; i < EHand::HAND_COUNT; i++ )
 	{
-		CHoloHand *hand = (CHoloHand *)m_hHand[i].Get();
+		CHoloHand *hand = (CHoloHand *)_hands[i].Get();
 		hand->ProcessFrame( finalHoloFrame );
 	}
 
@@ -203,7 +203,7 @@ void CHoloPlayer::HandlePickupGesture( const holo::CFrame &frame )
 		CPickupGesture pickup( frame, (EHand)i );
 		if( pickup.IsActive() )
 		{
-			CHoloHand *hand = (CHoloHand *)m_hHand[i].Get();
+			CHoloHand *hand = (CHoloHand *)_hands[i].Get();
 			if( pickup.IsHandClenched() && !hand->GetUseEntity() )
 			{
 				hand->AttemptObjectPickup();
@@ -222,7 +222,7 @@ float CHoloPlayer::GetHeldObjectMass( IPhysicsObject *pHeldObject )
 {
 	for( int i = 0; i < EHand::HAND_COUNT; i++ )
 	{
-		CHoloHand *hand = (CHoloHand *)m_hHand[i].Get();
+		CHoloHand *hand = (CHoloHand *)_hands[i].Get();
 		float mass = PlayerPickupGetHeldObjectMass( hand->GetUseEntity(), pHeldObject );
 		if( mass != 0.0f )
 		{

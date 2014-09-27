@@ -26,7 +26,7 @@ public:
 	Vector			GetHeadOffset()						{ return _viewoffset; }
 
 private:
-	EHANDLE			m_hHand[holo::EHand::HAND_COUNT];
+	EHANDLE			_hands[holo::EHand::HAND_COUNT];
 	Vector			_viewoffset;
 };
 

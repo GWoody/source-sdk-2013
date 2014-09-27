@@ -17,7 +17,7 @@
 #include "gamestats.h"
 
 #ifdef HOLODECK
-#include "holodeck/holo_base_hand.h"
+#include "holodeck/holo_hand.h"
 #endif
 
 #endif
@@ -251,7 +251,7 @@ void CBaseGrenade::Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE 
 #ifdef HOLODECK
 	if ( useType == USE_TOGGLE )
 	{
-		CBaseHoloHand *pHand = dynamic_cast<CBaseHoloHand *>( pActivator );
+		CHoloHand *pHand = dynamic_cast<CHoloHand *>( pActivator );
 		if ( pHand )
 		{
 			pHand->PickupObject( this );

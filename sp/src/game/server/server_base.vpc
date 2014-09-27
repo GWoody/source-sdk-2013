@@ -85,8 +85,6 @@ $Project
 		$File	"holodeck\holo_swipe_panel.cpp"
 		$File	"holodeck\holo_base_panel.cpp"
 		$File	"holodeck\holo_base_panel.h"
-		$File	"holodeck\holo_base_hand.cpp"
-		$File	"holodeck\holo_base_hand.h"
 		$File	"holodeck\holo_gesture_pickup.cpp"
 		$File	"holodeck\holo_gesture_detector.h"
 		$File	"holodeck\holo_hand.cpp"

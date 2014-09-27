@@ -43,7 +43,7 @@
 #include "vehicle_base.h"
 
 #ifdef HOLODECK
-#include "holodeck/holo_base_hand.h"
+#include "holodeck/holo_hand.h"
 #endif
 
 // memdbgon must be the last include file in a .cpp file!!!
@@ -2904,7 +2904,7 @@ int CPhysicsProp::ObjectCaps()
 void CPhysicsProp::Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value )
 {
 #ifdef HOLODECK
-	CBaseHoloHand *hand = dynamic_cast<CBaseHoloHand *>( pActivator );
+	CHoloHand *hand = dynamic_cast<CHoloHand *>( pActivator );
 	if ( hand )
 	{
 		if ( HasSpawnFlags( SF_PHYSPROP_ENABLE_PICKUP_OUTPUT ) )

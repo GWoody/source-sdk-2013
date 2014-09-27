@@ -28,7 +28,7 @@
 #include "func_break.h"
 
 #ifdef HOLODECK
-#include "holodeck/holo_base_hand.h"
+#include "holodeck/holo_hand.h"
 #endif
 
 #ifdef HL2MP
@@ -715,7 +715,7 @@ int	CBaseCombatWeapon::ObjectCaps( void )
 void CBaseCombatWeapon::Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value )
 {
 #ifdef HOLODECK
-	CBaseHoloHand *hand = dynamic_cast<CBaseHoloHand *>( pActivator );
+	CHoloHand *hand = dynamic_cast<CHoloHand *>( pActivator );
 	if ( hand )
 	{
 		hand->PickupObject( this );

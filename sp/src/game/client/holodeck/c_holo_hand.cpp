@@ -14,7 +14,7 @@
 //-----------------------------------------------------------------------------
 // Network table.
 //-----------------------------------------------------------------------------
-IMPLEMENT_CLIENTCLASS_DT( C_HoloHand, DT_HoloHand, CBaseHoloHand )
+IMPLEMENT_CLIENTCLASS_DT( C_HoloHand, DT_HoloHand, CHoloHand )
 
 	RecvPropDataTable( RECVINFO_DT(_haptics), 0, &REFERENCE_RECV_TABLE(DT_HoloHaptics) ),
 

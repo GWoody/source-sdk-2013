@@ -41,7 +41,7 @@ END_DATADESC()
 // Input  : *pPlayer - 
 //			*pObject - 
 //-----------------------------------------------------------------------------
-void CPlayerPickupController::Init( CBaseHoloHand *pHand, CBaseEntity *pObject )
+void CPlayerPickupController::Init( CHoloHand *pHand, CBaseEntity *pObject )
 {
 	// If the target is debris, convert it to non-debris
 	if ( pObject->GetCollisionGroup() == COLLISION_GROUP_DEBRIS )

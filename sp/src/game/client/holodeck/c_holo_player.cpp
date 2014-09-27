@@ -16,7 +16,7 @@
 //-----------------------------------------------------------------------------
 IMPLEMENT_CLIENTCLASS_DT( C_HoloPlayer, DT_HoloPlayer, CHoloPlayer )
 
-	RecvPropArray3( RECVINFO_ARRAY( m_hHand ), RecvPropEHandle( RECVINFO(m_hHand[0]) ) ),
+	RecvPropArray3( RECVINFO_ARRAY( _hands ), RecvPropEHandle( RECVINFO(_hands[0]) ) ),
 	RecvPropVector( RECVINFO( _viewoffset ) ),
 
 END_RECV_TABLE()
