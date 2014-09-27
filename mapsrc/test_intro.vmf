@@ -2,7 +2,7 @@ versioninfo
 {
 	"editorversion" "400"
 	"editorbuild" "6412"
-	"mapversion" "325"
+	"mapversion" "328"
 	"formatversion" "100"
 	"prefab" "0"
 }
@@ -20,7 +20,7 @@ viewsettings
 world
 {
 	"id" "1"
-	"mapversion" "325"
+	"mapversion" "328"
 	"classname" "worldspawn"
 	"detailmaterial" "detail/detailsprites"
 	"detailvbsp" "detail.vbsp"
@@ -4224,7 +4224,7 @@ entity
 		"OnTrigger" "haptic_proxy,SetLerpTime,2,0,-1"
 		"OnTrigger" "haptic_proxy,SwapStartEnd,,0,-1"
 		"OnTrigger" "haptic_proxy,Lerp,,0,-1"
-		"OnTrigger" "haptic_proxy,SetLinearLerp,,0,-1"
+		"OnTrigger" "haptic_proxy,SetExpLerp,,0,-1"
 	}
 	"origin" "0 0 32"
 	editor
@@ -4277,6 +4277,7 @@ entity
 	"endFreq" "0.5"
 	"endPower" "0.05"
 	"lerpType" "1"
+	"spawnflags" "3"
 	"startFreq" "0"
 	"startPower" "0"
 	"targetname" "haptic_proxy"
