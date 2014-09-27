@@ -11,7 +11,7 @@
 #include "holo_base_panel.h"
 #include "holo_hand.h"
 #include "grid/grid_player.h"
-#include "grid/grid_haptic_events.h"
+#include "holo_haptic_events.h"
 
 using namespace holo;
 

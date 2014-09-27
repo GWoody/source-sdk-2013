@@ -8,7 +8,9 @@
 //-------------------------------------------------------------------------
 @BaseClass base(Targetname, EnableDisable, Origin) = GesturePanel
 [
+	//
 	// Attributes.
+	//
 	glowtarget(target_destination) : "Glow entity" : "" : "The model based entity associated with this panel."
 ]
 
@@ -16,11 +18,15 @@
 //-------------------------------------------------------------------------
 @SolidClass base(GesturePanel) = holo_circle_panel : "A volume in which circle gestures are detected."
 [
+	//
 	// Attributes.
+	//
 	normal(angle) : "Circle Normal" : "0 0 0" : "The normal of the circle gesture required to trigger this panel."
 	useTime(float) : "Use Time" : "3.0" : "The length of time the user must make the circle gesture to trigger this panel."
 	
+	//
 	// Flags.
+	//
 	spawnflags(flags) =
 	[
 		2048: "Starts locked" : 0
@@ -28,12 +34,16 @@
 		8192 : "Open Clockwise" : 0
 	]
 	
+	//
 	// Inputs.
+	//
 	input SetUseTime(float) : "Updates the use time attribute."
 	input Lock(void) : "Lock the button, preventing it from functioning."
 	input Unlock(void) : "Unlock the button, allowing it to function."
 	
+	//
 	// Outputs.
+	//
 	output OnFullyOpen(void) : "Fired when the circle gesture has been performed inside the entity for the required time (after the entity was closed), and required direction."
 	output OnFullyClosed(void) : "Fired when the circle gesture has been performed inside the entity for the required time (after the entity was opened), and required direction."
 ]
@@ -42,14 +52,20 @@
 //-------------------------------------------------------------------------
 @SolidClass base(GesturePanel) = holo_swipe_panel : "A volume in which swipe gestures are detected."
 [
+	//
 	// Attributes.
+	//
 	swipeAngle(angle) : "Swipe Angle" : "0 0 0" : "The direction of the swipe gesture required to trigger this panel."
 	minSpeed(float) : "Use Time (mm/s)" : "3.0" : "The required speed of the swipe to activate trigger this panel."
 	
+	//
 	// Inputs.
+	//
 	input SetMinSpeed(float) : "Updates the minimum speed attribute."
 	
+	//
 	// Outputs.
+	//
 	output OnSwipe(void) : "Fired when the swipe matches the required direction."
 	output OnReverseSwipe(void) : "Fired when the swipe is opposite to the required direction."
 ]
@@ -58,23 +74,69 @@
 //-------------------------------------------------------------------------
 @SolidClass base(GesturePanel) = holo_button_panel : "A volume in which swipe gestures are detected."
 [
+	//
 	// Attributes.
+	//
 	pressDirection(angle) : "Press Direction" : "0 0 0" : "The direction of the press gesture required to trigger this panel."
 	pressSound(sound) : "Sound Name" : "" : "Name of the GameSound entry for the sound to play. Also supports direct .wav filenames."
 	lockedSound(sound) : "Locked Sound Name" : "" : "Name of the GameSound entry for the sound to play (when locked). Also supports direct .wav filenames."
 	volume(float) : "Sound Volume [0.0, 1.0]" : "1.0" : "Volume of the sound that is played when the button is pressed."
 	
+	//
 	// Flags.
+	//
 	spawnflags(flags) =
 	[
 		2048: "Starts locked" : 0
 	]
 	
+	//
 	// Inputs.
+	//
 	input Lock(void) : "Lock the button, preventing it from functioning."
 	input Unlock(void) : "Unlock the button, allowing it to function."
 	
+	//
 	// Outputs.
+	//
 	output OnPress(void) : "Fired when the button has a press gesture in required direction."
 	output OnPressLocked(void) : "Fired when the button has a press gesture in required direction, but the button panel has been locked."
+]
+
+//-------------------------------------------------------------------------
+//-------------------------------------------------------------------------
+@PointClass base(Targetname) size(16 16 16) = holo_haptic_proxy : "Interface to the haptic feedback system."
+[
+	//
+	// Attributes.
+	//
+	lerpType(choices) : "Lerp Type" : 0 =
+	[
+		0 : "Linear"
+		1 : "Exponential"
+		2 : "Sin Curve"
+	]
+	
+	time(float) : "Lerp Time" : "1"
+	
+	startPower(float) : "Start Power" : "0"
+	startFreq(float) : "Start Frequency" : "0"
+	endPower(float) : "End Power" : "1"
+	endFreq(float) : "End Frequency" : "1"
+	
+	//
+	// Inputs.
+	//
+	input Lerp(void) : "Start the specific blend over the specified time."
+	input SetLinearLerp(void) : "Sets the proxy to use a linear transition."
+	input SetExpLerp(void) : "Sets the proxy to use an exponential transition."
+	input SetSinLerp(void) : "Sets the proxy to use a sin curve transition."
+	input SetLerpTime(float) : "Sets the proxy to lerp over the given time."
+	input SetStartPower(float) : "Sets the power level to begin lerping."
+	input SetEndPower(float) : "Sets the power level to finish lerping."
+	input SetStartFreq(float) : "Sets the frequency to begin lerping."
+	input SetEndFreq(float) : "Sets the frequency to finish lerping."
+	input SwapStartEnd(void) : "Swaps the start and end power\frequency."
+	input Enable(void) : "Enables the haptic patch using the start power."
+	input Disable(void) : "Stops the haptic patch from running."
 ]
