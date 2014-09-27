@@ -41,7 +41,7 @@ END_SEND_TABLE()
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-CHoloPlayer::CHoloPlayer()
+CHoloPlayer::CHoloPlayer() : _haptics( 1 )
 {
 	_viewoffset.GetForModify().Init( 0, 0, 0 );
 }

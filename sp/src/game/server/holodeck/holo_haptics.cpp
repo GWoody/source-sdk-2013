@@ -42,22 +42,28 @@ void CHoloHapticEvent::Clear()
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 BEGIN_SEND_TABLE_NOBASE( CHoloHaptics, DT_HoloHaptics )
+
+	SendPropInt( SENDINFO(_target) ),
 	SendPropInt( SENDINFO(_power) ),
 	SendPropInt( SENDINFO(_frequency) ),
 	SendPropBool( SENDINFO(_enabled) ),
+
 END_SEND_TABLE()
 
 BEGIN_SIMPLE_DATADESC( CHoloHaptics )
+
 	DEFINE_FIELD( _power, FIELD_INTEGER ),
 	DEFINE_FIELD( _frequency, FIELD_INTEGER ),
 	DEFINE_FIELD( _enabled, FIELD_BOOLEAN ),
+
 END_DATADESC()
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-CHoloHaptics::CHoloHaptics() :
+CHoloHaptics::CHoloHaptics( int target ) :
 	_events( 0, 0, HapticEventLessFunc )
 {
+	_target = target;
 	_power = _frequency = 0;
 	_enabled = false;
 }
@@ -87,6 +93,10 @@ void CHoloHaptics::RemoveEvent( CHoloHapticEvent *event )
 //-----------------------------------------------------------------------------
 void CHoloHaptics::Update()
 {
+	unsigned char maxpower = 0;
+	unsigned char maxfreq = 0;
+	bool enabled = false;
+
 	// Run all events. Clear off those that have finished.
 	for( int i = 0; i < _events.Count(); i++ )
 	{
@@ -95,6 +105,12 @@ void CHoloHaptics::Update()
 		{
 			_events.RemoveAt( i );
 			delete event;
+		}
+		else if( event->IsEnabled() )
+		{
+			maxpower = max( maxpower, event->GetPower() );
+			maxfreq = max( maxfreq, event->GetFrequency() );
+			enabled = true;
 		}
 	}
 
@@ -105,11 +121,9 @@ void CHoloHaptics::Update()
 	}
 	else
 	{
-		// Set the highest priority event active.
-		CHoloHapticEvent *event = _events.Element( 0 );
-		SetPower( event->GetPower() );
-		SetFrequency( event->GetFrequency() );
-		SetEnabled( event->IsEnabled() );
+		SetPower( maxpower );
+		SetFrequency( maxfreq );
+		SetEnabled( enabled );
 	}
 }
 

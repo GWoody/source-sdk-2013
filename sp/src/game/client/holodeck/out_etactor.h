@@ -22,13 +22,7 @@ public:
 	static void		Create();
 	static void		Destroy()		{ delete _instance; }
 
-	virtual void	SetPowerFrequency( unsigned char power, unsigned char freq ) = 0;
-	virtual void	SetPower( unsigned char power ) = 0;
-	virtual void	SetFrequency( unsigned char freq ) = 0;
-	virtual void	SetEnabled( bool enabled ) = 0;
-	virtual void	SetTarget( unsigned char target ) = 0;
-	
-	virtual void	Connect() = 0;
+	virtual void	SetState( unsigned char target, bool enabled, unsigned char power, unsigned char freq ) = 0;
 
 protected:
 	IETactor() {}

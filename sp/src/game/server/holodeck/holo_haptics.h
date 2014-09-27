@@ -56,7 +56,7 @@ public:
 	DECLARE_CLASS_NOBASE( CHoloHaptics );
 	DECLARE_EMBEDDED_NETWORKVAR();
 
-	CHoloHaptics();
+	CHoloHaptics( int target );
 
 	void			AddEvent( CHoloHapticEvent *event );
 	void			RemoveEvent( CHoloHapticEvent *event );
@@ -73,6 +73,7 @@ public:
 private:
 	CUtlPriorityQueue<CHoloHapticEvent *>	_events;
 
+	CNetworkVar( int, _target );
 	CNetworkVar( int, _power );
 	CNetworkVar( int, _frequency );
 	CNetworkVar( bool, _enabled );

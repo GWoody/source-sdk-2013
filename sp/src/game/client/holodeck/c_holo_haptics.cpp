@@ -15,6 +15,7 @@
 //-----------------------------------------------------------------------------
 BEGIN_RECV_TABLE_NOBASE( C_HoloHaptics, DT_HoloHaptics )
 
+	RecvPropInt( RECVINFO(_target) ),
 	RecvPropInt( RECVINFO(_power) ),
 	RecvPropInt( RECVINFO(_frequency) ),
 	RecvPropBool( RECVINFO(_enabled) ),
@@ -25,6 +26,7 @@ END_RECV_TABLE()
 //-----------------------------------------------------------------------------
 C_HoloHaptics::C_HoloHaptics()
 {
+	_target = 0;
 	_power = _frequency = 0;
 	_enabled = false;
 }
@@ -34,6 +36,5 @@ C_HoloHaptics::C_HoloHaptics()
 void C_HoloHaptics::Update()
 {
 	IETactor &tactor = IETactor::Get();
-	tactor.SetPowerFrequency( _power, _frequency );
-	tactor.SetEnabled( _enabled );
+	tactor.SetState( _target, _enabled, _power, _frequency );
 }

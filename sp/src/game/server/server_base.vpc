@@ -71,11 +71,15 @@ $Project
 {
 	$Folder "Holodeck" [$HOLODECK]
 	{
-		$File	"holodeck\base_grabcontroller.cpp"
-		$File	"holodeck\base_grabcontroller.h"
-		$File	"holodeck\base_pickupcontroller.cpp"
-		$File	"holodeck\base_pickupcontroller.h"	
-		$File	"holodeck\base_pickupmanager.cpp"	
+		$Folder "Base"
+		{
+			$File	"holodeck\base_grabcontroller.cpp"
+			$File	"holodeck\base_grabcontroller.h"
+			$File	"holodeck\base_pickupcontroller.cpp"
+			$File	"holodeck\base_pickupcontroller.h"
+			$File	"holodeck\base_pickupmanager.cpp"
+		}
+		
 		$File	"holodeck\holo_button_panel.cpp"
 		$File	"holodeck\holo_circle_panel.cpp"
 		$File	"holodeck\holo_swipe_panel.cpp"

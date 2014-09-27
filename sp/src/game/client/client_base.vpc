@@ -130,6 +130,8 @@ $Project
 		$File	"holodeck\in_leap.h"
 		$File	"holodeck\out_etactor.cpp"
 		$File	"holodeck\out_etactor.h"
+		$File	"holodeck\out_etactor_thread.cpp"
+		$File	"holodeck\out_etactor_thread.h"
 		$File	"$SRCDIR\game\shared\holodeck\holo_shared.cpp"
 		$File	"$SRCDIR\game\shared\holodeck\holo_shared.h"
 	}

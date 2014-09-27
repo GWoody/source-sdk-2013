@@ -27,6 +27,7 @@ public:
 	void			Update();
 
 private:
+	int				_target;
 	int				_power;
 	int				_frequency;
 	bool			_enabled;
