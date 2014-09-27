@@ -25,9 +25,11 @@ public:
 	bool			IsEnabled() const		{ return _enabled; }
 
 	void			Update();
+	void			SetTargetId();
 
 private:
-	int				_target;
+	int				_targetHand;
+	int				_targetId;
 	int				_power;
 	int				_frequency;
 	bool			_enabled;

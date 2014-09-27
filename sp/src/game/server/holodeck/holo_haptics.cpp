@@ -10,6 +10,8 @@
 #include "cbase.h"
 #include "holo_haptics.h"
 
+using namespace holo;
+
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 bool HapticEventLessFunc( CHoloHapticEvent * const &a, CHoloHapticEvent * const &b )
@@ -43,7 +45,7 @@ void CHoloHapticEvent::Clear()
 //-----------------------------------------------------------------------------
 BEGIN_SEND_TABLE_NOBASE( CHoloHaptics, DT_HoloHaptics )
 
-	SendPropInt( SENDINFO(_target) ),
+	SendPropInt( SENDINFO(_targetHand) ),
 	SendPropInt( SENDINFO(_power) ),
 	SendPropInt( SENDINFO(_frequency) ),
 	SendPropBool( SENDINFO(_enabled) ),
@@ -60,10 +62,10 @@ END_DATADESC()
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-CHoloHaptics::CHoloHaptics( int target ) :
+CHoloHaptics::CHoloHaptics() :
 	_events( 0, 0, HapticEventLessFunc )
 {
-	_target = target;
+	_targetHand = -1;
 	_power = _frequency = 0;
 	_enabled = false;
 }

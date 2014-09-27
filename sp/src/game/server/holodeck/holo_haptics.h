@@ -10,6 +10,8 @@
 #ifndef __HOLO_HAPTICS_H__
 #define __HOLO_HAPTICS_H__
 
+#include "holodeck/holo_shared.h"
+
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 class CHoloHapticEvent
@@ -56,7 +58,7 @@ public:
 	DECLARE_CLASS_NOBASE( CHoloHaptics );
 	DECLARE_EMBEDDED_NETWORKVAR();
 
-	CHoloHaptics( int target );
+	CHoloHaptics();
 
 	void			AddEvent( CHoloHapticEvent *event );
 	void			RemoveEvent( CHoloHapticEvent *event );
@@ -69,11 +71,12 @@ public:
 	void			SetPower( unsigned char power )			{ _power = power; }
 	void			SetFrequency( unsigned char freq )		{ _frequency = freq; }
 	void			SetEnabled( bool enabled )				{ _enabled = enabled; }
+	void			SetTargetHand( holo::EHand hand )		{ _targetHand = hand; }
 
 private:
 	CUtlPriorityQueue<CHoloHapticEvent *>	_events;
 
-	CNetworkVar( int, _target );
+	CNetworkVar( int, _targetHand );
 	CNetworkVar( int, _power );
 	CNetworkVar( int, _frequency );
 	CNetworkVar( bool, _enabled );

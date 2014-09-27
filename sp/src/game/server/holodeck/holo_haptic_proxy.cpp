@@ -11,11 +11,26 @@
 #include "cbase.h"
 #include "holo_haptic_events.h"
 #include "holo_player.h"
+#include "holodeck/holo_shared.h"
+
+using namespace holo;
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 class CHoloHapticProxy : public CPointEntity
 {
+	enum ETarget
+	{
+		SF_LEFT_HAND,
+		SF_RIGHT_HAND,
+	};
+
+	enum ETargetBits
+	{
+		SF_LEFT_HAND_BIT = ( 1 << SF_LEFT_HAND ),
+		SF_RIGHT_HAND_BIT = ( 1 << SF_RIGHT_HAND ),
+	};
+
 public:
 	DECLARE_CLASS( CHoloHapticProxy, CPointEntity );
 	DECLARE_DATADESC();
@@ -28,6 +43,9 @@ public:
 	virtual void	Remove();
 
 private:
+	void			AddEventToTargetLimbs( CHoloPlayer *player );
+	void			RemoveEventFromTargetLimbs( CHoloPlayer *player );
+
 	// Hammer inputs.
 	void			InputLerp( inputdata_t &data );
 	void			InputSetLinearLerp( inputdata_t &data );
@@ -95,7 +113,7 @@ void CHoloHapticProxy::Think()
 	}
 	else
 	{
-		player->GetHaptics().AddEvent( _event );
+		AddEventToTargetLimbs( player );
 	}
 
 	BaseClass::Think();
@@ -162,8 +180,39 @@ void CHoloHapticProxy::Remove()
 		return;
 	}
 
-	player->GetHaptics().RemoveEvent( _event );
+	RemoveEventFromTargetLimbs( player );
+
 	delete _event;
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void CHoloHapticProxy::AddEventToTargetLimbs( CHoloPlayer *player )
+{
+	if( GetSpawnFlags() & SF_LEFT_HAND_BIT )
+	{
+		player->GetHandEntity( EHand::LEFT )->GetHaptics().AddEvent( _event );
+	}
+
+	if( GetSpawnFlags() & SF_RIGHT_HAND_BIT )
+	{
+		player->GetHandEntity( EHand::RIGHT )->GetHaptics().AddEvent( _event );
+	}
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void CHoloHapticProxy::RemoveEventFromTargetLimbs( CHoloPlayer *player )
+{
+	if( GetSpawnFlags() & SF_LEFT_HAND_BIT )
+	{
+		player->GetHandEntity( EHand::LEFT )->GetHaptics().RemoveEvent( _event );
+	}
+
+	if( GetSpawnFlags() & SF_RIGHT_HAND_BIT )
+	{
+		player->GetHandEntity( EHand::RIGHT )->GetHaptics().RemoveEvent( _event );
+	}
 }
 
 //-----------------------------------------------------------------------------

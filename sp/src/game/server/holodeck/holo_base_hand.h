@@ -14,6 +14,7 @@
 #include "baseentity.h"
 #include "holodeck/holo_shared.h"
 #include "holo_frame_filter.h"
+#include "holo_haptics.h"
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
@@ -21,22 +22,29 @@ class CBaseHoloHand : public CBaseEntity
 {
 public:
 	DECLARE_CLASS( CBaseHoloHand, CBaseEntity );
-					CBaseHoloHand();
+	DECLARE_DATADESC();
+	DECLARE_SERVERCLASS();
+					
+	CBaseHoloHand();
 
 	// CBaseEntity overrides.
 	virtual void	Spawn();
 	virtual void	Precache();
 	virtual	bool	CreateVPhysics();
 	virtual void	Think();
+	virtual int		UpdateTransmitState();
+
+	void			OwnerKilled();
 
 	// Mutators.
-	void			SetType( holo::EHand type )		{ _type = type; }
+	void			SetType( holo::EHand type );
 
 	// Accessors.
 	const holo::CFrame &	GetFrame() const;
 	const holo::CHand &	GetHoloHand() const;
 	const holo::EHand	GetType() const				{ return _type; }
 	CBasePlayer *	GetOwnerPlayer() const			{ return (CBasePlayer *)GetOwnerEntity(); }
+	CHoloHaptics &	GetHaptics()						{ return _haptics; }
 
 	// Held object.
 	void			SetUseEntity( CBaseEntity *entity );
@@ -70,6 +78,8 @@ private:
 
 	holo::CFrameFilter _filter;
 	holo::EHand		_type;
+
+	CHoloHaptics	_haptics;
 
 	// Object interaction.
 	EHANDLE			_heldEntity;

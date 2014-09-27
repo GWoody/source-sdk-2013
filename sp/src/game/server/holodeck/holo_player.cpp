@@ -26,7 +26,6 @@ extern float PlayerPickupGetHeldObjectMass( CBaseEntity *pPickupControllerEntity
 BEGIN_DATADESC( CHoloPlayer )
 
 	DEFINE_FIELD( m_hHand, FIELD_EHANDLE ),
-	DEFINE_EMBEDDED( _haptics ),
 
 END_DATADESC()
 
@@ -35,13 +34,12 @@ IMPLEMENT_SERVERCLASS_ST( CHoloPlayer, DT_HoloPlayer )
 
 	SendPropArray3( SENDINFO_ARRAY3(m_hHand), SendPropEHandle( SENDINFO_ARRAY(m_hHand) ) ),
 	SendPropVector( SENDINFO( _viewoffset ) ),
-	SendPropDataTable( SENDINFO_DT(_haptics), &REFERENCE_SEND_TABLE(DT_HoloHaptics), SendProxy_SendLocalDataTable ),
 	
 END_SEND_TABLE()
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-CHoloPlayer::CHoloPlayer() : _haptics( 1 )
+CHoloPlayer::CHoloPlayer()
 {
 	_viewoffset.GetForModify().Init( 0, 0, 0 );
 }
@@ -72,9 +70,6 @@ void CHoloPlayer::Spawn()
 //-----------------------------------------------------------------------------
 void CHoloPlayer::Think()
 {
-	_haptics.Update();
-	NetworkStateChanged();
-
 	BaseClass::Think();
 	SetNextThink( gpGlobals->curtime + 0.01f );
 }
@@ -83,12 +78,10 @@ void CHoloPlayer::Think()
 //-----------------------------------------------------------------------------
 void CHoloPlayer::Event_Killed( const CTakeDamageInfo &info )
 {
-	_haptics.ClearAllEvents();
-
 	for( int i = 0; i < EHand::HAND_COUNT; i++ )
 	{
 		CBaseHoloHand *hand = (CBaseHoloHand *)m_hHand.Get( i ).Get();
-		hand->ClearUseEntity();
+		hand->OwnerKilled();
 	}
 
 	BaseClass::Event_Killed( info );

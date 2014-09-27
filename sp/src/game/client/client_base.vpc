@@ -118,6 +118,8 @@ $Project
 		$File	"holodeck\c_holo_button_panel.cpp"
 		$File	"holodeck\c_holo_circle_panel.cpp"
 		$File	"holodeck\c_holo_swipe_panel.cpp"
+		$File	"holodeck\c_holo_hand.cpp"
+		$File	"holodeck\c_holo_hand.h"
 		$File	"holodeck\c_holo_haptics.cpp"
 		$File	"holodeck\c_holo_haptics.h"
 		$File	"holodeck\c_holo_player.cpp"

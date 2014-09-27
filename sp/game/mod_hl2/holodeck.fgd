@@ -131,6 +131,15 @@
 	]
 	
 	//
+	// Flags.
+	//
+	spawnflags(flags) =
+	[
+		1: "Left Hand" : 0
+		2 : "Right Hand" : 0
+	]
+	
+	//
 	// Inputs.
 	//
 	input Lerp(void) : "Start the specific blend over the specified time."

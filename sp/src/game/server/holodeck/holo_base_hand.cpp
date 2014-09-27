@@ -43,6 +43,24 @@ static const char *holo_render_debug_hand_options = "Rendering options:\n\
 static ConVar holo_render_debug_hand( "holo_render_debug_hand", "1", NULL, holo_render_debug_hand_options );
 
 //-----------------------------------------------------------------------------
+// Source entity configuration.
+//-----------------------------------------------------------------------------
+
+// Define fields.
+BEGIN_DATADESC( CBaseHoloHand )
+
+	DEFINE_EMBEDDED( _haptics ),
+
+END_DATADESC()
+
+// Networking table.
+IMPLEMENT_SERVERCLASS_ST( CBaseHoloHand, DT_HoloHand )
+
+	SendPropDataTable( SENDINFO_DT(_haptics), &REFERENCE_SEND_TABLE(DT_HoloHaptics), SendProxy_SendLocalDataTable ),
+	
+END_SEND_TABLE()
+
+//-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 CBaseHoloHand::CBaseHoloHand()
 {
@@ -91,14 +109,40 @@ bool CBaseHoloHand::CreateVPhysics()
 //-----------------------------------------------------------------------------
 void CBaseHoloHand::Think()
 {
+	_haptics.Update();
+	NetworkStateChanged();
+
 	if( _heldEntity )
 	{
 		_heldEntity->Use( this, this, USE_SET, 2 );
 	}
 
 	BaseClass::Think();
-
 	SetNextThink( gpGlobals->curtime + 0.01f ); 
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+int CBaseHoloHand::UpdateTransmitState()
+{
+	// Always transmit this entity to all clients.
+	return SetTransmitState( FL_EDICT_ALWAYS );
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void CBaseHoloHand::OwnerKilled()
+{
+	ClearUseEntity();
+	_haptics.ClearAllEvents();
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void CBaseHoloHand::SetType( holo::EHand type )
+{ 
+	_type = type; 
+	_haptics.SetTargetHand( type ); 
 }
 
 //-----------------------------------------------------------------------------

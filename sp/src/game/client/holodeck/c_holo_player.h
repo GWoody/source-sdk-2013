@@ -11,7 +11,6 @@
 #define __C_HOLO_PLAYER_H__
 
 #include "c_baseplayer.h"
-#include "c_holo_haptics.h"
 #include "holodeck/holo_shared.h"
 
 //-----------------------------------------------------------------------------
@@ -24,15 +23,11 @@ public:
 
 	C_HoloPlayer();
 
-	// C_BaseEntity overrides.
-	virtual void	Simulate();
-
 	Vector			GetHeadOffset()						{ return _viewoffset; }
 
 private:
 	EHANDLE			m_hHand[holo::EHand::HAND_COUNT];
 	Vector			_viewoffset;
-	C_HoloHaptics	_haptics;
 };
 
 #endif // __C_HOLO_PLAYER_H__
