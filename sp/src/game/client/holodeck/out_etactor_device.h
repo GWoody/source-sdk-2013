@@ -1,14 +1,14 @@
 /*
 ==============================================================================
 
-	out_etactor_thread.h
+	out_etactor_device.h
 	Defines the device queue for the haptic feedback system. 
 
 ==============================================================================
 */
 
-#ifndef __OUT_ETACTOR_THREAD_H__
-#define __OUT_ETACTOR_THREAD_H__
+#ifndef __OUT_ETACTOR_DEVICE_H__
+#define __OUT_ETACTOR_DEVICE_H__
 
 typedef unsigned char etactorId_t;
 extern const int TENS_TIMEOUT_MS;
@@ -35,10 +35,10 @@ private:
 //----------------------------------------------------------------------------
 // The state of a single device.
 //----------------------------------------------------------------------------
-class CETactorState
+class CETactorDevice
 {
 public:
-	CETactorState( etactorId_t id, CThread *owner );
+	CETactorDevice( etactorId_t id, CThread *owner );
 
 	void		Update( bool enabled, unsigned char power, unsigned char freq );
 	void		Commit();
@@ -51,10 +51,11 @@ private:
 	etactorId_t	_id;
 	CThread *	_owner;
 
+	// State.
 	CETactorVar<short>	_powfreq;
 	CETactorVar<bool>	_enabled;
 
 	bool		_initialized;
 };
 
-#endif // __OUT_ETACTOR_THREAD_H__
+#endif // __OUT_ETACTOR_DEVICE_H__

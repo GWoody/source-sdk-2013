@@ -9,7 +9,7 @@
 
 #include "cbase.h"
 #include "out_etactor.h"
-#include "out_etactor_thread.h"
+#include "out_etactor_device.h"
 
 #pragma warning( push )
 #pragma warning( disable : 4005 )
@@ -33,10 +33,10 @@ public:
 		while( !_quit )
 		{
 			while( _insertLock );
-			for( int i = 0; i != _states.Count(); i++ )
+			for( int i = 0; i != _devices.Count(); i++ )
 			{
-				CETactorState &state = _states[i];
-				state.Commit();
+				CETactorDevice &device = _devices[i];
+				device.Commit();
 
 				while( _insertLock );
 			}
@@ -47,20 +47,21 @@ public:
 
 	void Insert( etactorId_t target )
 	{
+		CETactorDevice device( target, this );
+
 		_insertLock = true;
-			CETactorState state( target, this );
-			_states.AddToTail( state );
+			_devices.AddToTail( device );
 		_insertLock = false;
 	}
 
 	void SetState( unsigned char target, bool enabled, unsigned char power, unsigned char freq )
 	{
-		for( int i = 0; i != _states.Count(); i++ )
+		for( int i = 0; i != _devices.Count(); i++ )
 		{
-			CETactorState &state = _states[i];
-			if( state.GetId() == target )
+			CETactorDevice &device = _devices[i];
+			if( device.GetId() == target )
 			{
-				state.Update( enabled, power, freq );
+				device.Update( enabled, power, freq );
 			}
 		}
 	}
@@ -72,8 +73,8 @@ public:
 
 private:
 	// ETactor state.
-	CUtlVector<CETactorState> _states;
-	bool			_insertLock;
+	CUtlVector<CETactorDevice> _devices;
+	volatile bool	_insertLock;
 
 	volatile bool	_quit;
 };

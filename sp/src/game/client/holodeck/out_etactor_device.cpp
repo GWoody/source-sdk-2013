@@ -1,14 +1,14 @@
 /*
 ==============================================================================
 
-	out_etactor_thread.cpp
+	out_etactor_device.cpp
 	Implements the device queue for the haptic feedback system. 
 
 ==============================================================================
 */
 
 #include "cbase.h"
-#include "out_etactor_thread.h"
+#include "out_etactor_device.h"
 
 #include <tenslib.h>
 
@@ -82,7 +82,7 @@ void CETactorVar<T>::Clean()
 
 //----------------------------------------------------------------------------
 //----------------------------------------------------------------------------
-CETactorState::CETactorState( etactorId_t id, CThread *owner )
+CETactorDevice::CETactorDevice( etactorId_t id, CThread *owner )
 {
 #pragma omp atomic
 	_id = id;
@@ -95,7 +95,7 @@ CETactorState::CETactorState( etactorId_t id, CThread *owner )
 
 //----------------------------------------------------------------------------
 //----------------------------------------------------------------------------
-void CETactorState::Update( bool enabled, unsigned char power, unsigned char freq )
+void CETactorDevice::Update( bool enabled, unsigned char power, unsigned char freq )
 {
 	short powfreq = ( power << 8 ) | freq;
 	_powfreq.Set( powfreq );
@@ -105,7 +105,7 @@ void CETactorState::Update( bool enabled, unsigned char power, unsigned char fre
 
 //----------------------------------------------------------------------------
 //----------------------------------------------------------------------------
-void CETactorState::Commit()
+void CETactorDevice::Commit()
 {
 	if( !_initialized )
 	{
@@ -147,14 +147,14 @@ void CETactorState::Commit()
 
 //----------------------------------------------------------------------------
 //----------------------------------------------------------------------------
-etactorId_t CETactorState::GetId() const
+etactorId_t CETactorDevice::GetId() const
 {
 	return _id;
 }
 
 //----------------------------------------------------------------------------
 //----------------------------------------------------------------------------
-void CETactorState::Init()
+void CETactorDevice::Init()
 {
 #pragma omp atomic
 	etactorId_t localId = _id;
