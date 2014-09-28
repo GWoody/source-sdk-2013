@@ -81,6 +81,7 @@ void CRazerHydra::MarkHome( const sixenseControllerData &data )
 //----------------------------------------------------------------------------
 void CRazerHydra::CreateMove( CUserCmd *cmd )
 {
+	cmd->viewoffset.Init();
 	if( !_initialized || !sixenseIsBaseConnected( 0 ) )
 	{
 		return;
@@ -103,7 +104,6 @@ void CRazerHydra::CreateMove( CUserCmd *cmd )
 	}
 
 	Vector curPos = HydraToSourceVector( data.pos );
-
 	cmd->viewoffset = curPos - _home;
 }
 
