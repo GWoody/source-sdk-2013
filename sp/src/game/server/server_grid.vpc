@@ -29,6 +29,12 @@ $Project "Server (Grid)"
 		$File	"grenadethrown.cpp"
 		$File	"grenadethrown.h"
 		$File	"$SRCDIR\game\shared\weapon_parse_default.cpp"
+		$File	"sunlightshadowcontrol.cpp"
+		$File	"env_ambient_light.cpp"
+		$File	"env_ambient_light.h"
+		$File	"env_global_light.cpp"
+		$File	"spatialentity.cpp"
+		$File	"spatialentity.h"
 
 		$Folder	"HL2 DLL"
 		{

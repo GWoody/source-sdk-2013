@@ -119,6 +119,8 @@ static ConVar r_drawtranslucentrenderables( "r_drawtranslucentrenderables", "1",
 static ConVar r_drawopaquerenderables( "r_drawopaquerenderables", "1", FCVAR_CHEAT );
 static ConVar r_threaded_renderables( "r_threaded_renderables", "0" );
 
+static ConVar r_flashlightdepth_drawtranslucents( "r_flashlightdepth_drawtranslucents", "0", FCVAR_NONE );
+
 // FIXME: This is not static because we needed to turn it off for TF2 playtests
 ConVar r_DrawDetailProps( "r_DrawDetailProps", "1", FCVAR_NONE, "0=Off, 1=Normal, 2=Wireframe" );
 
@@ -3310,7 +3312,7 @@ void CRendering3dView::SetupRenderablesList( int viewID )
 		setupInfo.m_nDetailBuildFrame = m_pMainView->BuildWorldListsNumber();	//
 		setupInfo.m_pRenderList = m_pRenderablesList;
 		setupInfo.m_bDrawDetailObjects = g_pClientMode->ShouldDrawDetailObjects() && r_DrawDetailProps.GetInt();
-		setupInfo.m_bDrawTranslucentObjects = (viewID != VIEW_SHADOW_DEPTH_TEXTURE);
+		setupInfo.m_bDrawTranslucentObjects = ( r_flashlightdepth_drawtranslucents.GetBool() || (viewID != VIEW_SHADOW_DEPTH_TEXTURE) || m_bRenderFlashlightDepthTranslucents );
 
 		setupInfo.m_vecRenderOrigin = origin;
 		setupInfo.m_vecRenderForward = CurrentViewForward();
@@ -5498,13 +5500,11 @@ void CBaseWorldView::SSAO_DepthPass()
 		DrawOpaqueRenderables( DEPTH_MODE_SSA0 );
 	}
 
-#if 0
 	if ( m_bRenderFlashlightDepthTranslucents || r_flashlightdepth_drawtranslucents.GetBool() )
 	{
 		VPROF_BUDGET( "DrawTranslucentRenderables", VPROF_BUDGETGROUP_SHADOW_DEPTH_TEXTURING );
 		DrawTranslucentRenderables( false, true );
 	}
-#endif
 
 	modelrender->ForcedMaterialOverride( 0 );
 

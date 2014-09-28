@@ -415,6 +415,28 @@ struct MaterialVideoMode_t
 	int m_RefreshRate;		// 0 == default (ignored for windowed mode)
 };
 
+struct AswFlashlightState_t
+{
+	AswFlashlightState_t()
+	{
+		m_bShadowHighRes = false;
+		m_bGlobalLight = false;
+		m_bOrtho = false;
+		m_fOrthoLeft = -1.0f;
+		m_fOrthoRight = 1.0f;
+		m_fOrthoTop = -1.0f;
+		m_fOrthoBottom = 1.0f;
+	}
+
+	bool  m_bShadowHighRes;
+	bool m_bGlobalLight;
+	bool  m_bOrtho;
+	float m_fOrthoLeft;
+	float m_fOrthoRight;
+	float m_fOrthoTop;
+	float m_fOrthoBottom;
+};
+
 // fixme: should move this into something else.
 struct FlashlightState_t
 {
@@ -423,7 +445,7 @@ struct FlashlightState_t
 		m_bEnableShadows = false;						// Provide reasonable defaults for shadow depth mapping parameters
 		m_bDrawShadowFrustum = false;
 		m_flShadowMapResolution = 1024.0f;
-		m_flShadowFilterSize = 0.25f;
+		m_flShadowFilterSize = 0.1f;
 		m_flShadowSlopeScaleDepthBias = 16.0f;
 		m_flShadowDepthBias = 0.0005f;
 		m_flShadowJitterSeed = 0.0f;

@@ -62,5 +62,14 @@ $Project "Client (Grid)"
 			$File	"$SRCDIR/game/shared/grid/grid_gamerules.cpp"
 			$File	"$SRCDIR/game/shared/grid/grid_gamerules.h"
 		}
+		
+		$File	"c_sunlightshadowcontrol.cpp"
+		$File	"c_env_ambient_light.cpp"
+		$File	"c_env_ambient_light.h"
+		$File	"c_env_global_light.cpp"
+		$File	"c_spatialentity.cpp"
+		$File	"c_spatialentity.h"
+		$File	"spatialentitymgr.cpp"
+		$File	"spatialentitymgr.h"
 	}
 }
