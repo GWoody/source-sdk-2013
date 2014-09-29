@@ -2,7 +2,7 @@ versioninfo
 {
 	"editorversion" "400"
 	"editorbuild" "6412"
-	"mapversion" "218"
+	"mapversion" "211"
 	"formatversion" "100"
 	"prefab" "0"
 }
@@ -20,7 +20,7 @@ viewsettings
 world
 {
 	"id" "1"
-	"mapversion" "218"
+	"mapversion" "211"
 	"classname" "worldspawn"
 	"detailmaterial" "detail/detailsprites"
 	"detailvbsp" "detail.vbsp"
@@ -830,6 +830,35 @@ entity
 }
 entity
 {
+	"id" "2694"
+	"classname" "light_spot"
+	"_cone" "45"
+	"_constant_attn" "0"
+	"_distance" "0"
+	"_exponent" "1"
+	"_fifty_percent_distance" "0"
+	"_hardfalloff" "0"
+	"_inner_cone" "30"
+	"_light" "255 255 255 200"
+	"_lightHDR" "-1 -1 -1 1"
+	"_lightscaleHDR" "1"
+	"_linear_attn" "0"
+	"_quadratic_attn" "1"
+	"_zero_percent_distance" "0"
+	"angles" "0 0 0"
+	"pitch" "-90"
+	"style" "0"
+	"origin" "0 400 424"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 500]"
+	}
+}
+entity
+{
 	"id" "2713"
 	"classname" "prop_physics"
 	"angles" "0 180 0"
@@ -1217,191 +1246,19 @@ entity
 }
 entity
 {
-	"id" "2918"
-	"classname" "env_projectedtexture"
-	"angles" "180 0 0"
-	"brightnessscale" "1.0"
-	"cameraspace" "0"
+	"id" "3172"
+	"classname" "env_global_light"
+	"angles" "50 40 0"
+	"color" "255 0 0 1"
 	"colortransitiontime" "0.5"
+	"distance" "10000"
 	"enableshadows" "1"
-	"farz" "8192"
-	"lightcolor" "255 0 0 200"
-	"lightfov" "90.0"
-	"lightonlytarget" "0"
-	"lightworld" "1"
-	"nearz" "4.0"
-	"parentname" "door"
-	"shadowquality" "1"
-	"spawnflags" "3"
-	"targetname" "sun"
+	"fov" "5"
+	"nearz" "512"
+	"northoffset" "200"
+	"StartDisabled" "0"
 	"texturename" "effects/flashlight001"
-	"origin" "504 256 128"
-	editor
-	{
-		"color" "220 30 220"
-		"visgroupshown" "1"
-		"visgroupautoshown" "1"
-		"logicalpos" "[0 2000]"
-	}
-}
-entity
-{
-	"id" "3033"
-	"classname" "func_door_rotating"
-	"angles" "0 0 0"
-	"disablereceiveshadows" "1"
-	"disableshadows" "1"
-	"distance" "180"
-	"dmg" "0"
-	"forceclosed" "0"
-	"health" "0"
-	"ignoredebris" "0"
-	"lip" "0"
-	"locked_sentence" "0"
-	"loopmovesound" "0"
-	"origin" "0 256 128"
-	"renderamt" "255"
-	"rendercolor" "255 255 255"
-	"renderfx" "0"
-	"rendermode" "0"
-	"solidbsp" "1"
-	"spawnflags" "134"
-	"spawnpos" "0"
-	"speed" "10"
-	"targetname" "door"
-	"unlocked_sentence" "0"
-	"wait" "-1"
-	solid
-	{
-		"id" "3031"
-		side
-		{
-			"id" "552"
-			"plane" "(-8 264 136) (8 264 136) (8 248 136)"
-			"material" "TOOLS/TOOLSNODRAW"
-			"uaxis" "[1 0 0 0] 0.25"
-			"vaxis" "[0 -1 0 0] 0.25"
-			"rotation" "0"
-			"lightmapscale" "16"
-			"smoothing_groups" "0"
-		}
-		side
-		{
-			"id" "551"
-			"plane" "(-8 248 120) (8 248 120) (8 264 120)"
-			"material" "TOOLS/TOOLSNODRAW"
-			"uaxis" "[1 0 0 0] 0.25"
-			"vaxis" "[0 -1 0 0] 0.25"
-			"rotation" "0"
-			"lightmapscale" "16"
-			"smoothing_groups" "0"
-		}
-		side
-		{
-			"id" "550"
-			"plane" "(-8 264 136) (-8 248 136) (-8 248 120)"
-			"material" "TOOLS/TOOLSNODRAW"
-			"uaxis" "[0 1 0 0] 0.25"
-			"vaxis" "[0 0 -1 0] 0.25"
-			"rotation" "0"
-			"lightmapscale" "16"
-			"smoothing_groups" "0"
-		}
-		side
-		{
-			"id" "549"
-			"plane" "(8 264 120) (8 248 120) (8 248 136)"
-			"material" "TOOLS/TOOLSNODRAW"
-			"uaxis" "[0 1 0 0] 0.25"
-			"vaxis" "[0 0 -1 0] 0.25"
-			"rotation" "0"
-			"lightmapscale" "16"
-			"smoothing_groups" "0"
-		}
-		side
-		{
-			"id" "548"
-			"plane" "(8 264 136) (-8 264 136) (-8 264 120)"
-			"material" "TOOLS/TOOLSNODRAW"
-			"uaxis" "[1 0 0 0] 0.25"
-			"vaxis" "[0 0 -1 0] 0.25"
-			"rotation" "0"
-			"lightmapscale" "16"
-			"smoothing_groups" "0"
-		}
-		side
-		{
-			"id" "547"
-			"plane" "(8 248 120) (-8 248 120) (-8 248 136)"
-			"material" "TOOLS/TOOLSNODRAW"
-			"uaxis" "[1 0 0 0] 0.25"
-			"vaxis" "[0 0 -1 0] 0.25"
-			"rotation" "0"
-			"lightmapscale" "16"
-			"smoothing_groups" "0"
-		}
-		editor
-		{
-			"color" "220 30 220"
-			"visgroupshown" "1"
-			"visgroupautoshown" "1"
-		}
-	}
-	editor
-	{
-		"color" "220 30 220"
-		"visgroupshown" "1"
-		"visgroupautoshown" "1"
-		"logicalpos" "[0 3500]"
-	}
-}
-entity
-{
-	"id" "3119"
-	"classname" "env_sprite"
-	"disablereceiveshadows" "0"
-	"framerate" "10.0"
-	"GlowProxySize" "2.0"
-	"HDRColorScale" "1.0"
-	"maxdxlevel" "0"
-	"mindxlevel" "0"
-	"model" "sprites/light_glow03.vmt"
-	"parentname" "door"
-	"renderamt" "255"
-	"rendercolor" "255 255 255"
-	"renderfx" "0"
-	"rendermode" "0"
-	"origin" "504 256 128"
-	editor
-	{
-		"color" "20 140 20"
-		"visgroupshown" "1"
-		"visgroupautoshown" "1"
-		"logicalpos" "[0 4000]"
-	}
-}
-entity
-{
-	"id" "3160"
-	"classname" "light_spot"
-	"_cone" "45"
-	"_constant_attn" "0"
-	"_distance" "0"
-	"_exponent" "1"
-	"_fifty_percent_distance" "0"
-	"_hardfalloff" "0"
-	"_inner_cone" "30"
-	"_light" "255 255 255 100"
-	"_lightscaleHDR" "1"
-	"_linear_attn" "0"
-	"_quadratic_attn" "1"
-	"_zero_percent_distance" "0"
-	"angles" "-90 0 0"
-	"pitch" "-90"
-	"spawnflags" "0"
-	"style" "0"
-	"_lightHDR" "-1 -1 -1 1"
-	"origin" "0 400 432"
+	"origin" "0 256 64"
 	editor
 	{
 		"color" "220 30 220"
