@@ -1,5 +1,28 @@
 # Files to ignore when considering what GIT should commit.
 
+# Hammer files
+*.ain
+*.log
+*.prt
+*.vmx
+mapsrc/*.bsp
+
+# Game config files
+sp/game/mod_hl2/cfg/*
+*.hl1
+*.hl2
+*.hl3
+*.lnk
+
+# Shader object files
+*fxctmp9_tmp*
+sp/src/materialsystem/stdshaders/NIL
+sp/src/materialsystem/stdshaders/filestocopy.txt
+sp/src/materialsystem/stdshaders/uniquefilestocopy.txt
+sp/src/materialsystem/stdshaders/vcslist.txt
+sp/src/materialsystem/stdshaders/inclist.txt
+*makefile*
+
 # Visual Studio 
 *.suo
 *.user
