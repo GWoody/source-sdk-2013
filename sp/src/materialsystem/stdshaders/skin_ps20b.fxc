@@ -295,6 +295,8 @@ float4 main( PS_INPUT i ) : COLOR
 
 			// These two values are output
 			diffuseLighting, specularLighting );
+			
+		diffuseLighting *= 5;
 	}
 
 	// If we didn't already apply Fresnel to specular warp, modulate the specular

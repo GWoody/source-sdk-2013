@@ -273,7 +273,7 @@ float4 main( PS_INPUT i ) : COLOR
 #if defined ( _X360 )
 		diffuseLighting += flashlightColor;
 #else
-		diffuseLighting = flashlightColor;
+		diffuseLighting = flashlightColor * 5;
 #endif
 
 	}
