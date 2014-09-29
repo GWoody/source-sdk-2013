@@ -6,58 +6,10 @@
 //=============================================================================//
 
 #include "cbase.h"
+#include "sunlightshadowcontrol.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
-
-//------------------------------------------------------------------------------
-// FIXME: This really should inherit from something	more lightweight
-//------------------------------------------------------------------------------
-
-
-//------------------------------------------------------------------------------
-// Purpose : Sunlight shadow control entity
-//------------------------------------------------------------------------------
-class CSunlightShadowControl : public CBaseEntity
-{
-public:
-	DECLARE_CLASS( CSunlightShadowControl, CBaseEntity );
-
-	CSunlightShadowControl();
-
-	void Spawn( void );
-	bool KeyValue( const char *szKeyName, const char *szValue );
-	virtual bool GetKeyValue( const char *szKeyName, char *szValue, int iMaxLen );
-	int  UpdateTransmitState();
-
-	// Inputs
-	void	InputSetAngles( inputdata_t &inputdata );
-	void	InputEnable( inputdata_t &inputdata );
-	void	InputDisable( inputdata_t &inputdata );
-	void	InputSetTexture( inputdata_t &inputdata );
-	void	InputSetEnableShadows( inputdata_t &inputdata );
-	void	InputSetLightColor( inputdata_t &inputdata );
-
-	virtual int	ObjectCaps( void ) { return BaseClass::ObjectCaps() & ~FCAP_ACROSS_TRANSITION; }
-
-	DECLARE_SERVERCLASS();
-	DECLARE_DATADESC();
-
-private:
-	CNetworkVector( m_shadowDirection );
-
-	CNetworkVar( bool, m_bEnabled );
-	bool m_bStartDisabled;
-
-	CNetworkString( m_TextureName, MAX_PATH );
-	CNetworkColor32( m_LightColor );
-	CNetworkVar( float, m_flColorTransitionTime );
-	CNetworkVar( float, m_flSunDistance );
-	CNetworkVar( float, m_flFOV );
-	CNetworkVar( float, m_flNearZ );
-	CNetworkVar( float, m_flNorthOffset );
-	CNetworkVar( bool, m_bEnableShadows );
-};
 
 LINK_ENTITY_TO_CLASS(sunlight_shadow_control, CSunlightShadowControl);
 

@@ -6,6 +6,7 @@
 //=============================================================================//
 #include "cbase.h"
 #include "tier0/vprof.h"
+#include "c_sunlightshadowcontrol.h"
 
 #include "c_baseplayer.h"
 
@@ -16,44 +17,6 @@
 ConVar cl_sunlight_ortho_size("cl_sunlight_ortho_size", "0.0", FCVAR_CHEAT, "Set to values greater than 0 for ortho view render projections.");
 ConVar cl_sunlight_slopescaledepthbias( "cl_sunlight_slopescaledepthbias", "2", FCVAR_CHEAT );
 ConVar cl_sunlight_depthbias( "cl_sunlight_depthbias", "0.0" );
-
-//------------------------------------------------------------------------------
-// Purpose : Sunlights shadow control entity
-//------------------------------------------------------------------------------
-class C_SunlightShadowControl : public C_BaseEntity
-{
-public:
-	DECLARE_CLASS( C_SunlightShadowControl, C_BaseEntity );
-
-	DECLARE_CLIENTCLASS();
-
-	virtual ~C_SunlightShadowControl();
-
-	void OnDataChanged( DataUpdateType_t updateType );
-	void Spawn();
-	bool ShouldDraw();
-
-	void ClientThink();
-
-private:
-	Vector m_shadowDirection;
-	bool m_bEnabled;
-	char m_TextureName[ MAX_PATH ];
-	CTextureReference m_SpotlightTexture;
-	color32	m_LightColor;
-	Vector m_CurrentLinearFloatLightColor;
-	float m_flCurrentLinearFloatLightAlpha;
-	float m_flColorTransitionTime;
-	float m_flSunDistance;
-	float m_flFOV;
-	float m_flNearZ;
-	float m_flNorthOffset;
-	bool m_bEnableShadows;
-	bool m_bOldEnableShadows;
-
-	static ClientShadowHandle_t m_LocalFlashlightHandle;
-};
-
 
 ClientShadowHandle_t C_SunlightShadowControl::m_LocalFlashlightHandle = CLIENTSHADOW_INVALID_HANDLE;
 
@@ -188,7 +151,7 @@ void C_SunlightShadowControl::ClientThink()
 		state.m_pSpotlightTexture = m_SpotlightTexture;
 		state.m_nSpotlightTextureFrame = 0;
 
-		state.m_nShadowQuality = 1; // Allow entity to affect shadow quality
+		state.m_nShadowQuality = 0; // Allow entity to affect shadow quality
 
 		if ( m_bOldEnableShadows != m_bEnableShadows )
 		{
