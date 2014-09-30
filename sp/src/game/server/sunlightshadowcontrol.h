@@ -43,7 +43,7 @@ protected:
 	bool m_bStartDisabled;
 
 	CNetworkString( m_TextureName, MAX_PATH );
-	CNetworkColor32( m_LightColor );
+	CNetworkArray( float, m_LightColor, 4 );
 	CNetworkVar( float, m_flColorTransitionTime );
 	CNetworkVar( float, m_flSunDistance );
 	CNetworkVar( float, m_flFOV );

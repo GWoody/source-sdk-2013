@@ -23,7 +23,7 @@ BEGIN_DATADESC( CSunlightShadowControl )
 	DEFINE_KEYFIELD( m_flNearZ,	FIELD_FLOAT, "nearz" ),
 	DEFINE_KEYFIELD( m_flNorthOffset,	FIELD_FLOAT, "northoffset" ),
 	DEFINE_KEYFIELD( m_bEnableShadows, FIELD_BOOLEAN, "enableshadows" ),
-	DEFINE_FIELD( m_LightColor, FIELD_COLOR32 ), 
+	DEFINE_AUTO_ARRAY( m_LightColor, FIELD_FLOAT ), 
 	DEFINE_KEYFIELD( m_flColorTransitionTime, FIELD_FLOAT, "colortransitiontime" ),
 
 	// Inputs
@@ -32,7 +32,7 @@ BEGIN_DATADESC( CSunlightShadowControl )
 	DEFINE_INPUT( m_flNearZ,			FIELD_FLOAT, "SetNearZDistance" ),
 	DEFINE_INPUT( m_flNorthOffset,			FIELD_FLOAT, "SetNorthOffset" ),
 
-	DEFINE_INPUTFUNC( FIELD_COLOR32, "LightColor", InputSetLightColor ),
+	DEFINE_INPUTFUNC( FIELD_VECTOR, "LightColor", InputSetLightColor ),
 	DEFINE_INPUTFUNC( FIELD_STRING, "SetAngles", InputSetAngles ),
 	DEFINE_INPUTFUNC( FIELD_VOID, "Enable", InputEnable ),
 	DEFINE_INPUTFUNC( FIELD_VOID, "Disable", InputDisable ),
@@ -46,7 +46,7 @@ IMPLEMENT_SERVERCLASS_ST_NOBASE(CSunlightShadowControl, DT_SunlightShadowControl
 	SendPropVector(SENDINFO(m_shadowDirection), -1,  SPROP_NOSCALE ),
 	SendPropBool(SENDINFO(m_bEnabled) ),
 	SendPropString(SENDINFO(m_TextureName)),
-	SendPropInt(SENDINFO (m_LightColor ),	32, SPROP_UNSIGNED ),
+	SendPropArray( SendPropFloat( SENDINFO_ARRAY(m_LightColor) ), m_LightColor),
 	SendPropFloat( SENDINFO( m_flColorTransitionTime ) ),
 	SendPropFloat(SENDINFO(m_flSunDistance), 0, SPROP_NOSCALE ),
 	SendPropFloat(SENDINFO(m_flFOV), 0, SPROP_NOSCALE ),
@@ -63,7 +63,8 @@ CSunlightShadowControl::CSunlightShadowControl()
 #else
 	Q_strcpy( m_TextureName.GetForModify(), "effects/flashlight001" );
 #endif
-	m_LightColor.Init( 255, 255, 255, 1 );
+	m_LightColor.GetForModify( 0 ) = m_LightColor.GetForModify( 1 ) = m_LightColor.GetForModify( 2 ) = 255.0f;
+	m_LightColor.GetForModify( 3 ) = 1.0f;
 	m_flColorTransitionTime = 0.5f;
 	m_flSunDistance = 10000.0f;
 	m_flFOV = 5.0f;
@@ -88,10 +89,10 @@ bool CSunlightShadowControl::KeyValue( const char *szKeyName, const char *szValu
 		float tmp[4];
 		UTIL_StringToFloatArray( tmp, 4, szValue );
 
-		m_LightColor.SetR( tmp[0] );
-		m_LightColor.SetG( tmp[1] );
-		m_LightColor.SetB( tmp[2] );
-		m_LightColor.SetA( tmp[3] );
+		m_LightColor.GetForModify( 0 ) = tmp[0];
+		m_LightColor.GetForModify( 1 ) = tmp[1];
+		m_LightColor.GetForModify( 2 ) = tmp[1];
+		m_LightColor.GetForModify( 3 ) = tmp[3];
 	}
 	else if ( FStrEq( szKeyName, "angles" ) )
 	{
@@ -130,7 +131,7 @@ bool CSunlightShadowControl::GetKeyValue( const char *szKeyName, char *szValue, 
 {
 	if ( FStrEq( szKeyName, "color" ) )
 	{
-		Q_snprintf( szValue, iMaxLen, "%d %d %d %d", m_LightColor.GetR(), m_LightColor.GetG(), m_LightColor.GetB(), m_LightColor.GetA() );
+		Q_snprintf( szValue, iMaxLen, "%d %d %d %d", (int)m_LightColor.Get(0), (int)m_LightColor.Get(1), (int)m_LightColor.Get(2), (int)m_LightColor.Get(3) );
 		return true;
 	}
 	else if ( FStrEq( szKeyName, "texturename" ) )
@@ -199,5 +200,9 @@ void CSunlightShadowControl::InputSetEnableShadows( inputdata_t &inputdata )
 
 void CSunlightShadowControl::InputSetLightColor( inputdata_t &inputdata )
 {
-	m_LightColor = inputdata.value.Color32();
+	color32 color = inputdata.value.Color32();
+	m_LightColor.GetForModify(0) = color.r;
+	m_LightColor.GetForModify(1) = color.g;
+	m_LightColor.GetForModify(2) = color.b;
+	m_LightColor.GetForModify(3) = color.a;
 }

@@ -30,7 +30,7 @@ private:
 	bool m_bEnabled;
 	char m_TextureName[ MAX_PATH ];
 	CTextureReference m_SpotlightTexture;
-	color32	m_LightColor;
+	float	m_LightColor[4];
 	Vector m_CurrentLinearFloatLightColor;
 	float m_flCurrentLinearFloatLightAlpha;
 	float m_flColorTransitionTime;

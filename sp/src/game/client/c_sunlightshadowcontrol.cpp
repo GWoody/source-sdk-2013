@@ -25,7 +25,7 @@ IMPLEMENT_CLIENTCLASS_DT(C_SunlightShadowControl, DT_SunlightShadowControl, CSun
 	RecvPropVector(RECVINFO(m_shadowDirection)),
 	RecvPropBool(RECVINFO(m_bEnabled)),
 	RecvPropString(RECVINFO(m_TextureName)),
-	RecvPropInt(RECVINFO(m_LightColor), 0),
+	RecvPropArray( RecvPropFloat(RECVINFO(m_LightColor[0]), 0), m_LightColor ),
 	RecvPropFloat(RECVINFO(m_flColorTransitionTime)),
 	RecvPropFloat(RECVINFO(m_flSunDistance)),
 	RecvPropFloat(RECVINFO(m_flFOV)),
@@ -76,8 +76,8 @@ void C_SunlightShadowControl::ClientThink()
 	VPROF("C_SunlightShadowControl::ClientThink");
 	if ( m_bEnabled )
 	{
-		Vector vLinearFloatLightColor( m_LightColor.r, m_LightColor.g, m_LightColor.b );
-		float flLinearFloatLightAlpha = m_LightColor.a;
+		Vector vLinearFloatLightColor( m_LightColor[0], m_LightColor[1], m_LightColor[2] );
+		float flLinearFloatLightAlpha = m_LightColor[3];
 
 		if ( m_CurrentLinearFloatLightColor != vLinearFloatLightColor || m_flCurrentLinearFloatLightAlpha != flLinearFloatLightAlpha )
 		{
