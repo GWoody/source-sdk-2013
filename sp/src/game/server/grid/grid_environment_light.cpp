@@ -27,6 +27,9 @@ public:
 	void			InputSetMaxPitch( inputdata_t &data );
 
 private:
+	void			SetSun();
+	void			SetMoon();
+
 	float			CalculatePitch( float localTime );
 	void			SetBrightness( float localTime );
 	void			SetZoneBrightness( float localTime, const Vector4D &riseBrightess, const Vector4D &horizonBrightess, const Vector4D &brightness );
@@ -74,6 +77,11 @@ void CGridEnvironmentLight::Spawn( void )
 	BaseClass::Spawn();
 
 	//
+	// Precache.
+	//
+	PrecacheModel( "sky/moon.vmt" );
+
+	//
 	// Selt projected texture variables.
 	//
 	m_flSunDistance = 29000.0f;
@@ -95,7 +103,7 @@ void CGridEnvironmentLight::Spawn( void )
 
 //-----------------------------------------------------------------------------
 // Assume a day starts when the sun rises (_hour = 00.00f).
-// Assume the night starts at 12.00f hours.
+// Assume the night starts at (_hour = 12.00f).
 //-----------------------------------------------------------------------------
 void CGridEnvironmentLight::Think( void )
 {
@@ -105,6 +113,15 @@ void CGridEnvironmentLight::Think( void )
 	{
 		// Reset the day.
 		_hour = _hour - 24.0f;
+	}
+
+	if( _hour >= 12.0f )
+	{
+		SetMoon();
+	}
+	else
+	{
+		SetSun();
 	}
 
 	// 24 hours has 2 zones: daytime (12 hours) and nighttime (12 hours).
@@ -133,6 +150,48 @@ void CGridEnvironmentLight::Think( void )
 void CGridEnvironmentLight::InputSetMaxPitch( inputdata_t &data )
 {
 	_maxPitch = data.value.Float();
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void CGridEnvironmentLight::SetSun()
+{
+	// Sun is bright. Don't worry about Z ordering.
+	_sunSprite->SetFarZ( false );
+
+	_sunSprite->SetMaterial( "sprites/light_glow02_add_noz.vmt" );
+	_sunSprite->m_nSize = 48;
+	_sunSprite->m_nOverlaySize = 16;
+
+	color32 &overlayClr = _sunSprite->m_clrOverlay.GetForModify();
+	overlayClr.r = overlayClr.g = overlayClr.b = 0;
+	overlayClr.a = 255;
+
+	color32 &sunClr = _sunSprite->m_clrRender.GetForModify();
+	sunClr.r = 100;
+	sunClr.g = sunClr.b = 80;
+	sunClr.a = 255;
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void CGridEnvironmentLight::SetMoon()
+{
+	// Moon has real detail. Render it in order.
+	_sunSprite->SetFarZ( true );
+
+	_sunSprite->SetMaterial( "sky/moon.vmt" );
+	_sunSprite->m_nSize = 6;
+	_sunSprite->m_nOverlaySize = 6;
+	_sunSprite->m_clrOverlay = _sunSprite->m_clrRender;
+
+	color32 &overlayClr = _sunSprite->m_clrOverlay.GetForModify();
+	overlayClr.r = overlayClr.g = overlayClr.b = 0;
+	overlayClr.a = 255;
+
+	color32 &sunClr = _sunSprite->m_clrRender.GetForModify();
+	sunClr.r = sunClr.g = sunClr.b = 255;
+	sunClr.a = 255;
 }
 
 //-----------------------------------------------------------------------------

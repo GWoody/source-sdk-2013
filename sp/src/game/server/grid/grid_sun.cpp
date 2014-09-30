@@ -13,6 +13,16 @@
 
 LINK_ENTITY_TO_CLASS( grid_env_sun, CGridSun );
 
+IMPLEMENT_SERVERCLASS_ST( CGridSun, DT_GridSun )
+	SendPropBool( SENDINFO(_farZ) ),
+END_SEND_TABLE()
+
+BEGIN_DATADESC( CGridSun )
+
+	DEFINE_FIELD( _farZ,		FIELD_BOOLEAN ),
+
+END_DATADESC()
+
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 CGridSun::CGridSun()
@@ -49,6 +59,22 @@ void CGridSun::SetPitchYaw( float pitch, float yaw )
 	lightDir.x = -m_vDirection.GetX();
 	lightDir.y = fabs( m_vDirection.GetY() );
 	lightDir.z = fabs( m_vDirection.GetZ() );
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void CGridSun::SetFarZ( bool farz )
+{
+	_farZ = farz;
+}
+
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void CGridSun::SetMaterial( const char *material )
+{
+	m_strMaterial = AllocPooledString( material );
+	m_nMaterial = PrecacheModel( STRING( m_strMaterial ) );
 }
 
 //-----------------------------------------------------------------------------
