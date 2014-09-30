@@ -640,6 +640,7 @@ $Project
 		$File	"$SRCDIR\game\shared\studio_shared.cpp"
 		$File	"subs.cpp"
 		$File	"sun.cpp"
+		$File	"sun.h"
 		$File	"tactical_mission.cpp"
 		$File	"tactical_mission.h"
 		$File	"$SRCDIR\game\shared\takedamageinfo.cpp"
