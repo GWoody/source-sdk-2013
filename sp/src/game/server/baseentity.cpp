@@ -63,6 +63,10 @@
 #include "tier1/utlstring.h"
 #include "utlhashtable.h"
 
+#ifdef GRID_DLL
+#include "grid_utils.h"
+#endif
+
 #if defined( TF_DLL )
 #include "tf_gamerules.h"
 #endif
@@ -4936,6 +4940,10 @@ int CBaseEntity::PrecacheModel( const char *name, bool bPreload )
 
 #if defined( WATCHACCESS )
 	g_bWatching = true;
+#endif
+
+#ifdef GRID_DLL
+	Grid_RunShaderReplacement( name );
 #endif
 
 	return idx;
