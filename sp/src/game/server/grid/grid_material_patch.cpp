@@ -24,7 +24,10 @@ static bool string_t_CmpFunc( const string_t &lhs, const string_t &rhs );
 static void Grid_RunStudioShaderReplacement( const model_t *model );
 static void Grid_RunBrushShaderReplacement( const model_t *model, bool worldmodel );
 static void Grid_PerformReplacement( IMaterial *material );
+
 static KeyValues *Grid_MaterialParamsToKeyValues( const char *shader, IMaterialVar **vars, int count );
+static int Grid_MaterialFlagsToInt( IMaterial *material );
+static void Grid_IntToMaterialFlags( int flags, IMaterial *material );
 
 //-----------------------------------------------------------------------------
 // Variables.
@@ -60,8 +63,8 @@ void Grid_InitShaderReplacementTable()
 		return;
 	}
 
-	Grid_CreateShaderReplacementPair( "LightmappedGeneric", "LightmappedGeneric" );
-	Grid_CreateShaderReplacementPair( "VertexLitGeneric", "VertexLitGeneric" );
+	Grid_CreateShaderReplacementPair( "LightmappedGeneric", "SDK_LightmappedGeneric" );
+	Grid_CreateShaderReplacementPair( "VertexLitGeneric", "SDK_VertexLitGeneric" );
 
 	gShaderReplacementTableInitialized = true;
 }
@@ -150,7 +153,7 @@ static void Grid_RunStudioShaderReplacement( const model_t *model )
 			// This should only break if there is something wrong in the model.
 			Assert( 0 );
 
-			ConColorMsg( COLOR_YELLOW, "Failed to find material %s for patching!\n", texture->pszName() );
+			ConColorMsg( COLOR_BLUE, "Failed to find material %s for patching!\n", texture->pszName() );
 			gBitchTable.Insert( AllocPooledString( texture->pszName() ), true );
 		}
 	}
@@ -241,12 +244,15 @@ static void Grid_PerformReplacement( IMaterial *material )
 		const char *findShaderName = STRING( gShaderReplacementTable.Key( i ) );
 		if( !Q_stricmp( shaderName, findShaderName ) )
 		{
-			ConColorMsg( COLOR_GREEN, "Patching material %s (%s -> %s)\n", material->GetName(), findShaderName, STRING( gShaderReplacementTable[i] ) );
+			ConColorMsg( COLOR_BLUE, "Patching material %s (%s -> %s)\n", material->GetName(), findShaderName, STRING( gShaderReplacementTable[i] ) );
 
 			// Setting the shader by itself reverts all material params to their default values.
 			// So we must make a copy of the current settings before applying the new shader.
 			KeyValues *vars = Grid_MaterialParamsToKeyValues( STRING( gShaderReplacementTable[i] ), material->GetShaderParams(), material->ShaderParamCount() );
+			int flags = Grid_MaterialFlagsToInt( material );
+
 			material->SetShaderAndParams( vars );
+			Grid_IntToMaterialFlags( flags, material );
 
 			vars->deleteThis();
 
@@ -268,6 +274,13 @@ static KeyValues *Grid_MaterialParamsToKeyValues( const char *shader, IMaterialV
 	{
 		IMaterialVar *pVar = vars[ i ];
 		const char *pVarName = pVar->GetName();
+
+		if( !Q_stricmp( pVarName, "$flags" ) || !Q_stricmp( pVarName, "$flags_defined" ) ||
+			!Q_stricmp( pVarName, "$flags2" ) || !Q_stricmp( pVarName, "$flags_defined2" ))
+		{
+			continue;
+		}
+
 		MaterialVarType_t vartype = pVar->GetType();
 		switch ( vartype )
 		{
@@ -342,4 +355,37 @@ static KeyValues *Grid_MaterialParamsToKeyValues( const char *shader, IMaterialV
 	}
 
 	return msg;
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+static int Grid_MaterialFlagsToInt( IMaterial *material )
+{
+	int flags = 0;
+
+	for( int i = 0; i < 32; i++ )
+	{
+		MaterialVarFlags_t f = (MaterialVarFlags_t)( 1 << i );
+		bool set = material->GetMaterialVarFlag( f );
+
+		if( set )
+		{
+			flags |= f;
+		}
+	}
+
+	return flags;
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+static void Grid_IntToMaterialFlags( int flags, IMaterial *material )
+{
+	for( int i = 0; i < 32; i++ )
+	{
+		MaterialVarFlags_t f = (MaterialVarFlags_t)( 1 << i );
+		bool set = flags & (1 << i) ? true : false;
+
+		material->SetMaterialVarFlag( f, set );
+	}
 }

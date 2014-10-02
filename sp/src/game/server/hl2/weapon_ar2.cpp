@@ -124,7 +124,10 @@ void CWeaponAR2::Precache( void )
 {
 	BaseClass::Precache();
 
+#ifndef GRID_DLL
 	UTIL_PrecacheOther( "prop_combine_ball" );
+#endif
+
 	UTIL_PrecacheOther( "env_entity_dissolver" );
 }
 

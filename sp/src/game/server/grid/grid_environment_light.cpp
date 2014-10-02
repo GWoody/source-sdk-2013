@@ -227,6 +227,8 @@ void CGridEnvironmentLight::SetZoneBrightness( float localTime, const Vector4D &
 	const Vector4D *end = NULL;
 	vec_t percent = 0.0f;
 
+#pragma message("CGridEnvironmentLight::SetZoneBrightness: make light color pitch based, not time")
+
 	if( localTime < 0.5f )
 	{
 		start = &_blankBrightness;

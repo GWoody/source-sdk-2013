@@ -16,6 +16,9 @@ sp/game/mod_hl2/cfg/*
 
 # Shader object files
 *fxctmp9_tmp*
+*pshtmp9*
+*vshtmp9*
+*vshtmp9_tmp*
 sp/src/materialsystem/stdshaders/NIL
 sp/src/materialsystem/stdshaders/filestocopy.txt
 sp/src/materialsystem/stdshaders/uniquefilestocopy.txt

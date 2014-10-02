@@ -149,7 +149,9 @@ CWeaponSMG1::CWeaponSMG1( )
 //-----------------------------------------------------------------------------
 void CWeaponSMG1::Precache( void )
 {
+#ifndef GRID_DLL
 	UTIL_PrecacheOther("grenade_ar2");
+#endif
 
 	BaseClass::Precache();
 }
