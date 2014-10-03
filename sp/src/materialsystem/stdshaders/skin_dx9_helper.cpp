@@ -21,6 +21,10 @@ static ConVar r_lightwarpidentity( "r_lightwarpidentity", "0", FCVAR_CHEAT );
 static ConVar r_rimlight( "r_rimlight", "1", FCVAR_CHEAT );
 ConVar r_flashlight_version2( "r_flashlight_version2", "0" );
 
+extern ConVar mat_ambient_light_r;
+extern ConVar mat_ambient_light_g;
+extern ConVar mat_ambient_light_b;
+
 // Textures may be bound to the following samplers:
 //	SHADER_SAMPLER0	 Base (Albedo) / Gloss in alpha
 //	SHADER_SAMPLER1	 Specular warp (including iridescence)
@@ -685,6 +689,11 @@ void DrawSkin_DX9_Internal( CBaseVSShader *pShader, IMaterialVar** params, IShad
 			vConstScaleBiasExp[3] = flMax; // Brightness
 
 			pShaderAPI->SetPixelShaderConstant( PSREG_SELFILLUM_SCALE_BIAS_EXP, vConstScaleBiasExp, 1 );
+		}
+		else
+		{
+			const float ambientLighting[4] = { mat_ambient_light_r.GetFloat(), mat_ambient_light_g.GetFloat(), mat_ambient_light_b.GetFloat(), 1.0f };
+			pShaderAPI->SetPixelShaderConstant( PSREG_SELFILLUM_SCALE_BIAS_EXP, ambientLighting );
 		}
 
 		pShader->SetAmbientCubeDynamicStateVertexShader();

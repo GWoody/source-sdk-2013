@@ -2,7 +2,7 @@ versioninfo
 {
 	"editorversion" "400"
 	"editorbuild" "6412"
-	"mapversion" "371"
+	"mapversion" "375"
 	"formatversion" "100"
 	"prefab" "0"
 }
@@ -20,7 +20,7 @@ viewsettings
 world
 {
 	"id" "1"
-	"mapversion" "371"
+	"mapversion" "375"
 	"classname" "worldspawn"
 	"detailmaterial" "detail/detailsprites"
 	"detailvbsp" "detail.vbsp"
@@ -1953,10 +1953,10 @@ entity
 	"_light" "0 0 0 0"
 	"_lightHDR" "0 0 0 0"
 	"_lightscaleHDR" "1"
-	"angles" "0 -135 0"
-	"pitch" "-35"
+	"angles" "0 0 0"
+	"pitch" "-90"
 	"SunSpreadAngle" "0"
-	"origin" "-144.958 439 189.909"
+	"origin" "-144.958 440 192"
 	editor
 	{
 		"color" "220 30 220"

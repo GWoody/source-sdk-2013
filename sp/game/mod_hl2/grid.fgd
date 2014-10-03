@@ -179,6 +179,20 @@
 // OLD HL2 STUFF
 //=============================================================================
 
+@PointClass base(BaseNPC, Parentname, RenderFields, Shadow) studio() = generic_actor : "Generic Actor NPC"
+[
+	model(studio) : "Model"
+
+	hull_name(choices) : "Hull type" : "Human" =
+	[
+		"HUMAN_HULL" : "Human"
+		"WIDE_HUMAN_HULL" : "Wide"
+		"TINY_HULL" : "Tiny"
+		"MEDIUM_HULL" : "Medium"
+		"LARGE_HULL" : "Large"
+	]
+]
+
 @NPCClass base(BaseNPC) studio("models/Weapons/w_grenade.mdl") = npc_grenade_frag : "Hand Grenade"
 [
 	input SetTimer(float) : "This input makes the grenade live, and specifies how many seconds before it explodes."

@@ -26,6 +26,10 @@
 static ConVar mat_fullbright( "mat_fullbright","0", FCVAR_CHEAT );
 static ConVar r_lightwarpidentity( "r_lightwarpidentity","0", FCVAR_CHEAT );
 
+extern ConVar mat_ambient_light_r;
+extern ConVar mat_ambient_light_g;
+extern ConVar mat_ambient_light_b;
+
 static inline bool WantsSkinShader( IMaterialVar** params, const VertexLitGeneric_DX9_Vars_t &info )
 {
 	if ( info.m_nPhong == -1)								// Don't use skin without Phong
@@ -1225,6 +1229,9 @@ static void DrawVertexLitGeneric_DX9_Internal( CBaseVSShader *pShader, IMaterial
 		// Controls for lerp-style paths through shader code (bump and non-bump have use different register)
 		float vShaderControls[4] = { fPixelFogType, fWriteDepthToAlpha, fWriteWaterFogToDestAlpha, fVertexAlpha	 };
 		DynamicCmdsOut.SetPixelShaderConstant( 12, vShaderControls, 1 );
+
+		const float ambientLighting[4] = { mat_ambient_light_r.GetFloat(), mat_ambient_light_g.GetFloat(), mat_ambient_light_b.GetFloat(), 1.0f };
+		DynamicCmdsOut.SetPixelShaderConstant( 19, ambientLighting );
 
 		// flashlightfixme: put this in common code.
 		if ( bHasFlashlight )
