@@ -90,6 +90,9 @@
 #include "serverbenchmark_base.h"
 #include "querycache.h"
 
+#ifdef GRID_DLL
+#include "grid_utils.h"
+#endif
 
 #ifdef TF_DLL
 #include "gc_clientsystem.h"
@@ -961,6 +964,12 @@ bool CServerGameDLL::LevelInit( const char *pMapName, char const *pMapEntities, 
 	}
 #endif // USES_ECON_ITEMS
 
+#ifdef GRID_DLL
+	char path[260];
+	Q_snprintf( path, sizeof(path), "maps/%s.bsp", pMapName );
+	Grid_RunShaderReplacement( path );
+#endif
+
 	ResetWindspeed();
 	UpdateChapterRestrictions( pMapName );
 
@@ -1370,6 +1379,10 @@ void CServerGameDLL::LevelShutdown( void )
 	IGameSystem::LevelShutdownPreClearSteamAPIContextAllSystems();
 
 	steamgameserverapicontext->Clear();
+#endif
+
+#ifdef GRID_DLL
+	Grid_ClearShaderReplacementList();
 #endif
 
 	g_pServerBenchmark->EndBenchmark();

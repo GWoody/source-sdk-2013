@@ -16,9 +16,182 @@
 @PointClass base(GridWeapon) studio("models/weapons/w_irifle.mdl") = grid_weapon_ar2 : "AR2" []
 @PointClass base(GridWeapon) studio("models/weapons/w_smg1.mdl") = grid_weapon_smg1 : "SMG1" []
 
+@PointClass base(Targetname, EnableDisable) iconsprite("editor/shadow_control.vmt") = grid_environment_light : 
+	"An entity to control the sunlight that casts shadows in the map."
+[
+]
+
+//=============================================================================
+// ASW STUFF
+//=============================================================================
+
+//-------------------------------------------------------------------------
+// Sunlight Shadow control
+//-------------------------------------------------------------------------
+
+@PointClass base(Targetname, EnableDisable) iconsprite("editor/shadow_control.vmt") = sunlight_shadow_control : 
+	"An entity to control the sunlight that casts shadows in the map."
+[
+	angles(string) : "Pitch Yaw Roll (Y Z X)" : "50 40 0" : "This is the light cast direction. Pitch is rotation around the Y axis, yaw is the rotation around the Z axis, and roll is the rotation around the X axis."
+
+	color(color255) : "Light Color" : "255 255 255 1" : "This is the color of the sunlight."
+	colortransitiontime(float) : "Color Transition Time" : "0.5" : "This is the number of seconds it takes to get from 0 to 255."
+	distance(float) : "Distance" : 10000 : "This is the distance of the sun, greater distances produce more orthogonal shadows."
+	fov(float) : "FOV" : 5 : "This is the field of view that the sunlight casts in. Use lower values for more distant sun and sharper shadows."
+	nearz(float) : "NearZ Distance" : 512 : "This controls the near clipping plane's distance from the player."
+	northoffset(float) : "North Offset" : 200 : "This offsets the from the player position where the sun is attached."
+	texturename(material) : "Texture Name" : "effects/flashlight001"
+	enableshadows(Choices) : "Enable Shadows" : 0 : "Enables/disables shadows from this projected texture." =
+	[
+		0 : "No"
+		1 : "Yes"
+	]
+
+	// Inputs
+	input LightColor(color255) : "Set the light color."
+	input SetAngles(string) : "Set the sun direction."
+	input SetDistance(float) : "Set the distance of the sun."
+	input SetFOV(float) : "Set the field of view the sun casts."
+	input SetNearZDistance(float) : "Set the near z distance."
+	input SetNorthOffset(float) : "Sets the north offset."
+	input SetTexture(string) : "Set the texture cookie of the sunlight."
+	input EnableShadows(bool)		: "Set the if shadows are enabled"
+]
+
+//-------------------------------------------------------------------------
+// Global Light
+//-------------------------------------------------------------------------
+
+@PointClass base(Targetname, EnableDisable) iconsprite("editor/shadow_control.vmt") = env_global_light : 
+	"An entity to control the sunlight that casts shadows in the map."
+[
+	angles(string) : "Pitch Yaw Roll (Y Z X)" : "50 40 0" : "This is the light cast direction. Pitch is rotation around the Y axis, yaw is the rotation around the Z axis, and roll is the rotation around the X axis."
+
+	color(color255) : "Light Color" : "255 255 255 1" : "This is the color of the sunlight."
+	colortransitiontime(float) : "Color Transition Time" : "0.5" : "This is the number of seconds it takes to get from 0 to 255."
+	distance(float) : "Distance" : 10000 : "This is the distance of the sun, greater distances produce more orthogonal shadows."
+	fov(float) : "FOV" : 5 : "This is the field of view that the sunlight casts in. Use lower values for more distant sun and sharper shadows."
+	nearz(float) : "NearZ Distance" : 512 : "This controls the near clipping plane's distance from the player."
+	northoffset(float) : "North Offset" : 200 : "This offsets the from the player position where the sun is attached."
+	texturename(material) : "Texture Name" : "effects/flashlight001"
+	enableshadows(Choices) : "Enable Shadows" : 0 : "Enables/disables shadows from this projected texture." =
+	[
+		0 : "No"
+		1 : "Yes"
+	]
+
+	// Inputs
+	input LightColor(color255) : "Set the light color."
+	input SetAngles(string) : "Set the sun direction."
+	input SetDistance(float) : "Set the distance of the sun."
+	input SetFOV(float) : "Set the field of view the sun casts."
+	input SetNearZDistance(float) : "Set the near z distance."
+	input SetNorthOffset(float) : "Sets the north offset."
+	input SetTexture(string) : "Set the texture cookie of the sunlight."
+	input EnableShadows(bool)		: "Set the if shadows are enabled"
+]
+
+//-------------------------------------------------------------------------
+// Ambient light control
+//-------------------------------------------------------------------------
+@BaseClass = SpatialEntity
+[
+	minfalloff(float) : "Lookup Falloff Start Distance" : "0.0"   : "This is the distance to the start of the falloff region (-1 = everywhere)"
+	maxfalloff(float) : "Lookup Falloff End Distance"   : "200.0" : "This is the distance to the end of the falloff region (-1 = everywhere)"
+	maxweight(float)  : "Maximum Weight"				: "1.0"   : "This is the maximum weight for this lookup"
+	fadeInDuration(float)   : "Lookup Fade In Duration"		: "0.0"	  : "Duration of fade in on when enabled."
+	fadeOutDuration(float)   : "Lookup Fade out Duration"		: "0.0"	  : "Dration of fade out on when disabled."
+	
+	// Inputs
+	input SetFadeInDuration(float) : "Sets the 'fadeInDuration' variable, used to fade cc lookup usage when entity is enabled."
+	input SetFadeOutDuration(float) : "Sets the 'fadeOutDuration' variable, used to fade cc lookup usage when entity is disabled."
+]
+
+@PointClass base(Targetname, EnableDisable, SpatialEntity) sphere(minfalloff) sphere(maxfalloff) iconsprite("editor/color_correction.vmt") = env_ambient_light : 
+	"An entity to control the color correction in the map."
+[
+	color(color255) : "Color (R G B)" : "255 255 255"
+	
+	// Inputs
+	input SetColor(color255) : "Sets the color."
+]
+
+//-------------------------------------------------------------------------
+// Project textures
+//-------------------------------------------------------------------------
+
+// lightprop("models/editor/spot.mdl") <---- use this once the orientation is unfucked
+@PointClass base(Targetname, Parentname, Angles) studio("models/editor/cone_helper.mdl") frustum(lightfov,nearz,farz,lightcolor,-1) = env_projectedtexture : 
+	"Projected texture entity."
+[
+	spawnflags(flags) =
+	[
+		1  : "Enabled"				: 1
+		2  : "Always Update (moving light)"	: 0
+	]
+
+	target(target_destination)	: "target" : : "target"	
+	lightfov(float)				: "FOV" : "90.0" : "FOV"
+	nearz(float)				: "NearZ" : "4.0" : "Near Z for projected texture"
+	farz(float)					: "FarZ" : "750.0" : "Far Z for projected texture"	
+	
+	enableshadows(Choices) : "Enable Shadows" : 0 : "Enables/disables shadows from this projected texture." =
+	[
+		0 : "No"
+		1 : "Yes"
+	]
+	shadowquality(Choices) : "Shadow Quality" : 1 : "Quality of shadows." =
+	[
+		0 : "Low"
+		1 : "High"
+	]
+	lightonlytarget(Choices) : "Light Only Target" : 0 : "Limit flashlight effect to only effect target entity." =
+	[
+		0 : "No"
+		1 : "Yes"
+	]
+	lightworld(Choices) : "Light World" : 1 : "Control whether flashlight effects static world geometry." =
+	[
+		0 : "No"
+		1 : "Yes"
+	]
+	
+	brightnessscale(float)		: "Brightness Scale" : "1.0" : "Scale the light color by this brightness"	
+
+	lightcolor(color255)		: "Light Color" : "255 255 255 200" : "Light Color RGB-Intensity"
+	colortransitiontime(float)	: "Color Transition Time" : "0.5" : "Amount of time it takes for a color change to occur."
+	cameraspace(integer)		: "Camera Space" : 0 : "Angles are interpreted as being relative to camera."
+
+	texturename(material) : "Texture Name" : "effects/flashlight001"
+
+	// Inputs
+	input TurnOn(void)		: "Turn on the texture"
+	input TurnOff(void)		: "Turn off the texture"
+	input AlwaysUpdateOn(void)	: "Turn on per frame updating (for moving lights)"
+	input AlwaysUpdateOff(void)	: "Turn off per frame updating (for moving lights)"
+	input SetFOV(float)		: "Set FOV"
+	input SpotlightTexture(string)		: "Set the spotlight texture"
+	input EnableShadows(bool)		: "Set the if shadows are enabled"
+	input LightColor(color255)		: "Change the light color/brightness"
+]
+
 //=============================================================================
 // OLD HL2 STUFF
 //=============================================================================
+
+@PointClass base(BaseNPC, Parentname, RenderFields, Shadow) studio() = generic_actor : "Generic Actor NPC"
+[
+	model(studio) : "Model"
+
+	hull_name(choices) : "Hull type" : "Human" =
+	[
+		"HUMAN_HULL" : "Human"
+		"WIDE_HUMAN_HULL" : "Wide"
+		"TINY_HULL" : "Tiny"
+		"MEDIUM_HULL" : "Medium"
+		"LARGE_HULL" : "Large"
+	]
+]
 
 @NPCClass base(BaseNPC) studio("models/Weapons/w_grenade.mdl") = npc_grenade_frag : "Hand Grenade"
 [

@@ -80,6 +80,10 @@ const float3 cAmbientCube[6]				: register( c5 );
  const float4 g_SelfIllumScaleBiasExpBrightness	: register( c11 );
 #endif
 
+#if !(defined(SHADER_MODEL_PS_1_1) || defined(SHADER_MODEL_PS_1_4) || defined(SHADER_MODEL_PS_2_0))
+const float3 g_AmbientColor					: register( c19 );
+#endif
+
 const float4 g_ShaderControls				: register( c12 );
 #define g_fPixelFogType					g_ShaderControls.x
 #define g_fWriteDepthToAlpha			g_ShaderControls.y
@@ -273,12 +277,16 @@ float4 main( PS_INPUT i ) : COLOR
 #if defined ( _X360 )
 		diffuseLighting += flashlightColor;
 #else
-		diffuseLighting = flashlightColor;
+		diffuseLighting = flashlightColor * 5;
 #endif
 
 	}
 #endif
 
+#if ( DIFFUSELIGHTING == 1 && !(defined(SHADER_MODEL_PS_1_1) || defined(SHADER_MODEL_PS_1_4) || defined(SHADER_MODEL_PS_2_0)) )
+	// PS2b+ only because <=PS2 are already out of instructions.
+	diffuseLighting += g_AmbientColor;
+#endif
 
 	float3 diffuseComponent = albedo * diffuseLighting;
 

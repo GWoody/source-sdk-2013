@@ -68,6 +68,9 @@ const float4 g_SelfIllumTint_and_DetailBlendFactor	: register( PSREG_SELFILLUMTI
 #if ( SELFILLUMFRESNEL == 1 )
 const float4 g_SelfIllumScaleBiasExpBrightness		: register( PSREG_SELFILLUM_SCALE_BIAS_EXP );
 #endif
+#if ( ( SELFILLUMFRESNEL == 0 ) && !(defined(SHADER_MODEL_PS_1_1) || defined(SHADER_MODEL_PS_1_4) || defined(SHADER_MODEL_PS_2_0)) )
+const float4 g_AmbientColor							: register( PSREG_SELFILLUM_SCALE_BIAS_EXP );
+#endif
 const float4 g_DiffuseModulation					: register( PSREG_DIFFUSE_MODULATION );
 const float4 g_EnvmapTint_ShadowTweaks				: register( PSREG_ENVMAP_TINT__SHADOW_TWEAKS );		// w controls spec mask
 const float3 cAmbientCube[6]						: register( PSREG_AMBIENT_CUBE );
@@ -295,6 +298,8 @@ float4 main( PS_INPUT i ) : COLOR
 
 			// These two values are output
 			diffuseLighting, specularLighting );
+			
+		diffuseLighting *= 5;
 	}
 
 	// If we didn't already apply Fresnel to specular warp, modulate the specular
@@ -315,6 +320,9 @@ float4 main( PS_INPUT i ) : COLOR
 		albedo = albedo * g_DiffuseModulation.rgb;
 	}
 
+#if ( ( SELFILLUMFRESNEL == 0 ) && !(defined(SHADER_MODEL_PS_1_1) || defined(SHADER_MODEL_PS_1_4) || defined(SHADER_MODEL_PS_2_0)) )
+	diffuseLighting += g_AmbientColor;
+#endif
 
 	float3 diffuseComponent = albedo * diffuseLighting;
 	if ( bSelfIllum && !bFlashlight )

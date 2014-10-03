@@ -22,6 +22,10 @@ ConVar mat_fullbright( "mat_fullbright","0", FCVAR_CHEAT );
 ConVar my_mat_fullbright( "mat_fullbright","0", FCVAR_CHEAT );
 extern ConVar r_flashlight_version2;
 
+ConVar mat_ambient_light_r( "mat_ambient_light_r", "0" );
+ConVar mat_ambient_light_g( "mat_ambient_light_g", "0" );
+ConVar mat_ambient_light_b( "mat_ambient_light_b", "0" );
+
 class CLightmappedGeneric_DX9_Context : public CBasePerMaterialContextData
 {
 public:
@@ -739,7 +743,7 @@ void DrawLightmappedGeneric_DX9_Internal(CBaseVSShader *pShader, IMaterialVar** 
 				detailTintAndBlend[3] = fDetailBlendFactor;
 				pContextData->m_SemiStaticCmdsOut.SetPixelShaderConstant( 8, detailTintAndBlend );
 			}
-			
+
 			float envmapTintVal[4];
 			float selfIllumTintVal[4];
 			params[info.m_nEnvmapTint]->GetVecValue( envmapTintVal, 3 );
@@ -1052,6 +1056,9 @@ void DrawLightmappedGeneric_DX9_Internal(CBaseVSShader *pShader, IMaterialVar** 
 				DynamicCmdsOut.SetPixelShaderConstant( 31, vScreenScale, 1 );
 			}
 		}
+
+		const float ambientLighting[4] = { mat_ambient_light_r.GetFloat(), mat_ambient_light_g.GetFloat(), mat_ambient_light_b.GetFloat(), 1.0f };
+		DynamicCmdsOut.SetPixelShaderConstant( 27, ambientLighting );
 
 		DynamicCmdsOut.End();
 		pShaderAPI->ExecuteCommandBuffer( DynamicCmdsOut.Base() );

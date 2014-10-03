@@ -43,14 +43,31 @@ class C_SunGlowOverlay : public CGlowOverlay
 
 public:
 
+	virtual void Draw( bool bCacheFullSceneState )
+	{
+		CMatRenderContextPtr pRenderContext( materials );
+		if( m_bFarZ )
+		{
+			pRenderContext->DepthRange( 0.999f, 1.0f );
+		}
+
+		CGlowOverlay::Draw( bCacheFullSceneState );
+	}
+
 	void SetModulateByDot( bool state = true )
 	{
 		m_bModulateByDot = state;
 	}
 
+	void SetFarZ( bool farz )
+	{
+		m_bFarZ = farz;
+	}
+
 protected:
 
 	bool m_bModulateByDot;
+	bool m_bFarZ;
 };
 
 //

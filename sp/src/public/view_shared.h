@@ -55,6 +55,7 @@ public:
 //		m_bUseExplicitViewVector = false;
         m_bViewToProjectionOverride = false;
 		m_eStereoEye = STEREO_EYE_MONO;
+		m_bRenderFlashlightDepthTranslucents = false;
 	}
 
 // shared by 2D & 3D views
@@ -129,6 +130,8 @@ public:
 	// This does NOT override the Z range - that will be set up as normal (i.e. the values in this matrix will be ignored).
     bool        m_bViewToProjectionOverride;
     VMatrix     m_ViewToProjection;
+
+	bool		m_bRenderFlashlightDepthTranslucents:1;
 };
 
 

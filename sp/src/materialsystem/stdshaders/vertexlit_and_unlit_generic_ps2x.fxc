@@ -95,6 +95,9 @@ const float4 g_FlashlightAttenuationFactors	    : register( c22 );
 const HALF3 g_FlashlightPos						: register( c23 );
 const float4x4 g_FlashlightWorldToTexture		: register( c24 ); // through c27
 
+#if !(defined(SHADER_MODEL_PS_1_1) || defined(SHADER_MODEL_PS_1_4) || defined(SHADER_MODEL_PS_2_0))
+const float3 g_AmbientColor					: register( c19 );
+#endif
 
 sampler BaseTextureSampler		: register( s0 );
 sampler EnvmapSampler			: register( s1 );
@@ -384,9 +387,14 @@ float4 main( PS_INPUT i ) : COLOR
 #if defined ( _X360 )
 		diffuseLighting += flashlightColor;
 #else
-		diffuseLighting = flashlightColor;
+		diffuseLighting = flashlightColor * 5;
 #endif
 	}
+	
+#if ( DIFFUSELIGHTING == 1 && !(defined(SHADER_MODEL_PS_1_1) || defined(SHADER_MODEL_PS_1_4) || defined(SHADER_MODEL_PS_2_0)) )
+	// PS2b+ only because <=PS2 are already out of instructions.
+	diffuseLighting += g_AmbientColor;
+#endif
 
 	if( bVertexColor && bDiffuseLighting )
 	{

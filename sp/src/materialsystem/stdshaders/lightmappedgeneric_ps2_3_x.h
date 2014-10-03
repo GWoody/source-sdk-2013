@@ -101,6 +101,9 @@ const float3 g_FlashlightPos				: register( c14 );
 const float4x4 g_FlashlightWorldToTexture	: register( c15 ); // through c18
 const float4 g_ShadowTweaks					: register( c19 );
 
+#if !(defined(SHADER_MODEL_PS_1_1) || defined(SHADER_MODEL_PS_1_4) || defined(SHADER_MODEL_PS_2_0))
+const float3 g_AmbientColor					: register( c27 );
+#endif
 
 sampler BaseTextureSampler		: register( s0 );
 sampler LightmapSampler			: register( s1 );
@@ -466,6 +469,11 @@ HALF4 main( PS_INPUT i ) : COLOR
 	{
 		diffuseLighting = lightmapColor1 * g_TintValuesAndLightmapScale.rgb;
 	}
+	
+#if !(defined(SHADER_MODEL_PS_1_1) || defined(SHADER_MODEL_PS_1_4) || defined(SHADER_MODEL_PS_2_0))
+	// PS2b+ only because <=PS2 are already out of instructions.
+	diffuseLighting += (HALF3)g_AmbientColor;
+#endif
 
 #if WARPLIGHTING && ( SEAMLESS == 0 )
 	float len=0.5*length(diffuseLighting);

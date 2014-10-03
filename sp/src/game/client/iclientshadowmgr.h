@@ -48,8 +48,8 @@ public:
 
 	// Create flashlight.
 	// FLASHLIGHTFIXME: need to rename all of the shadow stuff to projectedtexture and have flashlights and shadows as instances.
-	virtual ClientShadowHandle_t CreateFlashlight( const FlashlightState_t &lightState ) = 0;
-	virtual void UpdateFlashlightState( ClientShadowHandle_t shadowHandle, const FlashlightState_t &lightState ) = 0;
+	virtual ClientShadowHandle_t CreateFlashlight( const FlashlightState_t &lightState, const AswFlashlightState_t *aswState = NULL ) = 0;
+	virtual void UpdateFlashlightState( ClientShadowHandle_t shadowHandle, const FlashlightState_t &lightState, const AswFlashlightState_t *aswState = NULL ) = 0;
 	virtual void DestroyFlashlight( ClientShadowHandle_t handle ) = 0;
 	
 	// Indicate that the shadow should be recomputed due to a change in
@@ -101,6 +101,8 @@ public:
 
 	virtual void ComputeShadowDepthTextures( const CViewSetup &pView ) = 0;
 
+	// Toggle shadow casting from world light sources
+	virtual void SetShadowFromWorldLightsEnabled( bool bEnable ) = 0;
 };
 
 
