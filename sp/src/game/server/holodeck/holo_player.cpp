@@ -10,6 +10,7 @@
 #include "cbase.h"
 #include "holo_player.h"
 #include "holo_gesture_detector.h"
+#include "holo_gesture_listener.h"
 
 using namespace holo;
 
@@ -191,7 +192,32 @@ CFrame CHoloPlayer::AccumulateHoloFrame( CUserCmd *cmds, int numcmds, int totalc
 //-----------------------------------------------------------------------------
 void CHoloPlayer::ProcessFrame( const holo::CFrame &frame )
 {
+	//
+	// Detect custom gestures.
+	//
 	HandlePickupGesture( frame );
+
+	//
+	// Handle map callbacks.
+	//
+	CHoloGestureListener *listener = CHoloGestureListener::Get();
+	if( listener )
+	{
+		if( frame.IsGestureActive( EGesture::GESTURE_CIRCLE ) )
+		{
+			listener->OnCircleGesture( frame.GetCircleGesture() );
+		}
+		
+		if( frame.IsGestureActive( EGesture::GESTURE_SWIPE ) )
+		{
+			listener->OnSwipeGesture( frame.GetSwipeGesture() );
+		}
+
+		if( frame.IsGestureActive( EGesture::GESTURE_TAP ) )
+		{
+			listener->OnTapGesture( frame.GetTapGesture() );
+		}
+	}
 }
 
 //-----------------------------------------------------------------------------

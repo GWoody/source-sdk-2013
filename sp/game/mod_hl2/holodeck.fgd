@@ -6,6 +6,33 @@
 
 //-------------------------------------------------------------------------
 //-------------------------------------------------------------------------
+@PointClass base(Targetname, EnableDisable) = holo_gesture_listener : 
+	"An entity that listens for gestures while the map is running."
+[
+	//
+	// Attributes.
+	//
+	circleTarget(string) : "Circle gesture listener"
+	swipeTarget(string) : "Swipe gesture listener."
+	tapTarget(string) : "Tap gesture listener."
+	
+	//
+	// Inputs.
+	//
+	input SetCircleGestureListener(string) : "Set the name of the entity that will receive circle gesture callbacks."
+	input SetSwipeGestureListener(string) : "Set the name of the entity that will receive swipe gesture callbacks."
+	input SetTapGestureListener(string) : "Set the name of the entity that will receive tap gesture callbacks."
+	
+	//
+	// Outputs.
+	//
+	output OnCircleGesture(void) : "Fired when the user makes the circle gesture."
+	output OnSwipeGesture(void) : "Fired when the user makes the swipe gesture."
+	output OnTapGesture(void) : "Fired when the user makes the tap gesture."
+]
+
+//-------------------------------------------------------------------------
+//-------------------------------------------------------------------------
 @BaseClass base(Targetname, EnableDisable, Origin) = GesturePanel
 [
 	//

@@ -94,6 +94,10 @@
 #include "grid_utils.h"
 #endif
 
+#ifdef HOLODECK
+#include "holodeck/holo_gesture_listener.h"
+#endif
+
 #ifdef TF_DLL
 #include "gc_clientsystem.h"
 #include "econ_item_inventory.h"
@@ -1379,6 +1383,10 @@ void CServerGameDLL::LevelShutdown( void )
 	IGameSystem::LevelShutdownPreClearSteamAPIContextAllSystems();
 
 	steamgameserverapicontext->Clear();
+#endif
+
+#ifdef HOLODECK
+	CHoloGestureListener::ClearInstance();
 #endif
 
 #ifdef GRID_DLL

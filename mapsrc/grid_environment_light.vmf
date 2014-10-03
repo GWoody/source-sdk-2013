@@ -1,8 +1,8 @@
 versioninfo
 {
 	"editorversion" "400"
-	"editorbuild" "6412"
-	"mapversion" "376"
+	"editorbuild" "6440"
+	"mapversion" "377"
 	"formatversion" "100"
 	"prefab" "0"
 }
@@ -20,7 +20,7 @@ viewsettings
 world
 {
 	"id" "1"
-	"mapversion" "376"
+	"mapversion" "377"
 	"classname" "worldspawn"
 	"detailmaterial" "detail/detailsprites"
 	"detailvbsp" "detail.vbsp"
@@ -1957,6 +1957,20 @@ entity
 	"pitch" "-90"
 	"SunSpreadAngle" "0"
 	"origin" "-144.958 440 192"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 0]"
+	}
+}
+entity
+{
+	"id" "3613"
+	"classname" "holo_gesture_listener"
+	"StartDisabled" "0"
+	"origin" "384 -192 64"
 	editor
 	{
 		"color" "220 30 220"
