@@ -31,8 +31,8 @@ private:
 	void			SetMoon();
 
 	float			CalculatePitch( float localTime );
-	void			SetBrightness( float localTime );
-	void			SetZoneBrightness( float localTime, const Vector4D &riseBrightess, const Vector4D &horizonBrightess, const Vector4D &brightness );
+	void			SetBrightness( float pitch );
+	void			SetZoneBrightness( float pitch, const Vector4D &riseBrightess, const Vector4D &horizonBrightess, const Vector4D &brightness );
 
 	CHandle<CGridSun>	_sunSprite;
 
@@ -137,9 +137,9 @@ void CGridEnvironmentLight::Think( void )
 
 		_sunSprite->SetPitchYaw( pitch, yaw );
 		m_shadowDirection = _sunSprite->GetLightDirection();
-	}
 
-	SetBrightness( localHour );
+		SetBrightness( pitch );
+	}
 
 	BaseClass::Think();
 	SetNextThink( gpGlobals->curtime + 0.1f );	
@@ -207,64 +207,45 @@ float CGridEnvironmentLight::CalculatePitch( float localTime )
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void CGridEnvironmentLight::SetBrightness( float localTime )
+void CGridEnvironmentLight::SetBrightness( float pitch )
 {
 	if( _hour < 12 )
 	{
-		SetZoneBrightness( localTime, _sunriseBrightness, _sunHorizonBrightness, _sunBrightness );
+		SetZoneBrightness( pitch, _sunriseBrightness, _sunHorizonBrightness, _sunBrightness );
 	}
 	else
 	{
-		SetZoneBrightness( localTime, _moonriseBrightess, _moonHorizonBrightness, _moonBrightness );
+		SetZoneBrightness( pitch, _moonriseBrightess, _moonHorizonBrightness, _moonBrightness );
 	}
 }
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void CGridEnvironmentLight::SetZoneBrightness( float localTime, const Vector4D &riseBrightess, const Vector4D &horizonBrightess, const Vector4D &brightness )
+void CGridEnvironmentLight::SetZoneBrightness( float pitch, const Vector4D &riseBrightess, const Vector4D &horizonBrightess, const Vector4D &brightness )
 {
 	const Vector4D *start = NULL;
 	const Vector4D *end = NULL;
 	vec_t percent = 0.0f;
 
-#pragma message("CGridEnvironmentLight::SetZoneBrightness: make light color pitch based, not time")
-
-	if( localTime < 0.5f )
+	// Sun is on the way up.
+	if( pitch < 15.0f )
 	{
 		start = &_blankBrightness;
 		end = &riseBrightess;
-		percent = localTime / 0.5f;
+		percent = pitch / 15.0f;
 	}
-	else if( localTime < 1.0f )
+	else if( pitch < 30.0f )
 	{
 		// Inital 1 hour of sunrise.
 		start = &riseBrightess;
 		end = &horizonBrightess;
-		percent = ( localTime - 0.5f ) / 0.5f;
+		percent = ( pitch - 15.0f ) / 15.0f;
 	}
-	else if( localTime < 6.0f )
+	else /*if( pitch < 90.0f )*/
 	{
 		start = &horizonBrightess;
 		end = &brightness;
-		percent = ( localTime - 1.0f ) / 5.0f;
-	}
-	else if( localTime < 11.0f )
-	{
-		start = &brightness;
-		end = &horizonBrightess;
-		percent = ( localTime - 6.0f ) / 5.0f;
-	}
-	else if( localTime < 11.5 )
-	{
-		start = &horizonBrightess;
-		end = &riseBrightess;
-		percent = ( localTime - 11.0f ) / 0.5f;
-	}
-	else /* if( localTime < 12.0f ) */
-	{
-		start = &riseBrightess;
-		end = &_blankBrightness;
-		percent = ( localTime - 11.5f ) / 0.5f;
+		percent = ( pitch - 30.0f ) / 60.0f;
 	}
 
 	Vector4D dest;
