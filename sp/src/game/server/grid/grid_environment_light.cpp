@@ -40,8 +40,8 @@ private:
 	void			SetMoon();
 
 	float			CalculatePitch( float localTime );
-	void			SetBrightness( float pitch );
-	void			SetZoneBrightness( float pitch, const LightLevel_t &light );
+	void			SetLightLevel( float pitch );
+	void			SetZoneLightLevel( float pitch, const LightLevel_t &light, float level[4] );
 
 	CHandle<CGridSun>	_sunSprite;
 
@@ -49,10 +49,15 @@ private:
 	float			_hour;
 
 	LightLevel_t	_sunBrightness;
+	LightLevel_t	_sunAmbience;
+
 	LightLevel_t	_moonBrightness;
+	LightLevel_t	_moonAmbience;
 
 	Vector4D		_blankBrightness;
 	Vector4D		_blankAmbient;
+
+	CNetworkArray( float, _ambience, 4 );
 };
 
 //-----------------------------------------------------------------------------
@@ -60,6 +65,7 @@ private:
 LINK_ENTITY_TO_CLASS( grid_environment_light, CGridEnvironmentLight );
 
 IMPLEMENT_SERVERCLASS_ST( CGridEnvironmentLight, DT_GridEnvironmentLight )
+	SendPropArray( SendPropFloat( SENDINFO_ARRAY(_ambience) ), _ambience),
 END_SEND_TABLE()
 
 BEGIN_DATADESC( CGridEnvironmentLight )
@@ -70,16 +76,33 @@ END_DATADESC();
 //-----------------------------------------------------------------------------
 CGridEnvironmentLight::CGridEnvironmentLight()
 {
-	_sunBrightness._rise.Init( 127.0f, 0.0f, 0.0f, 1.0f );
-	_sunBrightness._horizon.Init( 237.0f, 200.0f, 127.0f, 1.0f );
-	_sunBrightness._highest.Init( 237.0f, 218.0f, 143.0f, 3.0f );
+	{
+		_sunBrightness._rise.Init( 127.0f, 0.0f, 0.0f, 1.0f );
+		_sunBrightness._horizon.Init( 237.0f, 200.0f, 127.0f, 1.0f );
+		_sunBrightness._highest.Init( 237.0f, 218.0f, 143.0f, 3.0f );
 
-	_moonBrightness._rise.Init( 16.0f, 16.0f, 16.0f, 0.1f );
-	_moonBrightness._horizon.Init( 32.0f, 32.0f, 32.0f, 0.1f );
-	_moonBrightness._highest.Init( 64.0f, 64.0f, 64.0f, 0.15f );
+		_sunAmbience._rise.Init( 8.0f, 8.0f, 8.0f, 1.0f );
+		_sunAmbience._horizon.Init( 48.0f, 48.0f, 48.0f, 1.0f );
+		_sunAmbience._highest.Init( 64.0f, 64.0f, 64.0f, 1.0f );
+	}
+
+	{
+		_moonBrightness._rise.Init( 16.0f, 16.0f, 16.0f, 0.2f );
+		_moonBrightness._horizon.Init( 32.0f, 32.0f, 32.0f, 0.2f );
+		_moonBrightness._highest.Init( 64.0f, 64.0f, 64.0f, 0.4f );
+
+		_moonAmbience._rise.Init( 0.0f, 0.0f, 0.0f, 1.0f );
+		_moonAmbience._horizon.Init( 8.0f, 8.0f, 8.0f, 1.0f );
+		_moonAmbience._highest.Init( 16.0f, 16.0f, 16.0f, 1.0f );
+	}
 
 	_blankBrightness.Init( 16.0f, 16.0f, 16.0f, 0.1f );
 	_blankAmbient.Init( 0.0f, 0.0f, 0.0f, 0.0f );
+
+	for( int i = 0; i < 4; i++ )
+	{
+		_ambience.GetForModify( i ) = 0.0f;
+	}
 }
 
 //-----------------------------------------------------------------------------
@@ -150,7 +173,7 @@ void CGridEnvironmentLight::Think( void )
 		_sunSprite->SetPitchYaw( pitch, yaw );
 		m_shadowDirection = _sunSprite->GetLightDirection();
 
-		SetBrightness( pitch );
+		SetLightLevel( pitch );
 	}
 
 	BaseClass::Think();
@@ -219,21 +242,25 @@ float CGridEnvironmentLight::CalculatePitch( float localTime )
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void CGridEnvironmentLight::SetBrightness( float pitch )
+void CGridEnvironmentLight::SetLightLevel( float pitch )
 {
 	if( _hour < 12 )
 	{
-		SetZoneBrightness( pitch, _sunBrightness );
+		SetZoneLightLevel( pitch, _sunBrightness, (float *)m_LightColor.Base() );
+		SetZoneLightLevel( pitch, _sunAmbience, (float *)_ambience.Base() );
 	}
 	else
 	{
-		SetZoneBrightness( pitch, _moonBrightness );
+		SetZoneLightLevel( pitch, _moonBrightness, (float *)m_LightColor.Base() );
+		SetZoneLightLevel( pitch, _moonAmbience, (float *)_ambience.Base() );
 	}
+
+	NetworkStateChanged();
 }
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void CGridEnvironmentLight::SetZoneBrightness( float pitch, const LightLevel_t &light )
+void CGridEnvironmentLight::SetZoneLightLevel( float pitch, const LightLevel_t &light, float level[4] )
 {
 	const Vector4D *start = NULL;
 	const Vector4D *end = NULL;
@@ -263,8 +290,8 @@ void CGridEnvironmentLight::SetZoneBrightness( float pitch, const LightLevel_t &
 	Vector4D dest;
 	Vector4DLerp( *start, *end, percent, dest );
 
-	m_LightColor.GetForModify(0) = dest[0];
-	m_LightColor.GetForModify(1) = dest[1];
-	m_LightColor.GetForModify(2) = dest[2];
-	m_LightColor.GetForModify(3) = dest[3];
+	level[0] = dest[0];
+	level[1] = dest[1];
+	level[2] = dest[2];
+	level[3] = dest[3];
 }
