@@ -19,6 +19,16 @@
 @PointClass base(Targetname, EnableDisable) iconsprite("editor/shadow_control.vmt") = grid_environment_light : 
 	"An entity to control the sunlight that casts shadows in the map."
 [
+	//
+	// Outputs.
+	//
+	output OnDayBegin(void) : "Fired when the moon sets and sun rises."
+	output OnNightBegin(void) : "Fired when the sun sets and moon rises."
+]
+
+@PointClass base(Targetname) = grid_sunspeed_gesture_listener : 
+	"Changes the speed of the sun and moon."
+[
 ]
 
 //=============================================================================

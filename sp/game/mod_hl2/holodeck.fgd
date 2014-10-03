@@ -12,9 +12,9 @@
 	//
 	// Attributes.
 	//
-	circleTarget(string) : "Circle gesture listener"
-	swipeTarget(string) : "Swipe gesture listener."
-	tapTarget(string) : "Tap gesture listener."
+	circleTarget(target_source) : "Circle gesture listener"
+	swipeTarget(target_source) : "Swipe gesture listener."
+	tapTarget(target_source) : "Tap gesture listener."
 	
 	//
 	// Inputs.

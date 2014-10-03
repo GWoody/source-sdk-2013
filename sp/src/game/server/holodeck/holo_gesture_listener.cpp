@@ -30,7 +30,7 @@ BEGIN_DATADESC( CHoloGestureListener )
 	DEFINE_OUTPUT( _onTapGesture, "OnTapGesture" ),
 	
 	// Attributes.
-	DEFINE_KEYFIELD( _disabled, FIELD_STRING, "StartDisabled" ),
+	DEFINE_KEYFIELD( _disabled, FIELD_BOOLEAN, "StartDisabled" ),
 	DEFINE_KEYFIELD( _circleTarget, FIELD_STRING, "circleTarget" ),
 	DEFINE_KEYFIELD( _swipeTarget, FIELD_STRING, "swipeTarget" ),
 	DEFINE_KEYFIELD( _tapTarget, FIELD_STRING, "tapTarget" ),
@@ -62,7 +62,7 @@ void CHoloGestureListener::Spawn()
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void CHoloGestureListener::OnCircleGesture( const holo::CCircleGesture &circle )
+void CHoloGestureListener::OnCircleGesture( const holo::CFrame &frame, const holo::CCircleGesture &circle )
 {
 	if( _disabled )
 	{
@@ -75,12 +75,12 @@ void CHoloGestureListener::OnCircleGesture( const holo::CCircleGesture &circle )
 		return;
 	}
 
-	callback->OnCircleGesture( circle );
+	callback->OnCircleGesture( frame, circle );
 }
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void CHoloGestureListener::OnSwipeGesture( const holo::CSwipeGesture &swipe )
+void CHoloGestureListener::OnSwipeGesture( const holo::CFrame &frame, const holo::CSwipeGesture &swipe )
 {
 	if( _disabled )
 	{
@@ -93,12 +93,12 @@ void CHoloGestureListener::OnSwipeGesture( const holo::CSwipeGesture &swipe )
 		return;
 	}
 
-	callback->OnSwipeGesture( swipe );
+	callback->OnSwipeGesture( frame, swipe );
 }
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void CHoloGestureListener::OnTapGesture( const holo::CTapGesture &tap )
+void CHoloGestureListener::OnTapGesture( const holo::CFrame &frame, const holo::CTapGesture &tap )
 {
 	if( _disabled )
 	{
@@ -111,7 +111,7 @@ void CHoloGestureListener::OnTapGesture( const holo::CTapGesture &tap )
 		return;
 	}
 
-	callback->OnTapGesture( tap );
+	callback->OnTapGesture( frame, tap );
 }
 
 //-----------------------------------------------------------------------------

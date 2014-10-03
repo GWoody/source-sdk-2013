@@ -11,7 +11,7 @@
 #include "sunlightshadowcontrol.h"
 #include "grid_sun.h"
 
-static ConVar grid_sun_speed_multiplier( "grid_sun_speed_multiplier", "1.0f" );
+ConVar grid_sun_speed_multiplier( "grid_sun_speed_multiplier", "1.0f" );
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
@@ -58,6 +58,9 @@ private:
 	Vector4D		_blankAmbient;
 
 	CNetworkArray( float, _ambience, 4 );
+
+	COutputEvent	_onDayBegin, _onNightBegin;
+	bool			_isDayTime;
 };
 
 //-----------------------------------------------------------------------------
@@ -69,7 +72,14 @@ IMPLEMENT_SERVERCLASS_ST( CGridEnvironmentLight, DT_GridEnvironmentLight )
 END_SEND_TABLE()
 
 BEGIN_DATADESC( CGridEnvironmentLight )
+
+	// Outputs.
+	DEFINE_OUTPUT( _onDayBegin, "OnDayBegin" ),
+	DEFINE_OUTPUT( _onNightBegin, "OnNightBegin" ),
+
+	// Inputs.
 	DEFINE_INPUTFUNC( FIELD_FLOAT, "SetMaxPitch", InputSetMaxPitch ),
+
 END_DATADESC();
 
 //-----------------------------------------------------------------------------
@@ -77,7 +87,7 @@ END_DATADESC();
 CGridEnvironmentLight::CGridEnvironmentLight()
 {
 	{
-		_sunBrightness._rise.Init( 127.0f, 0.0f, 0.0f, 1.0f );
+		_sunBrightness._rise.Init( 32.0f, 0.0f, 0.0f, 0.25f );
 		_sunBrightness._horizon.Init( 237.0f, 200.0f, 127.0f, 1.0f );
 		_sunBrightness._highest.Init( 237.0f, 218.0f, 143.0f, 3.0f );
 
@@ -87,13 +97,13 @@ CGridEnvironmentLight::CGridEnvironmentLight()
 	}
 
 	{
-		_moonBrightness._rise.Init( 16.0f, 16.0f, 16.0f, 0.2f );
-		_moonBrightness._horizon.Init( 32.0f, 32.0f, 32.0f, 0.2f );
-		_moonBrightness._highest.Init( 64.0f, 64.0f, 64.0f, 0.4f );
+		_moonBrightness._rise.Init( 16.0f, 16.0f, 16.0f, 0.1f );
+		_moonBrightness._horizon.Init( 32.0f, 32.0f, 32.0f, 0.1f );
+		_moonBrightness._highest.Init( 64.0f, 64.0f, 64.0f, 0.1f );
 
 		_moonAmbience._rise.Init( 0.0f, 0.0f, 0.0f, 1.0f );
-		_moonAmbience._horizon.Init( 8.0f, 8.0f, 8.0f, 1.0f );
-		_moonAmbience._highest.Init( 16.0f, 16.0f, 16.0f, 1.0f );
+		_moonAmbience._horizon.Init( 4.0f, 4.0f, 4.0f, 1.0f );
+		_moonAmbience._highest.Init( 8.0f, 8.0f, 8.0f, 1.0f );
 	}
 
 	_blankBrightness.Init( 16.0f, 16.0f, 16.0f, 0.1f );
@@ -131,6 +141,7 @@ void CGridEnvironmentLight::Spawn( void )
 	//
 	_maxPitch = 45.0f;
 	_hour = 0.0f;
+	_isDayTime = true;
 	_sunSprite = (CGridSun *)CreateEntityByName( "grid_env_sun" );
 
 	SetNextThink( gpGlobals->curtime + 0.1f );
@@ -144,19 +155,48 @@ void CGridEnvironmentLight::Think( void )
 {
 	_hour += gpGlobals->frametime * grid_sun_speed_multiplier.GetFloat();
 
-	if( _hour >= 24.0f )
+	//
+	// Ensure the time is kept within a valid range.
+	//
 	{
-		// Reset the day.
-		_hour = _hour - 24.0f;
+		while( _hour >= 24.0f )
+		{
+			_hour = _hour - 24.0f;
+		}
+		while( _hour < 0.0f )
+		{
+			_hour = _hour + 24.0f;
+		}
 	}
 
-	if( _hour >= 12.0f )
+	//
+	// Fire map events
+	//
 	{
-		SetMoon();
+		if( _isDayTime && _hour >= 12.0f )
+		{
+			_onNightBegin.FireOutput( this, this );
+		}
+		else if( !_isDayTime && _hour < 12 )
+		{
+			_onDayBegin.FireOutput( this, this );
+		}
 	}
-	else
+
+	//
+	// Configure the sun\moon sprite.
+	//
 	{
-		SetSun();
+		if( _hour >= 12.0f )
+		{
+			SetMoon();
+			_isDayTime = false;
+		}
+		else
+		{
+			SetSun();
+			_isDayTime = true;
+		}
 	}
 
 	// 24 hours has 2 zones: daytime (12 hours) and nighttime (12 hours).
@@ -178,6 +218,8 @@ void CGridEnvironmentLight::Think( void )
 
 	BaseClass::Think();
 	SetNextThink( gpGlobals->curtime + 0.1f );	
+
+	grid_sun_speed_multiplier.SetValue( 0.1f );
 }
 
 //-----------------------------------------------------------------------------
@@ -267,18 +309,18 @@ void CGridEnvironmentLight::SetZoneLightLevel( float pitch, const LightLevel_t &
 	vec_t percent = 0.0f;
 
 	// Sun is on the way up.
-	if( pitch < 15.0f )
+	if( pitch < 10.0f )
 	{
 		start = &_blankBrightness;
 		end = &light._rise;
-		percent = pitch / 15.0f;
+		percent = pitch / 10.0f;
 	}
 	else if( pitch < 30.0f )
 	{
 		// Inital 1 hour of sunrise.
 		start = &light._rise;
 		end = &light._horizon;
-		percent = ( pitch - 15.0f ) / 15.0f;
+		percent = ( pitch - 10.0f ) / 20.0f;
 	}
 	else /*if( pitch < 90.0f )*/
 	{

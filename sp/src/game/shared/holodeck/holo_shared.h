@@ -208,7 +208,7 @@ namespace holo
 
 		// Computed accessors.
 		float			FindThetaBetweenFingers( EFinger f1, EFinger f2 ) const;
-		inline const CFinger *	GetFingerById( int id ) const;
+		const CFinger *	GetFingerById( int id ) const;
 		inline const CFinger &	GetClosestFingerTo( EFinger to, EFinger f ) const;
 
 		// Filtering helpers.
@@ -357,7 +357,7 @@ namespace holo
 
 		// Frame data accessors.
 		inline const CHand &	GetHand( EHand hand ) const			{ return _hand[hand]; }
-		inline const CHand *	GetHandById( int id ) const;
+		const CHand *	GetHandById( int id ) const;
 		inline const CCircleGesture &	GetCircleGesture() const	{ return _circle; }
 		inline const CSwipeGesture &	GetSwipeGesture() const		{ return _swipe; }
 		inline const CTapGesture &	GetTapGesture() const			{ return _tap; }

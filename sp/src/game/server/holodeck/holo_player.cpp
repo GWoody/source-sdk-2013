@@ -205,17 +205,17 @@ void CHoloPlayer::ProcessFrame( const holo::CFrame &frame )
 	{
 		if( frame.IsGestureActive( EGesture::GESTURE_CIRCLE ) )
 		{
-			listener->OnCircleGesture( frame.GetCircleGesture() );
+			listener->OnCircleGesture( frame, frame.GetCircleGesture() );
 		}
 		
 		if( frame.IsGestureActive( EGesture::GESTURE_SWIPE ) )
 		{
-			listener->OnSwipeGesture( frame.GetSwipeGesture() );
+			listener->OnSwipeGesture( frame, frame.GetSwipeGesture() );
 		}
 
 		if( frame.IsGestureActive( EGesture::GESTURE_TAP ) )
 		{
-			listener->OnTapGesture( frame.GetTapGesture() );
+			listener->OnTapGesture( frame, frame.GetTapGesture() );
 		}
 	}
 }

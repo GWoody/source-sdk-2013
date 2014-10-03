@@ -574,7 +574,7 @@ float CHand::FindThetaBetweenFingers( EFinger f1, EFinger f2 ) const
 	return RAD2DEG( theta );
 }
 
-inline const CFinger *CHand::GetFingerById( int id ) const
+const CFinger *CHand::GetFingerById( int id ) const
 {
 	for( int i = 0; i < FINGER_COUNT; i++ )
 	{
@@ -1255,7 +1255,7 @@ bool CFrame::IsValid() const
 	return _valid;
 }
 
-inline const CHand *CFrame::GetHandById( int id ) const
+const CHand *CFrame::GetHandById( int id ) const
 {
 	if( _hand[EHand::LEFT].GetId() == id )
 	{
