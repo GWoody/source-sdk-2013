@@ -113,6 +113,47 @@ const char *EBoneToString( EBone bone )
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
+const char *EHandToString( EHand hand )
+{
+	switch( hand )
+	{
+		case EHand::LEFT:
+			return "LEFT";
+
+		case EHand::RIGHT:
+			return "RIGHT";
+
+		default:
+			break;
+	}
+
+	return "HAND_COUNT";
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+const char *EWorldPanelToString( EWorldPanel panel )
+{
+	switch( panel )
+	{
+		case WORLD_PANEL_LEFT:
+			return "WORLD_PANEL_LEFT";
+
+		case WORLD_PANEL_MIDDLE:
+			return "WORLD_PANEL_MIDDLE";
+
+		case WORLD_PANEL_RIGHT:
+			return "WORLD_PANEL_RIGHT";
+
+		default:
+			break;
+	}
+
+	return "WORLD_PANEL_COUNT";
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 const char *EGlobalsToString( EGlobals global )
 {
 	switch( global )

@@ -12,6 +12,7 @@
 
 #include "player.h"
 #include "holo_hand.h"
+#include "holo_world_screen_manager.h"
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
@@ -54,6 +55,8 @@ private:
 
 	CNetworkArray( EHANDLE, _hands, holo::EHand::HAND_COUNT );				// The hand entity which is used to interact with the environment.
 	CNetworkVar( Vector, _viewoffset );
+
+	CHoloWorldScreenManager	_screenManager;
 };
 
 #endif // __HOLO_PLAYER_H__

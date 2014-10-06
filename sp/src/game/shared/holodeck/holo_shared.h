@@ -63,10 +63,21 @@ namespace holo
 
 		HAND_COUNT
 	};
+	const char *EHandToString( EHand hand );
+
+	enum EWorldPanel
+	{
+		WORLD_PANEL_LEFT,
+		WORLD_PANEL_MIDDLE,
+		WORLD_PANEL_RIGHT,
+
+		WORLD_PANEL_COUNT
+	};
+	const char *EWorldPanelToString( EWorldPanel panel );
 
 	enum EGlobals
 	{
-		INVALID_INDEX = -1
+		INVALID_INDEX = -1,
 	};
 	const char *EGlobalsToString( EGlobals global );
 

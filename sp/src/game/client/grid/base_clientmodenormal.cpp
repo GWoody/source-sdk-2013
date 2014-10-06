@@ -94,7 +94,8 @@ void ClientModeGridNormal::Init()
 //-----------------------------------------------------------------------------
 bool ClientModeGridNormal::ShouldDrawCrosshair( void )
 {
-	return false;
+	extern ConVar crosshair;
+	return crosshair.GetBool();
 }
 
 

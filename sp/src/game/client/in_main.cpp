@@ -1077,6 +1077,7 @@ void CInput::ExtraMouseSample( float frametime, bool active )
 		VectorCopy( m_angPreviousViewAngles, cmd->viewangles );
 	}
 
+#ifndef HOLODECK
 	// Let the move manager override anything it wants to.
 	if ( g_pClientMode->CreateMove( frametime, cmd ) )
 	{
@@ -1084,6 +1085,7 @@ void CInput::ExtraMouseSample( float frametime, bool active )
 		engine->SetViewAngles( cmd->viewangles );
 		prediction->SetLocalViewAngles( cmd->viewangles );
 	}
+#endif
 
 	// Let the headtracker override the view at the very end of the process so
 	// that vehicles and other stuff in g_pClientMode->CreateMove can override 

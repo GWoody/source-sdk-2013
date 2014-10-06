@@ -11,6 +11,7 @@
 #include "holo_player.h"
 #include "holo_gesture_detector.h"
 #include "holo_gesture_listener.h"
+#include "holo_world_screen.h"
 
 using namespace holo;
 
@@ -65,6 +66,10 @@ void CHoloPlayer::Spawn()
 	BaseClass::Spawn();
 
 	SetNextThink( gpGlobals->curtime + 0.01f );
+
+	//_screenManager.CreateScreen( WORLD_PANEL_LEFT, "vgui_test_screen", this );
+	//_screenManager.CreateScreen( WORLD_PANEL_MIDDLE, "vgui_test_screen", this );
+	//_screenManager.CreateScreen( WORLD_PANEL_RIGHT, "vgui_test_screen", this );
 }
 
 //-----------------------------------------------------------------------------

@@ -126,7 +126,11 @@ private:
 	// Writes the z buffer
 	void DrawScreenOverlay();
 
+#ifdef HOLODECK
+protected:
+#else
 private:
+#endif
 	int m_nPixelWidth; 
 	int m_nPixelHeight;
 	float m_flWidth; 

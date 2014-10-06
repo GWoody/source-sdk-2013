@@ -46,7 +46,9 @@ CLIENTEFFECT_REGISTER_END()
 // ----------------------------------------------------------------------------- //
 // This is a cache of preloaded keyvalues.
 // ----------------------------------------------------------------------------- // 
-
+#ifdef HOLODECK
+CUtlVector<C_VGuiScreen*> g_pVGuiScreens;
+#endif
 CUtlDict<KeyValues*, int> g_KeyValuesCache;
 
 KeyValues* CacheKeyValuesForFile( const char *pFilename )
@@ -102,10 +104,17 @@ C_VGuiScreen::C_VGuiScreen()
 
 	m_WriteZMaterial.Init( "engine/writez", TEXTURE_GROUP_VGUI );
 	m_OverlayMaterial.Init( m_WriteZMaterial );
+
+#ifdef HOLODECK
+	g_pVGuiScreens.AddToTail( this );
+#endif
 }
 
 C_VGuiScreen::~C_VGuiScreen()
 {
+#ifdef HOLODECK
+	g_pVGuiScreens.FindAndRemove( this );
+#endif
 	DestroyVguiScreen();
 }
 
@@ -424,6 +433,7 @@ void C_VGuiScreen::ClientThink( void )
 		m_nOldPy = py;
 	}
 
+#ifndef HOLODECK
 	if (m_nButtonPressed & IN_ATTACK)
 	{
 		g_InputInternal->SetMouseCodeState( MOUSE_LEFT, vgui::BUTTON_PRESSED );
@@ -444,6 +454,34 @@ void C_VGuiScreen::ClientThink( void )
 		g_InputInternal->SetMouseCodeState( MOUSE_RIGHT, vgui::BUTTON_RELEASED );
 		g_InputInternal->InternalMouseReleased( MOUSE_RIGHT );
 	}
+#else
+	for (int i = 0; i < pPanel->GetChildCount(); i++)
+	{
+		vgui::Button *child = dynamic_cast<vgui::Button*>(pPanel->GetChild(i));
+		if ( child )
+		{
+			int x1, x2, y1, y2;
+			child->GetBounds( x1, y1, x2, y2 );
+
+			// Generate mouse input commands
+			if ( px >= x1 && px <= x1 + x2 && py >= y1 && py <= y1 + y2 )
+			{
+				if ( m_nButtonPressed & IN_ATTACK )
+				{
+					child->DoClick();
+				}
+				if ( m_nButtonState & IN_ATTACK )
+				{
+					child->ForceDepressed( true );
+				}
+				if ( m_nButtonReleased & IN_ATTACK )
+				{
+					child->ForceDepressed( false );
+				}
+			}
+		}
+	}
+#endif
 
 	if ( m_bLoseThinkNextFrame == true )
 	{
@@ -704,6 +742,7 @@ C_BaseEntity *FindNearbyVguiScreen( const Vector &viewPosition, const QAngle &vi
 	Ray_t lookRay;
 	lookRay.Init( viewPosition, lookEnd );
 
+#ifndef HOLODECK
 	// Look for vgui screens that are close to the player
 	CVGuiScreenEnumerator localScreens;
 	partition->EnumerateElementsInSphere( PARTITION_CLIENT_NON_STATIC_EDICTS, viewPosition, VGUI_SCREEN_MODE_RADIUS, false, &localScreens );
@@ -715,7 +754,15 @@ C_BaseEntity *FindNearbyVguiScreen( const Vector &viewPosition, const QAngle &vi
 	for (int i = localScreens.GetScreenCount(); --i >= 0; )
 	{
 		C_VGuiScreen *pScreen = localScreens.GetVGuiScreen(i);
+#else
+	Vector vecOut, vecViewDelta;
 
+	float flBestDist = 2.0f;
+	C_VGuiScreen *pBestScreen = NULL;
+	for (int i = 0; i < g_pVGuiScreens.Count(); i++ )
+	{
+		C_VGuiScreen *pScreen = g_pVGuiScreens[i];
+#endif
 		if ( pScreen->IsAttachedToViewModel() )
 			continue;
 
