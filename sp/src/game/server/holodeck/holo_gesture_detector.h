@@ -62,6 +62,17 @@ namespace holo
 		static float	_lastRadius[holo::EHand::HAND_COUNT];
 	};
 
+	//-------------------------------------------------------------------------
+	//-------------------------------------------------------------------------
+	class CScreenGesture : public CBaseGesture
+	{
+	public:
+						CScreenGesture( const holo::CFrame &frame, holo::EHand hand );
+
+	protected:
+		virtual void	Detect( const holo::CFrame &frame, holo::EHand hand );
+	};
+
 }
 
 #endif // __HOLO_GESTURE_DETECTOR_H__

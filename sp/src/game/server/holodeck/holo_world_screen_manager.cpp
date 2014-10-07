@@ -24,6 +24,12 @@ CHoloWorldScreenManager::CHoloWorldScreenManager()
 //-----------------------------------------------------------------------------
 bool CHoloWorldScreenManager::CreateScreen( holo::EWorldPanel panel, const char *typeName, CHoloPlayer *owner )
 {
+	if( !typeName )
+	{
+		ConColorMsg( COLOR_YELLOW, __FUNCTION__": called with a NULL typename!\n" );
+		return false;
+	}
+
 	if( _screens[panel] )
 	{
 		DestroyScreen( panel );

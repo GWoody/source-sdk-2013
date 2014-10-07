@@ -33,6 +33,28 @@
 
 //-------------------------------------------------------------------------
 //-------------------------------------------------------------------------
+@PointClass base(Targetname) = holo_screen_proxy : 
+	"Allows configuration of player screens."
+[
+	//
+	// Attributes.
+	//
+	screenGestureScreen(string) : "Screen to display when the screen gesture is made."
+	
+	//
+	// Inputs.
+	//
+	input ActivateLeftScreen(string) : "Activates the left screen with the given screen type."
+	input ActivateMiddleScreen(string) : "Activates the middle screen with the given screen type."
+	input ActivateRightScreen(string) : "Activates the middle screen with the given screen type."
+	input DestroyLeftScreen(void) : "Removes the left screen."
+	input DestroyMiddleScreen(void) : "Removes the middle screen."
+	input DestroyRightScreen(void) : "Removes the right screen."
+	input SetScreenGestureScreen(string) : "Sets the screen type that will activate when the screen gesture is made."
+]
+
+//-------------------------------------------------------------------------
+//-------------------------------------------------------------------------
 @BaseClass base(Targetname, EnableDisable, Origin) = GesturePanel
 [
 	//

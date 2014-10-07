@@ -2,7 +2,7 @@ versioninfo
 {
 	"editorversion" "400"
 	"editorbuild" "6412"
-	"mapversion" "412"
+	"mapversion" "415"
 	"formatversion" "100"
 	"prefab" "0"
 }
@@ -20,7 +20,7 @@ viewsettings
 world
 {
 	"id" "1"
-	"mapversion" "412"
+	"mapversion" "415"
 	"classname" "worldspawn"
 	"detailmaterial" "detail/detailsprites"
 	"detailvbsp" "detail.vbsp"
@@ -4140,12 +4140,12 @@ entity
 {
 	"id" "4238"
 	"classname" "holo_haptic_proxy"
-	"endFreq" "0.5"
-	"endPower" "0.05"
+	"endFreq" "1"
+	"endPower" "0.5"
 	"lerpType" "1"
 	"spawnflags" "3"
-	"startFreq" "0"
-	"startPower" "0"
+	"startFreq" "0.5"
+	"startPower" "0.5"
 	"targetname" "holodeck_haptic_proxy"
 	"time" "16"
 	"origin" "-64 -128 112"

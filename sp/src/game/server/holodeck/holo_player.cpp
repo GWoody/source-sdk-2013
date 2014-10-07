@@ -68,7 +68,7 @@ void CHoloPlayer::Spawn()
 	SetNextThink( gpGlobals->curtime + 0.01f );
 
 	//_screenManager.CreateScreen( WORLD_PANEL_LEFT, "vgui_test_screen", this );
-	//_screenManager.CreateScreen( WORLD_PANEL_MIDDLE, "vgui_test_screen", this );
+	//_screenManager.CreateScreen( WORLD_PANEL_MIDDLE, "grid_etactor_calibration_screen", this );
 	//_screenManager.CreateScreen( WORLD_PANEL_RIGHT, "vgui_test_screen", this );
 }
 
@@ -201,6 +201,7 @@ void CHoloPlayer::ProcessFrame( const holo::CFrame &frame )
 	// Detect custom gestures.
 	//
 	HandlePickupGesture( frame );
+	HandleScreenGesture( frame );
 
 	//
 	// Handle map callbacks.
@@ -243,6 +244,26 @@ void CHoloPlayer::HandlePickupGesture( const holo::CFrame &frame )
 			{
 				hand->AttemptObjectDrop();
 			}
+		}
+	}
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void CHoloPlayer::HandleScreenGesture( const holo::CFrame &frame )
+{
+	if( _screenManager.IsScreenActive( WORLD_PANEL_MIDDLE ) )
+	{
+		return;
+	}
+
+	for( int i = 0; i < EHand::HAND_COUNT; i++ )
+	{
+		CScreenGesture pickup( frame, (EHand)i );
+		if( pickup.IsActive() )
+		{
+			extern string_t global_screen_gesture_screen;
+			_screenManager.CreateScreen( WORLD_PANEL_MIDDLE, STRING( global_screen_gesture_screen ), this );
 		}
 	}
 }

@@ -48,4 +48,12 @@
 		"acceptsinput"  0
 		"resfile"		"scripts/screens/grid_ammo_screen.res"
 	}
+	
+	"grid_etactor_calibration_screen"
+	{
+		"type"			"grid_etactor_calibration_screen"
+		"pixelswide"	256
+		"pixelshigh"	256
+		"resfile"		"scripts/screens/grid_etactor_calibration_screen.res"
+	}
 }

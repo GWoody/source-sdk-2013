@@ -559,6 +559,14 @@ void C_VGuiScreen::ComputePanelToWorld()
 //-----------------------------------------------------------------------------
 void C_VGuiScreen::DrawScreenOverlay()
 {
+#ifdef HOLODECK
+	vgui::Panel *panel = m_PanelWrapper.GetPanel();
+	if( panel->GetAlpha() != 255 || panel->GetBgColor().a() != 255 )
+	{
+		return;
+	}
+#endif
+
 	CMatRenderContextPtr pRenderContext( materials );
 	pRenderContext->MatrixMode( MATERIAL_MODEL );
 	pRenderContext->PushMatrix();

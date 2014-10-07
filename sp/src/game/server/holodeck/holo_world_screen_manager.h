@@ -21,6 +21,7 @@ public:
 	CHoloWorldScreenManager();
 
 	virtual bool	CreateScreen( holo::EWorldPanel panel, const char *typeName, CHoloPlayer *owner );
+	virtual bool	IsScreenActive( holo::EWorldPanel panel )		{ return GetScreen(panel) != NULL; }
 	virtual void	DestroyScreen( holo::EWorldPanel panel );
 
 	CHoloWorldScreen *	GetScreen( holo::EWorldPanel panel ) const	{ return _screens[panel]; }
