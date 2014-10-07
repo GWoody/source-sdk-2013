@@ -45,8 +45,8 @@ public:
 	grid::CInventory &	GetInventory()					{ return _inventory; }
 
 private:
-	void			ProcessFrame( const holo::CFrame &frame );
-	void			HandleGunGesture( const holo::CFrame &frame );
+	void			ProcessFrame( const CFrame &frame );
+	void			HandleGunGesture( const CFrame &frame );
 
 	CNetworkHandle( CGridBaseWeapon, _activeWeapon );
 	grid::CInventory	_inventory;

@@ -11,8 +11,6 @@
 #include "cbase.h"
 #include "holo_gesture_listener.h"
 
-using namespace holo;
-
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 LINK_ENTITY_TO_CLASS( holo_gesture_listener, CHoloGestureListener );
@@ -62,7 +60,7 @@ void CHoloGestureListener::Spawn()
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void CHoloGestureListener::OnCircleGesture( const holo::CFrame &frame, const holo::CCircleGesture &circle )
+void CHoloGestureListener::OnCircleGesture( const CFrame &frame, const CCircleGesture &circle )
 {
 	if( _disabled )
 	{
@@ -80,7 +78,7 @@ void CHoloGestureListener::OnCircleGesture( const holo::CFrame &frame, const hol
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void CHoloGestureListener::OnSwipeGesture( const holo::CFrame &frame, const holo::CSwipeGesture &swipe )
+void CHoloGestureListener::OnSwipeGesture( const CFrame &frame, const CSwipeGesture &swipe )
 {
 	if( _disabled )
 	{
@@ -98,7 +96,7 @@ void CHoloGestureListener::OnSwipeGesture( const holo::CFrame &frame, const holo
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void CHoloGestureListener::OnTapGesture( const holo::CFrame &frame, const holo::CTapGesture &tap )
+void CHoloGestureListener::OnTapGesture( const CFrame &frame, const CTapGesture &tap )
 {
 	if( _disabled )
 	{

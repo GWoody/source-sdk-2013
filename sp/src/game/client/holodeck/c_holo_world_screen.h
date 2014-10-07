@@ -12,6 +12,9 @@
 
 #include "c_vguiscreen.h"
 
+class C_HoloHand;
+class vgui::Panel;
+
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 class C_HoloWorldScreen : public C_VGuiScreen
@@ -23,9 +26,13 @@ public:
 	C_HoloWorldScreen();
 	
 	// C_VGuiScreen overrides.
+	virtual void	ClientThink();
 	virtual void	GetAimEntOrigin( IClientEntity *pAttachedTo, Vector *pOrigin, QAngle *pAngles );
 
 private:
+	void			CheckHandContact( vgui::Panel *panel, C_HoloHand *hand );
+	void			CheckChildCollision( vgui::Panel *panel, int px, int py );
+
 	float			CalculateLeftOffset() const;
 
 	int				_type;

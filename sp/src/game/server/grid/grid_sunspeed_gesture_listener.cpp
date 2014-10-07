@@ -10,8 +10,6 @@
 #include "cbase.h"
 #include "holodeck/holo_gesture_listener.h"
 
-using namespace holo;
-
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 extern ConVar grid_sun_speed_multiplier;
@@ -25,7 +23,7 @@ class CGridSunSpeedListener : public CHoloGestureCallback
 public:
 	DECLARE_CLASS( CGridSunSpeedListener, CHoloGestureCallback );
 
-	virtual void	OnCircleGesture( const holo::CFrame &frame, const holo::CCircleGesture &circle );
+	virtual void	OnCircleGesture( const CFrame &frame, const CCircleGesture &circle );
 
 private:
 	float			AverageSpeed( float newSpeed );
@@ -39,7 +37,7 @@ LINK_ENTITY_TO_CLASS( grid_sunspeed_gesture_listener, CGridSunSpeedListener );
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void CGridSunSpeedListener::OnCircleGesture( const holo::CFrame &frame, const holo::CCircleGesture &circle )
+void CGridSunSpeedListener::OnCircleGesture( const CFrame &frame, const CCircleGesture &circle )
 {
 	const CHand *hand = frame.GetHandById( circle.GetHandId() );
 	Assert( hand );

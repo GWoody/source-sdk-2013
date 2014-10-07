@@ -28,13 +28,13 @@ class CLeapMotionListener;
 struct SFrameQueue
 {
 public:
-	void			Push( const holo::CFrame &frame );
-	holo::CFrame	Pop();
-	holo::CFrame 	Peek();
+	void			Push( const CFrame &frame );
+	CFrame	Pop();
+	CFrame 	Peek();
 	bool			IsEmpty();
 
 private:
-	std::queue<holo::CFrame>	_frameQueue;
+	std::queue<CFrame>	_frameQueue;
 	CThreadMutex	_mutex;
 };
 
@@ -66,7 +66,7 @@ public:
 
 private:
 	// Frame processing.
-	holo::CFrame	BuildFinalFrame();
+	CFrame	BuildFinalFrame();
 
 					CLeapMotion();
 					~CLeapMotion();

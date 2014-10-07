@@ -191,12 +191,12 @@ void CHoloHapticProxy::AddEventToTargetLimbs( CHoloPlayer *player )
 {
 	if( GetSpawnFlags() & SF_LEFT_HAND_BIT )
 	{
-		player->GetHandEntity( EHand::LEFT )->GetHaptics().AddEvent( _event );
+		player->GetHandEntity( HAND_LEFT )->GetHaptics().AddEvent( _event );
 	}
 
 	if( GetSpawnFlags() & SF_RIGHT_HAND_BIT )
 	{
-		player->GetHandEntity( EHand::RIGHT )->GetHaptics().AddEvent( _event );
+		player->GetHandEntity( HAND_RIGHT )->GetHaptics().AddEvent( _event );
 	}
 }
 
@@ -206,12 +206,12 @@ void CHoloHapticProxy::RemoveEventFromTargetLimbs( CHoloPlayer *player )
 {
 	if( GetSpawnFlags() & SF_LEFT_HAND_BIT )
 	{
-		player->GetHandEntity( EHand::LEFT )->GetHaptics().RemoveEvent( _event );
+		player->GetHandEntity( HAND_LEFT )->GetHaptics().RemoveEvent( _event );
 	}
 
 	if( GetSpawnFlags() & SF_RIGHT_HAND_BIT )
 	{
-		player->GetHandEntity( EHand::RIGHT )->GetHaptics().RemoveEvent( _event );
+		player->GetHandEntity( HAND_RIGHT )->GetHaptics().RemoveEvent( _event );
 	}
 }
 

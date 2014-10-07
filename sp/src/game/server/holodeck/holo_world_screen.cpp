@@ -22,6 +22,9 @@ BEGIN_DATADESC( CHoloWorldScreen )
 END_DATADESC()
 
 LINK_ENTITY_TO_CLASS( holo_world_screen, CHoloWorldScreen );
+LINK_ENTITY_TO_CLASS( vgui_screen, CHoloWorldScreen );
+LINK_ENTITY_TO_CLASS( vgui_screen_team, CHoloWorldScreen );
+PRECACHE_REGISTER( vgui_screen );
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------

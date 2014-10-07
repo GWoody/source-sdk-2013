@@ -21,7 +21,7 @@ using namespace holo;
 // ConVars.
 //-----------------------------------------------------------------------------
 extern ConVar sv_debug_player_use;
-static ConVar holo_pickup_cooldown( "holo_pickup_cooldown", "1", FCVAR_ARCHIVE );
+static ConVar holo_pickup_cooldown( "holo_pickup_cooldown", "1", FCVAR_ARCHIVE, "Length of time after picking up or dropping an object before being able to pickup or drop an object again." );
 
 //-----------------------------------------------------------------------------
 // External functions.
@@ -57,7 +57,7 @@ END_DATADESC()
 IMPLEMENT_SERVERCLASS_ST( CHoloHand, DT_HoloHand )
 
 	SendPropDataTable( SENDINFO_DT(_haptics), &REFERENCE_SEND_TABLE(DT_HoloHaptics), SendProxy_SendLocalDataTable ),
-	
+
 END_SEND_TABLE()
 
 LINK_ENTITY_TO_CLASS( holo_hand, CHoloHand );
@@ -141,7 +141,7 @@ void CHoloHand::OwnerKilled()
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void CHoloHand::SetType( holo::EHand type )
+void CHoloHand::SetType( EHand type )
 { 
 	_type = type; 
 	_haptics.SetTargetHand( type ); 
@@ -290,7 +290,7 @@ void CHoloHand::RenderDebugHand()
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-const holo::CHand &CHoloHand::GetHoloHand() const
+const CHand &CHoloHand::GetHoloHand() const
 {
 	return _transformedFrame.GetHand( _type );
 }

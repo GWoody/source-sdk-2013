@@ -433,7 +433,6 @@ void C_VGuiScreen::ClientThink( void )
 		m_nOldPy = py;
 	}
 
-#ifndef HOLODECK
 	if (m_nButtonPressed & IN_ATTACK)
 	{
 		g_InputInternal->SetMouseCodeState( MOUSE_LEFT, vgui::BUTTON_PRESSED );
@@ -454,34 +453,6 @@ void C_VGuiScreen::ClientThink( void )
 		g_InputInternal->SetMouseCodeState( MOUSE_RIGHT, vgui::BUTTON_RELEASED );
 		g_InputInternal->InternalMouseReleased( MOUSE_RIGHT );
 	}
-#else
-	for (int i = 0; i < pPanel->GetChildCount(); i++)
-	{
-		vgui::Button *child = dynamic_cast<vgui::Button*>(pPanel->GetChild(i));
-		if ( child )
-		{
-			int x1, x2, y1, y2;
-			child->GetBounds( x1, y1, x2, y2 );
-
-			// Generate mouse input commands
-			if ( px >= x1 && px <= x1 + x2 && py >= y1 && py <= y1 + y2 )
-			{
-				if ( m_nButtonPressed & IN_ATTACK )
-				{
-					child->DoClick();
-				}
-				if ( m_nButtonState & IN_ATTACK )
-				{
-					child->ForceDepressed( true );
-				}
-				if ( m_nButtonReleased & IN_ATTACK )
-				{
-					child->ForceDepressed( false );
-				}
-			}
-		}
-	}
-#endif
 
 	if ( m_bLoseThinkNextFrame == true )
 	{

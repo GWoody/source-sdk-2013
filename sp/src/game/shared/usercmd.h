@@ -171,7 +171,7 @@ public:
 #endif
 
 #ifdef HOLODECK
-	holo::CFrame holo_frame;
+	CFrame holo_frame;
 	Vector	viewoffset;
 #endif
 };

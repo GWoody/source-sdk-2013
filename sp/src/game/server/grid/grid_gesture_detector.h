@@ -27,18 +27,18 @@ namespace grid
 		};
 
 	public:
-						CGunGesture( const holo::CFrame &frame, holo::EHand hand );
+						CGunGesture( const CFrame &frame, EHand hand );
 
 		bool			IsIdle() const;
 		bool			HoldingTrigger() const;
 
 	protected:
-		virtual void	Detect( const holo::CFrame &frame, holo::EHand hand );
+		virtual void	Detect( const CFrame &frame, EHand hand );
 
 	private:
-		bool			DetectClosedFingers( const holo::CFrame &frame, holo::EHand hand );
-		bool			DetectGangsta( const holo::CFrame &frame, holo::EHand hand );
-		bool			DetectTrigger( const holo::CFrame &frame, holo::EHand hand );
+		bool			DetectClosedFingers( const CFrame &frame, EHand hand );
+		bool			DetectGangsta( const CFrame &frame, EHand hand );
+		bool			DetectTrigger( const CFrame &frame, EHand hand );
 
 		EState			_state;
 	};

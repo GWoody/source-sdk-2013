@@ -77,9 +77,9 @@ bool CBaseHoloPanel::PassesTriggerFilters( CBaseEntity *pOther )
 	CGridPlayer *pPlayer = dynamic_cast<CGridPlayer *>( UTIL_GetLocalPlayer() );
 	Assert( pPlayer );
 
-	for( int i = 0; i < holo::EHand::HAND_COUNT; i++ )
+	for( int i = 0; i < HAND_COUNT; i++ )
 	{
-		CBaseEntity *pHand = pPlayer->GetHandEntity( (holo::EHand)i );
+		CBaseEntity *pHand = pPlayer->GetHandEntity( (EHand)i );
 		if( !pHand )
 		{
 			return false;

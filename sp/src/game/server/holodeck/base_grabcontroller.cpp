@@ -640,7 +640,7 @@ bool CGrabController::UpdateObject( CHoloHand *pHand, float flError )
 	}
 
 	CBasePlayer *pPlayer = pHand->GetOwnerPlayer();
-	const holo::CHand &frameHand = pHand->GetHoloHand();
+	const CHand &frameHand = pHand->GetHoloHand();
 
 	QAngle playerAngles = frameHand.GetAngles();
 	Vector forward = frameHand.GetPosition() - pPlayer->EyePosition();

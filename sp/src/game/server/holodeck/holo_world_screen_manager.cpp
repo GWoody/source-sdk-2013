@@ -22,7 +22,7 @@ CHoloWorldScreenManager::CHoloWorldScreenManager()
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-bool CHoloWorldScreenManager::CreateScreen( holo::EWorldPanel panel, const char *typeName, CHoloPlayer *owner )
+bool CHoloWorldScreenManager::CreateScreen( EWorldPanel panel, const char *typeName, CHoloPlayer *owner )
 {
 	if( !typeName )
 	{
@@ -50,7 +50,7 @@ bool CHoloWorldScreenManager::CreateScreen( holo::EWorldPanel panel, const char 
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void CHoloWorldScreenManager::DestroyScreen( holo::EWorldPanel panel )
+void CHoloWorldScreenManager::DestroyScreen( EWorldPanel panel )
 {
 	DestroyVGuiScreen( _screens[panel] );
 	_screens[panel] = NULL;

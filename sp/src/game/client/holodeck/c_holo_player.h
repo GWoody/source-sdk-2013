@@ -13,6 +13,8 @@
 #include "c_baseplayer.h"
 #include "holodeck/holo_shared.h"
 
+class C_HoloHand;
+
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 class C_HoloPlayer : public C_BasePlayer
@@ -23,10 +25,14 @@ public:
 
 	C_HoloPlayer();
 
+	// Accessors.
 	Vector			GetHeadOffset()						{ return _viewoffset; }
+	C_HoloHand *	GetHand( EHand hand )				{ return (C_HoloHand *)_hands[hand].Get(); }
+
+	static C_HoloPlayer *	GetLocalPlayer()			{ return (C_HoloPlayer *)BaseClass::GetLocalPlayer(); }
 
 private:
-	EHANDLE			_hands[holo::EHand::HAND_COUNT];
+	EHANDLE			_hands[::HAND_COUNT];
 	Vector			_viewoffset;
 };
 

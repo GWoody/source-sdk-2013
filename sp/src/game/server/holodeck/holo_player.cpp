@@ -66,10 +66,6 @@ void CHoloPlayer::Spawn()
 	BaseClass::Spawn();
 
 	SetNextThink( gpGlobals->curtime + 0.01f );
-
-	//_screenManager.CreateScreen( WORLD_PANEL_LEFT, "vgui_test_screen", this );
-	//_screenManager.CreateScreen( WORLD_PANEL_MIDDLE, "grid_etactor_calibration_screen", this );
-	//_screenManager.CreateScreen( WORLD_PANEL_RIGHT, "vgui_test_screen", this );
 }
 
 //-----------------------------------------------------------------------------
@@ -171,21 +167,21 @@ CFrame CHoloPlayer::AccumulateHoloFrame( CUserCmd *cmds, int numcmds, int totalc
 
 		// Take the newest version of all frame attributes.
 		const CFrame &curframe = pCmd->holo_frame;
-		if( curframe.IsGestureActive( holo::EGesture::GESTURE_CIRCLE ) )
+		if( curframe.IsGestureActive( GESTURE_CIRCLE ) )
 		{
 			finalHoloFrame.SetCircleGesture( curframe.GetCircleGesture() );
 		}
-		if( curframe.IsGestureActive( holo::EGesture::GESTURE_SWIPE ) )
+		if( curframe.IsGestureActive( GESTURE_SWIPE ) )
 		{
 			finalHoloFrame.SetSwipeGesture( curframe.GetSwipeGesture() );
 		}
-		if( curframe.IsGestureActive( holo::EGesture::GESTURE_TAP ) )
+		if( curframe.IsGestureActive( GESTURE_TAP ) )
 		{
 			finalHoloFrame.SetTapGesture( curframe.GetTapGesture() );
 		}
 
-		finalHoloFrame.SetHand( curframe.GetHand( EHand::LEFT ), EHand::LEFT );
-		finalHoloFrame.SetHand( curframe.GetHand( EHand::RIGHT ), EHand::RIGHT );
+		finalHoloFrame.SetHand( curframe.GetHand( HAND_LEFT ), HAND_LEFT );
+		finalHoloFrame.SetHand( curframe.GetHand( HAND_RIGHT ), HAND_RIGHT );
 
 		finalHoloFrame.SetValid( true );
 	}
@@ -195,7 +191,7 @@ CFrame CHoloPlayer::AccumulateHoloFrame( CUserCmd *cmds, int numcmds, int totalc
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void CHoloPlayer::ProcessFrame( const holo::CFrame &frame )
+void CHoloPlayer::ProcessFrame( const CFrame &frame )
 {
 	//
 	// Detect custom gestures.
@@ -228,7 +224,7 @@ void CHoloPlayer::ProcessFrame( const holo::CFrame &frame )
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void CHoloPlayer::HandlePickupGesture( const holo::CFrame &frame )
+void CHoloPlayer::HandlePickupGesture( const CFrame &frame )
 {
 	for( int i = 0; i < EHand::HAND_COUNT; i++ )
 	{
@@ -250,7 +246,7 @@ void CHoloPlayer::HandlePickupGesture( const holo::CFrame &frame )
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void CHoloPlayer::HandleScreenGesture( const holo::CFrame &frame )
+void CHoloPlayer::HandleScreenGesture( const CFrame &frame )
 {
 	if( _screenManager.IsScreenActive( WORLD_PANEL_MIDDLE ) )
 	{

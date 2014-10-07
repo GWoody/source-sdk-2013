@@ -20,7 +20,7 @@ static ConVar grid_pickup_strength( "grid_pickup_strength", "0.8", FCVAR_ARCHIVE
 //-----------------------------------------------------------------------------
 // Gesture statics.
 //-----------------------------------------------------------------------------
-float CPickupGesture::_lastRadius[holo::EHand::HAND_COUNT] = { 0.0f, 0.0f };
+float CPickupGesture::_lastRadius[HAND_COUNT] = { 0.0f, 0.0f };
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
@@ -32,7 +32,7 @@ CPickupGesture::CPickupGesture( const CFrame &frame, EHand hand )
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void CPickupGesture::Detect( const holo::CFrame &frame, holo::EHand hand )
+void CPickupGesture::Detect( const CFrame &frame, EHand hand )
 {
 	float grabStrength = grid_pickup_strength.GetFloat();
 	float curRadius = frame.GetHand( hand ).GetBallGesture().GetGrabStrength();

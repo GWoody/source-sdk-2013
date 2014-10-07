@@ -24,19 +24,19 @@ CScreenGesture::CScreenGesture( const CFrame &frame, EHand hand )
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void CScreenGesture::Detect( const holo::CFrame &frame, holo::EHand hand )
+void CScreenGesture::Detect( const CFrame &frame, EHand hand )
 {
 	float tol = holo_screen_gesture_tolerance.GetFloat();
 	float theta;
 
-	const holo::CHand &holohand = frame.GetHand( hand );
+	const CHand &holohand = frame.GetHand( hand );
 
 	// Occasionally the middle finger gets "stuck" to the pointer and will copy its direction.
-	theta = holohand.FindThetaBetweenFingers( holo::EFinger::FINGER_POINTER, holo::EFinger::FINGER_MIDDLE );
+	theta = holohand.FindThetaBetweenFingers( FINGER_POINTER, FINGER_MIDDLE );
 	if( theta > tol )
 	{
 		// The middle finger is not stuck. Ensure the ring and middle fingers are pointing in roughly the same direction.
-		theta = holohand.FindThetaBetweenFingers( holo::EFinger::FINGER_RING, holo::EFinger::FINGER_MIDDLE );
+		theta = holohand.FindThetaBetweenFingers( FINGER_RING, FINGER_MIDDLE );
 		if( theta > tol )
 		{
 			SetInactive();
@@ -44,7 +44,7 @@ void CScreenGesture::Detect( const holo::CFrame &frame, holo::EHand hand )
 		}
 	}
 
-	theta = holohand.FindThetaBetweenFingers( holo::EFinger::FINGER_RING, holo::EFinger::FINGER_PINKY );
+	theta = holohand.FindThetaBetweenFingers( FINGER_RING, FINGER_PINKY );
 	if( theta < 65.0f - tol )
 	{
 		SetInactive();
@@ -52,7 +52,7 @@ void CScreenGesture::Detect( const holo::CFrame &frame, holo::EHand hand )
 	}
 
 	// Check if the fingers are pointing the opposite direction to the pointer.
-	theta = holohand.FindThetaBetweenFingers( holo::EFinger::FINGER_POINTER, holo::EFinger::FINGER_RING );
+	theta = holohand.FindThetaBetweenFingers( FINGER_POINTER, FINGER_RING );
 	if( theta < 65.0f - tol )
 	{
 		SetInactive();

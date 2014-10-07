@@ -131,7 +131,7 @@ CFrame CFrameFilter::AgedAverage()
 	{
 		// Older frames are stored at the beginning.
 		float currentWeight = ( i + 1 ) / MAX_HISTORY;
-		float confidence = _history[i].GetHand( EHand::LEFT ).GetConfidence() + _history[i].GetHand( EHand::RIGHT ).GetConfidence();
+		float confidence = _history[i].GetHand( HAND_LEFT ).GetConfidence() + _history[i].GetHand( HAND_RIGHT ).GetConfidence();
 
 		currentWeight *= useconfidence ? confidence : 1.0f;
 		totalWeight += currentWeight;

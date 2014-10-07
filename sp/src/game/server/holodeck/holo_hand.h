@@ -37,12 +37,12 @@ public:
 	void			OwnerKilled();
 
 	// Mutators.
-	void			SetType( holo::EHand type );
+	void			SetType( EHand type );
 
 	// Accessors.
-	const holo::CFrame &	GetFrame() const;
-	const holo::CHand &	GetHoloHand() const;
-	const holo::EHand	GetType() const				{ return _type; }
+	const CFrame &	GetFrame() const;
+	const CHand &	GetHoloHand() const;
+	const EHand		GetType() const				{ return _type; }
 	CBasePlayer *	GetOwnerPlayer() const			{ return (CBasePlayer *)GetOwnerEntity(); }
 	CHoloHaptics &	GetHaptics()						{ return _haptics; }
 
@@ -59,7 +59,7 @@ public:
 	void			AttemptObjectDrop();
 
 	// Frame processing.
-	void			ProcessFrame( const holo::CFrame &frame );
+	void			ProcessFrame( const CFrame &frame );
 
 	void			SetInvisible( bool invisible );
 
@@ -74,10 +74,10 @@ private:
 	void			RenderDebugHand();
 	Vector			GetOriginOffset() const;
 
-	holo::CFrame	_transformedFrame, _untransformedFrame;
+	CFrame	_transformedFrame, _untransformedFrame;
 
 	holo::CFrameFilter _filter;
-	holo::EHand		_type;
+	EHand			_type;
 
 	CHoloHaptics	_haptics;
 

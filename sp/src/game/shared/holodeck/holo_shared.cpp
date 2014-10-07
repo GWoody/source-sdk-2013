@@ -11,7 +11,6 @@
 #include "holo_shared.h"
 
 using namespace std;
-using namespace holo;
 
 static ConVar holo_arm_length( "holo_arm_length", "650", FCVAR_ARCHIVE, "Users arm length in mm" );
 
@@ -117,11 +116,11 @@ const char *EHandToString( EHand hand )
 {
 	switch( hand )
 	{
-		case EHand::LEFT:
-			return "LEFT";
+		case HAND_LEFT:
+			return "HAND_LEFT";
 
-		case EHand::RIGHT:
-			return "RIGHT";
+		case HAND_RIGHT:
+			return "HAND_RIGHT";
 
 		default:
 			break;
@@ -602,8 +601,8 @@ void CHand::Transform( float yaw, const Vector &translation )
 
 float CHand::FindThetaBetweenFingers( EFinger f1, EFinger f2 ) const
 {
-	const holo::CFinger &finger1 = GetFingerByType( f1 );
-	const holo::CFinger &finger2 = GetFingerByType( f2 );
+	const CFinger &finger1 = GetFingerByType( f1 );
+	const CFinger &finger2 = GetFingerByType( f2 );
 
 	const Vector &f1dir = finger1.GetDirection();
 	const Vector &f2dir = finger2.GetDirection();
@@ -1182,12 +1181,12 @@ void CFrame::FromLeap( const Leap::Frame &f )
 	{
 		if( hands[i].isLeft() )
 		{
-			_hand[EHand::LEFT].FromLeap( hands[i] );
+			_hand[HAND_LEFT].FromLeap( hands[i] );
 			wroteLeft = true;
 		}
 		else if( hands[i].isRight() )
 		{
-			_hand[EHand::RIGHT].FromLeap( hands[i] );
+			_hand[HAND_RIGHT].FromLeap( hands[i] );
 			wroteRight = true;
 		}
 
@@ -1207,8 +1206,8 @@ void CFrame::ToBitBuffer( bf_write *buf ) const
 		return;
 	}
 
-	_hand[EHand::LEFT].ToBitBuffer( buf );
-	_hand[EHand::RIGHT].ToBitBuffer( buf );
+	_hand[HAND_LEFT].ToBitBuffer( buf );
+	_hand[HAND_RIGHT].ToBitBuffer( buf );
 	buf->WriteVarInt32( _gestureBits );
 
 	if( IsGestureActive( GESTURE_CIRCLE ) )
@@ -1235,8 +1234,8 @@ void CFrame::FromBitBuffer( bf_read *buf )
 		return;
 	}
 
-	_hand[EHand::LEFT].FromBitBuffer( buf );
-	_hand[EHand::RIGHT].FromBitBuffer( buf );
+	_hand[HAND_LEFT].FromBitBuffer( buf );
+	_hand[HAND_RIGHT].FromBitBuffer( buf );
 	_gestureBits = buf->ReadVarInt32();
 
 	if( IsGestureActive( GESTURE_CIRCLE ) )
@@ -1266,8 +1265,8 @@ void CFrame::ToEntitySpace( CBaseCombatCharacter *entity, const Vector &delta )
 	Vector translation = entity->GetAbsOrigin() + delta;
 	const float yaw = ownerAngles.y;
 
-	_hand[EHand::LEFT].Transform( yaw, translation );
-	_hand[EHand::RIGHT].Transform( yaw, translation );
+	_hand[HAND_LEFT].Transform( yaw, translation );
+	_hand[HAND_RIGHT].Transform( yaw, translation );
 
 	if( IsGestureActive( EGesture::GESTURE_CIRCLE ) )
 	{
@@ -1288,7 +1287,7 @@ void CFrame::ToEntitySpace( CBaseCombatCharacter *entity, const Vector &delta )
 
 bool CFrame::IsValid() const
 {
-	if( _hand[EHand::LEFT].GetPosition().IsZero() && _hand[EHand::RIGHT].GetPosition().IsZero() )
+	if( _hand[HAND_LEFT].GetPosition().IsZero() && _hand[HAND_RIGHT].GetPosition().IsZero() )
 	{
 		return false;
 	}
@@ -1298,14 +1297,14 @@ bool CFrame::IsValid() const
 
 const CHand *CFrame::GetHandById( int id ) const
 {
-	if( _hand[EHand::LEFT].GetId() == id )
+	if( _hand[HAND_LEFT].GetId() == id )
 	{
-		return &_hand[EHand::LEFT];
+		return &_hand[HAND_LEFT];
 	}
 
-	if( _hand[EHand::RIGHT].GetId() == id )
+	if( _hand[HAND_RIGHT].GetId() == id )
 	{
-		return &_hand[EHand::RIGHT];
+		return &_hand[HAND_RIGHT];
 	}
 
 	return NULL;
@@ -1329,8 +1328,8 @@ CFrame CFrame::operator+( const CFrame &other ) const
 	// Both frames are valid. Add them!
 	CFrame f;
 
-	f._hand[EHand::LEFT] = _hand[EHand::LEFT] + other._hand[EHand::LEFT];
-	f._hand[EHand::RIGHT] = _hand[EHand::RIGHT] + other._hand[EHand::RIGHT];
+	f._hand[HAND_LEFT] = _hand[HAND_LEFT] + other._hand[HAND_LEFT];
+	f._hand[HAND_RIGHT] = _hand[HAND_RIGHT] + other._hand[HAND_RIGHT];
 
 	f._circle = AddGesture( other, _circle, other._circle, EGesture::GESTURE_CIRCLE );
 	f._swipe = AddGesture( other, _swipe, other._swipe, EGesture::GESTURE_SWIPE );
@@ -1348,8 +1347,8 @@ CFrame CFrame::operator/( float scale ) const
 
 	f._valid = _valid;
 	f._gestureBits = _gestureBits;
-	f._hand[EHand::LEFT] = _hand[EHand::LEFT] / scale;
-	f._hand[EHand::RIGHT] = _hand[EHand::RIGHT] / scale;
+	f._hand[HAND_LEFT] = _hand[HAND_LEFT] / scale;
+	f._hand[HAND_RIGHT] = _hand[HAND_RIGHT] / scale;
 	f._circle = _circle / scale;
 	f._swipe = _swipe / scale;
 	f._tap = _tap / scale;
@@ -1363,8 +1362,8 @@ CFrame CFrame::operator*( float scale ) const
 
 	f._valid = _valid;
 	f._gestureBits = _gestureBits;
-	f._hand[EHand::LEFT] = _hand[EHand::LEFT] * scale;
-	f._hand[EHand::RIGHT] = _hand[EHand::RIGHT] * scale;
+	f._hand[HAND_LEFT] = _hand[HAND_LEFT] * scale;
+	f._hand[HAND_RIGHT] = _hand[HAND_RIGHT] * scale;
 	f._circle = _circle * scale;
 	f._swipe = _swipe * scale;
 	f._tap = _tap * scale;

@@ -26,10 +26,10 @@ public:
 	virtual void	Spawn();
 
 	// Mutators.
-	void			SetType( holo::EWorldPanel type )		{ _type = type; }
+	void			SetType( EWorldPanel type )			{ _type = type; }
 
 	// Accessors.
-	holo::EWorldPanel	GetType() const						{ return (holo::EWorldPanel)_type.Get(); }
+	EWorldPanel		GetType() const							{ return (EWorldPanel)_type.Get(); }
 
 private:
 	CNetworkVar( int, _type );

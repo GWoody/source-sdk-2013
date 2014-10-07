@@ -10,8 +10,6 @@
 #include "cbase.h"
 #include "holo_haptics.h"
 
-using namespace holo;
-
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 bool HapticEventLessFunc( CHoloHapticEvent * const &a, CHoloHapticEvent * const &b )

@@ -41,22 +41,22 @@ public:
 	virtual void	ProcessUsercmds( CUserCmd *cmds, int numcmds, int totalcmds, int dropped_packets, bool paused );
 
 	// Accessors.
-	CHoloHand *		GetHandEntity( holo::EHand hand ) const	{ return (CHoloHand *)_hands[hand].Get(); }
+	CHoloHand *		GetHandEntity( EHand hand ) const	{ return (CHoloHand *)_hands[hand].Get(); }
 	Vector			GetHeadOffset() const				{ return _viewoffset; }
 	CHoloWorldScreenManager &	GetScreenManager()		{ return _screenManager; }
 
 protected:
-	virtual void	ProcessFrame( const holo::CFrame &frame );
+	virtual void	ProcessFrame( const CFrame &frame );
 
 private:
 	// Custom gesture detection.
-	void			HandlePickupGesture( const holo::CFrame &frame );
-	void			HandleScreenGesture( const holo::CFrame &frame );
+	void			HandlePickupGesture( const CFrame &frame );
+	void			HandleScreenGesture( const CFrame &frame );
 
 	// UserCmd processing.
-	holo::CFrame	AccumulateHoloFrame( CUserCmd *cmds, int numcmds, int totalcmds, int dropped_packets, bool paused );
+	CFrame	AccumulateHoloFrame( CUserCmd *cmds, int numcmds, int totalcmds, int dropped_packets, bool paused );
 
-	CNetworkArray( EHANDLE, _hands, holo::EHand::HAND_COUNT );				// The hand entity which is used to interact with the environment.
+	CNetworkArray( EHANDLE, _hands, HAND_COUNT );				// The hand entity which is used to interact with the environment.
 	CNetworkVar( Vector, _viewoffset );
 
 	CHoloWorldScreenManager	_screenManager;

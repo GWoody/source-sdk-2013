@@ -22,16 +22,16 @@ namespace holo
 	public:
 						CFrameFilter();
 
-		holo::CFrame	FilterFrame( const holo::CFrame &frame );
+		CFrame	FilterFrame( const CFrame &frame );
 
 	private:
-		void			AddToHistory( const holo::CFrame &frame );
+		void			AddToHistory( const CFrame &frame );
 
 		// Filtering methods.
-		holo::CFrame	StandardAverage();
-		holo::CFrame	AgedAverage();
+		CFrame	StandardAverage();
+		CFrame	AgedAverage();
 
-		CUtlVector<holo::CFrame> _history;
+		CUtlVector<CFrame> _history;
 	};
 	
 }

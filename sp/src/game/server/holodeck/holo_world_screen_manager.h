@@ -20,14 +20,14 @@ class CHoloWorldScreenManager
 public:
 	CHoloWorldScreenManager();
 
-	virtual bool	CreateScreen( holo::EWorldPanel panel, const char *typeName, CHoloPlayer *owner );
-	virtual bool	IsScreenActive( holo::EWorldPanel panel )		{ return GetScreen(panel) != NULL; }
-	virtual void	DestroyScreen( holo::EWorldPanel panel );
+	virtual bool	CreateScreen( EWorldPanel panel, const char *typeName, CHoloPlayer *owner );
+	virtual bool	IsScreenActive( EWorldPanel panel )		{ return GetScreen(panel) != NULL; }
+	virtual void	DestroyScreen( EWorldPanel panel );
 
-	CHoloWorldScreen *	GetScreen( holo::EWorldPanel panel ) const	{ return _screens[panel]; }
+	CHoloWorldScreen *	GetScreen( EWorldPanel panel ) const	{ return _screens[panel]; }
 
 private:
-	CHoloWorldScreen *	_screens[holo::WORLD_PANEL_COUNT];
+	CHoloWorldScreen *	_screens[WORLD_PANEL_COUNT];
 };
 
 #endif // __HOLO_WORLD_SCREEN_MANAGER_H__

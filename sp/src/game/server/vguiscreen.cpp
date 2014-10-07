@@ -27,10 +27,11 @@ IMPLEMENT_SERVERCLASS_ST(CVGuiScreen, DT_VGuiScreen)
 	SendPropEHandle(SENDINFO(m_hPlayerOwner)),
 END_SEND_TABLE();
 
+#ifndef HOLODECK
 LINK_ENTITY_TO_CLASS( vgui_screen, CVGuiScreen );
 LINK_ENTITY_TO_CLASS( vgui_screen_team, CVGuiScreen );
 PRECACHE_REGISTER( vgui_screen );
-
+#endif
 
 //-----------------------------------------------------------------------------
 // Save/load

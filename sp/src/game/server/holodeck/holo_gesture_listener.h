@@ -18,9 +18,9 @@
 class CHoloGestureCallback : public CLogicalEntity
 {
 public:
-	virtual void	OnCircleGesture( const holo::CFrame &frame, const holo::CCircleGesture &circle )	{}
-	virtual void	OnSwipeGesture( const holo::CFrame &frame, const holo::CSwipeGesture &swipe )		{}
-	virtual void	OnTapGesture( const holo::CFrame &frame, const holo::CTapGesture &tap )				{}
+	virtual void	OnCircleGesture( const CFrame &frame, const CCircleGesture &circle )	{}
+	virtual void	OnSwipeGesture( const CFrame &frame, const CSwipeGesture &swipe )		{}
+	virtual void	OnTapGesture( const CFrame &frame, const CTapGesture &tap )				{}
 };
 
 //-----------------------------------------------------------------------------
@@ -35,9 +35,9 @@ public:
 	virtual void	Spawn();
 	
 	// Gesture processing.
-	void			OnCircleGesture( const holo::CFrame &frame,const holo::CCircleGesture &circle );
-	void			OnSwipeGesture( const holo::CFrame &frame, const holo::CSwipeGesture &swipe );
-	void			OnTapGesture( const holo::CFrame &frame, const holo::CTapGesture &tap );
+	void			OnCircleGesture( const CFrame &frame,const CCircleGesture &circle );
+	void			OnSwipeGesture( const CFrame &frame, const CSwipeGesture &swipe );
+	void			OnTapGesture( const CFrame &frame, const CTapGesture &tap );
 
 	// Singleton stuff.
 	static void		ClearInstance()				{ _instance = NULL; }
@@ -48,7 +48,7 @@ private:
 	static CHoloGestureListener *	_instance;
 
 	// State.
-	EHANDLE			_callbacks[holo::EGesture::GESTURE_COUNT];
+	EHANDLE			_callbacks[GESTURE_COUNT];
 
 	// Hammer inputs.
 	void			InputSetCircleGestureListener( inputdata_t &input );

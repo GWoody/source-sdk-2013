@@ -13,7 +13,6 @@
 #include "holodeck/holo_shared.h"
 
 using namespace std;
-using namespace holo;
 
 CLeapMotion *CLeapMotion::_instance;
 
@@ -133,8 +132,8 @@ CFrame CLeapMotion::BuildFinalFrame()
 			finalFrame.SetTapGesture( curframe.GetTapGesture() );
 		}
 
-		finalFrame.SetHand( curframe.GetHand( EHand::LEFT ), EHand::LEFT );
-		finalFrame.SetHand( curframe.GetHand( EHand::RIGHT ), EHand::RIGHT );
+		finalFrame.SetHand( curframe.GetHand( HAND_LEFT ), HAND_LEFT );
+		finalFrame.SetHand( curframe.GetHand( HAND_RIGHT ), HAND_RIGHT );
 	}
 
 	return finalFrame;

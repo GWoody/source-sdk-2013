@@ -80,7 +80,7 @@ Vector CGridPlayer::Weapon_ShootPosition()
 //-----------------------------------------------------------------------------
 // Detects custom user gestures.
 //-----------------------------------------------------------------------------
-void CGridPlayer::ProcessFrame( const holo::CFrame &frame )
+void CGridPlayer::ProcessFrame( const CFrame &frame )
 {
 	HandleGunGesture( frame );
 	BaseClass::ProcessFrame( frame );
@@ -88,7 +88,7 @@ void CGridPlayer::ProcessFrame( const holo::CFrame &frame )
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void CGridPlayer::HandleGunGesture( const holo::CFrame &frame )
+void CGridPlayer::HandleGunGesture( const CFrame &frame )
 {
 	CGridBaseWeapon *weapon = GetInventory().GetWeapon();
 	if( !weapon )
@@ -147,7 +147,7 @@ void CGridPlayer::PreThink()
 			CHoloHand *hand = (CHoloHand *)GetHandEntity( (EHand)_weaponHandIdx );
 			weapon->SetAbsOrigin( hand->GetAbsOrigin() );
 
-			const Vector &pointerDir = hand->GetHoloHand().GetFingerByType( holo::EFinger::FINGER_POINTER ).GetDirection();
+			const Vector &pointerDir = hand->GetHoloHand().GetFingerByType( ::FINGER_POINTER ).GetDirection();
 			weapon->SetDirection( pointerDir );
 			weapon->ItemPreFrame();
 		}

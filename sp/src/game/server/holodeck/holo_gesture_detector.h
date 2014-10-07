@@ -24,7 +24,7 @@ namespace holo
 		void			SetInactive()			{ _active = false; }
 
 	private:
-		virtual void	Detect( const holo::CFrame &frame, holo::EHand hand ) = 0;
+		virtual void	Detect( const CFrame &frame, EHand hand ) = 0;
 
 		bool			_active;
 	};
@@ -42,7 +42,7 @@ namespace holo
 		};
 
 	public:
-						CPickupGesture( const holo::CFrame &frame, holo::EHand hand );
+						CPickupGesture( const CFrame &frame, EHand hand );
 
 		bool			IsHandClenched() const;
 
@@ -53,13 +53,13 @@ namespace holo
 		bool			HasClenchFinished() const;
 
 	protected:
-		virtual void	Detect( const holo::CFrame &frame, holo::EHand hand );
+		virtual void	Detect( const CFrame &frame, EHand hand );
 
 	private:
 		EState			_clenchState;
 
 		// Radius of the ball gesture last frame.
-		static float	_lastRadius[holo::EHand::HAND_COUNT];
+		static float	_lastRadius[HAND_COUNT];
 	};
 
 	//-------------------------------------------------------------------------
@@ -67,10 +67,10 @@ namespace holo
 	class CScreenGesture : public CBaseGesture
 	{
 	public:
-						CScreenGesture( const holo::CFrame &frame, holo::EHand hand );
+						CScreenGesture( const CFrame &frame, EHand hand );
 
 	protected:
-		virtual void	Detect( const holo::CFrame &frame, holo::EHand hand );
+		virtual void	Detect( const CFrame &frame, EHand hand );
 	};
 
 }
