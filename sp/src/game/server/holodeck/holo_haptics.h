@@ -33,15 +33,20 @@ public:
 
 	void			Clear();
 
+	void			SetId( unsigned int id )	{ _id = id; }
+
 	// Accessors.
 	EPriority		GetPriority() const		{ return _priority; }
 	unsigned char	GetPower() const		{ return _power; }
 	unsigned char	GetFrequency() const	{ return _frequency; }
 	bool			IsEnabled() const		{ return _enabled; }
+	unsigned int	GetId() const			{ return _id; }
 
 	virtual bool	Update() = 0;
 
 protected:
+	unsigned int	_id;
+
 	unsigned char	_power;
 	unsigned char	_frequency;
 	bool			_enabled;

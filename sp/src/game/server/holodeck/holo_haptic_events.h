@@ -30,6 +30,16 @@ private:
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
+class CTriggerHapticEvent : public CHoloHapticEvent
+{
+public:
+	CTriggerHapticEvent( unsigned char power, unsigned char freq );
+
+	virtual bool	Update();
+};
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 class CProxyHapticEvent : public CHoloHapticEvent
 {
 	enum EFlags

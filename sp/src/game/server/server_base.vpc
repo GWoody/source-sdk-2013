@@ -102,6 +102,8 @@ $Project
 		$File	"holodeck\holo_player.cpp"
         $File	"holodeck\holo_player.h"
 		$File	"holodeck\holo_screen_proxy.cpp"
+		$File	"holodeck\holo_trigger_haptic.cpp"
+		$File	"holodeck\holo_trigger_haptic.h"
 		$File	"holodeck\holo_world_screen.cpp"
 		$File	"holodeck\holo_world_screen.h"
 		$File	"holodeck\holo_world_screen_manager.cpp"

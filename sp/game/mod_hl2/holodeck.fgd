@@ -55,6 +55,17 @@
 
 //-------------------------------------------------------------------------
 //-------------------------------------------------------------------------
+@SolidClass base(Trigger) = holo_trigger_haptic : "Sets the ETactor of the touched hand to the specified values."
+[
+	//
+	// Attributes.
+	//
+	power(integer) : "Power [0, 255]" : 0 : "ETactor power upon touch."
+	frequency(integer) : "Frequency [0, 255]" : 0 : "ETactor frequency upon touch."
+]
+
+//-------------------------------------------------------------------------
+//-------------------------------------------------------------------------
 @BaseClass base(Targetname, EnableDisable, Origin) = GesturePanel
 [
 	//

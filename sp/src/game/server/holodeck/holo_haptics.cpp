@@ -73,6 +73,11 @@ CHoloHaptics::CHoloHaptics() :
 void CHoloHaptics::AddEvent( CHoloHapticEvent *event )
 {
 	_events.Insert( event );
+
+	if( !event->GetId() )
+	{
+		event->SetId( (unsigned int)event );
+	}
 }
 
 //-----------------------------------------------------------------------------
@@ -81,9 +86,10 @@ void CHoloHaptics::RemoveEvent( CHoloHapticEvent *event )
 {
 	for( int i = 0; i < _events.Count(); i++ )
 	{
-		if( _events.Element(i) == event )
+		if( _events.Element(i)->GetId() == event->GetId() )
 		{
 			_events.RemoveAt( i );
+			event->SetId( 0 );
 			break;
 		}
 	}
@@ -101,6 +107,7 @@ void CHoloHaptics::Update()
 	for( int i = 0; i < _events.Count(); i++ )
 	{
 		CHoloHapticEvent *event = _events.Element( i );
+		Assert( event->GetId() );
 		if( !event->Update() )
 		{
 			_events.RemoveAt( i );

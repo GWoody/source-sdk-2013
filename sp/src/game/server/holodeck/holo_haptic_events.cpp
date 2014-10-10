@@ -38,6 +38,23 @@ bool CButtonPressHapticEvent::Update()
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
+CTriggerHapticEvent::CTriggerHapticEvent( unsigned char power, unsigned char freq ) : CHoloHapticEvent( ENVIRONMENT )
+{
+	_power = power;
+	_frequency = freq;
+	_enabled = false;
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+bool CTriggerHapticEvent::Update()
+{
+	_enabled = true;
+	return true;
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 CProxyHapticEvent::CProxyHapticEvent() : CHoloHapticEvent( ENVIRONMENT )
 {
 	_startPower = _endPower = 0;
