@@ -16,6 +16,7 @@
 #include "Sprite.h"
 
 class CGridPlayer;
+class CWeaponShootHapticEvent;
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
@@ -39,7 +40,7 @@ public:
 	// Player interaction.
 	virtual void	Drop();
 	virtual void	Pickup( CGridPlayer *player );
-	virtual void	TakeOut();
+	virtual void	TakeOut( EHand hand );
 	virtual void	PutAway();
 
 	// Accessors.
@@ -92,6 +93,9 @@ private:
 	bool			_isOut;
 
 	CHandle<CVGuiScreen>	_ammoScreen;
+
+	CWeaponShootHapticEvent *	_haptic;
+	EHand			_hand;
 };
 
 #endif // __GRID_BASE_WEAPON_H__

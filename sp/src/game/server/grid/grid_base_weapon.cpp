@@ -10,6 +10,8 @@
 #include "cbase.h"
 #include "grid_player.h"
 #include "grid_base_weapon.h"
+#include "grid_haptic_events.h"
+
 #include "particle_parse.h"
 #include "te_effect_dispatch.h"
 
@@ -47,12 +49,15 @@ CGridBaseWeapon::CGridBaseWeapon( const char *script )
 	_nextFireTime = 0.0f;
 	_ammoScreen.Set( NULL );
 	_isOut = false;
+
+	_haptic = new CWeaponShootHapticEvent( _info.GetHaptic().GetPower(), _info.GetHaptic().GetFrequency() );
 }
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 CGridBaseWeapon::~CGridBaseWeapon()
 {
+	delete _haptic;
 }
 
 //-----------------------------------------------------------------------------
@@ -187,13 +192,22 @@ void CGridBaseWeapon::Drop()
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void CGridBaseWeapon::TakeOut()
+void CGridBaseWeapon::TakeOut( EHand hand )
 {
 	RemoveEffects( EF_NODRAW );
 
 	CreateSpriteEntity();
 	CreateAmmoScreen();
 
+	// Attach the haptic event.
+	{
+		CHoloPlayer *player = (CHoloPlayer *)GetOwnerEntity();
+		Assert( player );
+
+		player->GetHandEntity( hand )->GetHaptics().AddEvent( _haptic );
+	}
+
+	_hand = hand;
 	_isOut = true;
 }
 
@@ -206,6 +220,14 @@ void CGridBaseWeapon::PutAway()
 
 	DestroySpriteEntity();
 	DestroyAmmoScreen();
+
+	// Remove the haptic event.
+	{
+		CHoloPlayer *player = (CHoloPlayer *)GetOwnerEntity();
+		Assert( player );
+
+		player->GetHandEntity( _hand )->GetHaptics().RemoveEvent( _haptic );
+	}
 
 	_isOut = false;
 }
@@ -239,6 +261,12 @@ void CGridBaseWeapon::ItemPreFrame()
 	if( _triggerHeld )
 	{
 		Shoot();
+
+		_haptic->Enable();
+	}
+	else
+	{
+		_haptic->Disable();
 	}
 }
 

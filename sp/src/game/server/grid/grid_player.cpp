@@ -107,7 +107,7 @@ void CGridPlayer::HandleGunGesture( const CFrame &frame )
 				// The gun gesture was first made this frame. Show the gun in place of the hand.
 				_activeWeapon = weapon;
 				_weaponHandIdx = i;
-				_activeWeapon->TakeOut();
+				_activeWeapon->TakeOut( (EHand)i );
 				hand->SetInvisible( true );
 			}
 

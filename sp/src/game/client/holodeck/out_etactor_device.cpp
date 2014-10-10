@@ -12,6 +12,8 @@
 
 #include <tenslib.h>
 
+static ConVar holo_etactor_debug( "holo_etactor_debug", "0" );
+
 //----------------------------------------------------------------------------
 //----------------------------------------------------------------------------
 const int TENS_TIMEOUT_MS = 20;
@@ -141,6 +143,11 @@ void CETactorDevice::Commit()
 			_owner->Sleep( TENS_TIMEOUT_MS );
 
 			_powfreq.Clean();
+
+			if( holo_etactor_debug.GetBool() )
+			{
+				Msg( "%d -> power = %d, freq = %d\n", _id, power, freq );
+			}
 		}
 	}
 }
