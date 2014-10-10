@@ -103,7 +103,7 @@ CLeapMotion::~CLeapMotion()
 //----------------------------------------------------------------------------
 void CLeapMotion::CreateMove( CUserCmd *cmd )
 {
-	cmd->holo_frame = BuildFinalFrame();
+	cmd->holo_frame = _lastFrame = BuildFinalFrame();
 }
 
 //----------------------------------------------------------------------------

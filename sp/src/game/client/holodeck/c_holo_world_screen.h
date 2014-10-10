@@ -30,8 +30,9 @@ public:
 	virtual void	GetAimEntOrigin( IClientEntity *pAttachedTo, Vector *pOrigin, QAngle *pAngles );
 
 private:
-	void			CheckHandContact( vgui::Panel *panel, C_HoloHand *hand );
-	void			CheckChildCollision( vgui::Panel *panel, int px, int py );
+	void			CheckHandContact( vgui::Panel *panel, const CHand &hand );
+	bool			CheckFingerContact( vgui::Panel *panel, const CFinger &finger );
+	void			CheckChildCollision( vgui::Panel *panel, const CFinger &finger, int px, int py );
 
 	float			CalculateLeftOffset() const;
 

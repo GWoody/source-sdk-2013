@@ -41,6 +41,21 @@ public:
 	virtual bool	IsBaseCombatCharacter( void ) { return true; };
 	virtual C_BaseCombatCharacter *MyCombatCharacterPointer( void ) { return this; }
 
+#ifdef HOLODECK
+	Vector BodyDirection2D( void )
+	{
+		QAngle angles = GetAbsAngles();
+
+		// FIXME: cache this
+		Vector vBodyDir;
+		AngleVectors( angles, &vBodyDir );
+
+		vBodyDir.z = 0;
+		vBodyDir.AsVector2D().NormalizeInPlace();
+		return vBodyDir;
+	}
+#endif
+
 	// -----------------------
 	// Vision
 	// -----------------------

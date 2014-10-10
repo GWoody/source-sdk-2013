@@ -61,6 +61,7 @@ public:
 
 	// Accessors.
 	SFrameQueue &	GetQueue()			{ return *_queue; }
+	const CFrame &	GetLastFrame() const	{ return _lastFrame; }
 
 	void			CreateMove( CUserCmd *cmd );
 
@@ -74,6 +75,7 @@ private:
 	Leap::Controller	_controller;
 	CLeapMotionListener _listener;
 	SFrameQueue *	_queue;
+	CFrame			_lastFrame;
 
 	static CLeapMotion *	_instance;
 };

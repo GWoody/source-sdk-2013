@@ -15,6 +15,8 @@
 #ifdef CLIENT_DLL
 	// Required for custom structure constructors.
 	#include <Leap.h>
+
+	#define CBaseCombatCharacter C_BaseCombatCharacter
 #endif
 
 //=============================================================================
@@ -138,6 +140,7 @@ public:
 	inline float	GetWidth() const							{ return _width; }
 	inline float	GetLength() const							{ return _length; }
 	inline const CBone &	GetBone( EBone bone ) const			{ return _bones[bone]; }
+	float			GetVelocityDirectionTheta() const;
 
 	// Filtering helpers.
 	CFinger			operator+( const CFinger &other ) const;
@@ -354,9 +357,7 @@ public:
 	void			ToBitBuffer( bf_write *buf ) const;
 	void			FromBitBuffer( bf_read *buf );
 
-#ifdef GAME_DLL
 	void			ToEntitySpace( CBaseCombatCharacter *entity, const Vector &delta );
-#endif
 
 	void			SetValid( bool valid )						{ _valid = valid; }
 	bool			IsValid() const;

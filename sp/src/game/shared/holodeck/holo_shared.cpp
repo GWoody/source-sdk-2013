@@ -442,6 +442,14 @@ void CFinger::Transform( float yaw, const Vector &translation )
 	}
 }
 
+float CFinger::GetVelocityDirectionTheta() const
+{
+	const Vector norm = _direction.Normalized();
+	float dot = _tipVelocity.Normalized().Dot( norm );
+	float delta = acos( dot );
+	return RAD2DEG( delta );
+}
+
 CFinger CFinger::operator+( const CFinger &other ) const
 {
 	CFinger f;
@@ -1254,7 +1262,6 @@ void CFrame::FromBitBuffer( bf_read *buf )
 	}
 }
 
-#ifdef GAME_DLL
 // Transforms the frame data to be positioned relative to the given entity.
 void CFrame::ToEntitySpace( CBaseCombatCharacter *entity, const Vector &delta )
 {
@@ -1283,7 +1290,6 @@ void CFrame::ToEntitySpace( CBaseCombatCharacter *entity, const Vector &delta )
 		_tap.Transform( yaw, translation );
 	}
 }
-#endif
 
 bool CFrame::IsValid() const
 {

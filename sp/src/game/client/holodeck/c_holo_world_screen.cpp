@@ -12,6 +12,7 @@
 #include "c_holo_world_screen.h"
 #include "c_holo_player.h"
 #include "c_holo_hand.h"
+#include "in_leap.h"
 
 #include "engine/ivdebugoverlay.h"
 #include "cdll_client_int.h"
@@ -25,6 +26,7 @@ using namespace vgui;
 
 static ConVar holo_screen_distance( "holo_screen_distance", "32", FCVAR_ARCHIVE );
 static ConVar holo_screen_height_offset( "holo_screen_height_offset", "48", FCVAR_ARCHIVE );
+static ConVar holo_screen_finger_tipdir_tolertance( "holo_screen_finger_tipdir_tolertance", "30", FCVAR_ARCHIVE );
 
 extern vgui::IInputInternal *g_InputInternal;
 
@@ -66,23 +68,42 @@ void C_HoloWorldScreen::ClientThink( void )
 	if (!pLocalPlayer)
 		return;
 
+	CFrame frame = CLeapMotion::Get().GetLastFrame();
+	frame.ToEntitySpace( C_HoloPlayer::GetLocalPlayer(), Vector( 0, 0, 60 ) );
+
 	for( int i = 0; i < HAND_COUNT; i++ )
 	{
-		C_HoloHand *hand = pLocalPlayer->GetHand( (EHand)i );
+		const CHand &hand = frame.GetHand( (EHand)i );
 		CheckHandContact( pPanel, hand );
 	}
 }
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void C_HoloWorldScreen::CheckHandContact( vgui::Panel *panel, C_HoloHand *hand )
+void C_HoloWorldScreen::CheckHandContact( vgui::Panel *panel, const CHand &hand )
 {
-	C_HoloPlayer *pLocalPlayer = C_HoloPlayer::GetLocalPlayer();
+	//for( int i = 0; i < FINGER_COUNT; i++ )
+	{
+		int i = FINGER_POINTER;
+		const CFinger &finger = hand.GetFingerByType( (EFinger)i );
 
+		if( CheckFingerContact( panel, finger ) )
+		{
+			//break;
+		}
+	}
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+bool C_HoloWorldScreen::CheckFingerContact( vgui::Panel *panel, const CFinger &finger )
+{
 	// Generate a ray along the view direction
-	Vector vecEyePosition = pLocalPlayer->EyePosition();
+	Vector fingertipPos = finger.GetTipPosition();
 	
-	QAngle viewAngles = pLocalPlayer->EyeAngles();
+	const Vector &fingerDir = finger.GetDirection();
+	QAngle fingerAngle;
+	VectorAngles( fingerDir, fingerAngle );
 
 	// Compute cursor position...
 	Ray_t lookDir;
@@ -93,15 +114,17 @@ void C_HoloWorldScreen::CheckHandContact( vgui::Panel *panel, C_HoloHand *hand )
 	// Viewmodel attached screens that take input need to have a moving cursor
 	// Do a pick under the cursor as our selection
 	Vector viewDir;
-	AngleVectors( viewAngles, &viewDir );
-	VectorMA( vecEyePosition, 1000.0f, viewDir, endPos );
-	lookDir.Init( vecEyePosition, endPos );
+	AngleVectors( fingerAngle, &viewDir );
+	VectorMA( fingertipPos, 3.0f, viewDir, endPos );
+	lookDir.Init( fingertipPos, endPos );
 
+	//debugoverlay->AddLineOverlay( fingertipPos, endPos, 255, 0, 0, false, 0.5 );
+	
 	if (!IntersectWithRay( lookDir, &u, &v, NULL ))
-		return;
+		return false;
 
 	if ( ((u < 0) || (v < 0) || (u > 1) || (v > 1)) && !m_bLoseThinkNextFrame)
-		return;
+		return false;
 
 	// This will cause our panel to grab all input!
 	g_pClientMode->ActivateInGameVGuiContext( panel );
@@ -118,9 +141,10 @@ void C_HoloWorldScreen::CheckHandContact( vgui::Panel *panel, C_HoloHand *hand )
 		m_nOldPy = py;
 	}
 
-	CheckChildCollision( panel, px, py );
+	CheckChildCollision( panel, finger, px, py );
 
 	g_pClientMode->DeactivateInGameVGuiContext();
+	return true;
 }
 
 //-----------------------------------------------------------------------------
@@ -130,7 +154,7 @@ void C_HoloWorldScreen::CheckHandContact( vgui::Panel *panel, C_HoloHand *hand )
 // (the bug exists within the private engine section, and cannot be properly fixed
 // without engine access).
 //-----------------------------------------------------------------------------
-void C_HoloWorldScreen::CheckChildCollision( vgui::Panel *panel, int px, int py )
+void C_HoloWorldScreen::CheckChildCollision( vgui::Panel *panel, const CFinger &finger, int px, int py )
 {
 	for (int i = 0; i < panel->GetChildCount(); i++)
 	{
@@ -143,14 +167,17 @@ void C_HoloWorldScreen::CheckChildCollision( vgui::Panel *panel, int px, int py 
 			// Generate mouse input commands
 			if ( px >= x1 && px <= x1 + x2 && py >= y1 && py <= y1 + y2 )
 			{
+				// TODO: if finger is moving away from the player
 				if ( m_nButtonPressed & IN_ATTACK )
 				{
 					child->DoClick();
 				}
+				// TODO: if finger is moving away from the player
 				if ( m_nButtonState & IN_ATTACK )
 				{
 					child->ForceDepressed( true );
 				}
+				// TODO: if finger is moving towards player
 				if ( m_nButtonReleased & IN_ATTACK )
 				{
 					child->ForceDepressed( false );

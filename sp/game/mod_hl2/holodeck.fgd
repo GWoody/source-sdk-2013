@@ -39,7 +39,7 @@
 	//
 	// Attributes.
 	//
-	screenGestureScreen(string) : "Screen to display when the screen gesture is made."
+	screenGestureScreen(string) : "Screen Gesture Screen" : "Screen to display when the screen gesture is made."
 	
 	//
 	// Inputs.
