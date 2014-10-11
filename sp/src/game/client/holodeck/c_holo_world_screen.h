@@ -32,7 +32,8 @@ public:
 private:
 	void			CheckHandContact( vgui::Panel *panel, const CHand &hand );
 	bool			CheckFingerContact( vgui::Panel *panel, const CFinger &finger );
-	void			CheckChildCollision( vgui::Panel *panel, const CFinger &finger, int px, int py );
+	void			CheckChildCollision( vgui::Panel *panel, const CFinger &finger, int px, int py, float distance );
+	Vector			GetPanelIntersectionPosition( float u, float v );
 
 	float			CalculateLeftOffset() const;
 

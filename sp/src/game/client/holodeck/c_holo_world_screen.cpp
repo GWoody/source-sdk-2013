@@ -24,11 +24,11 @@
 
 using namespace vgui;
 
-static ConVar holo_screen_distance( "holo_screen_distance", "42", FCVAR_ARCHIVE );
-static ConVar holo_screen_height_offset( "holo_screen_height_offset", "47", FCVAR_ARCHIVE );
+static ConVar holo_screen_distance( "holo_screen_distance", "20", FCVAR_ARCHIVE );
+static ConVar holo_screen_height_offset( "holo_screen_height_offset", "56", FCVAR_ARCHIVE );
 static ConVar holo_screen_finger_tipdir_tolertance( "holo_screen_finger_tipdir_tolertance", "30", FCVAR_ARCHIVE );
-static ConVar holo_screen_display_intersection( "holo_screen_display_intersection", "0" );
 static ConVar holo_screen_button_velocity( "holo_screen_button_velocity", "5", FCVAR_ARCHIVE );
+static ConVar holo_screen_touch_distance( "holo_screen_touch_distance", "2", FCVAR_ARCHIVE );
 
 extern vgui::IInputInternal *g_InputInternal;
 
@@ -127,21 +127,6 @@ bool C_HoloWorldScreen::CheckFingerContact( vgui::Panel *panel, const CFinger &f
 	if ( ((u < 0) || (v < 0) || (u > 1) || (v > 1)) && !m_bLoseThinkNextFrame)
 		return false;
 
-	if( holo_screen_display_intersection.GetBool() )
-	{
-		Vector upl, upr, lwl;
-		ComputeEdges( &upl, &upr, &lwl );
-
-		Vector xdir = upr - upl;
-		Vector ydir = lwl - upl;
-
-		Vector pt = upl;
-		pt += u * xdir;
-		pt += v * ydir;
-
-		debugoverlay->AddBoxOverlay( pt, Vector(-0.05), Vector(0.05), vec3_angle, 0, 0, 255, 255, 0.5f );
-	}
-
 	// This will cause our panel to grab all input!
 	g_pClientMode->ActivateInGameVGuiContext( panel );
 
@@ -157,10 +142,29 @@ bool C_HoloWorldScreen::CheckFingerContact( vgui::Panel *panel, const CFinger &f
 		m_nOldPy = py;
 	}
 
-	CheckChildCollision( panel, finger, px, py );
+	Vector intersection = GetPanelIntersectionPosition( u, v );
+	Vector delta = intersection - fingertipPos;
+	CheckChildCollision( panel, finger, px, py, delta.Length() );
 
 	g_pClientMode->DeactivateInGameVGuiContext();
 	return true;
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+Vector C_HoloWorldScreen::GetPanelIntersectionPosition( float u, float v )
+{
+	Vector upl, upr, lwl;
+	ComputeEdges( &upl, &upr, &lwl );
+
+	Vector xdir = upr - upl;
+	Vector ydir = lwl - upl;
+
+	Vector pt = upl;
+	pt += u * xdir;
+	pt += v * ydir;
+
+	return pt;
 }
 
 //-----------------------------------------------------------------------------
@@ -170,7 +174,7 @@ bool C_HoloWorldScreen::CheckFingerContact( vgui::Panel *panel, const CFinger &f
 // (the bug exists within the private engine section, and cannot be properly fixed
 // without engine access).
 //-----------------------------------------------------------------------------
-void C_HoloWorldScreen::CheckChildCollision( vgui::Panel *panel, const CFinger &finger, int px, int py )
+void C_HoloWorldScreen::CheckChildCollision( vgui::Panel *panel, const CFinger &finger, int px, int py, float distance )
 {
 	for (int i = 0; i < panel->GetChildCount(); i++)
 	{
@@ -181,17 +185,14 @@ void C_HoloWorldScreen::CheckChildCollision( vgui::Panel *panel, const CFinger &
 			child->GetBounds( x1, y1, x2, y2 );
 
 			// Generate mouse input commands
-			if ( px >= x1 && px <= x1 + x2 && py >= y1 && py <= y1 + y2 )
+			if ( px >= x1 && px <= x1 + x2 && py >= y1 && py <= y1 + y2 && distance < holo_screen_touch_distance.GetFloat() )
 			{
-				if ( finger.GetTipVelocity().Length() > holo_screen_button_velocity.GetFloat() && finger.GetVelocityDirectionTheta() < holo_screen_finger_tipdir_tolertance.GetFloat() )
+				if( !child->IsDepressed() )
 				{
 					child->DoClick();
-					child->ForceDepressed( true );
 				}
-				else if( finger.GetTipVelocity().Length() <= holo_screen_button_velocity.GetFloat() )
-				{
-					child->ForceDepressed( false );
-				}
+
+				child->ForceDepressed( true );
 			}
 			else
 			{
