@@ -41,7 +41,10 @@ public:
 
 private:
 	void			RenderDebugHand();
-	void			DrawHandOutline( byte r, float duration );
+	void			DrawHandOutline( float duration );
+	void			DrawFingers( float duration );
+	void			DrawArm( float duration );
+	void			DrawSpecial( float duration );
 
 	Vector			GetOriginOffset() const;
 
