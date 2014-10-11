@@ -28,6 +28,7 @@ public:
 	// C_VGuiScreen overrides.
 	virtual void	ClientThink();
 	virtual void	GetAimEntOrigin( IClientEntity *pAttachedTo, Vector *pOrigin, QAngle *pAngles );
+	virtual EWorldPanel	GetWorldPanelType() const	{ return (EWorldPanel)_type; }
 
 private:
 	void			CheckHandContact( vgui::Panel *panel, const CHand &hand );

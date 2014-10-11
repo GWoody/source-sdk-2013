@@ -41,7 +41,8 @@ END_SEND_TABLE()
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-CHoloPlayer::CHoloPlayer()
+CHoloPlayer::CHoloPlayer() : 
+	_screenManager( this )
 {
 	_viewoffset.GetForModify().Init( 0, 0, 0 );
 }
@@ -259,7 +260,7 @@ void CHoloPlayer::HandleScreenGesture( const CFrame &frame )
 		if( pickup.IsActive() )
 		{
 			extern string_t global_screen_gesture_screen;
-			_screenManager.CreateScreen( WORLD_PANEL_MIDDLE, STRING( global_screen_gesture_screen ), this );
+			_screenManager.CreateScreen( WORLD_PANEL_MIDDLE, STRING( global_screen_gesture_screen ) );
 		}
 	}
 }

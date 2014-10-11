@@ -56,4 +56,28 @@
 		"pixelshigh"	282
 		"resfile"		"scripts/screens/grid_etactor_calibration_screen.res"
 	}
+	
+	"grid_eden_home_screen"
+	{
+		"type"			"grid_eden_home_screen"
+		"pixelswide"	256
+		"pixelshigh"	282
+		"resfile"		"scripts/screens/grid_eden_home_screen.res"
+	}
+	
+	"grid_eden_lighting_screen"
+	{
+		"type"			"grid_eden_lighting_screen"
+		"pixelswide"	256
+		"pixelshigh"	282
+		"resfile"		"scripts/screens/grid_eden_lighting_screen.res"
+	}
+	
+	"grid_eden_prop_screen"
+	{
+		"type"			"grid_eden_prop_screen"
+		"pixelswide"	256
+		"pixelshigh"	282
+		"resfile"		"scripts/screens/grid_eden_prop_screen.res"
+	}
 }

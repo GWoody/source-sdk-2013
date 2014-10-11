@@ -74,7 +74,7 @@ void CHoloScreenProxy::Activate()
 void CHoloScreenProxy::InputActivateLeftScreen( inputdata_t &data )
 {
 	CHoloPlayer *player = (CHoloPlayer *)UTIL_GetLocalPlayer();
-	player->GetScreenManager().CreateScreen( WORLD_PANEL_LEFT, data.value.String(), player );
+	player->GetScreenManager().CreateScreen( WORLD_PANEL_LEFT, data.value.String() );
 }
 
 //-----------------------------------------------------------------------------
@@ -82,7 +82,7 @@ void CHoloScreenProxy::InputActivateLeftScreen( inputdata_t &data )
 void CHoloScreenProxy::InputActivateMiddleScreen( inputdata_t &data )
 {
 	CHoloPlayer *player = (CHoloPlayer *)UTIL_GetLocalPlayer();
-	player->GetScreenManager().CreateScreen( WORLD_PANEL_MIDDLE, data.value.String(), player );
+	player->GetScreenManager().CreateScreen( WORLD_PANEL_MIDDLE, data.value.String() );
 }
 
 //-----------------------------------------------------------------------------
@@ -90,7 +90,7 @@ void CHoloScreenProxy::InputActivateMiddleScreen( inputdata_t &data )
 void CHoloScreenProxy::InputActivateRightScreen( inputdata_t &data )
 {
 	CHoloPlayer *player = (CHoloPlayer *)UTIL_GetLocalPlayer();
-	player->GetScreenManager().CreateScreen( WORLD_PANEL_RIGHT, data.value.String(), player );
+	player->GetScreenManager().CreateScreen( WORLD_PANEL_RIGHT, data.value.String() );
 }
 
 //-----------------------------------------------------------------------------

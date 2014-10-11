@@ -15,14 +15,39 @@
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-CHoloWorldScreenManager::CHoloWorldScreenManager()
+CHoloWorldScreenManager::CHoloWorldScreenManager( CHoloPlayer *owner )
 {
+	_owner = owner;
+
 	memset( _screens, 0, sizeof(_screens) );
+
+	ListenForGameEvent( "holo_open_screen" );
+	ListenForGameEvent( "holo_destroy_screen" );
 }
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-bool CHoloWorldScreenManager::CreateScreen( EWorldPanel panel, const char *typeName, CHoloPlayer *owner )
+void CHoloWorldScreenManager::FireGameEvent( IGameEvent *event )
+{
+	if( !Q_stricmp( event->GetName(), "holo_open_screen" ) )
+	{
+		EWorldPanel panel = (EWorldPanel)event->GetInt( "panel", WORLD_PANEL_MIDDLE );
+		const char *type = event->GetString( "type", NULL );
+		CreateScreen( panel, type );
+	}
+	else if( !Q_stricmp( event->GetName(), "holo_destroy_screen" ) )
+	{
+		int panel = (EWorldPanel)event->GetInt( "panel", -1 );
+		if( panel != -1 )
+		{
+			DestroyScreen( (EWorldPanel)panel );
+		}
+	}
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+bool CHoloWorldScreenManager::CreateScreen( EWorldPanel panel, const char *typeName )
 {
 	if( !typeName )
 	{
@@ -35,7 +60,7 @@ bool CHoloWorldScreenManager::CreateScreen( EWorldPanel panel, const char *typeN
 		DestroyScreen( panel );
 	}
 
-	_screens[panel] = (CHoloWorldScreen *)CreateVGuiScreen( "holo_world_screen", typeName, owner, owner, -1 );
+	_screens[panel] = (CHoloWorldScreen *)CreateVGuiScreen( "holo_world_screen", typeName, _owner, _owner, -1 );
 
 	if( _screens[panel] )
 	{

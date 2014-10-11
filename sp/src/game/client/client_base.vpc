@@ -128,6 +128,8 @@ $Project
 		$File	"holodeck\c_holo_world_screen.h"
 		$File	"holodeck\c_holo_world_screen_manager.cpp"
 		$File	"holodeck\c_holo_world_screen_manager.h"
+		$File	"holodeck\c_holo_world_screen_panel.cpp"
+		$File	"holodeck\c_holo_world_screen_panel.h"
 		$File	"holodeck\in_dinput.cpp"
 		$File	"holodeck\in_dinput.h"
 		$File	"holodeck\in_hydra.cpp"
