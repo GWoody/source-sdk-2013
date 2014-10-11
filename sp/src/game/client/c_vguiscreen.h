@@ -120,9 +120,13 @@ private:
 	//  Computes the panel to world transform
 	void ComputePanelToWorld();
 
+#ifdef HOLODECK
+protected:
 	// Computes control points of the quad describing the screen
 	void ComputeEdges( Vector *pUpperLeft, Vector *pUpperRight, Vector *pLowerLeft );
 
+private:
+#endif
 	// Writes the z buffer
 	void DrawScreenOverlay();
 

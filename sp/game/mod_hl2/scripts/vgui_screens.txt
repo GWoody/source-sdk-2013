@@ -53,7 +53,7 @@
 	{
 		"type"			"grid_etactor_calibration_screen"
 		"pixelswide"	256
-		"pixelshigh"	256
+		"pixelshigh"	282
 		"resfile"		"scripts/screens/grid_etactor_calibration_screen.res"
 	}
 }

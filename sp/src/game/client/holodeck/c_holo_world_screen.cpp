@@ -24,9 +24,11 @@
 
 using namespace vgui;
 
-static ConVar holo_screen_distance( "holo_screen_distance", "32", FCVAR_ARCHIVE );
-static ConVar holo_screen_height_offset( "holo_screen_height_offset", "48", FCVAR_ARCHIVE );
+static ConVar holo_screen_distance( "holo_screen_distance", "42", FCVAR_ARCHIVE );
+static ConVar holo_screen_height_offset( "holo_screen_height_offset", "47", FCVAR_ARCHIVE );
 static ConVar holo_screen_finger_tipdir_tolertance( "holo_screen_finger_tipdir_tolertance", "30", FCVAR_ARCHIVE );
+static ConVar holo_screen_display_intersection( "holo_screen_display_intersection", "0" );
+static ConVar holo_screen_button_velocity( "holo_screen_button_velocity", "5", FCVAR_ARCHIVE );
 
 extern vgui::IInputInternal *g_InputInternal;
 
@@ -79,6 +81,8 @@ void C_HoloWorldScreen::ClientThink( void )
 }
 
 //-----------------------------------------------------------------------------
+// We only need to support the pointer. Only a fool would use these screens
+// with any other finger.
 //-----------------------------------------------------------------------------
 void C_HoloWorldScreen::CheckHandContact( vgui::Panel *panel, const CHand &hand )
 {
@@ -98,12 +102,11 @@ void C_HoloWorldScreen::CheckHandContact( vgui::Panel *panel, const CHand &hand 
 //-----------------------------------------------------------------------------
 bool C_HoloWorldScreen::CheckFingerContact( vgui::Panel *panel, const CFinger &finger )
 {
+	C_HoloPlayer *player = C_HoloPlayer::GetLocalPlayer();
+
 	// Generate a ray along the view direction
-	Vector fingertipPos = finger.GetTipPosition();
-	
-	const Vector &fingerDir = finger.GetDirection();
-	QAngle fingerAngle;
-	VectorAngles( fingerDir, fingerAngle );
+	const Vector &fingertipPos = finger.GetTipPosition();
+	const Vector &fingerDir = ( fingertipPos - player->EyePosition() ).Normalized();
 
 	// Compute cursor position...
 	Ray_t lookDir;
@@ -113,18 +116,31 @@ bool C_HoloWorldScreen::CheckFingerContact( vgui::Panel *panel, const CFinger &f
 
 	// Viewmodel attached screens that take input need to have a moving cursor
 	// Do a pick under the cursor as our selection
-	Vector viewDir;
-	AngleVectors( fingerAngle, &viewDir );
-	VectorMA( fingertipPos, 3.0f, viewDir, endPos );
+	VectorMA( fingertipPos, 3.0f, fingerDir, endPos );
 	lookDir.Init( fingertipPos, endPos );
 
-	//debugoverlay->AddLineOverlay( fingertipPos, endPos, 255, 0, 0, false, 0.5 );
+	debugoverlay->AddLineOverlay( fingertipPos, endPos, 255, 0, 0, false, 0.5 );
 	
 	if (!IntersectWithRay( lookDir, &u, &v, NULL ))
 		return false;
 
 	if ( ((u < 0) || (v < 0) || (u > 1) || (v > 1)) && !m_bLoseThinkNextFrame)
 		return false;
+
+	if( holo_screen_display_intersection.GetBool() )
+	{
+		Vector upl, upr, lwl;
+		ComputeEdges( &upl, &upr, &lwl );
+
+		Vector xdir = upr - upl;
+		Vector ydir = lwl - upl;
+
+		Vector pt = upl;
+		pt += u * xdir;
+		pt += v * ydir;
+
+		debugoverlay->AddBoxOverlay( pt, Vector(-0.05), Vector(0.05), vec3_angle, 0, 0, 255, 255, 0.5f );
+	}
 
 	// This will cause our panel to grab all input!
 	g_pClientMode->ActivateInGameVGuiContext( panel );
@@ -167,21 +183,19 @@ void C_HoloWorldScreen::CheckChildCollision( vgui::Panel *panel, const CFinger &
 			// Generate mouse input commands
 			if ( px >= x1 && px <= x1 + x2 && py >= y1 && py <= y1 + y2 )
 			{
-				// TODO: if finger is moving away from the player
-				if ( m_nButtonPressed & IN_ATTACK )
+				if ( finger.GetTipVelocity().Length() > holo_screen_button_velocity.GetFloat() && finger.GetVelocityDirectionTheta() < holo_screen_finger_tipdir_tolertance.GetFloat() )
 				{
 					child->DoClick();
-				}
-				// TODO: if finger is moving away from the player
-				if ( m_nButtonState & IN_ATTACK )
-				{
 					child->ForceDepressed( true );
 				}
-				// TODO: if finger is moving towards player
-				if ( m_nButtonReleased & IN_ATTACK )
+				else if( finger.GetTipVelocity().Length() <= holo_screen_button_velocity.GetFloat() )
 				{
 					child->ForceDepressed( false );
 				}
+			}
+			else
+			{
+				child->ForceDepressed( false );
 			}
 		}
 	}
