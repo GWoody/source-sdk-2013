@@ -11,11 +11,13 @@
 #include "sunlightshadowcontrol.h"
 #include "grid_sun.h"
 
+#include "GameEventListener.h"
+
 ConVar grid_sun_speed_multiplier( "grid_sun_speed_multiplier", "1.0f" );
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-class CGridEnvironmentLight : public CSunlightShadowControl
+class CGridEnvironmentLight : public CSunlightShadowControl, public CGameEventListener
 {
 	struct LightLevel_t
 	{
@@ -30,6 +32,10 @@ public:
 	DECLARE_SERVERCLASS();
 	CGridEnvironmentLight();
 
+	// CGameEventListener.
+	virtual void	FireGameEvent( IGameEvent *event );
+
+	// Source entity overrides.
 	virtual void	Spawn();
 	virtual void	Think();
 
@@ -112,6 +118,43 @@ CGridEnvironmentLight::CGridEnvironmentLight()
 	for( int i = 0; i < 4; i++ )
 	{
 		_ambience.GetForModify( i ) = 0.0f;
+	}
+
+	ListenForGameEvent( "grid_env_light_color" );
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void CGridEnvironmentLight::FireGameEvent( IGameEvent *event )
+{
+	bool isSun = event->GetBool( "issun", true );
+	bool isAmbient = event->GetBool( "isambient", false );
+	float r = event->GetFloat( "r" );
+	float g = event->GetFloat( "g" );
+	float b = event->GetFloat( "b" );
+	float a = event->GetFloat( "a" );
+
+	if( isSun )
+	{
+		if( isAmbient )
+		{
+			_sunAmbience._highest.Init( r, g, b, a );	
+		}
+		else
+		{
+			_sunBrightness._highest.Init( r, g, b, a );
+		}
+	}
+	else
+	{
+		if( isAmbient )
+		{
+			_moonAmbience._highest.Init( r, g, b, a );	
+		}
+		else
+		{
+			_moonBrightness._highest.Init( r, g, b, a );
+		}
 	}
 }
 

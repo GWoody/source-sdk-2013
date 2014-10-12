@@ -2,7 +2,7 @@ versioninfo
 {
 	"editorversion" "400"
 	"editorbuild" "6440"
-	"mapversion" "411"
+	"mapversion" "414"
 	"formatversion" "100"
 	"prefab" "0"
 }
@@ -20,7 +20,7 @@ viewsettings
 world
 {
 	"id" "1"
-	"mapversion" "411"
+	"mapversion" "414"
 	"classname" "worldspawn"
 	"detailmaterial" "detail/detailsprites"
 	"detailvbsp" "detail.vbsp"
@@ -2196,7 +2196,26 @@ entity
 	"id" "4683"
 	"classname" "holo_screen_proxy"
 	"screenGestureScreen" "grid_eden_home_screen"
+	"targetname" "screen_proxy"
 	"origin" "0 -480 80"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 0]"
+	}
+}
+entity
+{
+	"id" "4737"
+	"classname" "logic_auto"
+	"spawnflags" "1"
+	connections
+	{
+		"OnMapSpawn" "screen_proxy,ActivateMiddleScreen,grid_eden_sun_lighting_screen,0,-1"
+	}
+	"origin" "0 -480 96"
 	editor
 	{
 		"color" "220 30 220"

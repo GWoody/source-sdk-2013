@@ -58,11 +58,11 @@ void C_GridEdenHomeScreen::OnCommand( const char *command )
 {
 	if( !Q_stricmp( command, "open_sun_color" ) )
 	{
-		OpenPanel( "grid_eden_lighting_screen", WORLD_PANEL_RIGHT );
+		OpenPanel( "grid_eden_sun_lighting_screen", WORLD_PANEL_RIGHT );
 	}
 	else if( !Q_stricmp( command, "open_moon_color" ) )
 	{
-		OpenPanel( "grid_eden_lighting_screen", WORLD_PANEL_RIGHT );
+		OpenPanel( "grid_eden_moon_lighting_screen", WORLD_PANEL_RIGHT );
 	}
 	else if( !Q_stricmp( command, "open_prop_spawner" ) )
 	{

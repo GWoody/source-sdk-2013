@@ -34,6 +34,16 @@
 		"panel"		"long"
 	}
 	
+	"grid_env_light_color"
+	{
+		"issun"		"bool"
+		"isambient"	"bool"
+		"r"			"float"
+		"g"			"float"
+		"b"			"float"
+		"a"			"float"
+	}
+	
 	"team_info"				// info about team
 	{
 		"teamid"	"byte"		// unique team id

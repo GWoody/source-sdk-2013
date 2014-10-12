@@ -20,7 +20,7 @@ using namespace vgui;
 CHoloVGuiScreenPanel::CHoloVGuiScreenPanel( Panel *parent, const char *panelname ) :
 	BaseClass( parent, panelname )
 {
-
+	SetScheme( scheme()->LoadSchemeFromFile( "Resource/HoloPanelScheme.res", "HoloPanelScheme" ) );
 }
 
 //-----------------------------------------------------------------------------
