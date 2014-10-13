@@ -34,12 +34,12 @@ public:
 
 private:
 	void			CheckHandContact( vgui::Panel *panel, const CHand &hand );
-	bool			CheckFingerContact( vgui::Panel *panel, const CFinger &finger );
-	void			CheckChildCollision( vgui::Panel *panel, const CFinger &finger, int px, int py, float distance );
+	bool			CheckFingerContact( vgui::Panel *panel, const CHand &hand, const CFinger &finger );
+	void			CheckChildCollision( vgui::Panel *panel, const CHand &hand, const CFinger &finger, int px, int py, float distance );
 	Vector			GetPanelIntersectionPosition( float u, float v );
 
 	void			CheckButton( vgui::Panel *child, int px, int py, bool closeEnough, bool fastEnough );
-	void			CheckSlider( vgui::Panel *child, int px, int py, bool closeEnough, bool fastEnough );
+	void			CheckSlider( const CHand &hand, const CFinger &finger, vgui::Panel *child, int px, int py );
 
 	float			CalculateLeftOffset() const;
 

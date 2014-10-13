@@ -30,6 +30,7 @@ static ConVar holo_screen_height_offset( "holo_screen_height_offset", "56", FCVA
 static ConVar holo_screen_finger_tipdir_tolertance( "holo_screen_finger_tipdir_tolertance", "30", FCVAR_ARCHIVE );
 static ConVar holo_screen_button_velocity( "holo_screen_button_velocity", "5", FCVAR_ARCHIVE );
 static ConVar holo_screen_touch_distance( "holo_screen_touch_distance", "2", FCVAR_ARCHIVE );
+static ConVar holo_screen_slider_pinch( "holo_screen_slider_pinch", "0.75", FCVAR_ARCHIVE );
 
 extern vgui::IInputInternal *g_InputInternal;
 
@@ -93,7 +94,7 @@ void C_HoloWorldScreen::CheckHandContact( vgui::Panel *panel, const CHand &hand 
 		int i = FINGER_POINTER;
 		const CFinger &finger = hand.GetFingerByType( (EFinger)i );
 
-		if( CheckFingerContact( panel, finger ) )
+		if( CheckFingerContact( panel, hand, finger ) )
 		{
 			//break;
 		}
@@ -102,7 +103,7 @@ void C_HoloWorldScreen::CheckHandContact( vgui::Panel *panel, const CHand &hand 
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-bool C_HoloWorldScreen::CheckFingerContact( vgui::Panel *panel, const CFinger &finger )
+bool C_HoloWorldScreen::CheckFingerContact( vgui::Panel *panel, const CHand &hand, const CFinger &finger )
 {
 	C_HoloPlayer *player = C_HoloPlayer::GetLocalPlayer();
 
@@ -144,7 +145,7 @@ bool C_HoloWorldScreen::CheckFingerContact( vgui::Panel *panel, const CFinger &f
 
 	Vector intersection = GetPanelIntersectionPosition( u, v );
 	Vector delta = intersection - fingertipPos;
-	CheckChildCollision( panel, finger, px, py, delta.Length() );
+	CheckChildCollision( panel, hand, finger, px, py, delta.Length() );
 
 	g_pClientMode->DeactivateInGameVGuiContext();
 	return true;
@@ -174,7 +175,7 @@ Vector C_HoloWorldScreen::GetPanelIntersectionPosition( float u, float v )
 // (the bug exists within the private engine section, and cannot be properly fixed
 // without engine access).
 //-----------------------------------------------------------------------------
-void C_HoloWorldScreen::CheckChildCollision( Panel *panel, const CFinger &finger, int px, int py, float distance )
+void C_HoloWorldScreen::CheckChildCollision( Panel *panel, const CHand &hand, const CFinger &finger, int px, int py, float distance )
 {
 	bool closeEnough = distance < holo_screen_touch_distance.GetFloat();
 	bool fastEnough = distance < holo_screen_touch_distance.GetFloat() * 4 && finger.GetVelocityDirectionTheta() < holo_screen_finger_tipdir_tolertance.GetFloat() && finger.GetTipVelocity().Length() > 10;
@@ -188,7 +189,7 @@ void C_HoloWorldScreen::CheckChildCollision( Panel *panel, const CFinger &finger
 	{
 		Panel *child = panel->GetChild( i );
 		CheckButton( child, px, py, closeEnough, fastEnough );
-		CheckSlider( child, px, py, closeEnough, fastEnough );
+		CheckSlider( hand, finger, child, px, py );
 	}
 }
 
@@ -243,7 +244,7 @@ void C_HoloWorldScreen::CheckButton( vgui::Panel *child, int px, int py, bool cl
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void C_HoloWorldScreen::CheckSlider( vgui::Panel *child, int px, int py, bool closeEnough, bool fastEnough )
+void C_HoloWorldScreen::CheckSlider( const CHand &hand, const CFinger &finger, vgui::Panel *child, int px, int py )
 {
 	Slider *slider = dynamic_cast<Slider*>( child );
 	if( !slider )
@@ -257,7 +258,7 @@ void C_HoloWorldScreen::CheckSlider( vgui::Panel *child, int px, int py, bool cl
 		return;
 	}
 
-	if( closeEnough || fastEnough )
+	if( hand.GetPinchStrength() > holo_screen_slider_pinch.GetFloat() )
 	{
 		int x1, x2, y1, y2;
 		slider->GetBounds( x1, y1, x2, y2 );
