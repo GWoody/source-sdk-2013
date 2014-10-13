@@ -84,6 +84,8 @@ private:
 	// Object interaction.
 	EHANDLE			_heldEntity;
 	float			_nextPickupTime;
+
+	int				_invalidCount;
 };
 
 #endif // __HOLO_HAND_H__

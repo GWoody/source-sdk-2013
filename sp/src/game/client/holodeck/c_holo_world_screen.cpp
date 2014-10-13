@@ -259,7 +259,7 @@ void C_HoloWorldScreen::CheckSlider( const CHand &hand, const CFinger &finger, v
 	VPANEL oldInteracted = _interacted;
 	_interacted = 0;
 
-	if( hand.GetPinchStrength() > holo_screen_slider_pinch.GetFloat() && distance < holo_screen_touch_distance.GetFloat() * 4 && hand.GetClosestFingerTo( FINGER_THUMB ).GetType() == FINGER_POINTER )
+	if( hand.GetPinchStrength() > holo_screen_slider_pinch.GetFloat() && distance < holo_screen_touch_distance.GetFloat() * 5 && hand.GetClosestFingerTo( FINGER_THUMB ).GetType() == FINGER_POINTER )
 	{
 		int x1, x2, y1, y2;
 		slider->GetBounds( x1, y1, x2, y2 );
