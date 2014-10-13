@@ -39,7 +39,7 @@ private:
 	Vector			GetPanelIntersectionPosition( float u, float v );
 
 	void			CheckButton( vgui::Panel *child, int px, int py, bool closeEnough, bool fastEnough );
-	void			CheckSlider( const CHand &hand, const CFinger &finger, vgui::Panel *child, int px, int py );
+	void			CheckSlider( const CHand &hand, const CFinger &finger, vgui::Panel *child, int px, int py, float distance );
 	bool			CheckBoundingRect( int px, int py, vgui::Panel *panel );
 
 	float			CalculateLeftOffset() const;

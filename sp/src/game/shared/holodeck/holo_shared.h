@@ -134,6 +134,7 @@ public:
 
 	// Accessors.
 	inline int		GetId() const								{ return _id; }
+	inline EFinger	GetType() const								{ return (EFinger)_type; }
 	inline const Vector &	GetDirection() const				{ return _direction; }
 	inline const Vector &	GetTipPosition() const				{ return _tipPosition; }
 	inline const Vector &	GetTipVelocity() const				{ return _tipVelocity; }
@@ -149,6 +150,7 @@ public:
 
 private:
 	int				_id;
+	unsigned char	_type;
 	Vector			_direction;
 	Vector			_tipPosition;
 	Vector			_tipVelocity;
@@ -221,7 +223,7 @@ public:
 	// Computed accessors.
 	float			FindThetaBetweenFingers( EFinger f1, EFinger f2 ) const;
 	const CFinger *	GetFingerById( int id ) const;
-	inline const CFinger &	GetClosestFingerTo( EFinger to, EFinger f ) const;
+	const CFinger &	GetClosestFingerTo( EFinger to ) const;
 
 	// Filtering helpers.
 	CHand			operator+( const CHand &other ) const;

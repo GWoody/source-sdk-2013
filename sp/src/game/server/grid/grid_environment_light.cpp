@@ -128,41 +128,32 @@ CGridEnvironmentLight::CGridEnvironmentLight()
 void CGridEnvironmentLight::FireGameEvent( IGameEvent *event )
 {
 	bool isSun = event->GetBool( "issun", true );
-	bool isAmbient = event->GetBool( "isambient", false );
 	float r = event->GetFloat( "r" );
 	float g = event->GetFloat( "g" );
 	float b = event->GetFloat( "b" );
 	float a = event->GetFloat( "a" );
 
+	float lum = ( 0.2126f * r ) + ( 0.7152f * g ) + ( 0.0722f * b );
+
 	if( isSun )
 	{
-		if( isAmbient )
-		{
-			_sunAmbience._highest.Init( r, g, b, a );
-			_sunAmbience._horizon.Init( r * 0.6f, g * 0.6f, b * 0.6f, a );
-			_sunAmbience._rise.Init( r * 0.1f, g * 0.1f, b * 0.1f, a );
-		}
-		else
-		{
-			_sunBrightness._highest.Init( r, g, b, a );
-			_sunBrightness._horizon.Init( r, g * 0.9f, b * 0.9f, a * 0.3f );
-			_sunBrightness._rise.Init( r * 0.3f, g * 0.1f, b * 0.1f, a * 0.1f );
-		}
+		_sunBrightness._highest.Init( r, g, b, a );
+		_sunBrightness._horizon.Init( r, g * 0.9f, b * 0.9f, a * 0.3f );
+		_sunBrightness._rise.Init( r * 0.3f, g * 0.1f, b * 0.1f, a * 0.1f );
+
+		_sunAmbience._highest.Init( lum, lum, lum, 1.0f );
+		_sunAmbience._horizon.Init( lum * 0.5f, lum * 0.5f, lum * 0.5f, 1.0f );
+		_sunAmbience._rise.Init( lum * 0.25f, lum * 0.25f, lum * 0.25f, 1.0f );
 	}
 	else
 	{
-		if( isAmbient )
-		{
-			_moonAmbience._highest.Init( r, g, b, a );
-			_moonAmbience._horizon.Init( r * 0.5f, g * 0.5f, b * 0.5f, a );
-			_moonAmbience._rise.Init( r * 0.1f, g * 0.1f, b * 0.1f, a );	
-		}
-		else
-		{
-			_moonBrightness._highest.Init( r, g, b, a );
-			_moonBrightness._horizon.Init( r * 0.5f, g * 0.5f, b * 0.5f, a );
-			_moonBrightness._rise.Init( r * 0.25f, g * 0.25f, b * 0.25f, a );
-		}
+		_moonBrightness._highest.Init( r, g, b, a );
+		_moonBrightness._horizon.Init( r * 0.5f, g * 0.5f, b * 0.5f, a );
+		_moonBrightness._rise.Init( r * 0.25f, g * 0.25f, b * 0.25f, a );
+
+		_moonAmbience._highest.Init( lum, lum, lum, 1.0f );
+		_moonAmbience._horizon.Init( lum * 0.5f, lum * 0.5f, lum * 0.5f, 1.0f );
+		_moonAmbience._rise.Init( lum * 0.25f, lum * 0.25f, lum * 0.25f, 1.0f );
 	}
 }
 

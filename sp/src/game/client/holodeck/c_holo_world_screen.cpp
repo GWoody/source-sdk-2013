@@ -201,7 +201,7 @@ void C_HoloWorldScreen::CheckChildCollision( Panel *panel, const CHand &hand, co
 		}
 
 		CheckButton( child, px, py, closeEnough, fastEnough );
-		CheckSlider( hand, finger, child, px, py );
+		CheckSlider( hand, finger, child, px, py, distance );
 	}
 }
 
@@ -247,7 +247,7 @@ void C_HoloWorldScreen::CheckButton( vgui::Panel *child, int px, int py, bool cl
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void C_HoloWorldScreen::CheckSlider( const CHand &hand, const CFinger &finger, vgui::Panel *child, int px, int py )
+void C_HoloWorldScreen::CheckSlider( const CHand &hand, const CFinger &finger, vgui::Panel *child, int px, int py, float distance )
 {
 	Slider *slider = dynamic_cast<Slider*>( child );
 	if( !slider )
@@ -259,7 +259,7 @@ void C_HoloWorldScreen::CheckSlider( const CHand &hand, const CFinger &finger, v
 	VPANEL oldInteracted = _interacted;
 	_interacted = 0;
 
-	if( hand.GetPinchStrength() > holo_screen_slider_pinch.GetFloat() )
+	if( hand.GetPinchStrength() > holo_screen_slider_pinch.GetFloat() && distance < holo_screen_touch_distance.GetFloat() * 3 && hand.GetClosestFingerTo( FINGER_THUMB ).GetType() == FINGER_POINTER )
 	{
 		int x1, x2, y1, y2;
 		slider->GetBounds( x1, y1, x2, y2 );

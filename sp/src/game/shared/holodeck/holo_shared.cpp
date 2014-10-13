@@ -380,6 +380,7 @@ CFinger::CFinger( const Leap::Finger &f )
 void CFinger::FromLeap( const Leap::Finger &f )
 {
 	_id = f.id();
+	_type = LeapToSourceFingerCode( f.type() );
 	_direction = LeapToSourceVector( f.direction() );
 	_tipPosition = LeapToSourceVector( f.tipPosition(), true );
 	_tipVelocity = LeapToSourceVector( f.tipVelocity() );
@@ -399,6 +400,7 @@ void CFinger::FromLeap( const Leap::Finger &f )
 void CFinger::ToBitBuffer( bf_write *buf ) const
 {
 	buf->WriteVarInt32( _id );
+	buf->WriteChar( _type );
 	buf->WriteBitVec3Normal( _direction );
 	buf->WriteBitVec3Coord( _tipPosition );
 	buf->WriteBitVec3Coord( _tipVelocity );
@@ -414,6 +416,7 @@ void CFinger::ToBitBuffer( bf_write *buf ) const
 void CFinger::FromBitBuffer( bf_read *buf )
 {
 	_id = buf->ReadVarInt32();
+	_type = buf->ReadChar();
 	buf->ReadBitVec3Normal( _direction );
 	buf->ReadBitVec3Coord( _tipPosition );
 	buf->ReadBitVec3Coord( _tipVelocity );
@@ -455,6 +458,7 @@ CFinger CFinger::operator+( const CFinger &other ) const
 	CFinger f;
 
 	f._id = _id;
+	f._type = _type;
 	f._direction = _direction + other._direction;
 	f._tipPosition = _tipPosition + other._tipPosition;
 	f._tipVelocity = _tipVelocity + other._tipVelocity;
@@ -474,6 +478,7 @@ CFinger CFinger::operator/( float scale ) const
 	CFinger f;
 
 	f._id = _id;
+	f._type = _type;
 	f._direction = _direction / scale;
 	f._tipPosition = _tipPosition / scale;
 	f._tipVelocity = _tipVelocity / scale;
@@ -493,6 +498,7 @@ CFinger CFinger::operator*( float scale ) const
 	CFinger f;
 
 	f._id = _id;
+	f._type = _type;
 	f._direction = _direction * scale;
 	f._tipPosition = _tipPosition * scale;
 	f._tipVelocity = _tipVelocity * scale;
@@ -635,7 +641,7 @@ const CFinger *CHand::GetFingerById( int id ) const
 	return NULL;
 }
 
-inline const CFinger &CHand::GetClosestFingerTo( EFinger to, EFinger f ) const
+const CFinger &CHand::GetClosestFingerTo( EFinger to ) const
 {
 	EFinger closest = EFinger::FINGER_THUMB;
 	float closestDistance = FLT_MAX;
