@@ -182,12 +182,24 @@ void C_HoloWorldScreen::CheckChildCollision( Panel *panel, const CHand &hand, co
 
 	if( !closeEnough && !fastEnough )
 	{
-		_interacted = 0;
+		Slider *slider = dynamic_cast<Slider *>( ipanel()->GetPanel( _interacted, panel->GetModuleName() ) );
+		if( !slider )
+		{
+			// Sliders only release when we release pinch.
+			_interacted = 0;
+		}
 	}
 
 	for (int i = 0; i < panel->GetChildCount(); i++)
 	{
 		Panel *child = panel->GetChild( i );
+
+		if( _interacted && _interacted != child->GetVPanel() )
+		{
+			// This is not the panel we are currently interacting with.
+			continue;
+		}
+
 		CheckButton( child, px, py, closeEnough, fastEnough );
 		CheckSlider( hand, finger, child, px, py );
 	}
@@ -203,19 +215,10 @@ void C_HoloWorldScreen::CheckButton( vgui::Panel *child, int px, int py, bool cl
 		return;
 	}
 
-	if( _interacted && _interacted != button->GetVPanel() )
-	{
-		// This is not the panel we are currently interacting with.
-		return;
-	}
-
-	int x1, x2, y1, y2;
-	button->GetBounds( x1, y1, x2, y2 );
-
 	button->SetArmed( false );
 
 	// Generate mouse input commands
-	if ( px >= x1 && px <= x1 + x2 && py >= y1 && py <= y1 + y2 )
+	if( CheckBoundingRect( px, py, button ) )
 	{
 		// Finger is close enough to be touching.
 		if( closeEnough || fastEnough )
@@ -252,20 +255,18 @@ void C_HoloWorldScreen::CheckSlider( const CHand &hand, const CFinger &finger, v
 		return;
 	}
 
-	if( _interacted && _interacted != slider->GetVPanel() )
-	{
-		// This is not the panel we are currently interacting with.
-		return;
-	}
+	// Assume an invalid interaction.
+	VPANEL oldInteracted = _interacted;
+	_interacted = 0;
 
 	if( hand.GetPinchStrength() > holo_screen_slider_pinch.GetFloat() )
 	{
 		int x1, x2, y1, y2;
 		slider->GetBounds( x1, y1, x2, y2 );
 
-		if ( px >= x1 && px <= x1 + x2 && py >= y1 && py <= y1 + y2 )
+		if( oldInteracted || CheckBoundingRect( px, py, slider ) )
 		{
-			float perc = (float)( px - x1 ) / (float)( x2 - x1 );
+			float perc = (float)( px - x1 ) / (float)x2;
 
 			int min, max;
 			slider->GetRange( min, max );
@@ -274,6 +275,16 @@ void C_HoloWorldScreen::CheckSlider( const CHand &hand, const CFinger &finger, v
 			_interacted = slider->GetVPanel();
 		}
 	}
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+bool C_HoloWorldScreen::CheckBoundingRect( int px, int py, Panel *panel )
+{
+	int x1, x2, y1, y2;
+	panel->GetBounds( x1, y1, x2, y2 );
+
+	return ( px >= x1 && px <= x1 + x2 && py >= y1 && py <= y1 + y2 );
 }
 
 //-----------------------------------------------------------------------------

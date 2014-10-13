@@ -138,22 +138,30 @@ void CGridEnvironmentLight::FireGameEvent( IGameEvent *event )
 	{
 		if( isAmbient )
 		{
-			_sunAmbience._highest.Init( r, g, b, a );	
+			_sunAmbience._highest.Init( r, g, b, a );
+			_sunAmbience._horizon.Init( r * 0.6f, g * 0.6f, b * 0.6f, a );
+			_sunAmbience._rise.Init( r * 0.1f, g * 0.1f, b * 0.1f, a );
 		}
 		else
 		{
 			_sunBrightness._highest.Init( r, g, b, a );
+			_sunBrightness._horizon.Init( r, g * 0.9f, b * 0.9f, a * 0.3f );
+			_sunBrightness._rise.Init( r * 0.3f, g * 0.1f, b * 0.1f, a * 0.1f );
 		}
 	}
 	else
 	{
 		if( isAmbient )
 		{
-			_moonAmbience._highest.Init( r, g, b, a );	
+			_moonAmbience._highest.Init( r, g, b, a );
+			_moonAmbience._horizon.Init( r * 0.5f, g * 0.5f, b * 0.5f, a );
+			_moonAmbience._rise.Init( r * 0.1f, g * 0.1f, b * 0.1f, a );	
 		}
 		else
 		{
 			_moonBrightness._highest.Init( r, g, b, a );
+			_moonBrightness._horizon.Init( r * 0.5f, g * 0.5f, b * 0.5f, a );
+			_moonBrightness._rise.Init( r * 0.25f, g * 0.25f, b * 0.25f, a );
 		}
 	}
 }
@@ -365,11 +373,11 @@ void CGridEnvironmentLight::SetZoneLightLevel( float pitch, const LightLevel_t &
 		end = &light._horizon;
 		percent = ( pitch - 10.0f ) / 20.0f;
 	}
-	else /*if( pitch < 90.0f )*/
+	else /*if( pitch < _maxPitch )*/
 	{
 		start = &light._horizon;
 		end = &light._highest;
-		percent = ( pitch - 30.0f ) / 60.0f;
+		percent = ( pitch - 30.0f ) / ( _maxPitch - 30.0f );
 	}
 
 	Vector4D dest;

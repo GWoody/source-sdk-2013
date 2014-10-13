@@ -13,6 +13,7 @@
 #include <tenslib.h>
 
 static ConVar holo_etactor_debug( "holo_etactor_debug", "0" );
+static ConVar holo_etactor_power_scale( "holo_etactor_power_scale", "1.0", FCVAR_ARCHIVE );
 
 //----------------------------------------------------------------------------
 //----------------------------------------------------------------------------
@@ -139,14 +140,16 @@ void CETactorDevice::Commit()
 			unsigned char power = ( powfreq >> 8 ) & 0xFF;
 			unsigned char freq = powfreq & 0xFF;
 
-			tens_control( power, freq );
+			float powScale = clamp( holo_etactor_power_scale.GetFloat(), 0.0f, 1.0f );
+
+			tens_control( power * powScale, freq );
 			_owner->Sleep( TENS_TIMEOUT_MS );
 
 			_powfreq.Clean();
 
 			if( holo_etactor_debug.GetBool() )
 			{
-				Msg( "%d -> power = %d, freq = %d\n", _id, power, freq );
+				Msg( "%d -> power = %d, freq = %d\n", _id, power * powScale, freq );
 			}
 		}
 	}

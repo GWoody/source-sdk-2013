@@ -15,6 +15,7 @@
 #include <vgui_controls/Panel.h>
 #include <vgui_controls/Label.h>
 #include <vgui_controls/Button.h>
+#include <vgui_controls/Slider.h>
 
 using namespace vgui;
 
@@ -33,15 +34,15 @@ public:
 
 protected:
 	virtual const char *	GetLightingName() const = 0;
+	virtual bool	IsSun() const = 0;
 
 private:
-	void			SetButtonColor( Button *btn, const Color &color );
-
 	Label *			_header;
-	Button *		_ambientButton;
-	Button *		_brightnessButton;
 
-	bool			_isAmbient;
+	Slider *		_redSlider;
+	Slider *		_greenSlider;
+	Slider *		_blueSlider;
+	Slider *		_alphaSlider;
 };
 
 //-----------------------------------------------------------------------------
@@ -59,6 +60,11 @@ public:
 	virtual const char *GetLightingName() const
 	{
 		return "Sun Colour";
+	}
+
+	virtual bool IsSun() const
+	{
+		return true;
 	}
 };
 
@@ -78,6 +84,11 @@ public:
 	{
 		return "Moon Colour";
 	}
+
+	virtual bool IsSun() const
+	{
+		return false;
+	}
 };
 
 // Expose the VGUI screen to the server.
@@ -89,27 +100,24 @@ DECLARE_VGUI_SCREEN_FACTORY( C_GridEdenMoonLightingScreen, "grid_eden_moon_light
 C_GridEdenLightingScreen::C_GridEdenLightingScreen( Panel *parent, const char *panelname ) :
 	BaseClass( parent, panelname )
 {
-	_isAmbient = false;
 }
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 void C_GridEdenLightingScreen::OnTick()
 {
-	//
-	// Highlight the mode the user is in.
-	//
-	if( _isAmbient && _ambientButton )
+	IGameEvent *event = gameeventmanager->CreateEvent( "grid_env_light_color" );
+	if( event )
 	{
-		_ambientButton->ForceDepressed( true );
-	}
-	else if( _brightnessButton )
-	{
-		_brightnessButton->ForceDepressed( true );
-	}
+		event->SetInt( "issun", IsSun() );
+		event->SetInt( "isambient", false );
+		event->SetFloat( "r", _redSlider->GetValue() );
+		event->SetFloat( "g", _greenSlider->GetValue() );
+		event->SetFloat( "b", _blueSlider->GetValue() );
+		event->SetFloat( "a", _alphaSlider->GetValue() / 200.0f );
 
-	Button *btn = dynamic_cast<Button *>( FindChildByName( "RedButton" ) );
-	SetButtonColor( btn, Color(255, 0, 0, 255) );
+		gameeventmanager->FireEvent( event );
+	}
 
 	SetBgColor( Color( 0, 0, 0, 63 ) );
 	BaseClass::OnTick();
@@ -125,33 +133,16 @@ void C_GridEdenLightingScreen::ApplySchemeSettings( IScheme *scheme )
 	Assert( _header );
 	_header->SetText( GetLightingName() );
 
-	_ambientButton = dynamic_cast<Button *>( FindChildByName( "AmbientButton" ) );
-	_brightnessButton = dynamic_cast<Button *>( FindChildByName( "BrightnessButton" ) );
-	Assert( _ambientButton && _brightnessButton );
+	_redSlider = dynamic_cast<Slider *>( FindChildByName( "RedSlider" ) );
+	_greenSlider = dynamic_cast<Slider *>( FindChildByName( "GreenSlider" ) );
+	_blueSlider = dynamic_cast<Slider *>( FindChildByName( "BlueSlider" ) );
+	_alphaSlider = dynamic_cast<Slider *>( FindChildByName( "AlphaSlider" ) );
+	Assert( _redSlider && _greenSlider && _blueSlider );
 }
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 void C_GridEdenLightingScreen::OnCommand( const char *command )
 {
-	if( !Q_stricmp( command, "ambient" ) )
-	{
-		_isAmbient = true;
-	}
-	else if( !Q_stricmp( command, "brightness" ) )
-	{
-		_isAmbient = false;
-	}
-	else
-	{
-		BaseClass::OnCommand( command );
-	}
-}
-
-//-----------------------------------------------------------------------------
-//-----------------------------------------------------------------------------
-void C_GridEdenLightingScreen::SetButtonColor( Button *btn, const Color &color )
-{
-	btn->SetBgColor( color );
-	btn->SetFgColor( color );
+	BaseClass::OnCommand( command );
 }

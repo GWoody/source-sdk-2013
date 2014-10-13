@@ -40,6 +40,7 @@ private:
 
 	void			CheckButton( vgui::Panel *child, int px, int py, bool closeEnough, bool fastEnough );
 	void			CheckSlider( const CHand &hand, const CFinger &finger, vgui::Panel *child, int px, int py );
+	bool			CheckBoundingRect( int px, int py, vgui::Panel *panel );
 
 	float			CalculateLeftOffset() const;
 
