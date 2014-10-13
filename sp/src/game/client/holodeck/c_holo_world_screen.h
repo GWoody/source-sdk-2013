@@ -11,6 +11,7 @@
 #define __C_HOLO_WORLD_SCREEN_H__
 
 #include "c_vguiscreen.h"
+#include "vgui/VGUI.h"
 
 class C_HoloHand;
 class vgui::Panel;
@@ -26,6 +27,7 @@ public:
 	C_HoloWorldScreen();
 	
 	// C_VGuiScreen overrides.
+	virtual RenderGroup_t	GetRenderGroup()		{ return RENDER_GROUP_TRANSLUCENT_ENTITY; }
 	virtual void	ClientThink();
 	virtual void	GetAimEntOrigin( IClientEntity *pAttachedTo, Vector *pOrigin, QAngle *pAngles );
 	virtual EWorldPanel	GetWorldPanelType() const	{ return (EWorldPanel)_type; }
@@ -36,9 +38,14 @@ private:
 	void			CheckChildCollision( vgui::Panel *panel, const CFinger &finger, int px, int py, float distance );
 	Vector			GetPanelIntersectionPosition( float u, float v );
 
+	void			CheckButton( vgui::Panel *child, int px, int py, bool closeEnough, bool fastEnough );
+	void			CheckSlider( vgui::Panel *child, int px, int py, bool closeEnough, bool fastEnough );
+
 	float			CalculateLeftOffset() const;
 
 	int				_type;
+
+	vgui::VPANEL	_interacted;
 };
 
 #endif // __C_HOLO_WORLD_SCREEN_H__

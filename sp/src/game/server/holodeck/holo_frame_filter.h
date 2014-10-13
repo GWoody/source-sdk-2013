@@ -22,7 +22,8 @@ namespace holo
 	public:
 						CFrameFilter();
 
-		CFrame	FilterFrame( const CFrame &frame );
+		CFrame			FilterFrame( const CFrame &frame );
+		const CFrame &	GetLastFrame() const		{ return _lastFrame; }
 
 	private:
 		void			AddToHistory( const CFrame &frame );
@@ -32,6 +33,7 @@ namespace holo
 		CFrame	AgedAverage();
 
 		CUtlVector<CFrame> _history;
+		CFrame			_lastFrame;
 	};
 	
 }

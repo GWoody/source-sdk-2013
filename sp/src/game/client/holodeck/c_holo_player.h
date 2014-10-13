@@ -32,7 +32,7 @@ public:
 	static C_HoloPlayer *	GetLocalPlayer()			{ return (C_HoloPlayer *)BaseClass::GetLocalPlayer(); }
 
 private:
-	EHANDLE			_hands[::HAND_COUNT];
+	EHANDLE			_hands[HAND_COUNT];
 	Vector			_viewoffset;
 };
 

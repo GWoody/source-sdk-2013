@@ -50,10 +50,12 @@ CFrame CFrameFilter::FilterFrame( const CFrame &frame )
 	switch( holo_filter_method.GetInt() )
 	{
 		case EFilterMethod::AVERAGE:
-			return StandardAverage();
+			_lastFrame = StandardAverage();
+			return _lastFrame;
 
 		case EFilterMethod::AGED_AVERAGE:
-			return AgedAverage();
+			_lastFrame = AgedAverage();
+			return _lastFrame;
 	}
 
 	return StandardAverage();

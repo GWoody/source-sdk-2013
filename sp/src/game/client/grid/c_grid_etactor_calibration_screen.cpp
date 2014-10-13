@@ -10,6 +10,7 @@
 #include "cbase.h"
 #include "c_vguiscreen.h"
 #include "c_grid_player.h"
+#include "holodeck/c_holo_world_screen_panel.h"
 
 #include <vgui_controls/Panel.h>
 #include <vgui_controls/Label.h>
@@ -19,10 +20,10 @@ using namespace vgui;
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-class C_GridETactorScreen : public CVGuiScreenPanel
+class C_GridETactorScreen : public CHoloVGuiScreenPanel
 {
 public:
-	DECLARE_CLASS( C_GridETactorScreen, CVGuiScreenPanel );
+	DECLARE_CLASS( C_GridETactorScreen, CHoloVGuiScreenPanel );
 	
 	C_GridETactorScreen( Panel *parent, const char *panelname );
 

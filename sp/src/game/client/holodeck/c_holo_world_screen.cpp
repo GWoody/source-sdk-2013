@@ -21,6 +21,7 @@
 #include "in_buttons.h"
 
 #include <vgui_controls/Button.h>
+#include <vgui_controls/Slider.h>
 
 using namespace vgui;
 
@@ -44,6 +45,7 @@ END_RECV_TABLE()
 //-----------------------------------------------------------------------------
 C_HoloWorldScreen::C_HoloWorldScreen()
 {
+	_interacted = 0;
 }
 
 //-----------------------------------------------------------------------------
@@ -118,8 +120,6 @@ bool C_HoloWorldScreen::CheckFingerContact( vgui::Panel *panel, const CFinger &f
 	// Do a pick under the cursor as our selection
 	VectorMA( fingertipPos, 3.0f, fingerDir, endPos );
 	lookDir.Init( fingertipPos, endPos );
-
-	debugoverlay->AddLineOverlay( fingertipPos, endPos, 255, 0, 0, false, 0.5 );
 	
 	if (!IntersectWithRay( lookDir, &u, &v, NULL ))
 		return false;
@@ -174,30 +174,103 @@ Vector C_HoloWorldScreen::GetPanelIntersectionPosition( float u, float v )
 // (the bug exists within the private engine section, and cannot be properly fixed
 // without engine access).
 //-----------------------------------------------------------------------------
-void C_HoloWorldScreen::CheckChildCollision( vgui::Panel *panel, const CFinger &finger, int px, int py, float distance )
+void C_HoloWorldScreen::CheckChildCollision( Panel *panel, const CFinger &finger, int px, int py, float distance )
 {
+	bool closeEnough = distance < holo_screen_touch_distance.GetFloat();
+	bool fastEnough = distance < holo_screen_touch_distance.GetFloat() * 4 && finger.GetVelocityDirectionTheta() < holo_screen_finger_tipdir_tolertance.GetFloat() && finger.GetTipVelocity().Length() > 10;
+
+	if( !closeEnough && !fastEnough )
+	{
+		_interacted = 0;
+	}
+
 	for (int i = 0; i < panel->GetChildCount(); i++)
 	{
-		vgui::Button *child = dynamic_cast<vgui::Button*>( panel->GetChild(i) );
-		if ( child )
+		Panel *child = panel->GetChild( i );
+		CheckButton( child, px, py, closeEnough, fastEnough );
+		CheckSlider( child, px, py, closeEnough, fastEnough );
+	}
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void C_HoloWorldScreen::CheckButton( vgui::Panel *child, int px, int py, bool closeEnough, bool fastEnough )
+{
+	Button *button = dynamic_cast<Button*>( child );
+	if( !button )
+	{
+		return;
+	}
+
+	if( _interacted && _interacted != button->GetVPanel() )
+	{
+		// This is not the panel we are currently interacting with.
+		return;
+	}
+
+	int x1, x2, y1, y2;
+	button->GetBounds( x1, y1, x2, y2 );
+
+	button->SetArmed( false );
+
+	// Generate mouse input commands
+	if ( px >= x1 && px <= x1 + x2 && py >= y1 && py <= y1 + y2 )
+	{
+		// Finger is close enough to be touching.
+		if( closeEnough || fastEnough )
 		{
-			int x1, x2, y1, y2;
-			child->GetBounds( x1, y1, x2, y2 );
-
-			// Generate mouse input commands
-			if ( px >= x1 && px <= x1 + x2 && py >= y1 && py <= y1 + y2 && distance < holo_screen_touch_distance.GetFloat() )
+			if( !button->IsDepressed() )
 			{
-				if( !child->IsDepressed() )
-				{
-					child->DoClick();
-				}
+				// Only simulate a press on the first contact.
+				button->DoClick();
+			}
 
-				child->ForceDepressed( true );
-			}
-			else
-			{
-				child->ForceDepressed( false );
-			}
+			// Keep the button pressed on prolonged contact.
+			button->ForceDepressed( true );
+			_interacted = button->GetVPanel();
+		}
+		else
+		{
+			// Finger is over the control, but not touching. Highlight it.
+			button->SetArmed( true );
+		}
+	}
+	else
+	{
+		button->ForceDepressed( false );
+	}
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void C_HoloWorldScreen::CheckSlider( vgui::Panel *child, int px, int py, bool closeEnough, bool fastEnough )
+{
+	Slider *slider = dynamic_cast<Slider*>( child );
+	if( !slider )
+	{
+		return;
+	}
+
+	if( _interacted && _interacted != slider->GetVPanel() )
+	{
+		// This is not the panel we are currently interacting with.
+		return;
+	}
+
+	if( closeEnough || fastEnough )
+	{
+		int x1, x2, y1, y2;
+		slider->GetBounds( x1, y1, x2, y2 );
+
+		if ( px >= x1 && px <= x1 + x2 && py >= y1 && py <= y1 + y2 )
+		{
+			float perc = (float)( px - x1 ) / (float)( x2 - x1 );
+
+			int min, max;
+			slider->GetRange( min, max );
+
+			slider->SetValue( min + (perc * max) );
+			_interacted = slider->GetVPanel();
 		}
 	}
 }
