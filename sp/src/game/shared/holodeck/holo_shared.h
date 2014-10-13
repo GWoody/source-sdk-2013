@@ -264,6 +264,7 @@ public:
 	inline const Vector &	GetCenter() const					{ return _center; }
 	inline const Vector &	GetNormal() const					{ return _normal; }
 	inline bool		IsClockwise() const							{ return _clockwise; }
+	inline float	GetProgress() const							{ return _progress; }
 
 	// Filtering helpers.
 	CCircleGesture	operator+( const CCircleGesture &other ) const;
@@ -275,6 +276,7 @@ private:
 	float			_radius, _duration;
 	Vector			_center, _normal;
 	bool			_clockwise;
+	float			_progress;
 };
 
 //-----------------------------------------------------------------------------

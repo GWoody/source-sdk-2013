@@ -755,6 +755,7 @@ void CCircleGesture::FromLeap( const Leap::CircleGesture &c )
 	_center = LeapToSourceVector( c.center(), true );
 	_normal = LeapToSourceVector( c.normal() );
 	_duration = c.durationSeconds();
+	_progress = c.progress();
 
 	_normal.NormalizeInPlace();
 
@@ -778,6 +779,7 @@ void CCircleGesture::ToBitBuffer( bf_write *buf ) const
 	buf->WriteBitVec3Coord( _center );
 	buf->WriteBitVec3Normal( _normal );
 	buf->WriteChar( _clockwise );
+	buf->WriteFloat( _progress );
 }
 
 void CCircleGesture::FromBitBuffer( bf_read *buf )
@@ -789,6 +791,7 @@ void CCircleGesture::FromBitBuffer( bf_read *buf )
 	buf->ReadBitVec3Coord( _center );
 	buf->ReadBitVec3Normal( _normal );
 	_clockwise = buf->ReadChar() != 0 ? true : false;
+	_progress = buf->ReadFloat();
 }
 
 void CCircleGesture::Transform( float yaw, const Vector &translation )
@@ -812,6 +815,7 @@ CCircleGesture CCircleGesture::operator+( const CCircleGesture &other ) const
 	g._center = _center + other._center;
 	g._normal = _normal + other._normal;
 	g._clockwise = _clockwise;
+	g._progress = _progress + other._progress;
 
 	return g;
 }
@@ -827,6 +831,7 @@ CCircleGesture CCircleGesture::operator/( float scale ) const
 	g._radius = _radius / scale;
 	g._center = _center / scale;
 	g._normal = _normal / scale;
+	g._progress = _progress / scale;
 
 	return g;
 }
@@ -842,6 +847,7 @@ CCircleGesture CCircleGesture::operator*( float scale ) const
 	g._radius = _radius * scale;
 	g._center = _center * scale;
 	g._normal = _normal * scale;
+	g._progress = _progress * scale;
 
 	return g;
 }

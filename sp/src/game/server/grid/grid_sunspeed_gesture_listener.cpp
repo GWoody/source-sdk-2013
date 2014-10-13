@@ -39,6 +39,12 @@ LINK_ENTITY_TO_CLASS( grid_sunspeed_gesture_listener, CGridSunSpeedListener );
 //-----------------------------------------------------------------------------
 void CGridSunSpeedListener::OnCircleGesture( const CFrame &frame, const CCircleGesture &circle )
 {
+	if( circle.GetProgress() < 1.0f )
+	{
+		// Make the circle gesture less sensitive than the standard gesture panels.
+		return;
+	}
+
 	const CHand *hand = frame.GetHandById( circle.GetHandId() );
 	Assert( hand );
 
