@@ -24,6 +24,8 @@
 //=============================================================================
 enum EFinger
 {
+	FINGER_INVALID = -1,
+
 	FINGER_THUMB,
 	FINGER_POINTER,
 	FINGER_MIDDLE,
@@ -57,7 +59,9 @@ const char *EBoneToString( EBone bone );
 
 enum EHand
 {
-	HAND_LEFT,
+	HAND_INVALID = -1,
+
+	HAND_LEFT = 0,
 	HAND_RIGHT,
 
 	HAND_COUNT
@@ -175,7 +179,7 @@ public:
 	void			Transform( float yaw, const Vector &translation );
 
 	// Accessors.
-	inline int		GetHandId() const							{ return _handId; }
+	inline EHand	GetHandType() const							{ return _handType; }
 	inline float	GetRadius() const							{ return _radius; }
 	inline float	GetGrabStrength() const						{ return _grabStrength; }
 	inline Vector	GetCenter() const							{ return _center; }
@@ -186,7 +190,7 @@ public:
 	CBallGesture	operator*( float scale ) const;
 
 private:
-	int				_handId;
+	EHand			_handType;
 	float			_radius, _grabStrength;
 	Vector			_center;
 };
@@ -257,8 +261,8 @@ public:
 	void			Transform( float yaw, const Vector &translation );
 
 	// Accessors.
-	inline int		GetHandId() const							{ return _handId; }
-	inline int		GetFingerId() const							{ return _fingerId; }
+	inline EHand	GetHandType() const							{ return _handType; }
+	inline EFinger	GetFingerType() const						{ return _fingerType; }
 	inline float	GetRadius() const							{ return _radius; }
 	inline float	GetDuration() const							{ return _duration; }
 	inline const Vector &	GetCenter() const					{ return _center; }
@@ -272,7 +276,8 @@ public:
 	CCircleGesture	operator*( float scale ) const;
 
 private:
-	int				_handId, _fingerId;
+	EHand			_handType;
+	EFinger			_fingerType;
 	float			_radius, _duration;
 	Vector			_center, _normal;
 	bool			_clockwise;
@@ -296,7 +301,7 @@ public:
 	void			Transform( float yaw, const Vector &translation );
 
 	// Accessors.
-	inline int		GetHandId() const							{ return _handId; }
+	inline EHand	GetHandType() const							{ return _handType; }
 	inline float	GetSpeed() const							{ return _speed; }
 	inline const Vector &	GetDirection() const				{ return _direction; }
 	inline const Vector &	GetCurrentPosition() const			{ return _curPosition; }
@@ -308,7 +313,7 @@ public:
 	CSwipeGesture	operator*( float scale ) const;
 
 private:
-	int				_handId;
+	EHand			_handType;
 	float			_speed;
 	Vector			_direction, _curPosition, _startPosition;
 };
@@ -332,8 +337,8 @@ public:
 	void			Transform( float yaw, const Vector &translation );
 
 	// Accessors.
-	inline int		GetHandId() const							{ return _handId; }
-	inline int		GetFingerId() const							{ return _fingerId; }
+	inline EHand	GetHandType() const							{ return _handType; }
+	inline EFinger	GetFingerType() const						{ return _fingerType; }
 	inline const Vector &	GetDirection() const				{ return _direction; }
 	inline const Vector &	GetPosition() const					{ return _position; }
 
@@ -343,7 +348,8 @@ public:
 	CTapGesture		operator*( float scale ) const;
 
 private:
-	int				_handId, _fingerId;
+	EHand			_handType;
+	EFinger			_fingerType;
 	Vector			_direction, _position;
 };
 

@@ -736,7 +736,8 @@ CHand CHand::operator*( float scale ) const
 //=============================================================================
 CCircleGesture::CCircleGesture()
 {
-	_handId = _fingerId = INVALID_INDEX;
+	_handType = HAND_INVALID;
+	_fingerType = FINGER_INVALID;
 	_radius = _duration = 0.0f;
 	_center = _normal = vec3_origin;
 	_clockwise = false;
@@ -751,9 +752,10 @@ CCircleGesture::CCircleGesture( const Leap::CircleGesture &c )
 void CCircleGesture::FromLeap( const Leap::CircleGesture &c )
 {
 	const Leap::HandList &hands = c.hands();
+	const Leap::Finger finger = Leap::Finger( c.pointable() );
 
-	_handId = hands[0].id();
-	_fingerId = c.pointable().id();
+	_handType = hands[0].isLeft() ? HAND_LEFT : HAND_RIGHT;
+	_fingerType = LeapToSourceFingerCode( finger.type() );
 	_radius = LeapToSourceDistance( c.radius() );
 	_center = LeapToSourceVector( c.center(), true );
 	_normal = LeapToSourceVector( c.normal() );
@@ -775,8 +777,8 @@ void CCircleGesture::FromLeap( const Leap::CircleGesture &c )
 
 void CCircleGesture::ToBitBuffer( bf_write *buf ) const
 {
-	buf->WriteVarInt32( _handId );
-	buf->WriteVarInt32( _fingerId );
+	buf->WriteVarInt32( _handType );
+	buf->WriteVarInt32( _fingerType );
 	buf->WriteFloat( _radius );
 	buf->WriteFloat( _duration );
 	buf->WriteBitVec3Coord( _center );
@@ -787,8 +789,8 @@ void CCircleGesture::ToBitBuffer( bf_write *buf ) const
 
 void CCircleGesture::FromBitBuffer( bf_read *buf )
 {
-	_handId = buf->ReadVarInt32();
-	_fingerId = buf->ReadVarInt32();
+	_handType = (EHand)buf->ReadVarInt32();
+	_fingerType = (EFinger)buf->ReadVarInt32();
 	_radius = buf->ReadFloat();
 	_duration = buf->ReadFloat();
 	buf->ReadBitVec3Coord( _center );
@@ -811,8 +813,8 @@ CCircleGesture CCircleGesture::operator+( const CCircleGesture &other ) const
 {
 	CCircleGesture g;
 
-	g._handId = _handId;
-	g._fingerId = _fingerId;
+	g._handType = _handType;
+	g._fingerType = _fingerType;
 	g._radius = _radius + other._radius;
 	g._duration = max( _duration, other._duration );
 	g._center = _center + other._center;
@@ -827,8 +829,8 @@ CCircleGesture CCircleGesture::operator/( float scale ) const
 {
 	CCircleGesture g;
 
-	g._handId = _handId;
-	g._fingerId = _fingerId;
+	g._handType = _handType;
+	g._fingerType = _fingerType;
 	g._duration = _duration;
 	g._clockwise = _clockwise;
 	g._radius = _radius / scale;
@@ -843,8 +845,8 @@ CCircleGesture CCircleGesture::operator*( float scale ) const
 {
 	CCircleGesture g;
 
-	g._handId = _handId;
-	g._fingerId = _fingerId;
+	g._handType = _handType;
+	g._fingerType = _fingerType;
 	g._duration = _duration;
 	g._clockwise = _clockwise;
 	g._radius = _radius * scale;
@@ -860,7 +862,7 @@ CCircleGesture CCircleGesture::operator*( float scale ) const
 //=============================================================================
 CSwipeGesture::CSwipeGesture()
 {
-	_handId = INVALID_INDEX;
+	_handType = HAND_INVALID;
 	_speed = 0;
 	_direction = _curPosition = _startPosition = vec3_origin;
 }
@@ -875,7 +877,7 @@ void CSwipeGesture::FromLeap( const Leap::SwipeGesture &s )
 {
 	const Leap::HandList &hands = s.hands();
 
-	_handId = hands[0].id();
+	_handType = hands[0].isLeft() ? HAND_LEFT : HAND_RIGHT;
 	_speed = s.speed();
 	_direction = LeapToSourceVector( s.direction() );
 	_curPosition = LeapToSourceVector( s.position(), true );
@@ -887,7 +889,7 @@ void CSwipeGesture::FromLeap( const Leap::SwipeGesture &s )
 
 void CSwipeGesture::ToBitBuffer( bf_write *buf ) const
 {
-	buf->WriteVarInt32( _handId );
+	buf->WriteVarInt32( _handType );
 	buf->WriteFloat( _speed );
 	buf->WriteBitVec3Normal( _direction );
 	buf->WriteBitVec3Coord( _curPosition );
@@ -896,7 +898,7 @@ void CSwipeGesture::ToBitBuffer( bf_write *buf ) const
 
 void CSwipeGesture::FromBitBuffer( bf_read *buf )
 {
-	_handId = buf->ReadVarInt32();
+	_handType = (EHand)buf->ReadVarInt32();
 	_speed = buf->ReadFloat();
 	buf->ReadBitVec3Normal( _direction );
 	buf->ReadBitVec3Coord( _curPosition );
@@ -919,7 +921,7 @@ CSwipeGesture CSwipeGesture::operator+( const CSwipeGesture &other ) const
 {
 	CSwipeGesture g;
 
-	g._handId = _handId;
+	g._handType = _handType;
 	g._speed = _speed + other._speed;
 	g._direction = _direction + other._direction;
 	g._curPosition = _curPosition + other._curPosition;
@@ -932,7 +934,7 @@ CSwipeGesture CSwipeGesture::operator/( float scale ) const
 {
 	CSwipeGesture g;
 
-	g._handId = _handId;
+	g._handType = _handType;
 	g._speed = _speed / scale;
 	g._direction = _direction / scale;
 	g._curPosition = _curPosition / scale;
@@ -945,7 +947,7 @@ CSwipeGesture CSwipeGesture::operator*( float scale ) const
 {
 	CSwipeGesture g;
 
-	g._handId = _handId;
+	g._handType = _handType;
 	g._speed = _speed * scale;
 	g._direction = _direction * scale;
 	g._curPosition = _curPosition * scale;
@@ -959,7 +961,8 @@ CSwipeGesture CSwipeGesture::operator*( float scale ) const
 //=============================================================================
 CTapGesture::CTapGesture()
 {
-	_handId = _fingerId = INVALID_INDEX;
+	_handType = HAND_INVALID;
+	_fingerType = FINGER_INVALID;
 	_direction = _position = vec3_origin;
 }
 
@@ -977,9 +980,10 @@ CTapGesture::CTapGesture( const Leap::ScreenTapGesture &s )
 void CTapGesture::FromLeap( const Leap::KeyTapGesture &k )
 {
 	const Leap::HandList &hands = k.hands();
+	const Leap::Finger finger = Leap::Finger( k.pointable() );
 
-	_handId = hands[0].id();
-	_fingerId = k.pointable().id();
+	_handType = hands[0].isLeft() ? HAND_LEFT : HAND_RIGHT;
+	_fingerType = LeapToSourceFingerCode( finger.type() );
 	_direction = LeapToSourceVector( k.direction() );
 	_position = LeapToSourceVector( k.position(), true );
 
@@ -989,9 +993,10 @@ void CTapGesture::FromLeap( const Leap::KeyTapGesture &k )
 void CTapGesture::FromLeap( const Leap::ScreenTapGesture &s )
 {
 	const Leap::HandList &hands = s.hands();
+	const Leap::Finger finger = Leap::Finger( s.pointable() );
 
-	_handId = hands[0].id();
-	_fingerId = s.pointable().id();
+	_handType = hands[0].isLeft() ? HAND_LEFT : HAND_RIGHT;
+	_fingerType = LeapToSourceFingerCode( finger.type() );
 	_direction = LeapToSourceVector( s.direction() );
 	_position = LeapToSourceVector( s.position(), true );
 
@@ -1001,16 +1006,16 @@ void CTapGesture::FromLeap( const Leap::ScreenTapGesture &s )
 
 void CTapGesture::ToBitBuffer( bf_write *buf ) const
 {
-	buf->WriteVarInt32( _handId );
-	buf->WriteVarInt32( _fingerId );
+	buf->WriteVarInt32( _handType );
+	buf->WriteVarInt32( _fingerType );
 	buf->WriteBitVec3Normal( _direction );
 	buf->WriteBitVec3Coord( _position );
 }
 
 void CTapGesture::FromBitBuffer( bf_read *buf )
 {
-	_handId = buf->ReadVarInt32();
-	_fingerId = buf->ReadVarInt32();
+	_handType = (EHand)buf->ReadVarInt32();
+	_fingerType = (EFinger)buf->ReadVarInt32();
 	buf->ReadBitVec3Normal( _direction );
 	buf->ReadBitVec3Coord( _position );
 }
@@ -1029,8 +1034,8 @@ CTapGesture CTapGesture::operator+( const CTapGesture &other ) const
 {
 	CTapGesture g;
 
-	g._handId = _handId;
-	g._fingerId = _fingerId;
+	g._handType = _handType;
+	g._fingerType = _fingerType;
 	g._direction = _direction + other._direction;
 	g._position = _position + other._position;
 
@@ -1041,8 +1046,8 @@ CTapGesture CTapGesture::operator/( float scale ) const
 {
 	CTapGesture g;
 
-	g._handId = _handId;
-	g._fingerId = _fingerId;
+	g._handType = _handType;
+	g._fingerType = _fingerType;
 	g._direction = _direction / scale;
 	g._position = _position / scale;
 
@@ -1053,8 +1058,8 @@ CTapGesture CTapGesture::operator*( float scale ) const
 {
 	CTapGesture g;
 
-	g._handId = _handId;
-	g._fingerId = _fingerId;
+	g._handType = _handType;
+	g._fingerType = _fingerType;
 	g._direction = _direction * scale;
 	g._position = _position * scale;
 
@@ -1066,7 +1071,7 @@ CTapGesture CTapGesture::operator*( float scale ) const
 //=============================================================================
 CBallGesture::CBallGesture()
 {
-	_handId = INVALID_INDEX;
+	_handType = HAND_INVALID;
 	_radius = _grabStrength = 0.0f;
 	_center = vec3_origin;
 }
@@ -1079,7 +1084,7 @@ CBallGesture::CBallGesture( const Leap::Hand &h )
 
 void CBallGesture::FromLeap( const Leap::Hand &h )
 {
-	_handId = h.id();
+	_handType = h.isLeft() ? HAND_LEFT : HAND_RIGHT;
 	_radius = LeapToSourceDistance( h.sphereRadius() );
 	_grabStrength = h.grabStrength();
 	_center = LeapToSourceVector( h.sphereCenter(), true );
@@ -1088,7 +1093,7 @@ void CBallGesture::FromLeap( const Leap::Hand &h )
 
 void CBallGesture::ToBitBuffer( bf_write *buf ) const
 {
-	buf->WriteSignedVarInt32( _handId );
+	buf->WriteSignedVarInt32( _handType );
 	buf->WriteFloat( _radius );
 	buf->WriteFloat( _grabStrength );
 	buf->WriteBitVec3Coord( _center );
@@ -1096,7 +1101,7 @@ void CBallGesture::ToBitBuffer( bf_write *buf ) const
 
 void CBallGesture::FromBitBuffer( bf_read *buf )
 {
-	_handId = buf->ReadSignedVarInt32();
+	_handType = (EHand)buf->ReadSignedVarInt32();
 	_radius = buf->ReadFloat();
 	_grabStrength = buf->ReadFloat();
 	buf->ReadBitVec3Coord( _center );
@@ -1115,7 +1120,7 @@ CBallGesture CBallGesture::operator+( const CBallGesture &other ) const
 {
 	CBallGesture g;
 
-	g._handId = _handId;
+	g._handType = _handType;
 	g._radius = _radius + other._radius;
 	g._grabStrength = _grabStrength + other._grabStrength;
 	g._center = _center + other._center;
@@ -1127,7 +1132,7 @@ CBallGesture CBallGesture::operator/( float scale ) const
 {
 	CBallGesture g;
 
-	g._handId = _handId;
+	g._handType = _handType;
 	g._radius = _radius / scale;
 	g._grabStrength = _grabStrength / scale;
 	g._center = _center / scale;
@@ -1139,7 +1144,7 @@ CBallGesture CBallGesture::operator*( float scale ) const
 {
 	CBallGesture g;
 
-	g._handId = _handId;
+	g._handType = _handType;
 	g._radius = _radius * scale;
 	g._grabStrength = _grabStrength * scale;
 	g._center = _center * scale;

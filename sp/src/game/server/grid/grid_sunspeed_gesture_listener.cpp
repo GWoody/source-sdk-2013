@@ -45,14 +45,11 @@ void CGridSunSpeedListener::OnCircleGesture( const CFrame &frame, const CCircleG
 		return;
 	}
 
-	const CHand *hand = frame.GetHandById( circle.GetHandId() );
-	Assert( hand );
-
-	const CFinger *finger = hand->GetFingerById( circle.GetFingerId() );
-	Assert( finger );
+	const CHand &hand = frame.GetHand( circle.GetHandType() );
+	const CFinger &finger = hand.GetFingerByType( circle.GetFingerType() );
 
 	// Clockwise puts the sun in reverse.
-	float currentSpeed = finger->GetTipVelocity().Length();
+	float currentSpeed = finger.GetTipVelocity().Length();
 	currentSpeed = circle.IsClockwise() ? -currentSpeed : currentSpeed;
 
 	float speed = AverageSpeed( currentSpeed ) * grid_sun_speed_gesture_multipler.GetFloat();
