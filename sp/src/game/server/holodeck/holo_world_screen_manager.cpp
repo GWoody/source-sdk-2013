@@ -66,7 +66,7 @@ bool CHoloWorldScreenManager::CreateScreen( EWorldPanel panel, const char *typeN
 	{
 		_screens[panel]->SetType( panel );
 		_screens[panel]->SetActive( true );
-		_screens[panel]->SetActualSize( 16, 12 );
+		_screens[panel]->SetActualSize( 22, 16.5 );
 		return true;
 	}
 

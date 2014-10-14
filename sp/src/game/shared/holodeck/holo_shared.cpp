@@ -595,6 +595,8 @@ void CHand::FromBitBuffer( bf_read *buf )
 
 void CHand::Transform( float yaw, const Vector &translation )
 {
+	const Vector extraTranslation( 0.0f, 0.0f, _position.z * 1.0f );
+	
 	_ball.Transform( yaw, translation );
 
 	// Apply rotations.
@@ -604,12 +606,13 @@ void CHand::Transform( float yaw, const Vector &translation )
 	VectorYawRotate( _velocity, yaw, _velocity );
 	
 	// Apply translations.
-	_position += translation;
+	_position += translation + extraTranslation;
 	
 	// Transform fingers.
+	const Vector fingerTranslation = translation + extraTranslation;
 	for( int i = 0; i < FINGER_COUNT; i++ )
 	{
-		_fingers[i].Transform( yaw, translation );
+		_fingers[i].Transform( yaw, fingerTranslation );
 	}
 }
 
