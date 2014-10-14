@@ -14,6 +14,7 @@
 
 static ConVar holo_etactor_debug( "holo_etactor_debug", "0" );
 static ConVar holo_etactor_power_scale( "holo_etactor_power_scale", "1.0", FCVAR_ARCHIVE );
+static ConVar holo_etactor_msg_repeat( "holo_etactor_msg_repeat", "5", FCVAR_ARCHIVE );
 
 //----------------------------------------------------------------------------
 //----------------------------------------------------------------------------
@@ -28,7 +29,7 @@ CETactorVar<T>::CETactorVar()
 	_val = 0;
 
 #pragma omp atomic
-	_dirty = true;
+	_dirtyCount = holo_etactor_msg_repeat.GetInt();
 }
 
 //----------------------------------------------------------------------------
@@ -48,7 +49,7 @@ void CETactorVar<T>::Set( const T &val )
 	_val = val;
 
 #pragma omp atomic
-	_dirty = true;
+	_dirtyCount = holo_etactor_msg_repeat.GetInt();
 }
 
 //----------------------------------------------------------------------------
@@ -67,8 +68,8 @@ template<class T>
 bool CETactorVar<T>::IsDirty() const
 {
 #pragma omp atomic
-	bool localDirty = _dirty;
-	return localDirty;
+	int localDirtyCount = _dirtyCount;
+	return localDirtyCount != 0;
 }
 
 //----------------------------------------------------------------------------
@@ -77,7 +78,9 @@ template<class T>
 void CETactorVar<T>::Clean()
 {
 #pragma omp atomic
-	_dirty = false;
+	int localDirtyCount = _dirtyCount;
+#pragma omp atomic
+	_dirtyCount = localDirtyCount - 1;
 }
 
 //=============================================================================
@@ -149,7 +152,7 @@ void CETactorDevice::Commit()
 
 			if( holo_etactor_debug.GetBool() )
 			{
-				Msg( "%d -> power = %d, freq = %d\n", _id, power * powScale, freq );
+				Msg( "%d -> power = %d, freq = %d\n", _id, (unsigned int)(power * powScale), freq );
 			}
 		}
 	}
