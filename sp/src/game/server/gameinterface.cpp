@@ -96,6 +96,7 @@
 
 #ifdef HOLODECK
 #include "holodeck/holo_gesture_listener.h"
+#include "holodeck/holo_player.h"
 #endif
 
 #ifdef TF_DLL
@@ -1387,6 +1388,11 @@ void CServerGameDLL::LevelShutdown( void )
 
 #ifdef HOLODECK
 	CHoloGestureListener::ClearInstance();
+	CHoloPlayer *player = (CHoloPlayer *)UTIL_GetLocalPlayer();
+	if( player )
+	{
+		player->LevelShutdown();
+	}
 #endif
 
 #ifdef GRID_DLL

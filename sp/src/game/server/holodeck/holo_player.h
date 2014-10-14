@@ -40,6 +40,9 @@ public:
 	// UserCmd processing.
 	virtual void	ProcessUsercmds( CUserCmd *cmds, int numcmds, int totalcmds, int dropped_packets, bool paused );
 
+	// Misc.
+	virtual void	LevelShutdown();
+
 	// Accessors.
 	CHoloHand *		GetHandEntity( EHand hand ) const	{ return (CHoloHand *)_hands[hand].Get(); }
 	Vector			GetHeadOffset() const				{ return _viewoffset; }

@@ -35,6 +35,7 @@ public:
 	virtual int		UpdateTransmitState();
 
 	void			OwnerKilled();
+	void			LevelShutdown();
 
 	// Mutators.
 	void			SetType( EHand type );
@@ -42,9 +43,9 @@ public:
 	// Accessors.
 	const CFrame &	GetFrame() const;
 	const CHand &	GetHoloHand() const;
-	const EHand		GetType() const				{ return _type; }
+	const EHand		GetType() const					{ return _type; }
 	CBasePlayer *	GetOwnerPlayer() const			{ return (CBasePlayer *)GetOwnerEntity(); }
-	CHoloHaptics &	GetHaptics()						{ return _haptics; }
+	CHoloHaptics &	GetHaptics()					{ return _haptics; }
 
 	// Held object.
 	void			SetUseEntity( CBaseEntity *entity );

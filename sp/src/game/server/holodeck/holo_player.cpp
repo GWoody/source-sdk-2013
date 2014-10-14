@@ -187,6 +187,19 @@ void CHoloPlayer::ProcessUsercmds( CUserCmd *cmds, int numcmds, int totalcmds, i
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
+void CHoloPlayer::LevelShutdown()
+{
+	//
+	// Kill haptics.
+	//
+	for( int i = 0; i < HAND_COUNT; i++ )
+	{
+		GetHandEntity( (EHand)i )->LevelShutdown();
+	}
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 CFrame CHoloPlayer::AccumulateHoloFrame( CUserCmd *cmds, int numcmds, int totalcmds, int dropped_packets, bool paused )
 {
 	CFrame finalHoloFrame;
