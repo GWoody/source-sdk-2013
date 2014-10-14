@@ -44,8 +44,14 @@ public:
 	// Accessors.
 	grid::CInventory &	GetInventory()					{ return _inventory; }
 
+protected:
+	// CHoloPlayer overrides.
+	virtual void	ProcessFrame( const CFrame &frame );
+	virtual void	OnInvalidFrame();
+
+	virtual bool	CanAttemptPickup() const			{ return _weaponHandIdx == -1; }
+
 private:
-	void			ProcessFrame( const CFrame &frame );
 	void			HandleGunGesture( const CFrame &frame );
 
 	CNetworkHandle( CGridBaseWeapon, _activeWeapon );

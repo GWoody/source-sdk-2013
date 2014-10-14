@@ -34,6 +34,12 @@ CPickupGesture::CPickupGesture( const CFrame &frame, EHand hand )
 //-----------------------------------------------------------------------------
 void CPickupGesture::Detect( const CFrame &frame, EHand hand )
 {
+	if( !frame.IsValid() )
+	{
+		SetInactive();
+		return;
+	}
+
 	float grabStrength = grid_pickup_strength.GetFloat();
 	float curRadius = frame.GetHand( hand ).GetBallGesture().GetGrabStrength();
 

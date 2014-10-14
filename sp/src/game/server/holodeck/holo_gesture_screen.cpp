@@ -26,6 +26,12 @@ CScreenGesture::CScreenGesture( const CFrame &frame, EHand hand )
 //-----------------------------------------------------------------------------
 void CScreenGesture::Detect( const CFrame &frame, EHand hand )
 {
+	if( !frame.IsValid() )
+	{
+		SetInactive();
+		return;
+	}
+
 	float tol = holo_screen_gesture_tolerance.GetFloat();
 	float theta;
 

@@ -67,7 +67,6 @@ LINK_ENTITY_TO_CLASS( holo_hand, CHoloHand );
 CHoloHand::CHoloHand()
 {
 	_nextPickupTime = 0.0f;
-	_invalidCount = 0;
 }
 
 //-----------------------------------------------------------------------------
@@ -167,21 +166,14 @@ void CHoloHand::ProcessFrame( const CFrame &frame )
 	{
 		// Use last frames data.
 		source = &_untransformedFrame;
-		_invalidCount++;
 	}
 	else
 	{
 		source = &frame;
 		_untransformedFrame = frame;
-		_invalidCount = 0;
 	}
 
-	if( _invalidCount >= 15 )
-	{
-		// Allow 0.25 seconds of invalid frames before canning processing.
-		_transformedFrame = CFrame();
-		return;
-	}
+	_haptics.SetActive( true );
 
 	// Apply filtering to the source frame.
 	_transformedFrame = _filter.FilterFrame( *source );
@@ -196,6 +188,14 @@ void CHoloHand::ProcessFrame( const CFrame &frame )
 	{
 		RenderDebugHand();
 	}
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void CHoloHand::OnInvalidFrame()
+{
+	ClearUseEntity();
+	_haptics.SetActive( false );
 }
 
 //-----------------------------------------------------------------------------

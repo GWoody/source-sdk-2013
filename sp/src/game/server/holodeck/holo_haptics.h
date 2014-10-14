@@ -68,6 +68,8 @@ public:
 	void			AddEvent( CHoloHapticEvent *event );
 	void			RemoveEvent( CHoloHapticEvent *event );
 
+	void			SetActive( bool active )				{ _active = active; }
+
 	void			ClearAllEvents();
 	void			Disable();
 
@@ -85,6 +87,7 @@ private:
 	CNetworkVar( int, _power );
 	CNetworkVar( int, _frequency );
 	CNetworkVar( bool, _enabled );
+	bool			_active;
 };
 
 EXTERN_SEND_TABLE( DT_HoloHaptics );

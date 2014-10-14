@@ -88,10 +88,32 @@ void CGridPlayer::ProcessFrame( const CFrame &frame )
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
+void CGridPlayer::OnInvalidFrame()
+{
+	//
+	// Disable guns.
+	//
+	if( _activeWeapon )
+	{
+		CHoloHand *hand = (CHoloHand *)GetHandEntity( (EHand)_weaponHandIdx );
+
+		_activeWeapon->PutAway();
+		hand->SetInvisible( false );
+
+		_activeWeapon = NULL;
+		_weaponWasOut = false;
+		_weaponHandIdx = -1;
+	}
+
+	BaseClass::OnInvalidFrame();
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 void CGridPlayer::HandleGunGesture( const CFrame &frame )
 {
 	CGridBaseWeapon *weapon = GetInventory().GetWeapon();
-	if( !weapon )
+	if( !weapon || GetUseEntity() )
 	{
 		return;
 	}

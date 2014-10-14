@@ -45,6 +45,7 @@ CHoloPlayer::CHoloPlayer() :
 	_screenManager( this )
 {
 	_viewoffset.GetForModify().Init( 0, 0, 0 );
+	_invalidFrames = 0;
 }
 
 //-----------------------------------------------------------------------------
@@ -128,19 +129,55 @@ bool CHoloPlayer::BumpWeapon( CBaseCombatWeapon *pWeapon )
 //-----------------------------------------------------------------------------
 void CHoloPlayer::ProcessUsercmds( CUserCmd *cmds, int numcmds, int totalcmds, int dropped_packets, bool paused )
 {
+	//
+	// Build the frame from all the usercmds.
+	//
 	CFrame finalHoloFrame = AccumulateHoloFrame( cmds, numcmds, totalcmds, dropped_packets, paused );
-	
-	for( int i = 0; i < EHand::HAND_COUNT; i++ )
+
+	//
+	// Determine the source for the frame data processing.
+	//
+	CFrame *pFrame = NULL;
+	if( !finalHoloFrame.IsValid() && _invalidFrames < 10 )
 	{
-		CHoloHand *hand = (CHoloHand *)_hands[i].Get();
-		hand->ProcessFrame( finalHoloFrame );
+		// Allow 10 invalid frames before rejecting processing.
+		pFrame = &_lastValidFrame;
+		_invalidFrames++;
+	}
+	else if( finalHoloFrame.IsValid() )
+	{
+		pFrame = &finalHoloFrame;
+		_lastValidFrame = finalHoloFrame;
+		_invalidFrames = 0;
 	}
 
-	if( finalHoloFrame.IsValid() )
+	//
+	// Process the selected frame.
+	//
+	if( pFrame )
 	{
-		ProcessFrame( finalHoloFrame );
+		for( int i = 0; i < EHand::HAND_COUNT; i++ )
+		{
+			CHoloHand *hand = (CHoloHand *)_hands[i].Get();
+			hand->ProcessFrame( *pFrame );
+		}
+
+		ProcessFrame( *pFrame );
+	}
+	else
+	{
+		for( int i = 0; i < EHand::HAND_COUNT; i++ )
+		{
+			CHoloHand *hand = (CHoloHand *)_hands[i].Get();
+			hand->OnInvalidFrame();
+		}
+
+		OnInvalidFrame();
 	}
 
+	//
+	// Apply the headtracked offset.
+	//
 	const Vector eyeOffset = GetFlags() & FL_DUCKING ? VEC_DUCK_VIEW_SCALED( this ) : VEC_VIEW_SCALED( this );
 	_viewoffset = cmds[totalcmds-1].viewoffset;
 	SetViewOffset( eyeOffset + _viewoffset );
@@ -204,7 +241,7 @@ void CHoloPlayer::ProcessFrame( const CFrame &frame )
 	// Handle map callbacks.
 	//
 	CHoloGestureListener *listener = CHoloGestureListener::Get();
-	if( listener )
+	if( listener && frame.IsValid() )
 	{
 		if( frame.IsGestureActive( EGesture::GESTURE_CIRCLE ) )
 		{
@@ -225,8 +262,19 @@ void CHoloPlayer::ProcessFrame( const CFrame &frame )
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
+void CHoloPlayer::OnInvalidFrame()
+{
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 void CHoloPlayer::HandlePickupGesture( const CFrame &frame )
 {
+	if( !CanAttemptPickup() )
+	{
+		return;
+	}
+
 	for( int i = 0; i < EHand::HAND_COUNT; i++ )
 	{
 		CPickupGesture pickup( frame, (EHand)i );

@@ -1,8 +1,8 @@
 versioninfo
 {
 	"editorversion" "400"
-	"editorbuild" "6440"
-	"mapversion" "189"
+	"editorbuild" "6412"
+	"mapversion" "190"
 	"formatversion" "100"
 	"prefab" "0"
 }
@@ -20,7 +20,7 @@ viewsettings
 world
 {
 	"id" "1"
-	"mapversion" "189"
+	"mapversion" "190"
 	"classname" "worldspawn"
 	"detailmaterial" "detail/detailsprites"
 	"detailvbsp" "detail.vbsp"
@@ -809,42 +809,6 @@ world
 }
 entity
 {
-	"id" "685"
-	"classname" "info_player_start"
-	"angles" "0 90 0"
-	"origin" "0 64 0"
-	editor
-	{
-		"color" "0 255 0"
-		"visgroupshown" "1"
-		"visgroupautoshown" "1"
-		"logicalpos" "[0 0]"
-	}
-}
-entity
-{
-	"id" "694"
-	"classname" "light_environment"
-	"_ambient" "255 255 255 20"
-	"_ambientHDR" "-1 -1 -1 1"
-	"_AmbientScaleHDR" "1"
-	"_light" "255 255 255 200"
-	"_lightHDR" "-1 -1 -1 1"
-	"_lightscaleHDR" "1"
-	"angles" "0 212 0"
-	"pitch" "-30"
-	"SunSpreadAngle" "0"
-	"origin" "480 480 608"
-	editor
-	{
-		"color" "220 30 220"
-		"visgroupshown" "1"
-		"visgroupautoshown" "1"
-		"logicalpos" "[0 2000]"
-	}
-}
-entity
-{
 	"id" "2665"
 	"classname" "func_brush"
 	"disablereceiveshadows" "0"
@@ -960,7 +924,7 @@ entity
 		side
 		{
 			"id" "546"
-			"plane" "(-240 288 72) (-240 352 72) (-144 352 72)"
+			"plane" "(-224 304 72) (-224 336 72) (-160 336 72)"
 			"material" "TOOLS/TOOLSTRIGGER"
 			"uaxis" "[1 0 0 0] 0.25"
 			"vaxis" "[0 -1 0 0] 0.25"
@@ -971,7 +935,7 @@ entity
 		side
 		{
 			"id" "545"
-			"plane" "(-240 352 0) (-240 288 0) (-144 288 0)"
+			"plane" "(-224 336 0) (-224 304 0) (-160 304 0)"
 			"material" "TOOLS/TOOLSTRIGGER"
 			"uaxis" "[1 0 0 0] 0.25"
 			"vaxis" "[0 -1 0 0] 0.25"
@@ -982,7 +946,7 @@ entity
 		side
 		{
 			"id" "544"
-			"plane" "(-240 288 0) (-240 352 0) (-240 352 72)"
+			"plane" "(-224 304 0) (-224 336 0) (-224 336 72)"
 			"material" "TOOLS/TOOLSTRIGGER"
 			"uaxis" "[0 1 0 0] 0.25"
 			"vaxis" "[0 0 -1 0] 0.25"
@@ -993,7 +957,7 @@ entity
 		side
 		{
 			"id" "543"
-			"plane" "(-144 352 0) (-144 288 0) (-144 288 72)"
+			"plane" "(-160 336 0) (-160 304 0) (-160 304 72)"
 			"material" "TOOLS/TOOLSTRIGGER"
 			"uaxis" "[0 1 0 0] 0.25"
 			"vaxis" "[0 0 -1 0] 0.25"
@@ -1004,7 +968,7 @@ entity
 		side
 		{
 			"id" "542"
-			"plane" "(-240 352 0) (-144 352 0) (-144 352 72)"
+			"plane" "(-224 336 0) (-160 336 0) (-160 336 72)"
 			"material" "TOOLS/TOOLSTRIGGER"
 			"uaxis" "[1 0 0 0] 0.25"
 			"vaxis" "[0 0 -1 0] 0.25"
@@ -1015,7 +979,7 @@ entity
 		side
 		{
 			"id" "541"
-			"plane" "(-144 288 0) (-240 288 0) (-240 288 72)"
+			"plane" "(-160 304 0) (-224 304 0) (-224 304 72)"
 			"material" "TOOLS/TOOLSTRIGGER"
 			"uaxis" "[1 0 0 0] 0.25"
 			"vaxis" "[0 0 -1 0] 0.25"
@@ -1137,37 +1101,6 @@ entity
 		"visgroupshown" "1"
 		"visgroupautoshown" "1"
 		"logicalpos" "[0 500]"
-	}
-}
-entity
-{
-	"id" "3032"
-	"classname" "ambient_generic"
-	"cspinup" "0"
-	"fadeinsecs" "0"
-	"fadeoutsecs" "0"
-	"health" "10"
-	"lfomodpitch" "0"
-	"lfomodvol" "0"
-	"lforate" "0"
-	"lfotype" "0"
-	"message" "apc_engine_idle"
-	"pitch" "100"
-	"pitchstart" "100"
-	"preset" "0"
-	"radius" "256"
-	"spawnflags" "0"
-	"spindown" "0"
-	"spinup" "0"
-	"targetname" "r1_shield_sound"
-	"volstart" "0"
-	"origin" "0 304 48"
-	editor
-	{
-		"color" "220 30 220"
-		"visgroupshown" "1"
-		"visgroupautoshown" "1"
-		"logicalpos" "[0 3000]"
 	}
 }
 entity
@@ -1356,6 +1289,73 @@ entity
 		"visgroupshown" "1"
 		"visgroupautoshown" "1"
 		"logicalpos" "[0 2000]"
+	}
+}
+entity
+{
+	"id" "685"
+	"classname" "info_player_start"
+	"angles" "0 90 0"
+	"origin" "0 64 0"
+	editor
+	{
+		"color" "0 255 0"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 0]"
+	}
+}
+entity
+{
+	"id" "694"
+	"classname" "light_environment"
+	"_ambient" "255 255 255 20"
+	"_ambientHDR" "-1 -1 -1 1"
+	"_AmbientScaleHDR" "1"
+	"_light" "255 255 255 200"
+	"_lightHDR" "-1 -1 -1 1"
+	"_lightscaleHDR" "1"
+	"angles" "0 212 0"
+	"pitch" "-30"
+	"SunSpreadAngle" "0"
+	"origin" "480 480 608"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 2000]"
+	}
+}
+entity
+{
+	"id" "3032"
+	"classname" "ambient_generic"
+	"cspinup" "0"
+	"fadeinsecs" "0"
+	"fadeoutsecs" "0"
+	"health" "10"
+	"lfomodpitch" "0"
+	"lfomodvol" "0"
+	"lforate" "0"
+	"lfotype" "0"
+	"message" "apc_engine_idle"
+	"pitch" "100"
+	"pitchstart" "100"
+	"preset" "0"
+	"radius" "256"
+	"spawnflags" "0"
+	"spindown" "0"
+	"spinup" "0"
+	"targetname" "r1_shield_sound"
+	"volstart" "0"
+	"origin" "0 304 48"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 3000]"
 	}
 }
 entity

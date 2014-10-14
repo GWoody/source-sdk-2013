@@ -60,6 +60,7 @@ public:
 
 	// Frame processing.
 	void			ProcessFrame( const CFrame &frame );
+	void			OnInvalidFrame();
 
 	void			SetInvisible( bool invisible );
 
@@ -84,8 +85,6 @@ private:
 	// Object interaction.
 	EHANDLE			_heldEntity;
 	float			_nextPickupTime;
-
-	int				_invalidCount;
 };
 
 #endif // __HOLO_HAND_H__

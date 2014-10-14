@@ -66,6 +66,8 @@ CHoloHaptics::CHoloHaptics() :
 	_targetHand = -1;
 	_power = _frequency = 0;
 	_enabled = false;
+
+	_active = true;
 }
 
 //-----------------------------------------------------------------------------
@@ -121,7 +123,7 @@ void CHoloHaptics::Update()
 		}
 	}
 
-	if( !_events.Count() )
+	if( !_events.Count() || !_active )
 	{
 		// More more events. Kill the device.
 		Disable();

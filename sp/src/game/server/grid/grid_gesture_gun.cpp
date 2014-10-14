@@ -46,6 +46,12 @@ bool CGunGesture::HoldingTrigger() const
 //-----------------------------------------------------------------------------
 void CGunGesture::Detect( const CFrame &frame, EHand hand )
 {
+	if( !frame.IsValid() )
+	{
+		SetInactive();
+		return;
+	}
+
 	if( !DetectClosedFingers( frame, hand ) )
 	{
 		SetInactive();

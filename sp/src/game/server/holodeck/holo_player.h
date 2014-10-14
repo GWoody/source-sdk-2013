@@ -47,6 +47,9 @@ public:
 
 protected:
 	virtual void	ProcessFrame( const CFrame &frame );
+	virtual void	OnInvalidFrame();
+
+	virtual bool	CanAttemptPickup() const			{ return true; }
 
 private:
 	// Custom gesture detection.
@@ -60,6 +63,9 @@ private:
 	CNetworkVar( Vector, _viewoffset );
 
 	CHoloWorldScreenManager	_screenManager;
+
+	int				_invalidFrames;
+	CFrame			_lastValidFrame;
 };
 
 #endif // __HOLO_PLAYER_H__
