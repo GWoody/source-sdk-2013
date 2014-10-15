@@ -49,3 +49,51 @@ void CWeaponShootHapticEvent::Disable()
 {
 	_enabled = false;
 }
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+CShockDmgHapticEvent::CShockDmgHapticEvent() : CHoloHapticEvent( TAKE_DAMAGE )
+{
+	_startTime = gpGlobals->curtime;
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+bool CShockDmgHapticEvent::Update()
+{
+	if( _startTime + 0.5f < gpGlobals->curtime )
+	{
+		Clear();
+		return false;
+	}
+
+	_power = 127;
+	_frequency = 255;
+	_enabled = true;
+
+	return true;
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+CBulletDmgHapticEvent::CBulletDmgHapticEvent() : CHoloHapticEvent( TAKE_DAMAGE )
+{
+	_startTime = gpGlobals->curtime;
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+bool CBulletDmgHapticEvent::Update()
+{
+	if( _startTime + 0.3f < gpGlobals->curtime )
+	{
+		Clear();
+		return false;
+	}
+
+	_power = 191;
+	_frequency = 127;
+	_enabled = true;
+
+	return true;
+}

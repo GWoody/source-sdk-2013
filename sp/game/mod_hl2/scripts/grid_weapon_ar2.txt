@@ -42,7 +42,7 @@
 	
 	"haptic"
 	{
-		"power"			"190"
+		"power"			"100"
 		"freq"			"63"
 		"duration"		"0"
 	}

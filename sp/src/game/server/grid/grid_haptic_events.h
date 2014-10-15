@@ -29,4 +29,30 @@ private:
 	unsigned char	_weaponFreq;
 };
 
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+class CShockDmgHapticEvent : public CHoloHapticEvent
+{
+public:
+	CShockDmgHapticEvent();
+
+	virtual bool	Update();
+
+private:
+	float			_startTime;
+};
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+class CBulletDmgHapticEvent : public CHoloHapticEvent
+{
+public:
+	CBulletDmgHapticEvent();
+
+	virtual bool	Update();
+
+private:
+	float			_startTime;
+};
+
 #endif // __GRID_HAPTIC_EVENTS_H__

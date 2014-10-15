@@ -37,6 +37,7 @@ public:
 	virtual void	Spawn();
 	virtual bool	IsUseableEntity( CBaseEntity *pEntity, unsigned int requiredCaps );
 	virtual void	PreThink();
+	virtual int		OnTakeDamage( const CTakeDamageInfo &info );
 
 	// Weapon overrides.
 	virtual Vector	Weapon_ShootPosition();

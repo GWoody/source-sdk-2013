@@ -11,6 +11,7 @@
 #include "grid_player.h"
 #include "grid_base_weapon.h"
 #include "holodeck/holo_haptics.h"
+#include "grid/grid_haptic_events.h"
 
 using namespace holo;
 using namespace grid;
@@ -174,4 +175,23 @@ void CGridPlayer::PreThink()
 			weapon->ItemPreFrame();
 		}
 	}
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+int CGridPlayer::OnTakeDamage( const CTakeDamageInfo &info )
+{
+	if( info.GetDamageType() & DMG_SHOCK )
+	{
+		GetHandEntity( HAND_LEFT )->GetHaptics().AddEvent( new CShockDmgHapticEvent );
+		GetHandEntity( HAND_RIGHT )->GetHaptics().AddEvent( new CShockDmgHapticEvent );
+	}
+
+	if( info.GetDamageType() & DMG_BULLET )
+	{
+		GetHandEntity( HAND_LEFT )->GetHaptics().AddEvent( new CBulletDmgHapticEvent );
+		GetHandEntity( HAND_RIGHT )->GetHaptics().AddEvent( new CBulletDmgHapticEvent );
+	}
+
+	return BaseClass::OnTakeDamage( info );
 }
