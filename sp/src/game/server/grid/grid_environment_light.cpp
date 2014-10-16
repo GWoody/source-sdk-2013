@@ -94,12 +94,12 @@ CGridEnvironmentLight::CGridEnvironmentLight()
 {
 	{
 		_sunBrightness._rise.Init( 32.0f, 0.0f, 0.0f, 0.25f );
-		_sunBrightness._horizon.Init( 237.0f, 200.0f, 127.0f, 1.0f );
-		_sunBrightness._highest.Init( 237.0f, 218.0f, 143.0f, 3.0f );
+		_sunBrightness._horizon.Init( 237.0f, 200.0f, 127.0f, 0.75f );
+		_sunBrightness._highest.Init( 237.0f, 218.0f, 143.0f, 1.5f );
 
-		_sunAmbience._rise.Init( 8.0f, 8.0f, 8.0f, 1.0f );
-		_sunAmbience._horizon.Init( 48.0f, 48.0f, 48.0f, 1.0f );
-		_sunAmbience._highest.Init( 64.0f, 64.0f, 64.0f, 1.0f );
+		_sunAmbience._rise.Init( 4.0f, 4.0f, 4.0f, 1.0f );
+		_sunAmbience._horizon.Init( 64.0f, 64.0f, 64.0f, 1.0f );
+		_sunAmbience._highest.Init( 96.0f, 96.0f, 96.0f, 1.0f );
 	}
 
 	{

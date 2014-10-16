@@ -52,6 +52,7 @@ struct VertexLitGeneric_DX9_Vars_t
 	int m_nAlphaTestReference;
 	int m_nVertexAlphaTest;
 	int m_nFlashlightNoLambert;
+	int m_nFlashlightScale;
 	int m_nFlashlightTexture;
 	int m_nFlashlightTextureFrame;
 

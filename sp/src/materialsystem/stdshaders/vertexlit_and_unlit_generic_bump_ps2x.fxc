@@ -81,7 +81,7 @@ const float3 cAmbientCube[6]				: register( c5 );
 #endif
 
 #if !(defined(SHADER_MODEL_PS_1_1) || defined(SHADER_MODEL_PS_1_4) || defined(SHADER_MODEL_PS_2_0))
-const float3 g_AmbientColor					: register( c19 );
+const float4 g_AmbientColor					: register( c19 );
 #endif
 
 const float4 g_ShaderControls				: register( c12 );
@@ -276,8 +276,9 @@ float4 main( PS_INPUT i ) : COLOR
 
 #if defined ( _X360 )
 		diffuseLighting += flashlightColor;
-#else
-		diffuseLighting = flashlightColor * 5;
+#endif
+#if ( DIFFUSELIGHTING == 1 && !(defined(SHADER_MODEL_PS_1_1) || defined(SHADER_MODEL_PS_1_4) || defined(SHADER_MODEL_PS_2_0)) )
+		diffuseLighting = flashlightColor * g_AmbientColor.a;
 #endif
 
 	}
@@ -285,7 +286,7 @@ float4 main( PS_INPUT i ) : COLOR
 
 #if ( DIFFUSELIGHTING == 1 && !(defined(SHADER_MODEL_PS_1_1) || defined(SHADER_MODEL_PS_1_4) || defined(SHADER_MODEL_PS_2_0)) )
 	// PS2b+ only because <=PS2 are already out of instructions.
-	diffuseLighting += g_AmbientColor;
+	diffuseLighting += g_AmbientColor.rgb;
 #endif
 
 	float3 diffuseComponent = albedo * diffuseLighting;

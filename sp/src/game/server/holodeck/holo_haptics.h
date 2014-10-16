@@ -67,18 +67,19 @@ public:
 
 	void			AddEvent( CHoloHapticEvent *event );
 	void			RemoveEvent( CHoloHapticEvent *event );
+	void			ClearAllEvents();
 
 	void			SetActive( bool active )				{ _active = active; }
-
-	void			ClearAllEvents();
-	void			Disable();
+	void			SetTargetHand( EHand hand )				{ _targetHand = hand; }
 
 	void			Update();
+
+protected:
+	void			Disable();
 
 	void			SetPower( unsigned char power )			{ _power = power; }
 	void			SetFrequency( unsigned char freq )		{ _frequency = freq; }
 	void			SetEnabled( bool enabled )				{ _enabled = enabled; }
-	void			SetTargetHand( EHand hand )				{ _targetHand = hand; }
 
 private:
 	CUtlPriorityQueue<CHoloHapticEvent *>	_events;

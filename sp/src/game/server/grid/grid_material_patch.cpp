@@ -65,6 +65,8 @@ void Grid_InitShaderReplacementTable()
 
 	Grid_CreateShaderReplacementPair( "LightmappedGeneric", "SDK_LightmappedGeneric" );
 	Grid_CreateShaderReplacementPair( "VertexLitGeneric", "SDK_VertexLitGeneric" );
+	Grid_CreateShaderReplacementPair( "WorldVertexTransition", "SDK_WorldVertexTransition" );
+	Grid_CreateShaderReplacementPair( "WorldVertexTransition_DX9", "SDK_WorldVertexTransition_DX9" );
 
 	gShaderReplacementTableInitialized = true;
 }

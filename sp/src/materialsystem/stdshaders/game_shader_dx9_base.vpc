@@ -72,6 +72,9 @@ $Project
 		$File	"lightmappedgeneric_dx9.cpp"
 		$File	"lightmappedgeneric_dx9_helper.cpp"
 		$File	"lightmappedgeneric_dx9_helper.h"
+		
+		$File	"worldvertextransition.cpp"
+		$File	"worldvertextransition_dx8_helper.h"
 	}
 
 	$Folder	"Header Files"

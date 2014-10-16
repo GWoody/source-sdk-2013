@@ -66,6 +66,7 @@ void InitParamsVertexLitGeneric_DX9( CBaseVSShader *pShader, IMaterialVar** para
 	InitIntParam( info.m_nVertexAlphaTest, params, 0 );
 
 	InitIntParam( info.m_nFlashlightNoLambert, params, 0 );
+	InitFloatParam( info.m_nFlashlightScale, params, 5.0f );
 
 	if ( info.m_nDetailTint != -1 && !params[info.m_nDetailTint]->IsDefined() )
 	{
@@ -1230,7 +1231,12 @@ static void DrawVertexLitGeneric_DX9_Internal( CBaseVSShader *pShader, IMaterial
 		float vShaderControls[4] = { fPixelFogType, fWriteDepthToAlpha, fWriteWaterFogToDestAlpha, fVertexAlpha	 };
 		DynamicCmdsOut.SetPixelShaderConstant( 12, vShaderControls, 1 );
 
-		const float ambientLighting[4] = { mat_ambient_light_r.GetFloat(), mat_ambient_light_g.GetFloat(), mat_ambient_light_b.GetFloat(), 1.0f };
+		float flashlightScale = 1.0f;
+		if( info.m_nFlashlightScale != -1 )
+		{
+			flashlightScale = params[info.m_nFlashlightScale]->GetFloatValue();
+		}
+		const float ambientLighting[4] = { mat_ambient_light_r.GetFloat(), mat_ambient_light_g.GetFloat(), mat_ambient_light_b.GetFloat(), flashlightScale };
 		DynamicCmdsOut.SetPixelShaderConstant( 19, ambientLighting );
 
 		// flashlightfixme: put this in common code.

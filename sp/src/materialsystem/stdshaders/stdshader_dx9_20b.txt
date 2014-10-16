@@ -61,3 +61,13 @@ lightmappedgeneric_flashlight_vs20.fxc
 
 flashlight_ps2x.fxc
 flashlight_ps11.fxc
+
+WorldVertexTransition.psh
+WorldVertexTransition.vsh
+WorldVertexTransition_BlendBase2.psh
+WorldVertexTransition_ps2x.fxc
+WorldVertexTransition_ps14.psh
+WorldVertexTransition_Seamless.psh
+WorldVertexTransition_Seamless.vsh
+WorldVertexTransition_vs14.vsh
+WorldVertexTransition_vs20.fxc
