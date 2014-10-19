@@ -1,4 +1,8 @@
 "prop_manifest"
 {
+	"file"	"scripts/grid_estate_prop_entertainment.txt"
 	"file"	"scripts/grid_estate_prop_sitting.txt"
+	"file"	"scripts/grid_estate_prop_sleeping.txt"
+	"file"	"scripts/grid_estate_prop_storage.txt"
+	"file"	"scripts/grid_estate_prop_surface.txt"
 }

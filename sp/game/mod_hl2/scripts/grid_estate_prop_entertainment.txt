@@ -1,0 +1,51 @@
+"props"
+{
+	"models/props_c17/tv_monitor01.mdl"
+	{
+		"pitch"	"15"
+		"x"		"32"
+		"z"		"5"
+	}
+	
+	"models/props_c17/furniturefridge001a.mdl"
+	{
+		"pitch"	"20"
+		"x"		"72"
+		"z"		"17"
+	}
+	
+	"models/props_wasteland/kitchen_fridge001a.mdl"
+	{
+		"pitch"	"20"
+		"x"		"128"
+		"z"		"100"
+	}
+	
+	"models/props_c17/furniturewashingmachine001a.mdl"
+	{
+		"pitch"	"20"
+		"x"		"72"
+		"z"		"17"
+	}
+	
+	"models/props_c17/furniturestove001a.mdl"
+	{
+		"pitch"	"20"
+		"x"		"72"
+		"z"		"17"
+	}
+	
+	"models/props_wasteland/kitchen_stove001a.mdl"
+	{
+		"pitch"	"20"
+		"x"		"72"
+		"z"		"50"
+	}
+	
+	"models/props_wasteland/kitchen_stove002a.mdl"
+	{
+		"pitch"	"20"
+		"x"		"100"
+		"z"		"80"
+	}
+}

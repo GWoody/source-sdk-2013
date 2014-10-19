@@ -150,8 +150,18 @@ private:
 	int				_propy;
 };
 
+typedef C_GridEstatePropSpawnScreen C_GridEstateSittingPropScreen;
+typedef C_GridEstatePropSpawnScreen C_GridEstateSleepingPropScreen;
+typedef C_GridEstatePropSpawnScreen C_GridEstateEntertainmentPropScreen;
+typedef C_GridEstatePropSpawnScreen C_GridEstateSurfacePropScreen;
+typedef C_GridEstatePropSpawnScreen C_GridEstateStoragePropScreen;
+
 // Expose the VGUI screen to the server.
-DECLARE_VGUI_SCREEN_FACTORY( C_GridEstatePropSpawnScreen, "grid_estate_sitting_prop_screen" );
+DECLARE_VGUI_SCREEN_FACTORY( C_GridEstateSittingPropScreen, "grid_estate_sitting_prop_screen" );
+DECLARE_VGUI_SCREEN_FACTORY( C_GridEstateSleepingPropScreen, "grid_estate_sleeping_prop_screen" );
+DECLARE_VGUI_SCREEN_FACTORY( C_GridEstateEntertainmentPropScreen, "grid_estate_entertainment_prop_screen" );
+DECLARE_VGUI_SCREEN_FACTORY( C_GridEstateSurfacePropScreen, "grid_estate_surface_prop_screen" );
+DECLARE_VGUI_SCREEN_FACTORY( C_GridEstateStoragePropScreen, "grid_estate_storage_prop_screen" );
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
@@ -179,19 +189,19 @@ void C_GridEstatePropScreen::OnCommand( const char *command )
 	}
 	else if( !Q_stricmp( command, "open_sleeping_props" ) )
 	{
-		OpenPanel( "grid_eden_moon_lighting_screen", WORLD_PANEL_MIDDLE );
+		OpenPanel( "grid_estate_sleeping_prop_screen", WORLD_PANEL_MIDDLE );
 	}
 	else if( !Q_stricmp( command, "open_entertainment_props" ) )
 	{
-		OpenPanel( "grid_eden_prop_screen", WORLD_PANEL_MIDDLE );
+		OpenPanel( "grid_estate_entertainment_prop_screen", WORLD_PANEL_MIDDLE );
 	}
 	else if( !Q_stricmp( command, "open_surface_props" ) )
 	{
-		OpenPanel( "grid_eden_prop_screen", WORLD_PANEL_MIDDLE );
+		OpenPanel( "grid_estate_surface_prop_screen", WORLD_PANEL_MIDDLE );
 	}
 	else if( !Q_stricmp( command, "open_storage_props" ) )
 	{
-		OpenPanel( "grid_eden_prop_screen", WORLD_PANEL_MIDDLE );
+		OpenPanel( "grid_estate_storage_prop_screen", WORLD_PANEL_MIDDLE );
 	}
 	else
 	{

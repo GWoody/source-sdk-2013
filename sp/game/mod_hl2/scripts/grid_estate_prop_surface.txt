@@ -1,0 +1,44 @@
+"props"
+{
+	"models/props_combine/breendesk.mdl"
+	{
+		"pitch"	"15"
+		"x"		"105"
+		"z"		"50"
+	}
+	
+	"models/props_interiors/furniture_desk01a.mdl"
+	{
+		"pitch"	"20"
+		"x"		"70"
+		"z"		"30"
+	}
+	
+	"models/props_interiors/furniture_vanity01a.mdl"
+	{
+		"pitch"	"20"
+		"x"		"70"
+		"z"		"30"
+	}
+	
+	"models/props_c17/furnituretable001a.mdl"
+	{
+		"pitch"	"20"
+		"x"		"70"
+		"z"		"30"
+	}
+	
+	"models/props_c17/furnituretable002a.mdl"
+	{
+		"pitch"	"20"
+		"x"		"80"
+		"z"		"30"
+	}
+	
+	"models/props_c17/furnituretable003a.mdl"
+	{
+		"pitch"	"20"
+		"x"		"70"
+		"z"		"30"
+	}
+}

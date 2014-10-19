@@ -1,0 +1,43 @@
+"props"
+{
+	"models/props_c17/furnituredrawer001a.mdl"
+	{
+		"pitch"	"15"
+		"x"		"64"
+		"z"		"20"
+	}
+	
+	"models/props_c17/furnituredrawer002a.mdl"
+	{
+		"pitch"	"17"
+		"z"		"20"
+	}
+	
+	"models/props_interiors/furniture_cabinetdrawer01a.mdl"
+	{
+		"pitch"	"15"
+		"x"		"64"
+		"z"		"20"
+	}
+	
+	"models/props_interiors/furniture_cabinetdrawer02a.mdl"
+	{
+		"pitch"	"12"
+		"x"		"85"
+		"z"		"20"
+	}
+	
+	"models/props_c17/furniturecupboard001a.mdl"
+	{
+		"pitch"	"12"
+		"y"		"-10"
+		"z"		"20"
+	}
+	
+	"models/props_c17/furnituredresser001a.mdl"
+	{
+		"pitch"	"12"
+		"x"		"90"
+		"z"		"20"
+	}
+}

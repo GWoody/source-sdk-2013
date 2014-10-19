@@ -272,7 +272,7 @@ private:
 		CFmtStr vmtSource( 
 "UnlitGeneric\n\
 {\n\
-	\"$basetexture\"	\"grid/%s.vtf\"\n\
+	\"$basetexture\"	\"grid/%s\"\n\
 	\"$translucent\"	1\n\
 }\n", modelNoExt );
 

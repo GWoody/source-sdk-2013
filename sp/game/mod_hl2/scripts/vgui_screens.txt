@@ -104,4 +104,36 @@
 		"pixelshigh"	282
 		"resfile"		"scripts/screens/grid_estate_sitting_prop_screen.res"
 	}
+	
+	"grid_estate_sleeping_prop_screen"
+	{
+		"type"			"grid_estate_sleeping_prop_screen"
+		"pixelswide"	256
+		"pixelshigh"	282
+		"resfile"		"scripts/screens/grid_estate_sleeping_prop_screen.res"
+	}
+	
+	"grid_estate_entertainment_prop_screen"
+	{
+		"type"			"grid_estate_entertainment_prop_screen"
+		"pixelswide"	256
+		"pixelshigh"	282
+		"resfile"		"scripts/screens/grid_estate_entertainment_prop_screen.res"
+	}
+	
+	"grid_estate_surface_prop_screen"
+	{
+		"type"			"grid_estate_surface_prop_screen"
+		"pixelswide"	256
+		"pixelshigh"	282
+		"resfile"		"scripts/screens/grid_estate_surface_prop_screen.res"
+	}
+	
+	"grid_estate_storage_prop_screen"
+	{
+		"type"			"grid_estate_storage_prop_screen"
+		"pixelswide"	256
+		"pixelshigh"	282
+		"resfile"		"scripts/screens/grid_estate_storage_prop_screen.res"
+	}
 }

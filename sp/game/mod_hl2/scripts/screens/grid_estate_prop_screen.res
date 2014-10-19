@@ -124,7 +124,7 @@
 		"visible"		"1"
 		"enabled"		"1"
 		"tabPosition"	"2"
-		"labelText"		"Entertainment"
+		"labelText"		"Appliances"
 		"textAlignment"	"center"
 		"dulltext"		"0"
 		"brighttext"	"0"
