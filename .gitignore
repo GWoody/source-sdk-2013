@@ -108,3 +108,6 @@ sp/src/lib/public/mathlib.lib
 sp/src/lib/public/mathlib.lib
 sp/src/lib/public/tier1.lib
 sp/src/lib/public/vgui_controls.lib
+
+sp/game/mod_hl2/materials/grid/models/*
+sp/game/mod_hl2/materialsrc/grid/models/*

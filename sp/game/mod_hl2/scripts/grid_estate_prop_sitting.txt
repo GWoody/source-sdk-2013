@@ -2,46 +2,62 @@
 {
 	"models/props_c17/furniturearmchair001a.mdl"
 	{
-		
+		"pitch"	"15"
+		"x"		"80"
+		"y"		"32"
+		"z"		"30"
 	}
 	
 	"models/props_c17/furniturechair001a.mdl"
 	{
-		
+		"pitch"	"15"
+		"z"		"10"
 	}
 	
 	"models/props_combine/breenchair.mdl"
 	{
-		
+		"pitch"	"15"
+		"x"		"80"
+		"z"		"40"
 	}
 	
 	"models/props_interiors/furniture_chair01a.mdl"
 	{
-		
+		"pitch"	"15"
+		"z"		"10"
 	}
 	
 	"models/props_interiors/furniture_chair03a.mdl"
 	{
-		
+		"pitch"	"15"
+		"z"		"10"
 	}
 	
 	"models/props_c17/furniturecouch001a.mdl"
 	{
-		
+		"x"		"96"
+		"z"		"15"
+		"pitch"	"15"
 	}
 	
 	"models/props_c17/furniturecouch002a.mdl"
 	{
-		
+		"x"		"72"
+		"z"		"10"
+		"pitch"	"15"
 	}
 	
 	"models/props_interiors/furniture_couch01a.mdl"
 	{
-		
+		"x"		"96"
+		"z"		"15"
+		"pitch"	"15"
 	}
 	
 	"models/props_interiors/furniture_couch02a.mdl"
 	{
-		
+		"x"		"72"
+		"z"		"10"
+		"pitch"	"15"
 	}
 }

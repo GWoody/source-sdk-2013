@@ -108,7 +108,11 @@ private:
 		FOR_EACH_TRUE_SUBKEY( kv, sub )
 		{
 			const char *modelname = sub->GetName();
-			ScreenshotModel( vtex, modelname );
+
+			Vector origin( sub->GetFloat("x", 48.0f), sub->GetFloat("y"), sub->GetFloat("z") );
+			QAngle angles( sub->GetFloat("pitch"), sub->GetFloat("yaw", 180), sub->GetFloat("roll") );
+
+			ScreenshotModel( vtex, modelname, origin, angles );
 		}
 
 		VTex_Unload( module );
@@ -116,7 +120,7 @@ private:
 		kv->deleteThis();
 	}
 
-	void ScreenshotModel( IVTex *vtex, const char *model )
+	void ScreenshotModel( IVTex *vtex, const char *model, const Vector &origin, const QAngle &angles )
 	{
 		//
 		// Create paths.
@@ -130,11 +134,11 @@ private:
 
 		CFmtStr vtfPath( "materials/grid/%s.vtf", modelNoExt );
 		CFmtStr vmtPath( "materials/grid/%s.vmt", modelNoExt );
-		if( filesystem->FileExists( vtfPath, "MOD" ) )
+		/*if( filesystem->FileExists( vtfPath, "MOD" ) )
 		{
 			PrecacheMaterial( vmtPath.Get() );
 			return;
-		}
+		}*/
 
 		//
 		// Create the model.
@@ -147,12 +151,7 @@ private:
 			return;
 		}
 
-		QAngle angles( 0.0f, 200.0f, 0.0f );
-		Vector origin( 64.0f, 40.0f, -15.0f );
-
 		pEnt->AddEffects( EF_NODRAW );
-		pEnt->SetAbsOrigin( origin );
-		pEnt->SetLocalAngles( angles );
 
 		//
 		// Set the view.
@@ -162,8 +161,8 @@ private:
 		view.width = view.height = 256;
 		view.m_bOrtho = false;
 		view.fov = ScaleFOVByWidthRatio( 60.0f, 1.0f );
-		view.origin = vec3_origin;
-		view.angles.Init();
+		view.origin = origin;
+		view.angles = angles;
 		view.zNear = VIEW_NEARZ;
 		view.zFar = 1000;
 
