@@ -58,3 +58,10 @@ void CHoloVGuiScreenPanel::OnCommand( const char *command )
 		BaseClass::OnCommand( command );
 	}
 }
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+Panel *CHoloVGuiScreenPanel::CreateControlByName( const char *controlName )
+{
+	return BaseClass::CreateControlByName( controlName );
+}

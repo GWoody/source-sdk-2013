@@ -47,7 +47,11 @@ public:
 	CVGuiScreenPanel( vgui::Panel *parent, const char *panelName );
 	CVGuiScreenPanel( vgui::Panel *parent, const char *panelName, vgui::HScheme hScheme );
 	virtual bool Init( KeyValues* pKeyValues, VGuiScreenInitData_t* pInitData );
+#ifdef HOLODECK
+	virtual vgui::Panel *CreateControlByName(const char *controlName);
+#else
 	vgui::Panel *CreateControlByName(const char *controlName);
+#endif
 	virtual void OnCommand( const char *command );
 
 protected:

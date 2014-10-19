@@ -1,0 +1,12 @@
+"vertexlitGeneric"
+{
+	"$basetexture" "nature/rockwall010e"
+	"$model" 1
+	"$surfaceprop" "boulder"
+	"$flashlightscale"	"40.0"
+
+	"$detail" "detail\rock_detail_01"
+	"$detailscale" "8.0"
+	"$detailblendfactor" .7
+	"$detailblendmode" 0
+}

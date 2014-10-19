@@ -1,0 +1,4 @@
+"prop_manifest"
+{
+	"file"	"scripts/grid_estate_prop_sitting.txt"
+}

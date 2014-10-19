@@ -646,7 +646,6 @@ void CModelPanel::Paint()
 	vgui::surface()->DrawSetColor( Color(0,0,0,255) );
 	vgui::surface()->DrawOutlinedRect( 0,0, GetWide(), GetTall() );
 	*/
-	
 }
 
 //-----------------------------------------------------------------------------

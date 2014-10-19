@@ -1,0 +1,47 @@
+"props"
+{
+	"models/props_c17/furniturearmchair001a.mdl"
+	{
+		
+	}
+	
+	"models/props_c17/furniturechair001a.mdl"
+	{
+		
+	}
+	
+	"models/props_combine/breenchair.mdl"
+	{
+		
+	}
+	
+	"models/props_interiors/furniture_chair01a.mdl"
+	{
+		
+	}
+	
+	"models/props_interiors/furniture_chair03a.mdl"
+	{
+		
+	}
+	
+	"models/props_c17/furniturecouch001a.mdl"
+	{
+		
+	}
+	
+	"models/props_c17/furniturecouch002a.mdl"
+	{
+		
+	}
+	
+	"models/props_interiors/furniture_couch01a.mdl"
+	{
+		
+	}
+	
+	"models/props_interiors/furniture_couch02a.mdl"
+	{
+		
+	}
+}

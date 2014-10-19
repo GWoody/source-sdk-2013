@@ -1,0 +1,5 @@
+"LightmappedGeneric"
+{
+	"$basetexture" "estate/plasterwall001"
+	"$surfaceprop"  "plaster"
+}

@@ -71,3 +71,8 @@ WorldVertexTransition_Seamless.psh
 WorldVertexTransition_Seamless.vsh
 WorldVertexTransition_vs14.vsh
 WorldVertexTransition_vs20.fxc
+
+unlitgeneric_ps2x.fxc
+unlitgeneric_ps11.fxc
+unlitgeneric_vs11.vsh
+unlitgeneric_vs20.fxc

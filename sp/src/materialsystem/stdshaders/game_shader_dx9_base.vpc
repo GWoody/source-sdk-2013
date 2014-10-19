@@ -75,6 +75,8 @@ $Project
 		
 		$File	"worldvertextransition.cpp"
 		$File	"worldvertextransition_dx8_helper.h"
+		
+		$File	"unlitgeneric_dx9.cpp"
 	}
 
 	$Folder	"Header Files"

@@ -80,6 +80,9 @@ void ClientGamePrecache( void )
 	CBaseEntity::PrecacheScriptSound( "Geiger.BeepHigh" );
 	CBaseEntity::PrecacheScriptSound( "Geiger.BeepLow" );
 
+	extern void Grid_PrecacheEstateProps();
+	Grid_PrecacheEstateProps();
+
 	PrecacheParticleSystem( "grenade_explosion_01" );
 }
 

@@ -22,6 +22,7 @@ public:
 
 	virtual bool	Init( KeyValues *kv, VGuiScreenInitData_t *init );
 	virtual void	OnCommand( const char *command );
+	virtual vgui::Panel * CreateControlByName( const char *controlName );
 };
 
 #endif // __C_HOLO_WORLD_SCREEN_PANEL_H__

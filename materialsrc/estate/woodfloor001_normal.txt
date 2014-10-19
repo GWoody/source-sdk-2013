@@ -1,0 +1,2 @@
+"bumpscale" "1"
+"normal" "1"
