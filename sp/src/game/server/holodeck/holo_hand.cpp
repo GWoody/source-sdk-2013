@@ -250,8 +250,6 @@ void CHoloHand::RenderDebugHand()
 	const float duration = 1.0f / 15.0f;
 	const int r = ( 1.0f - hand.GetConfidence() ) * 255.0f;
 
-	debugoverlay->ClearAllOverlays();
-
 	// Draw all fingers.
 	for( int i = 0; i < FINGER_COUNT; i++ )
 	{

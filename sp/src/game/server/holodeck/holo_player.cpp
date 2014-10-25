@@ -154,6 +154,7 @@ void CHoloPlayer::ProcessUsercmds( CUserCmd *cmds, int numcmds, int totalcmds, i
 	//
 	// Process the selected frame.
 	//
+	debugoverlay->ClearAllOverlays();
 	if( pFrame )
 	{
 		for( int i = 0; i < EHand::HAND_COUNT; i++ )
