@@ -1,0 +1,29 @@
+"grid_proptool.txt"
+{
+	"bullet"
+	{
+		"count"			"9999"
+		"ammotype"		"AR2"
+		"maxdistance"	"8192"
+		"damage"		"0"
+	}
+	
+	"shoot"
+	{
+		"semiauto"		"1"
+		"rate"			"1"
+	}
+	
+	"model"
+	{
+		"player"		"models/weapons/p_irifle.mdl"
+		"world"			"models/weapons/w_irifle.mdl"
+		"angle"			"0 180 0"
+	}
+	
+	"sound"
+	{
+		"shoot"			"Weapon_AR2.Single"
+		"empty"			"Weapon_IRifle.Empty"
+	}
+}
