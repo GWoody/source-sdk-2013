@@ -49,6 +49,25 @@
 		"prop"		"string"
 	}
 	
+	"grid_commit_prop"
+	{
+		"dummy"		"byte"
+	}
+	
+	"grid_prop_offset"
+	{
+		"x"			"float"
+		"y"			"float"
+		"z"			"float"
+	}
+	
+	"grid_prop_angles"
+	{
+		"pitch"		"float"
+		"yaw"		"float"
+		"roll"		"float"
+	}
+	
 	"team_info"				// info about team
 	{
 		"teamid"	"byte"		// unique team id

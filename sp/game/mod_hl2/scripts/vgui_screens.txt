@@ -136,4 +136,20 @@
 		"pixelshigh"	282
 		"resfile"		"scripts/screens/grid_estate_storage_prop_screen.res"
 	}
+	
+	"grid_estate_prop_position_screen"
+	{
+		"type"			"grid_estate_prop_position_screen"
+		"pixelswide"	256
+		"pixelshigh"	282
+		"resfile"		"scripts/screens/grid_estate_prop_position_screen.res"
+	}
+	
+	"grid_estate_prop_angle_screen"
+	{
+		"type"			"grid_estate_prop_angle_screen"
+		"pixelswide"	256
+		"pixelshigh"	282
+		"resfile"		"scripts/screens/grid_estate_prop_angle_screen.res"
+	}
 }

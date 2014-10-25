@@ -27,6 +27,7 @@ public:
 
 private:
 	EHANDLE			_activeWeapon;
+	EHANDLE			_prop;
 };
 
 #endif // __C_GRID_PLAYER_H__

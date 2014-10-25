@@ -30,6 +30,7 @@ END_DATADESC()
 IMPLEMENT_SERVERCLASS_ST( CGridPlayer, DT_GridPlayer )
 
 	SendPropEHandle( SENDINFO( _activeWeapon ) ),
+	SendPropEHandle( SENDINFO( _prop ) ),
 	
 END_SEND_TABLE()
 
@@ -38,7 +39,12 @@ END_SEND_TABLE()
 CGridPlayer::CGridPlayer() : _inventory( this )
 {
 	_weaponHandIdx = -1;
+	_prop = NULL;
+
 	ListenForGameEvent( "grid_ready_proptool" );
+	ListenForGameEvent( "grid_commit_prop" );
+	ListenForGameEvent( "grid_prop_offset" );
+	ListenForGameEvent( "grid_prop_angles" );
 }
 
 //-----------------------------------------------------------------------------
@@ -56,6 +62,26 @@ void CGridPlayer::FireGameEvent( IGameEvent *event )
 
 		_inventory.RemoveWeapon();
 		_inventory.SwapWeapons( tool );
+	}
+	else if( !Q_strcmp( event->GetName(), "grid_commit_prop" ) )
+	{
+		_prop = NULL;
+	}
+	else if( !Q_strcmp( event->GetName(), "grid_prop_offset" ) )
+	{
+		if( _prop.Get() )
+		{
+			Vector v( event->GetFloat("x"), event->GetFloat("y"), event->GetFloat("z") );
+			_prop->SetLocalOrigin( v );
+		}
+	}
+	else if( !Q_strcmp( event->GetName(), "grid_prop_angles" ) )
+	{
+		if( _prop.Get() )
+		{
+			QAngle a( event->GetFloat("pitch"), event->GetFloat("roll"), event->GetFloat("yaw") );
+			_prop->SetLocalAngles( a );
+		}
 	}
 }
 
@@ -96,6 +122,13 @@ Vector CGridPlayer::Weapon_ShootPosition()
 	}
 
 	return GetHandEntity( (EHand)_weaponHandIdx )->GetAbsOrigin();
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void CGridPlayer::SetProp( CDynamicProp *prop )
+{
+	_prop = prop;
 }
 
 //-----------------------------------------------------------------------------

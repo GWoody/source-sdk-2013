@@ -268,10 +268,11 @@ void C_HoloWorldScreen::CheckSlider( const CHand &hand, const CFinger &finger, v
 		{
 			float perc = (float)( px - x1 ) / (float)x2;
 
-			int min, max;
+			int min, max, delta;
 			slider->GetRange( min, max );
+			delta = max - min;
 
-			slider->SetValue( min + (perc * max) );
+			slider->SetValue( min + (perc * delta) );
 			_interacted = slider->GetVPanel();
 		}
 	}

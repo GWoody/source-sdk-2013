@@ -19,6 +19,7 @@ LINK_ENTITY_TO_CLASS( player, C_GridPlayer );
 IMPLEMENT_CLIENTCLASS_DT( C_GridPlayer, DT_GridPlayer, CGridPlayer )
 
 	RecvPropEHandle( RECVINFO( _activeWeapon ) ),
+	RecvPropEHandle( RECVINFO( _prop ) ),
 
 END_RECV_TABLE()
 

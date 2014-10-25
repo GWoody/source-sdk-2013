@@ -113,7 +113,7 @@ void CGridPropTool::ItemPreFrame()
 		trace_t tr;
 		UTIL_TraceHull( finger.GetTipPosition(), finger.GetTipPosition() + finger.GetDirection() * 1024, _preview->CollisionProp()->OBBMins(), _preview->CollisionProp()->OBBMaxs(), MASK_SOLID, &filter, &tr );
 
-		debugoverlay->AddLineOverlayAlpha( finger.GetTipPosition(), tr.endpos, 255, 0, 0, 127, false, 0.5 );
+		debugoverlay->AddLineOverlayAlpha( finger.GetTipPosition(), tr.endpos, 255, 0, 0, 63, false, 0.5 );
 		
 		_preview->SetAbsOrigin( tr.endpos );
 	}
@@ -130,5 +130,8 @@ void CGridPropTool::ShootSingleBullet()
 
 	PutAway();
 
+	owner->SetProp( _preview.Get() );
 	owner->GetInventory().RemoveWeapon();
+	owner->GetScreenManager().CreateScreen( WORLD_PANEL_LEFT, "grid_estate_prop_position_screen" );
+	owner->GetScreenManager().CreateScreen( WORLD_PANEL_RIGHT, "grid_estate_prop_angle_screen" );
 }

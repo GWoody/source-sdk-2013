@@ -16,6 +16,8 @@
 #include "holodeck/holo_haptics.h"
 #include "holodeck/holo_player.h"
 
+#include "props.h"
+
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 class CGridPlayer : public CHoloPlayer, public CGameEventListener
@@ -45,6 +47,9 @@ public:
 	// Weapon overrides.
 	virtual Vector	Weapon_ShootPosition();
 
+	// Mutators.
+	void			SetProp( CDynamicProp *prop );
+
 	// Accessors.
 	grid::CInventory &	GetInventory()					{ return _inventory; }
 
@@ -62,6 +67,8 @@ private:
 	grid::CInventory	_inventory;
 	bool			_weaponWasOut;
 	int				_weaponHandIdx;
+
+	CNetworkHandle( CDynamicProp, _prop );
 };
 
 #endif // __GRID_PLAYER_H__
