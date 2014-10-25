@@ -29,6 +29,9 @@ public:
 	virtual void	PutAway();
 	virtual void	ItemPreFrame();
 
+	// Shooting.
+	virtual void	ShootSingleBullet();
+
 private:
 	CHandle<CDynamicProp>	_preview;
 	CUtlString		_prop;

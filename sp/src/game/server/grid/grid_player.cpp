@@ -54,6 +54,7 @@ void CGridPlayer::FireGameEvent( IGameEvent *event )
 		tool->SetProp( prop );
 		tool->TakeOut( HAND_RIGHT );
 
+		_inventory.RemoveWeapon();
 		_inventory.SwapWeapons( tool );
 	}
 }
@@ -150,7 +151,11 @@ void CGridPlayer::HandleGunGesture( const CFrame &frame )
 				_activeWeapon = weapon;
 				_weaponHandIdx = i;
 				_activeWeapon->TakeOut( (EHand)i );
-				hand->SetInvisible( true );
+
+				if( !weapon->IsPropTool() )
+				{
+					hand->SetInvisible( true );
+				}
 			}
 
 			weapon->SetTriggerState( gun.HoldingTrigger() );
@@ -202,6 +207,11 @@ void CGridPlayer::PreThink()
 			weapon->SetDirection( pointerDir );
 			weapon->ItemPreFrame();
 		}
+	}
+
+	if( _activeWeapon && !weapon )
+	{
+		_activeWeapon = NULL;
 	}
 }
 

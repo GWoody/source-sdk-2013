@@ -201,6 +201,7 @@ void CGridBaseWeapon::TakeOut( EHand hand )
 	CreateAmmoScreen();
 
 	// Attach the haptic event.
+	if( !IsPropTool() )
 	{
 		CHoloPlayer *player = (CHoloPlayer *)GetOwnerEntity();
 		Assert( player );
@@ -223,6 +224,7 @@ void CGridBaseWeapon::PutAway()
 	DestroyAmmoScreen();
 
 	// Remove the haptic event.
+	if( !IsPropTool() )
 	{
 		CHoloPlayer *player = (CHoloPlayer *)GetOwnerEntity();
 		Assert( player );

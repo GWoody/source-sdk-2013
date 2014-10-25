@@ -9,6 +9,7 @@
 
 #include "cbase.h"
 #include "grid_proptool.h"
+#include "grid_player.h"
 #include "holodeck/holo_player.h"
 #include "holodeck/holo_hand.h"
 
@@ -46,6 +47,11 @@ CGridPropTool::CGridPropTool() : BaseClass( "scripts/grid_proptool.txt" )
 //-----------------------------------------------------------------------------
 void CGridPropTool::TakeOut( EHand h )
 {
+	if( _preview )
+	{
+		return;
+	}
+
 	BaseClass::TakeOut( h );
 	AddEffects( EF_NODRAW );
 
@@ -78,7 +84,6 @@ void CGridPropTool::TakeOut( EHand h )
 		preview->Precache();
 		DispatchSpawn( preview );
 		preview->Activate();
-		preview->SetRenderColorA( 63 );
 
 		_handIdx = h;
 		_preview.Set( preview );
@@ -91,15 +96,7 @@ void CGridPropTool::TakeOut( EHand h )
 //-----------------------------------------------------------------------------
 void CGridPropTool::PutAway()
 {
-	BaseClass::PutAway();
-
-	//
-	// Destroy the preview prop.
-	//
-	_preview->Remove();
-	_preview.Set( NULL );
-
-	_handIdx = -1;
+	
 }
 
 //-----------------------------------------------------------------------------
@@ -114,15 +111,24 @@ void CGridPropTool::ItemPreFrame()
 
 		CTraceFilterWorldAndPropsOnly filter;
 		trace_t tr;
-		//UTIL_TraceLine( finger.GetTipPosition(), finger.GetTipPosition() + finger.GetDirection() * 1024, 0, hand, COLLISION_GROUP_NONE, &tr );
-		UTIL_TraceLine( finger.GetTipPosition(), finger.GetTipPosition() + finger.GetDirection() * 1024, MASK_SOLID, &filter, &tr );
-		//UTIL_TraceModel( finger.GetTipPosition(), finger.GetTipPosition() + finger.GetDirection() * 1024, _preview->CollisionProp()->OBBMins(), _preview->CollisionProp()->OBBMaxs(), player, COLLISION_GROUP_NONE, &tr );
-		Msg( "%f %f %f\n", tr.endpos.x, tr.endpos.y, tr.endpos.z );
+		UTIL_TraceHull( finger.GetTipPosition(), finger.GetTipPosition() + finger.GetDirection() * 1024, _preview->CollisionProp()->OBBMins(), _preview->CollisionProp()->OBBMaxs(), MASK_SOLID, &filter, &tr );
 
-		debugoverlay->AddLineOverlay( finger.GetTipPosition(), tr.endpos, 255, 255, 255, false, 0.5 );
+		debugoverlay->AddLineOverlayAlpha( finger.GetTipPosition(), tr.endpos, 255, 0, 0, 127, false, 0.5 );
 		
 		_preview->SetAbsOrigin( tr.endpos );
 	}
 
 	BaseClass::ItemPreFrame();
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void CGridPropTool::ShootSingleBullet()
+{
+	CGridPlayer *owner = dynamic_cast<CGridPlayer *>( GetOwnerEntity() );
+	Assert( owner );
+
+	PutAway();
+
+	owner->GetInventory().RemoveWeapon();
 }
