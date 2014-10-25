@@ -102,20 +102,21 @@ private:
 			return;
 		}
 
-		CSysModule *module;
-		IVTex *vtex = VTex_Load( &module );
+		//CSysModule *module;
+		//IVTex *vtex = VTex_Load( &module );
 
 		FOR_EACH_TRUE_SUBKEY( kv, sub )
 		{
-			const char *modelname = sub->GetName();
+			//const char *modelname = sub->GetName();
 
-			Vector origin( sub->GetFloat("x", 48.0f), sub->GetFloat("y"), sub->GetFloat("z") );
-			QAngle angles( sub->GetFloat("pitch"), sub->GetFloat("yaw", 180), sub->GetFloat("roll") );
+			//Vector origin( sub->GetFloat("x", 48.0f), sub->GetFloat("y"), sub->GetFloat("z") );
+			//QAngle angles( sub->GetFloat("pitch"), sub->GetFloat("yaw", 180), sub->GetFloat("roll") );
 
-			ScreenshotModel( vtex, modelname, origin, angles );
+			// LUCASTODO
+			//ScreenshotModel( vtex, modelname, origin, angles );
 		}
 
-		VTex_Unload( module );
+		//VTex_Unload( module );
 
 		kv->deleteThis();
 	}

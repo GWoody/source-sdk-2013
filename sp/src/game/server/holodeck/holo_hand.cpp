@@ -87,7 +87,7 @@ void CHoloHand::Spawn()
 	SetCollisionGroup( COLLISION_GROUP_PLAYER );
 	SetCollisionBounds( -bounds, bounds );
 
-	SetRenderColor( 0, 255, 0 );
+	SetRenderColor( 192, 192, 192 );
 
 	SetNextThink( gpGlobals->curtime + 0.01f ); 
 }
@@ -223,14 +223,18 @@ void CHoloHand::SetInvisible( bool invisible )
 //-----------------------------------------------------------------------------
 void CHoloHand::DebugStartTouch()
 {
+#ifdef DEBUG
 	SetRenderColor( 0, 0, 255 );
+#endif
 }
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 void CHoloHand::DebugEndTouch()
 {
-	SetRenderColor( 0, 255, 0 );
+#ifdef DEBUG
+	SetRenderColor( 255, 255, 255 );
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -242,26 +246,71 @@ void CHoloHand::RenderDebugHand()
 		return;
 	}
 
-	const CHand &hand = GetHoloHand();
-
-	const Vector handBounds( 0.25f, 0.25f, 0.25f );
-	const Vector fingerBounds( 0.05f, 0.05f, 0.05f );
-	const Vector &palmPosition = hand.GetPosition();
 	const float duration = 1.0f / 15.0f;
-	const int r = ( 1.0f - hand.GetConfidence() ) * 255.0f;
 
-	// Draw all fingers.
+	DrawHandOutline( duration );
+	DrawFingers( duration );
+	DrawArm( duration );
+	DrawSpecial( duration );
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void CHoloHand::DrawFingers( float duration )
+{
+	EFinger circleFinger = _transformedFrame.GetCircleGesture().GetFingerType();
+
 	for( int i = 0; i < FINGER_COUNT; i++ )
 	{
-		const CFinger &finger = hand.GetFingerByType( (EFinger)i );
-		for( int j = 0; j < EBone::BONE_COUNT; j++ )
+		const CFinger &finger = GetHoloHand().GetFingerByType( (EFinger)i );
+		float width = finger.GetWidth() / 8;
+		float halfWidth = width / 2;
+		for( int j = 1; j < EBone::BONE_COUNT; j++ )
 		{
 			const CBone &bone = finger.GetBone( (EBone)j );
-			
-			debugoverlay->AddLineOverlay( bone.GetPrevJoint(), bone.GetNextJoint(), r, m_clrRender.GetG(), m_clrRender.GetB(), false, duration );
-			debugoverlay->AddBoxOverlay( bone.GetNextJoint(), -fingerBounds, fingerBounds, vec3_angle, r, m_clrRender.GetG(), m_clrRender.GetB(), 127, duration );
+
+			int red = ( circleFinger == i ) ? 0 : m_clrRender.GetR();
+			int green = ( circleFinger == i ) ? 255 : m_clrRender.GetG();
+			int blue = ( circleFinger == i ) ? 0 : m_clrRender.GetB();
+
+			if( i == FINGER_THUMB && j == BONE_PROXIMAL )
+			{
+				// Drawing the proximal on the thumb looks...weird.
+				debugoverlay->AddLineOverlay( bone.GetNextJoint(), bone.GetPrevJoint(), red, green, blue, false, duration );
+				continue;
+			}
+
+			// Don't know why, but the angles generated are off by 90 degrees.
+			QAngle angles;
+			VectorAngles( bone.GetDirection(), angles );
+			angles += QAngle( 90, 0, 0 );
+
+			// Generate the bounding volume of the fingers.
+			float length = ( bone.GetNextJoint() - bone.GetPrevJoint() ).Length();
+			Vector maxs( halfWidth, halfWidth, length );
+			Vector mins( -halfWidth, -halfWidth, 0 );
+
+			debugoverlay->AddBoxOverlay( bone.GetPrevJoint(), mins, maxs, angles, red, green, blue, 127, duration );
+			debugoverlay->AddBoxOverlay( bone.GetNextJoint(), -Vector(width), Vector(width), angles, red, green, blue, 127, duration );
 		}
 	}
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void CHoloHand::DrawArm( float duration )
+{
+	const CArm &arm = GetHoloHand().GetArm();
+	debugoverlay->AddLineOverlay( arm.GetWristPosition(), arm.GetElbowPosition(), m_clrRender.GetR(), m_clrRender.GetG(), m_clrRender.GetB(), false, duration );
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void CHoloHand::DrawSpecial( float duration )
+{
+	const CHand &hand = GetHoloHand();
+	const Vector bounds( 0.05f, 0.05f, 0.05f );
+	const Vector &palmPosition = hand.GetPosition();
 
 	if( holo_render_debug_hand.GetInt() == 2 )
 	{
@@ -269,16 +318,14 @@ void CHoloHand::RenderDebugHand()
 		const CBallGesture &ball = hand.GetBallGesture();
 		NDebugOverlay::Sphere( ball.GetCenter(), ball.GetRadius(), 0, 0, 255, false, duration );
 	}
-
-	if( holo_render_debug_hand.GetInt() == 3 )
+	else if( holo_render_debug_hand.GetInt() == 3 )
 	{
 		// Draw the bounding box.
 		const Vector mins = CollisionProp()->OBBMins();
 		const Vector maxs = CollisionProp()->OBBMaxs();
 		debugoverlay->AddBoxOverlay( GetAbsOrigin(), mins, maxs, vec3_angle, 255, 255, 255, 63, duration );
 	}
-
-	if( holo_render_debug_hand.GetInt() == 4 )
+	else if( holo_render_debug_hand.GetInt() == 4 )
 	{
 		// Draw the palm normal vector.
 		debugoverlay->AddLineOverlayAlpha( palmPosition, palmPosition + hand.GetNormal(), 255, 0, 0, 127, false, duration );
@@ -286,14 +333,12 @@ void CHoloHand::RenderDebugHand()
 		// Draw the palm direction vector.
 		debugoverlay->AddLineOverlayAlpha( palmPosition, palmPosition + hand.GetDirection(), 0, 0, 255, 127, false, duration );
 	}
-
-	if( holo_render_debug_hand.GetInt() == 5 )
+	else if( holo_render_debug_hand.GetInt() == 5 )
 	{
 		// Draw velocity.
 		debugoverlay->AddLineOverlay( palmPosition, palmPosition + hand.GetVelocity(), 255, 0, 0, false, duration );
 	}
-
-	if( holo_render_debug_hand.GetInt() == 6 )
+	else if( holo_render_debug_hand.GetInt() == 6 )
 	{
 		// Draw finger directions.
 		for( int i = 0; i < FINGER_COUNT; i++ )
@@ -303,6 +348,58 @@ void CHoloHand::RenderDebugHand()
 			debugoverlay->AddLineOverlayAlpha( tipPosition, tipPosition + direction, 255, 0, 0, 127, false, duration );
 		}
 	}
+	else if( holo_render_debug_hand.GetInt() == 7 )
+	{
+		// Draw finger tips.
+		for( int i = 0; i < FINGER_COUNT; i++ )
+		{
+			const Vector &tipPosition = hand.GetFingerByType( (EFinger)i ).GetTipPosition();
+			debugoverlay->AddBoxOverlay( tipPosition, -bounds * 2, bounds * 2, vec3_angle, 255, 0, 0, 255, duration );
+		}
+	}
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void CHoloHand::DrawHandOutline( float duration )
+{
+	const CHand &hand = GetHoloHand();
+
+	const CFinger &thumb = hand.GetFingerByType( EFinger::FINGER_THUMB );
+	const CFinger &pointer = hand.GetFingerByType( EFinger::FINGER_POINTER );
+	const CFinger &middle = hand.GetFingerByType( EFinger::FINGER_MIDDLE );
+	const CFinger &ring = hand.GetFingerByType( EFinger::FINGER_RING );
+	const CFinger &pinky = hand.GetFingerByType( EFinger::FINGER_PINKY );
+
+	const CBone thumbBone = thumb.GetBone( EBone::BONE_METACARPAL );
+	const CBone pointerBone = pointer.GetBone( EBone::BONE_METACARPAL );
+	const CBone middleBone = middle.GetBone( EBone::BONE_METACARPAL );
+	const CBone ringBone = ring.GetBone( EBone::BONE_METACARPAL );
+	const CBone pinkyBone = pinky.GetBone( EBone::BONE_METACARPAL );
+
+	const CBone thumbProximal = thumb.GetBone( EBone::BONE_PROXIMAL );
+
+	const CArm &arm = hand.GetArm();
+
+	// Web the fingers.
+	debugoverlay->AddLineOverlay( thumbProximal.GetNextJoint(), pointerBone.GetNextJoint(), m_clrRender.GetR(), m_clrRender.GetG(), m_clrRender.GetB(), false, duration );
+	debugoverlay->AddLineOverlay( pointerBone.GetNextJoint(), middleBone.GetNextJoint(), m_clrRender.GetR(), m_clrRender.GetG(), m_clrRender.GetB(), false, duration );
+	debugoverlay->AddLineOverlay( middleBone.GetNextJoint(), ringBone.GetNextJoint(), m_clrRender.GetR(), m_clrRender.GetG(), m_clrRender.GetB(), false, duration );
+	debugoverlay->AddLineOverlay( ringBone.GetNextJoint(), pinkyBone.GetNextJoint(), m_clrRender.GetR(), m_clrRender.GetG(), m_clrRender.GetB(), false, duration );
+
+	// Link thumb and pinky to the arm.
+	debugoverlay->AddLineOverlay( arm.GetWristPosition(), pinkyBone.GetNextJoint(), m_clrRender.GetR(), m_clrRender.GetG(), m_clrRender.GetB(), false, duration );
+	debugoverlay->AddLineOverlay( arm.GetWristPosition(), thumbBone.GetNextJoint(), m_clrRender.GetR(), m_clrRender.GetG(), m_clrRender.GetB(), false, duration );
+	debugoverlay->AddLineOverlay( thumbBone.GetNextJoint() + arm.GetDirection() * arm.GetLength(), thumbBone.GetNextJoint(), m_clrRender.GetR(), m_clrRender.GetG(), m_clrRender.GetB(), false, duration );
+
+	// Draw joints.
+	const Vector fingerBounds( 0.05f, 0.05f, 0.05f );
+	debugoverlay->AddBoxOverlay( thumbBone.GetNextJoint(), -fingerBounds, fingerBounds, vec3_angle, m_clrRender.GetR(), m_clrRender.GetG(), m_clrRender.GetB(), 127, duration );
+	debugoverlay->AddBoxOverlay( pointerBone.GetNextJoint(), -fingerBounds, fingerBounds, vec3_angle, m_clrRender.GetR(), m_clrRender.GetG(), m_clrRender.GetB(), 127, duration );
+	debugoverlay->AddBoxOverlay( middleBone.GetNextJoint(), -fingerBounds, fingerBounds, vec3_angle, m_clrRender.GetR(), m_clrRender.GetG(), m_clrRender.GetB(), 127, duration );
+	debugoverlay->AddBoxOverlay( middleBone.GetNextJoint(), -fingerBounds, fingerBounds, vec3_angle, m_clrRender.GetR(), m_clrRender.GetG(), m_clrRender.GetB(), 127, duration );
+	debugoverlay->AddBoxOverlay( ringBone.GetNextJoint(), -fingerBounds, fingerBounds, vec3_angle, m_clrRender.GetR(), m_clrRender.GetG(), m_clrRender.GetB(), 127, duration );
+	debugoverlay->AddBoxOverlay( arm.GetWristPosition(), -fingerBounds, fingerBounds, vec3_angle, m_clrRender.GetR(), m_clrRender.GetG(), m_clrRender.GetB(), 127, duration );
 }
 
 //-----------------------------------------------------------------------------

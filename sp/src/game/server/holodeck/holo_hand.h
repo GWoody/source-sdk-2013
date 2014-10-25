@@ -69,11 +69,18 @@ public:
 	void			DebugEndTouch();
 
 private:
+	// Rendering.
+	void			RenderDebugHand();
+	void			DrawHandOutline( float duration );
+	void			DrawFingers( float duration );
+	void			DrawArm( float duration );
+	void			DrawSpecial( float duration );
+
+	// Pickup.
 	CBaseEntity *	FindUseEntity();
 	bool			CanPickupObject( CBaseEntity *pObject, float massLimit, float sizeLimit );
 	float			IntervalDistance( float x, float x0, float x1 );
 
-	void			RenderDebugHand();
 	Vector			GetOriginOffset() const;
 
 	CFrame	_transformedFrame, _untransformedFrame;

@@ -12,7 +12,7 @@
 
 #include <tier0/threadtools.h>
 
-#include <Leap.h> 
+#include <GiantLeap.h> 
 #include <queue>
 #include <string>
 #include <sstream>
@@ -40,13 +40,13 @@ private:
 
 //----------------------------------------------------------------------------
 //----------------------------------------------------------------------------
-class CLeapMotionListener : public Leap::Listener
+class CLeapMotionListener : public GiantLeap::Listener
 {
 public:
 					CLeapMotionListener();
 
-	virtual void	onConnect( const Leap::Controller &controller );
-	virtual void	onFrame( const Leap::Controller &controller );
+	virtual void	onConnect( const GiantLeap::Controller &controller );
+	virtual void	onFrame( const GiantLeap::Controller &controller );
 };
 
 //----------------------------------------------------------------------------
@@ -72,7 +72,9 @@ private:
 					CLeapMotion();
 					~CLeapMotion();
 
-	Leap::Controller	_controller;
+	GiantLeap::Init	_init;
+	GiantLeap::Controller	_controller;
+
 	CLeapMotionListener _listener;
 	SFrameQueue *	_queue;
 	CFrame			_lastFrame;

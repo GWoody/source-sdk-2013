@@ -14,7 +14,7 @@
 
 #ifdef CLIENT_DLL
 	// Required for custom structure constructors.
-	#include <Leap.h>
+	#include <GiantLeap.h>
 
 	#define CBaseCombatCharacter C_BaseCombatCharacter
 #endif
@@ -88,6 +88,38 @@ const char *EGlobalsToString( EGlobals global );
 // Classes.
 //=============================================================================
 
+//-------------------------------------------------------------------------
+//-------------------------------------------------------------------------
+class CArm
+{
+public:
+					CArm();
+#ifdef CLIENT_DLL
+					CArm( const GiantLeap::Arm &b );
+	void			FromLeap( const GiantLeap::Arm &b );
+#endif
+
+	void			ToBitBuffer( bf_write *buf ) const;
+	void			FromBitBuffer( bf_read *buf );
+
+	void			Transform( float yaw, const Vector &translation );
+
+	inline const Vector &	GetWristPosition() const			{ return _wristPosition; }
+	inline const Vector &	GetElbowPosition() const			{ return _elbowPosition; }
+	inline Vector	GetDirection() const						{ return ( _elbowPosition - _wristPosition ).Normalized(); }
+	inline float	GetLength() const							{ return fabs( ( _elbowPosition - _wristPosition ).Length() ); }
+
+	// Filtering helpers.
+	CArm			operator+( const CArm &other ) const;
+	CArm			operator/( float scale ) const;
+	CArm			operator*( float scale ) const;
+
+private:
+	Vector			_wristPosition;
+	Vector			_elbowPosition;
+};
+
+
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 class CBone
@@ -95,8 +127,8 @@ class CBone
 public:
 					CBone();
 #ifdef CLIENT_DLL
-					CBone( const Leap::Bone &b );
-	void			FromLeap( const Leap::Bone &b );
+					CBone( const GiantLeap::Bone &b );
+	void			FromLeap( const GiantLeap::Bone &b );
 #endif
 
 	void			ToBitBuffer( bf_write *buf ) const;
@@ -127,8 +159,8 @@ class CFinger
 public:
 					CFinger();
 #ifdef CLIENT_DLL
-					CFinger( const Leap::Finger &f );
-	void			FromLeap( const Leap::Finger &f );
+					CFinger( const GiantLeap::Finger &f );
+	void			FromLeap( const GiantLeap::Finger &f );
 #endif
 
 	void			ToBitBuffer( bf_write *buf ) const;
@@ -169,8 +201,8 @@ class CBallGesture
 public:
 					CBallGesture();
 #ifdef CLIENT_DLL
-					CBallGesture( const Leap::Hand &h );
-	void			FromLeap( const Leap::Hand &h );
+					CBallGesture( const GiantLeap::Hand &h );
+	void			FromLeap( const GiantLeap::Hand &h );
 #endif
 
 	void			ToBitBuffer( bf_write *buf ) const;
@@ -202,9 +234,9 @@ class CHand
 public:
 					CHand();
 #ifdef CLIENT_DLL
-					CHand( const Leap::Hand &h );
-	void			FromLeap( const Leap::Hand &h );
-	void			BuildFingers( const Leap::Hand &h );
+					CHand( const GiantLeap::Hand &h );
+	void			FromLeap( const GiantLeap::Hand &h );
+	void			BuildFingers( const GiantLeap::Hand &h );
 #endif
 
 	void			ToBitBuffer( bf_write *buf ) const;
@@ -223,6 +255,7 @@ public:
 	inline const Vector &	GetVelocity() const					{ return _velocity; }
 	inline const CFinger &	GetFingerByType( EFinger f ) const	{ return _fingers[f]; }
 	inline const CBallGesture &	GetBallGesture() const			{ return _ball; }
+	inline const CArm &		GetArm() const						{ return _arm; }
 
 	// Computed accessors.
 	float			FindThetaBetweenFingers( EFinger f1, EFinger f2 ) const;
@@ -242,6 +275,7 @@ private:
 	Vector			_velocity;
 	CFinger			_fingers[EFinger::FINGER_COUNT];
 	CBallGesture	_ball;
+	CArm			_arm;
 };
 
 //-----------------------------------------------------------------------------
@@ -251,8 +285,8 @@ class CCircleGesture
 public:
 					CCircleGesture();
 #ifdef CLIENT_DLL
-					CCircleGesture( const Leap::CircleGesture &c );
-	void			FromLeap( const Leap::CircleGesture &c );
+					CCircleGesture( const GiantLeap::CircleGesture &c );
+	void			FromLeap( const GiantLeap::CircleGesture &c );
 #endif
 
 	void			ToBitBuffer( bf_write *buf ) const;
@@ -291,8 +325,8 @@ class CSwipeGesture
 public:
 					CSwipeGesture();
 #ifdef CLIENT_DLL
-					CSwipeGesture( const Leap::SwipeGesture &s );
-	void			FromLeap( const Leap::SwipeGesture &s );
+					CSwipeGesture( const GiantLeap::SwipeGesture &s );
+	void			FromLeap( const GiantLeap::SwipeGesture &s );
 #endif
 
 	void			ToBitBuffer( bf_write *buf ) const;
@@ -325,10 +359,10 @@ class CTapGesture
 public:
 					CTapGesture();
 #ifdef CLIENT_DLL
-					CTapGesture( const Leap::KeyTapGesture &k );
-					CTapGesture( const Leap::ScreenTapGesture &s );
-	void			FromLeap( const Leap::KeyTapGesture &k );
-	void			FromLeap( const Leap::ScreenTapGesture &s );
+					CTapGesture( const GiantLeap::KeyTapGesture &k );
+					CTapGesture( const GiantLeap::ScreenTapGesture &s );
+	void			FromLeap( const GiantLeap::KeyTapGesture &k );
+	void			FromLeap( const GiantLeap::ScreenTapGesture &s );
 #endif
 
 	void			ToBitBuffer( bf_write *buf ) const;
@@ -360,8 +394,8 @@ class CFrame
 public:
 					CFrame();
 #ifdef CLIENT_DLL
-					CFrame( const Leap::Frame &f );
-	void			FromLeap( const Leap::Frame &f );
+					CFrame( const GiantLeap::Frame &f );
+	void			FromLeap( const GiantLeap::Frame &f );
 #endif
 
 	void			ToBitBuffer( bf_write *buf ) const;

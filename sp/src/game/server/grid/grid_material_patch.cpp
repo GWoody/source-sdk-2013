@@ -234,7 +234,8 @@ static void Grid_RunBrushShaderReplacement( const model_t *model, bool worldmode
 //-----------------------------------------------------------------------------
 static void Grid_PerformReplacement( IMaterial *material )
 {
-	if( !material || gModifiedMaterials.Find( AllocPooledString( material->GetName() ) ) != gModifiedMaterials.InvalidIndex() )
+	// LUCASTODO
+	//if( !material || gModifiedMaterials.Find( AllocPooledString( material->GetName() ) ) != gModifiedMaterials.InvalidIndex() )
 	{
 		return;
 	}
