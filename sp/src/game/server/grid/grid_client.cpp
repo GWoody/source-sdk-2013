@@ -84,6 +84,7 @@ void ClientGamePrecache( void )
 	Grid_PrecacheEstateProps();
 
 	PrecacheParticleSystem( "grenade_explosion_01" );
+	UTIL_PrecacheOther( "grid_proptool" );
 }
 
 //-----------------------------------------------------------------------------

@@ -44,6 +44,11 @@
 		"a"			"float"
 	}
 	
+	"grid_ready_proptool"
+	{
+		"prop"		"string"
+	}
+	
 	"team_info"				// info about team
 	{
 		"teamid"	"byte"		// unique team id

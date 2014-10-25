@@ -23,6 +23,17 @@ CInventory::CInventory( CGridPlayer *player )
 }
 
 //-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void CInventory::RemoveWeapon()
+{
+	if( _weapon ) 
+	{ 
+		_weapon->Remove(); 
+		_weapon = NULL; 
+	} 
+}
+
+//-----------------------------------------------------------------------------
 // Exchanges a weapon in the world with the one in the inventory.
 //-----------------------------------------------------------------------------
 void CInventory::SwapWeapons( CGridBaseWeapon *weapon )

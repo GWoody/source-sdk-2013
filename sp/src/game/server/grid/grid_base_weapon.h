@@ -46,6 +46,7 @@ public:
 	// Accessors.
 	int				GetBulletCount() const					{ return _remainingShots; }
 	bool			IsOut() const							{ return _isOut; }
+	virtual bool	IsPropTool() const						{ return false; }
 
 	// Shooting.
 	virtual void	SetTriggerState( bool pressed );

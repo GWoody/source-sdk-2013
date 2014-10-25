@@ -71,7 +71,8 @@ void CGridBaseWeapon::Precache()
 	PrecacheScriptSound( _info.GetSound().GetEmpty() );
 	PrecacheScriptSound( _info.GetSound().GetFire() );
 
-	if( const char *particle = _info.GetEffect().GetMuzzleParticleName() )
+	const char *particle = _info.GetEffect().GetMuzzleParticleName();
+	if( particle && particle[0] )
 	{
 		PrecacheParticleSystem( particle );
 	}
@@ -416,7 +417,13 @@ void CGridBaseWeapon::Shoot()
 //-----------------------------------------------------------------------------
 void CGridBaseWeapon::CreateAmmoScreen()
 {
-	int attachment = LookupAttachment( _info.GetHud( ).GetAmmoAttachment() );
+	const char *attachmentname = _info.GetHud().GetAmmoAttachment();
+	if( !attachmentname || !attachmentname[0] )
+	{
+		return;
+	}
+
+	int attachment = LookupAttachment( attachmentname );
 	if( attachment != -1 )
 	{
 		CVGuiScreen *screen = CreateVGuiScreen( "vgui_screen", "grid_ammo_screen", this, this, attachment );

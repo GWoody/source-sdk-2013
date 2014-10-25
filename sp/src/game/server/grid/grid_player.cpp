@@ -12,6 +12,7 @@
 #include "grid_base_weapon.h"
 #include "holodeck/holo_haptics.h"
 #include "grid/grid_haptic_events.h"
+#include "grid_proptool.h"
 
 using namespace holo;
 using namespace grid;
@@ -37,6 +38,24 @@ END_SEND_TABLE()
 CGridPlayer::CGridPlayer() : _inventory( this )
 {
 	_weaponHandIdx = -1;
+	ListenForGameEvent( "grid_ready_proptool" );
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void CGridPlayer::FireGameEvent( IGameEvent *event )
+{
+	if( !Q_strcmp( event->GetName(), "grid_ready_proptool" ) )
+	{
+		const char *prop = event->GetString( "prop" );
+		
+		CGridPropTool *tool = (CGridPropTool *)CreateEntityByName( "grid_proptool" );
+		tool->SetOwnerEntity( this );
+		tool->SetProp( prop );
+		tool->TakeOut( HAND_RIGHT );
+
+		_inventory.SwapWeapons( tool );
+	}
 }
 
 //-----------------------------------------------------------------------------
@@ -94,7 +113,7 @@ void CGridPlayer::OnInvalidFrame()
 	//
 	// Disable guns.
 	//
-	if( _activeWeapon )
+	if( _activeWeapon && !_activeWeapon->IsPropTool() )
 	{
 		CHoloHand *hand = (CHoloHand *)GetHandEntity( (EHand)_weaponHandIdx );
 
@@ -142,13 +161,17 @@ void CGridPlayer::HandleGunGesture( const CFrame &frame )
 		}
 		else if( i == _weaponHandIdx && _weaponWasOut && !gun.IsActive() )
 		{
-			// All gun gestures have been stopped. Return the hand to the normal state.
-			weapon->PutAway();
-			hand->SetInvisible( false );
+			if( !weapon->IsPropTool() )
+			{
+				// All gun gestures have been stopped. Return the hand to the normal state.
+				weapon->PutAway();
+				hand->SetInvisible( false );
 
-			_activeWeapon = NULL;
-			_weaponWasOut = false;
-			_weaponHandIdx = -1;
+				_activeWeapon = NULL;
+				_weaponWasOut = false;
+				_weaponHandIdx = -1;
+			}
+			
 			break;
 		}
 	}
@@ -161,7 +184,12 @@ void CGridPlayer::PreThink()
 {
 	BaseClass::PreThink();
 
-	if( CGridBaseWeapon *weapon = _inventory.GetWeapon() )
+	CGridBaseWeapon *weapon = _inventory.GetWeapon();
+	if( weapon && weapon->IsPropTool() )
+	{
+		weapon->ItemPreFrame();
+	}
+	else if( weapon )
 	{
 		weapon->SetAbsOrigin( EyePosition() );
 

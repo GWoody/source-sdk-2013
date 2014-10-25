@@ -22,6 +22,7 @@ namespace grid
 	public:
 						CInventory( CGridPlayer *player );
 
+		void			RemoveWeapon();
 		void			SwapWeapons( CGridBaseWeapon *weapon );
 		CGridBaseWeapon *	GetWeapon()						{ return _weapon; }
 

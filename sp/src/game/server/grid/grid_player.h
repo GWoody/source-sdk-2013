@@ -18,7 +18,7 @@
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-class CGridPlayer : public CHoloPlayer
+class CGridPlayer : public CHoloPlayer, public CGameEventListener
 {
 public:
 	DECLARE_CLASS( CGridPlayer, CHoloPlayer );
@@ -32,6 +32,9 @@ public:
 		CGridPlayer::s_PlayerEdict = ed;
 		return (CGridPlayer*)CreateEntityByName( className );
 	}
+
+	// CGameEventListener implementation.
+	virtual void	FireGameEvent( IGameEvent *event );
 
 	// CBasePlayer overrides.
 	virtual void	Spawn();

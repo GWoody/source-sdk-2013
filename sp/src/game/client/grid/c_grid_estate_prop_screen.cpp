@@ -85,6 +85,11 @@ public:
 			Q_StripExtension( modelname, modelnameNoExt, sizeof(modelnameNoExt) );
 			CFmtStr path( "grid/%s.vmt", modelnameNoExt );
 
+			// Set command.
+			CUtlString command( "proptool " );
+			command += modelname;
+			button->SetCommand( command.Get() );
+
 			// Set size.
 			button->SetPos( x, y );
 			button->SetSize( _buttonWidth, _buttonHeight );
@@ -139,6 +144,38 @@ public:
 	{
 		SetBgColor( Color( 0, 0, 0, 63 ) );
 		BaseClass::OnTick();
+	}
+
+	virtual void OnCommand( const char *command )
+	{
+		if( !Q_strncmp( "proptool ", command, 9 ) )
+		{
+			IGameEvent *event = gameeventmanager->CreateEvent( "grid_ready_proptool" );
+			if( event )
+			{
+				event->SetString( "prop", command + 9 );
+				gameeventmanager->FireEvent( event );
+			}
+			else
+			{
+				ConColorMsg( COLOR_YELLOW, __FUNCTION__": failed to create event!\n" );
+			}
+
+			event = gameeventmanager->CreateEvent( "holo_destroy_screen" );
+			if( event )
+			{
+				event->SetInt( "panel", WORLD_PANEL_MIDDLE );
+				gameeventmanager->FireEvent( event );
+			}
+			else
+			{
+				ConColorMsg( COLOR_YELLOW, __FUNCTION__": failed to create event!\n" );
+			}		
+		}
+		else
+		{
+			BaseClass::OnCommand( command );
+		}
 	}
 
 private:
