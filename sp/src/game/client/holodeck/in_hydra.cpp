@@ -9,6 +9,7 @@
 
 #include "cbase.h"
 #include "in_hydra.h"
+#include "c_holo_player.h"
 
 #include "sixense.h"
 
@@ -103,8 +104,20 @@ void CRazerHydra::CreateMove( CUserCmd *cmd )
 		MarkHome( data );
 	}
 
+	C_HoloPlayer *player = C_HoloPlayer::GetLocalPlayer();
+	if( !player )
+	{
+		return;
+	}
+
 	Vector curPos = HydraToSourceVector( data.pos );
-	cmd->viewoffset = curPos - _home;
+	Vector delta = _home - curPos;
+
+	float yaw = player->GetAbsAngles().y;
+	VectorYawRotate( delta, yaw, delta );
+
+	delta.z = -delta.z;
+	cmd->viewoffset = delta;
 }
 
 //----------------------------------------------------------------------------
