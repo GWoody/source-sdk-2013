@@ -79,6 +79,10 @@ public:
 		_y = dynamic_cast<Slider *>( FindChildByName( "YSlider" ) );
 		_z = dynamic_cast<Slider *>( FindChildByName( "ZSlider" ) );
 		Assert( _x && _y && _z );
+
+		_x->SetValue( 0 );
+		_y->SetValue( 0 );
+		_z->SetValue( 0 );
 	}
 
 private:
@@ -155,6 +159,10 @@ public:
 		_roll = dynamic_cast<Slider *>( FindChildByName( "RollSlider" ) );
 		_yaw = dynamic_cast<Slider *>( FindChildByName( "YawSlider" ) );
 		Assert( _pitch && _roll && _yaw );
+
+		_pitch->SetValue( 0 );
+		_roll->SetValue( 0 );
+		_yaw->SetValue( 0 );
 	}
 
 private:
