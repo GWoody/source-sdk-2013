@@ -675,9 +675,9 @@ void CHand::FromBitBuffer( bf_read *buf )
 
 void CHand::Transform( float yaw, const Vector &translation )
 {
-	const Vector extraTranslation( 0.0f, 0.0f, _position.z * 1.0f );
+	const Vector extraTranslation = translation + Vector( 0.0f, 0.0f, _position.z * 1.0f );
 	
-	_ball.Transform( yaw, translation );
+	_ball.Transform( yaw, extraTranslation );
 
 	// Apply rotations.
 	VectorYawRotate( _position, yaw, _position );
@@ -686,16 +686,15 @@ void CHand::Transform( float yaw, const Vector &translation )
 	VectorYawRotate( _velocity, yaw, _velocity );
 	
 	// Apply translations.
-	_position += translation + extraTranslation;
+	_position += extraTranslation;
 	
 	// Transform fingers.
-	const Vector fingerTranslation = translation + extraTranslation;
 	for( int i = 0; i < FINGER_COUNT; i++ )
 	{
-		_fingers[i].Transform( yaw, fingerTranslation );
+		_fingers[i].Transform( yaw, extraTranslation );
 	}
 
-	_arm.Transform( yaw, translation );
+	_arm.Transform( yaw, extraTranslation );
 }
 
 float CHand::FindThetaBetweenFingers( EFinger f1, EFinger f2 ) const
@@ -1414,6 +1413,9 @@ bool CFrame::IsValid() const
 
 const CHand *CFrame::GetHandById( int id ) const
 {
+	// Dont use this.
+	Assert( 0 );
+
 	if( _hand[HAND_LEFT].GetId() == id )
 	{
 		return &_hand[HAND_LEFT];
