@@ -780,9 +780,11 @@ C_BaseEntity *FindNearbyVguiScreen( const Vector &viewPosition, const QAngle &vi
 		if (!pScreen->IntersectWithRay( lookRay, &u, &v, &t ))
 			continue;
 
+#ifndef HOLODECK
 		// Barycentric test
 		if ((u < 0) || (v < 0) || (u > 1) || (v > 1))
 			continue;
+#endif
 
 		if ( t < flBestDist )
 		{

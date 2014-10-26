@@ -225,7 +225,8 @@ private:
 		//
 		int width, height;
 		CUtlMemory<unsigned char> pixels;
-		Assert( TGALoader::LoadRGBA8888( tgaPath, pixels, width, height ) );
+		bool success = TGALoader::LoadRGBA8888( tgaPath, pixels, width, height );
+		Assert( success );
 
 		// Fix alpha.
 		for( int i = 0; i < pixels.Count(); i += 4 )
@@ -242,7 +243,8 @@ private:
 
 		int stride = width * 4;
 		unsigned char *colorbuffer = pixels.Base() + stride * (height / 2);
-		Assert( TGAWriter::WriteTGAFile( tgaPath, width, height / 2, IMAGE_FORMAT_RGBA8888, colorbuffer, stride ) );
+		success = TGAWriter::WriteTGAFile( tgaPath, width, height / 2, IMAGE_FORMAT_RGBA8888, colorbuffer, stride );
+		Assert( success );
 
 		//
 		// Generate VTex script.

@@ -65,22 +65,36 @@ void CGridPlayer::FireGameEvent( IGameEvent *event )
 	}
 	else if( !Q_strcmp( event->GetName(), "grid_commit_prop" ) )
 	{
+		GetScreenManager().DestroyScreen( WORLD_PANEL_LEFT );
+		GetScreenManager().DestroyScreen( WORLD_PANEL_MIDDLE );
+		GetScreenManager().DestroyScreen( WORLD_PANEL_RIGHT );
+
 		_prop = NULL;
 	}
 	else if( !Q_strcmp( event->GetName(), "grid_prop_offset" ) )
 	{
 		if( _prop.Get() )
 		{
-			Vector v( event->GetFloat("x"), event->GetFloat("y"), event->GetFloat("z") );
-			_prop->SetLocalOrigin( v );
+			static Vector lastOffset( 0, 0, 0 );
+
+			Vector newOffset( event->GetFloat("x"), event->GetFloat("y"), event->GetFloat("z") );
+			Vector delta = newOffset - lastOffset;
+
+			_prop->SetAbsOrigin( _prop->GetAbsOrigin() + delta );
+			lastOffset = newOffset;
 		}
 	}
 	else if( !Q_strcmp( event->GetName(), "grid_prop_angles" ) )
 	{
 		if( _prop.Get() )
 		{
-			QAngle a( event->GetFloat("pitch"), event->GetFloat("roll"), event->GetFloat("yaw") );
-			_prop->SetLocalAngles( a );
+			static QAngle lastAngles( 0, 0, 0 );
+
+			QAngle newAngles( event->GetFloat("pitch"), event->GetFloat("roll"), event->GetFloat("yaw") );
+			QAngle delta = newAngles - lastAngles;
+
+			_prop->SetAbsAngles( _prop->GetAbsAngles() + delta );
+			lastAngles = newAngles;
 		}
 	}
 }

@@ -263,8 +263,7 @@ void CHoloHand::DrawFingers( float duration )
 	for( int i = 0; i < FINGER_COUNT; i++ )
 	{
 		const CFinger &finger = GetHoloHand().GetFingerByType( (EFinger)i );
-		float width = finger.GetWidth() / 8;
-		float halfWidth = width / 2;
+		
 		for( int j = 1; j < EBone::BONE_COUNT; j++ )
 		{
 			const CBone &bone = finger.GetBone( (EBone)j );
@@ -280,6 +279,11 @@ void CHoloHand::DrawFingers( float duration )
 				continue;
 			}
 
+			float width = finger.GetWidth() / 8;
+
+#if 0
+			float halfWidth = width / 2;
+
 			// Don't know why, but the angles generated are off by 90 degrees.
 			QAngle angles;
 			VectorAngles( bone.GetDirection(), angles );
@@ -292,6 +296,11 @@ void CHoloHand::DrawFingers( float duration )
 
 			debugoverlay->AddBoxOverlay( bone.GetPrevJoint(), mins, maxs, angles, red, green, blue, 127, duration );
 			debugoverlay->AddBoxOverlay( bone.GetNextJoint(), -Vector(width), Vector(width), angles, red, green, blue, 127, duration );
+#else
+			debugoverlay->AddBoxOverlay( bone.GetNextJoint(), -Vector(width), Vector(width), vec3_angle, red, green, blue, 127, duration );
+			debugoverlay->AddBoxOverlay( bone.GetPrevJoint(), -Vector(width), Vector(width), vec3_angle, red, green, blue, 127, duration );
+			debugoverlay->AddLineOverlay( bone.GetPrevJoint(), bone.GetNextJoint(), red, green, blue, false, duration );
+#endif
 		}
 	}
 }

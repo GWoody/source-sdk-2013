@@ -31,7 +31,11 @@ public:
 
 	static C_HoloPlayer *	GetLocalPlayer()			{ return (C_HoloPlayer *)BaseClass::GetLocalPlayer(); }
 
+	virtual void	DetermineVguiInputMode( CUserCmd *pCmd );
+
 private:
+	C_BaseEntity *	GetCurrentVGuiScreen( const Vector &viewPosition, const QAngle &viewAngle, int nTeam );
+
 	EHANDLE			_hands[HAND_COUNT];
 	Vector			_viewoffset;
 };

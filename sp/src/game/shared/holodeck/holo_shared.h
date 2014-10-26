@@ -441,4 +441,17 @@ private:
 	int				_gestureBits;
 };
 
+//-------------------------------------------------------------------------
+//-------------------------------------------------------------------------
+class CHoloProfiler
+{
+public:
+	CHoloProfiler( const char *name );
+	~CHoloProfiler();
+	
+private:
+	CUtlString _name;
+	float _startTime;
+};
+
 #endif // __HOLO_SHARED_H__

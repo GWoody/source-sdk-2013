@@ -1508,3 +1508,14 @@ T CFrame::AddGesture( const CFrame &other, const T &g1, const T &g2, EGesture g 
 	
 	return T();
 }
+
+CHoloProfiler::CHoloProfiler( const char *name )
+{
+	_name.Set( name );
+	_startTime = engine->Time();
+}
+	
+CHoloProfiler::~CHoloProfiler()
+{
+	Msg( "%s took %.02f ms\n", _name.Get(), ( engine->Time() - _startTime ) * 1000.0f );
+}

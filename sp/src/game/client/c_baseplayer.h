@@ -459,9 +459,13 @@ protected:
 	void				CalcRoamingView(Vector& eyeOrigin, QAngle& eyeAngles, float& fov);
 	virtual void		CalcFreezeCamView( Vector& eyeOrigin, QAngle& eyeAngles, float& fov );
 
+#ifdef HOLODECK
+	// Check to see if we're in vgui input mode...
+	virtual void DetermineVguiInputMode( CUserCmd *pCmd );
+#else
 	// Check to see if we're in vgui input mode...
 	void DetermineVguiInputMode( CUserCmd *pCmd );
-
+#endif
 	// Used by prediction, sets the view angles for the player
 	virtual void SetLocalViewAngles( const QAngle &viewAngles );
 	virtual void SetViewAngles( const QAngle& ang );
@@ -521,7 +525,13 @@ private:
 	int				m_nTickBase;
 	int				m_nFinalPredictedTick;
 
+#ifdef HOLODECK
+protected:
+#endif
 	EHANDLE			m_pCurrentVguiScreen;
+#ifdef HOLODECK
+private:
+#endif
 
 	bool			m_bFiredWeapon;
 
