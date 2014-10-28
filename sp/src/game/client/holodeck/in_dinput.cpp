@@ -26,6 +26,12 @@ CDirectInput *CDirectInput::_instance;
 LPDIRECTINPUT8		gDirectInput = NULL;
 LPDIRECTINPUTDEVICE8	gJoystick = NULL;
 
+#define JOY_MAX		32767
+static ConVar holo_joy_forward_sensitivity( "holo_joy_forward_sensitivity", "1.0", FCVAR_ARCHIVE );
+static ConVar holo_joy_side_sensitivity( "holo_joy_side_sensitivity", "1.0", FCVAR_ARCHIVE );
+static ConVar holo_joy_yaw_sensitivity( "holo_joy_yaw_sensitivity", "1.0", FCVAR_ARCHIVE );
+static ConVar holo_joy_deadzone_frac( "holo_joy_deadzone_frac", "0.2", FCVAR_ARCHIVE );
+
 //----------------------------------------------------------------------------
 //----------------------------------------------------------------------------
 void format_message( HRESULT hr, const char **message )
@@ -119,8 +125,8 @@ BOOL CALLBACK  EnumObjectsCallback( const DIDEVICEOBJECTINSTANCE* pdidoi, VOID* 
         diprg.diph.dwHeaderSize = sizeof( DIPROPHEADER );
         diprg.diph.dwHow = DIPH_BYID;
         diprg.diph.dwObj = pdidoi->dwType; // Specify the enumerated axis
-        diprg.lMin = -10;
-        diprg.lMax = +10;
+        diprg.lMin = -JOY_MAX;
+        diprg.lMax = +JOY_MAX;
 
         // Set the range for the axis
         if( FAILED( gJoystick->SetProperty( DIPROP_RANGE, &diprg.diph)))
@@ -263,32 +269,26 @@ void CDirectInput::CreateMove( CUserCmd *cmd )
 	long lForwardAxis = js.lY*-1;
 	long lSideAxis = js.lX;
 	long lYaw = js.lRz;
-	bool jmp = js.rgbButtons[0];
 	
-	// Scale from the range [-10, 10] to [-1, 1] so we can use the axis values as
+	// Scale from the range [-JOY_MAX, JOY_MAX] to [-1, 1] so we can use the axis values as
 	// movement speed scalars.
-	float fForwardAxis = lForwardAxis / 10.0f;
-	float fSideAxis = lSideAxis / 10.0f;
+	float fForwardAxis = lForwardAxis / (float)JOY_MAX;
+	float fSideAxis = lSideAxis / (float)JOY_MAX;
 	
-	if( abs( lForwardAxis ) > 1 )
+	if( abs( lForwardAxis ) > holo_joy_deadzone_frac.GetFloat() * JOY_MAX )
 	{
-		cmd->forwardmove = fForwardAxis * maxPlayerVelocity;
+		cmd->forwardmove = fForwardAxis * maxPlayerVelocity * holo_joy_forward_sensitivity.GetFloat();
 	}
 
-	if( abs( lSideAxis ) > 1 )
+	if( abs( lSideAxis ) > holo_joy_deadzone_frac.GetFloat() * JOY_MAX )
 	{
-		cmd->sidemove = fSideAxis * maxPlayerVelocity;
+		cmd->sidemove = fSideAxis * maxPlayerVelocity * holo_joy_side_sensitivity.GetFloat();
 	}
 
-	if( abs( lYaw ) > 2 )
+	if( abs( lYaw ) > holo_joy_deadzone_frac.GetFloat() * JOY_MAX )
 	{
-		cmd->viewangles[YAW] -= lYaw / 10.0f;
+		cmd->viewangles[YAW] -= ( lYaw / (float)JOY_MAX ) * holo_joy_yaw_sensitivity.GetFloat();;
 		engine->SetViewAngles( cmd->viewangles );
-	}
-
-	if(jmp)
-	{	
-		cmd->upmove = maxPlayerVelocity;
 	}
 
 	// Do this last.
@@ -315,11 +315,6 @@ void CDirectInput::FillBitFields( CUserCmd *cmd )
 	else
 	{
 		cmd->buttons |= IN_LEFT;
-	}
-
-	if( cmd->upmove > 0 )
-	{
-		cmd->buttons |= IN_JUMP;
 	}
 }
 
