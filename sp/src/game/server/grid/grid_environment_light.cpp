@@ -47,6 +47,7 @@ private:
 
 	float			CalculatePitch( float localTime );
 	void			SetLightLevel( float pitch );
+	void			UpdateSkybox( float pitch );
 	void			SetZoneLightLevel( float pitch, const LightLevel_t &light, float level[4] );
 
 	CHandle<CGridSun>	_sunSprite;
@@ -67,6 +68,9 @@ private:
 
 	COutputEvent	_onDayBegin, _onNightBegin;
 	bool			_isDayTime;
+
+	string_t		_dayTarget, _nightTarget;
+	EHANDLE			_dayBox, _nightBox;
 };
 
 //-----------------------------------------------------------------------------
@@ -78,6 +82,10 @@ IMPLEMENT_SERVERCLASS_ST( CGridEnvironmentLight, DT_GridEnvironmentLight )
 END_SEND_TABLE()
 
 BEGIN_DATADESC( CGridEnvironmentLight )
+
+	// Attributes.
+	DEFINE_KEYFIELD( _dayTarget, FIELD_STRING, "dayBrush" ),
+	DEFINE_KEYFIELD( _nightTarget, FIELD_STRING, "nightBrush" ),
 
 	// Outputs.
 	DEFINE_OUTPUT( _onDayBegin, "OnDayBegin" ),
@@ -168,6 +176,9 @@ void CGridEnvironmentLight::Spawn( void )
 	//
 	PrecacheModel( "sky/moon.vmt" );
 
+	_dayBox = gEntList.FindEntityByName( NULL, _dayTarget );
+	_nightBox = gEntList.FindEntityByName( NULL, _nightTarget );
+
 	//
 	// Selt projected texture variables.
 	//
@@ -256,6 +267,7 @@ void CGridEnvironmentLight::Think( void )
 		m_shadowDirection = _sunSprite->GetLightDirection();
 
 		SetLightLevel( pitch );
+		UpdateSkybox( pitch );
 	}
 
 	BaseClass::Think();
@@ -340,6 +352,42 @@ void CGridEnvironmentLight::SetLightLevel( float pitch )
 	}
 
 	NetworkStateChanged();
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void CGridEnvironmentLight::UpdateSkybox( float pitch )
+{
+	const float FADE_PITCH = 20.0f;
+
+	if( pitch < FADE_PITCH && _hour < 6 )
+	{
+		// Sun is on the way up.
+		float perc = pitch / FADE_PITCH;
+		_dayBox->SetRenderColorA( 127 + perc * 127 );
+		_nightBox->SetRenderColorA( (1.0f - perc) * 127 );
+	}
+	else if( pitch < FADE_PITCH && _hour >= 6 && _hour < 12 )
+	{
+		// Sun is on the way down.
+		float perc = pitch / FADE_PITCH;
+		_dayBox->SetRenderColorA( 127 + perc * 127 );
+		_nightBox->SetRenderColorA( (1.0f - perc) * 127 );
+	}
+	else if( pitch < FADE_PITCH && _hour < 18 )
+	{
+		// Moon is on the way up.
+		float perc = pitch / FADE_PITCH;
+		_dayBox->SetRenderColorA( (1.0f - perc) * 127 );
+		_nightBox->SetRenderColorA( 127 + perc * 127 );
+	}
+	else if( pitch < FADE_PITCH && _hour >= 18 )
+	{
+		// Moon is on the way down.
+		float perc = pitch / FADE_PITCH;
+		_dayBox->SetRenderColorA( (1.0f - perc) * 127 );
+		_nightBox->SetRenderColorA( 127 + perc * 127 );
+	}
 }
 
 //-----------------------------------------------------------------------------

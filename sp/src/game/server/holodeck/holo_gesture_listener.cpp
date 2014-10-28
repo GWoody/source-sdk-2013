@@ -74,6 +74,7 @@ void CHoloGestureListener::OnCircleGesture( const CFrame &frame, const CCircleGe
 	}
 
 	callback->OnCircleGesture( frame, circle );
+	_onCircleGesture.FireOutput( UTIL_GetLocalPlayer(), this );
 }
 
 //-----------------------------------------------------------------------------
@@ -92,6 +93,7 @@ void CHoloGestureListener::OnSwipeGesture( const CFrame &frame, const CSwipeGest
 	}
 
 	callback->OnSwipeGesture( frame, swipe );
+	_onSwipeGesture.FireOutput( UTIL_GetLocalPlayer(), this );
 }
 
 //-----------------------------------------------------------------------------
@@ -110,6 +112,7 @@ void CHoloGestureListener::OnTapGesture( const CFrame &frame, const CTapGesture 
 	}
 
 	callback->OnTapGesture( frame, tap );
+	_onTapGesture.FireOutput( UTIL_GetLocalPlayer(), this );
 }
 
 //-----------------------------------------------------------------------------

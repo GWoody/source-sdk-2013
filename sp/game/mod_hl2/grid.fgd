@@ -19,6 +19,9 @@
 @PointClass base(Targetname, EnableDisable) iconsprite("editor/shadow_control.vmt") = grid_environment_light : 
 	"An entity to control the sunlight that casts shadows in the map."
 [
+	dayBrush(target_source) : "Day Skybox"
+	nightBrush(target_source) : "Night Skybox"
+
 	//
 	// Outputs.
 	//

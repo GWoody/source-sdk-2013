@@ -116,8 +116,7 @@ void CRazerHydra::CreateMove( CUserCmd *cmd )
 	float yaw = player->GetAbsAngles().y;
 	VectorYawRotate( delta, yaw, delta );
 
-	delta.z = -delta.z;
-	cmd->viewoffset = delta;
+	cmd->viewoffset = -delta;
 }
 
 //----------------------------------------------------------------------------
