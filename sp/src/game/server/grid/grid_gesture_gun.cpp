@@ -126,12 +126,12 @@ bool CGunGesture::DetectTrigger( const CFrame &frame, EHand hand )
 {
 	const CHand &holohand = frame.GetHand( hand );
 	const CFinger &pointer = holohand.GetFingerByType( FINGER_POINTER );
-	const CBone &pointerBase = pointer.GetBone( BONE_INTERMEDIATE );
+	const Vector &pointerTip = pointer.GetTipPosition();
 	const CFinger &thumb = holohand.GetFingerByType( FINGER_THUMB );
 
 	// We want the thumb tip to be relatively close to the pointer tip.
-	const Vector &diff = pointerBase.GetNextJoint() - thumb.GetTipPosition();
-	if( diff.Length() > ( pointer.GetLength() ) )
+	const Vector &diff = pointerTip - thumb.GetTipPosition();
+	if( diff.Length() > ( pointer.GetLength() * 1.25f ) )
 	{
 		return false;	
 	}

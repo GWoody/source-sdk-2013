@@ -38,6 +38,7 @@ static const char *holo_render_debug_hand_options = "Rendering options:\n\
 4 - palm direction + normal.\n\
 5 - velocity vector.\n\
 6 - finger direction vectors.\n\
+7 - highlight finger tips.\n\
 ";
 
 static ConVar holo_render_debug_hand( "holo_render_debug_hand", "1", NULL, holo_render_debug_hand_options );

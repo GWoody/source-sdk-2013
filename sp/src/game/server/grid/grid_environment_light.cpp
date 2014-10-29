@@ -358,7 +358,7 @@ void CGridEnvironmentLight::SetLightLevel( float pitch )
 //-----------------------------------------------------------------------------
 void CGridEnvironmentLight::UpdateSkybox( float pitch )
 {
-	const float FADE_PITCH = 20.0f;
+	const float FADE_PITCH = 30.0f;
 
 	if( pitch < FADE_PITCH && _hour < 6 )
 	{

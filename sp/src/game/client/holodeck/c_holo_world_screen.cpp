@@ -34,6 +34,8 @@ static ConVar holo_screen_slider_pinch( "holo_screen_slider_pinch", "0.75", FCVA
 
 extern vgui::IInputInternal *g_InputInternal;
 
+static bool global_wait_for_release = false;
+
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 IMPLEMENT_CLIENTCLASS_DT( C_HoloWorldScreen, DT_HoloWorldScreen, CHoloWorldScreen )
@@ -145,7 +147,13 @@ bool C_HoloWorldScreen::CheckFingerContact( vgui::Panel *panel, const CHand &han
 
 	Vector intersection = GetPanelIntersectionPosition( u, v );
 	Vector delta = intersection - fingertipPos;
-	CheckChildCollision( panel, hand, finger, px, py, delta.Length() );
+
+	float intersectionDistance = intersection.DistToSqr( player->GetAbsOrigin() );
+	float fingerTipDistance = fingertipPos.DistToSqr( player->GetAbsOrigin() );
+	if( fingerTipDistance < intersectionDistance )
+	{
+		CheckChildCollision( panel, hand, finger, px, py, delta.Length() );
+	}
 
 	g_pClientMode->DeactivateInGameVGuiContext();
 	return true;
@@ -178,7 +186,17 @@ Vector C_HoloWorldScreen::GetPanelIntersectionPosition( float u, float v )
 void C_HoloWorldScreen::CheckChildCollision( Panel *panel, const CHand &hand, const CFinger &finger, int px, int py, float distance )
 {
 	bool closeEnough = distance < holo_screen_touch_distance.GetFloat();
-	bool fastEnough = distance < holo_screen_touch_distance.GetFloat() * 4 && finger.GetVelocityDirectionTheta() < holo_screen_finger_tipdir_tolertance.GetFloat() && finger.GetTipVelocity().Length() > 10;
+	bool fastEnough = finger.GetVelocityDirectionTheta() < holo_screen_finger_tipdir_tolertance.GetFloat() && finger.GetTipVelocity().Length() > 10;
+	
+	if( global_wait_for_release && ( closeEnough || fastEnough ) )
+	{
+		return;
+	}
+
+	if( global_wait_for_release && !closeEnough && !fastEnough )
+	{
+		global_wait_for_release = false;
+	}
 
 	if( !closeEnough && !fastEnough )
 	{
@@ -223,6 +241,8 @@ void C_HoloWorldScreen::CheckButton( vgui::Panel *child, int px, int py, bool cl
 		// Finger is close enough to be touching.
 		if( closeEnough || fastEnough )
 		{
+			global_wait_for_release = true;
+
 			if( !button->IsDepressed() )
 			{
 				// Only simulate a press on the first contact.
@@ -266,6 +286,8 @@ void C_HoloWorldScreen::CheckSlider( const CHand &hand, const CFinger &finger, v
 
 		if( oldInteracted || CheckBoundingRect( px, py, slider ) )
 		{
+			global_wait_for_release = true;
+
 			float perc = (float)( px - x1 ) / (float)x2;
 
 			int min, max, delta;

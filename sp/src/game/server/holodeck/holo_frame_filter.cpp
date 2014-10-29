@@ -102,7 +102,7 @@ CFrame CFrameFilter::StandardAverage()
 	}
 	else
 	{
-		for( int i = 1; i < _history.Count(); i++ )
+		for( int i = 0; i < _history.Count(); i++ )
 		{
 			sum = sum + _history[i];
 		}

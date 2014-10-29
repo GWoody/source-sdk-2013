@@ -278,5 +278,7 @@ int CGridPlayer::OnTakeDamage( const CTakeDamageInfo &info )
 		GetHandEntity( HAND_RIGHT )->GetHaptics().AddEvent( new CBulletDmgHapticEvent );
 	}
 
-	return BaseClass::OnTakeDamage( info );
+	CTakeDamageInfo copy = info;
+	copy.SetDamage( 0 );
+	return BaseClass::OnTakeDamage( copy );
 }
