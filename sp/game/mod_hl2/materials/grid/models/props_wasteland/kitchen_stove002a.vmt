@@ -1,0 +1,5 @@
+UnlitGeneric
+{
+	"$basetexture"	"grid/models/props_wasteland/kitchen_stove002a"
+	"$translucent"	1
+}

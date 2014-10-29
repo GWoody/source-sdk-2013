@@ -1,0 +1,5 @@
+UnlitGeneric
+{
+	"$basetexture"	"grid/models/props_c17/furniture_shelf01a"
+	"$translucent"	1
+}

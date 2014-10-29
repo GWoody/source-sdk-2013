@@ -1,0 +1,5 @@
+UnlitGeneric
+{
+	"$basetexture"	"grid/models/props_combine/breendesk"
+	"$translucent"	1
+}
