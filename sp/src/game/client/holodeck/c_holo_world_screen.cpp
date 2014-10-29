@@ -188,7 +188,7 @@ void C_HoloWorldScreen::CheckChildCollision( Panel *panel, const CHand &hand, co
 	bool closeEnough = distance < holo_screen_touch_distance.GetFloat();
 	bool fastEnough = finger.GetVelocityDirectionTheta() < holo_screen_finger_tipdir_tolertance.GetFloat() && finger.GetTipVelocity().Length() > 10;
 	
-	if( global_wait_for_release && ( closeEnough || fastEnough ) )
+	/*if( global_wait_for_release && ( closeEnough || fastEnough ) )
 	{
 		return;
 	}
@@ -196,7 +196,7 @@ void C_HoloWorldScreen::CheckChildCollision( Panel *panel, const CHand &hand, co
 	if( global_wait_for_release && !closeEnough && !fastEnough )
 	{
 		global_wait_for_release = false;
-	}
+	}*/
 
 	if( !closeEnough && !fastEnough )
 	{

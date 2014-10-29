@@ -65,10 +65,10 @@
 		}
 	}
 	
-	"SleepingButton"
+	"StorageButton"
 	{
 		"ControlName"	"MaterialButton"
-		"fieldName"		"SleepingButton"
+		"fieldName"		"StorageButton"
 		"xpos"			"133"
 		"ypos"			"40"
 		"wide"			"113"
@@ -78,12 +78,12 @@
 		"visible"		"1"
 		"enabled"		"1"
 		"tabPosition"	"2"
-		"labelText"		"Sleeping"
+		"labelText"		"Storage"
 		"textAlignment"	"center"
 		"dulltext"		"0"
 		"brighttext"	"0"
 		"Default"		"0"
-		"command"		"open_sleeping_props"
+		"command"		"open_storage_props"
 		"paintborder"	"0"
 
 		"enabledImage"
@@ -203,49 +203,25 @@
 		}
 	}
 	
-	"StorageButton"
+	"CloseButton"
 	{
-		"ControlName"	"MaterialButton"
-		"fieldName"		"StorageButton"
-		"xpos"			"10"
-		"ypos"			"156"
-		"wide"			"113"
-		"tall"			"48"
-		"autoResize"	"0"
-		"pinCorner"		"0"
-		"visible"		"1"
-		"enabled"		"1"
-		"tabPosition"	"2"
-		"labelText"		"Storage"
-		"textAlignment"	"center"
-		"dulltext"		"0"
-		"brighttext"	"0"
-		"Default"		"0"
-		"command"		"open_storage_props"
-		"paintborder"	"0"
-
-		"enabledImage"
-		{
-			"material"	"vgui/screens/vgui_button_enabled"
-			"color" "255 255 255 255"
-		}
-
-		"mouseOverImage"
-		{
-			"material"	"vgui/screens/vgui_button_hover"
-			"color" "255 255 255 255"
-		}
-
-		"pressedImage"
-		{
-			"material"	"vgui/screens/vgui_button_pushed"
-			"color" "255 255 255 255"
-		}
-
-		"disabledImage"
-		{
-			"material"	"vgui/screens/vgui_button_disabled"
-			"color" "255 255 255 255"
-		}
+		"ControlName"		"Button"
+		"fieldName"			"CloseButton"
+		"xpos"				"10"
+		"ypos"				"206"
+		"wide"				"236"
+		"tall"				"56"
+		"autoResize"		"0"
+		"pinCorner"			"0"
+		"visible"			"1"
+		"enabled"			"1"
+		"tabPosition"		"11"
+		"labelText"			"Close"
+		"textAlignment"		"center"
+		"dulltext"			"0"
+		"brighttext"		"0"
+		"wrap"				"0"
+		"Command"			"close"
+		"Default"			"0"
 	}
 }

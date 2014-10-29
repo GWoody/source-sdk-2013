@@ -269,6 +269,15 @@ void CDirectInput::CreateMove( CUserCmd *cmd )
 	long lForwardAxis = js.lY*-1;
 	long lSideAxis = js.lX;
 	long lYaw = js.lRz;
+
+	for( int i = 0; i < 128; i++ )
+	{
+		if( js.rgbButtons[i] )
+		{
+			engine->ClientCmd_Unrestricted( "vr_reset_home_pos" );
+			break;
+		}
+	}
 	
 	// Scale from the range [-JOY_MAX, JOY_MAX] to [-1, 1] so we can use the axis values as
 	// movement speed scalars.
